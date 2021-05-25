@@ -1,0 +1,197 @@
+use System.IO.Net;
+use Data.JSON;
+use Collection.Generic;
+
+class Server {
+	function : Main(args : String[]) ~ Nil {
+		server := LanguageServer->New("localhost", 6013);
+		server->Listen();
+	}
+}
+
+class LanguageServer {
+	@address : String;
+	@port : Int;
+	@quit : Bool;
+	@is_debug : Bool;
+
+	New(address : String, port : Int) {
+		@address := address;
+		@port := port;
+		@is_debug := true;
+	}
+
+	method : public : Listen() ~ Nil {
+		server := TCPSocketServer->New(6013);
+		leaving {
+			server->Close();
+		};
+
+		if(server->Listen(5)) {
+			socket := server->Accept();
+			while(<>@quit) {
+				response := GetRpcResponse(socket);
+				if(response <> Nil) {
+					ProcessResponse(response, socket);
+				}	
+				else {
+					@quit := true;
+				};
+			};
+		};
+	}
+
+	method : ProcessResponse(response : RpcResponse, socket : TCPSocket) ~ Nil {
+		id := response->GetId();
+		method_id := response->GetMethod();
+		
+		# notification
+		if(id->IsNeg()) {
+			if(@is_debug) {
+				"notification='{$method_id}', id={$id}"->PrintLine();
+			};
+
+			if(method_id->Equals("initialized")) {
+				NotifyInitialized(response->GetParams(), socket);
+			}
+			else {
+				if(@is_debug) {
+					"*** Unknown notification='{$method_id}' ***"->PrintLine();
+				};
+			};
+		}
+		# method
+		else {
+			if(@is_debug) {
+				"method='{$method_id}', id={$id}"->PrintLine();
+			};
+
+			if(method_id->Equals("initialize")) {
+				CallbackInitialize(id, response->GetParams(), socket);
+			}
+			else {
+				if(@is_debug) {
+					"*** Unknown method='{$method_id}' ***"->PrintLine();
+				};
+			};
+		};
+	}
+
+	method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
+		
+	}
+
+	method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+		workspace := params->FindElements("capabilities/workspace");
+		configuration := params->FindElements("capabilities/workspace/configuration");
+
+		# build response
+		response := JSONElement->New(JSONType->OBJECT);
+		capabilities := response->AddChild("capabilities");
+        completionProvider := capabilities->AddChild("completionProvider");
+        completionProvider->Insert("resolveProvider", true);
+        capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
+        node := MakeRpcResponse(id, response);
+
+        # write response
+        WriteString(socket, node->ToString());
+	}
+
+	# ---
+
+	method : ReadString(socket : TCPSocket) ~ String {
+		line := socket->ReadLine();
+		socket->ReadLine();
+
+		index := line->Find(':');
+		if(index > 0) {
+			index += 2;
+			length := line->SubString(index, line->Size() - index)->ToInt();
+			buffer := Byte->New[length];
+			socket->ReadBuffer(0, buffer->Size(), buffer);
+
+			text := String->New(buffer->ToUnicode());
+			if(@is_debug) {
+				"==> Read='{$text}'\n"->PrintLine();
+			};
+
+			return text;
+		};
+
+		return "";
+	}
+
+	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
+		if(@is_debug) {
+			"==> Wrote='{$text}'\n"->PrintLine();
+		};
+		length := text->Size();
+		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
+	}
+
+	method : GetRpcResponse(socket : TCPSocket) ~ RpcResponse {
+		text := ReadString(socket);
+		if(<>text->IsEmpty()) {
+			json :=JSONParser->New(text);
+			if(json->Parse()) {
+				node := json->GetRoot();
+				
+				id := -1;
+				id_elem := node->Get("id");
+				if(id_elem <> Nil) {
+					id := id_elem->GetValue()->ToInt();
+				};
+				mthd := node->Get("method")->GetValue();
+				params := node->Get("params");
+
+				if(mthd <> Nil & params <> Nil) {
+					return RpcResponse->New(id, mthd, params);
+				};
+			};
+		};
+
+		return Nil;
+	}
+
+	method : MakeRpcResponse(id : Int, result : JSONElement) ~ JSONElement {
+		node := JSONElement->New(JSONType->OBJECT);
+
+		node->Insert("jsonrpc", "2.0");
+		if(result = Nil) {
+			node->Insert("result", JSONElement->New(JSONType->NULL ));
+		}
+		else {
+			node->Insert("result", result);
+		};
+
+		if(id > -1) {
+			node->Insert("id", id);
+		};
+
+		return node;
+	}
+}
+
+class : private : RpcResponse {
+	@id : Int;
+	@mthd : String;
+	@params : JSONElement;
+
+	New(id : Int, mthd : String, params : JSONElement) {
+		@id := id;
+		@mthd := mthd;
+		@params := params;
+	}
+
+	method : public : GetId() ~ Int {
+		return @id;
+	}
+
+	method : public : GetMethod() ~ String {
+		return @mthd;
+	}
+
+	method : public : GetParams() ~ JSONElement {
+		return @params;
+	}
+}
