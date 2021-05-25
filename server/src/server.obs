@@ -21,6 +21,8 @@ class LanguageServer {
 		@is_debug := true;
 	}
 
+	#--- Setup server ---
+
 	method : public : Listen() ~ Nil {
 		server := TCPSocketServer->New(6013);
 		leaving {
@@ -30,9 +32,9 @@ class LanguageServer {
 		if(server->Listen(5)) {
 			socket := server->Accept();
 			while(<>@quit) {
-				response := GetRpcResponse(socket);
-				if(response <> Nil) {
-					ProcessResponse(response, socket);
+				request := GetRpcRequest(socket);
+				if(request <> Nil) {
+					ProcessResponse(request, socket);
 				}	
 				else {
 					@quit := true;
@@ -41,18 +43,68 @@ class LanguageServer {
 		};
 	}
 
-	method : ProcessResponse(response : RpcResponse, socket : TCPSocket) ~ Nil {
-		id := response->GetId();
-		method_id := response->GetMethod();
+	#--- Handle callback ---
+
+	method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+		workspace := params->FindElements("capabilities/workspace");
+		configuration := params->FindElements("capabilities/workspace/configuration");
+
+		# build response
+		request := JSONElement->New(JSONType->OBJECT);
+		capabilities := request->AddChild("capabilities");
+        completionProvider := capabilities->AddChild("completionProvider");
+        completionProvider->Insert("resolveProvider", true);
+        capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
+        
+        # write response
+        WriteString(socket, MakeRpcResult(id, request)->ToString());
+	}
+
+	method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+		uri := workspace := params->FindElements("textDocument/uri");
+		line_pos := workspace := params->FindElements("position/line");
+		char_pos := workspace := params->FindElements("position/character");
+		kind := workspace := params->FindElements("context/triggerKind");
+
+		"### file='{$uri}', line={$line_pos}, char={$char_pos}, kind={$kind} ###"->PrintLine();
+	}
+
+	#--- Handle notifications ---
+
+	method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
 		
-		# notification
+	}
+
+	method : NotifyCancelRequest(params : JSONElement, socket : TCPSocket) ~ Nil {
+			
+	}
+
+	method : NotifyDidChangeWatchedFiles(params : JSONElement, socket : TCPSocket) ~ Nil {
+			
+	}
+
+	# --- Process requests ---
+
+	method : ProcessResponse(request : RpcRequest, socket : TCPSocket) ~ Nil {
+		id := request->GetId();
+		method_id := request->GetMethod();
+		
+		#
+		# Notification
+		#
 		if(id->IsNeg()) {
 			if(@is_debug) {
-				"notification='{$method_id}', id={$id}"->PrintLine();
+				"notification='{$method_id}'"->PrintLine();
 			};
 
 			if(method_id->Equals("initialized")) {
-				NotifyInitialized(response->GetParams(), socket);
+				NotifyInitialized(request->GetParams(), socket);
+			}
+			else if(method_id->Equals("$/cancelRequest")) {
+				NotifyCancelRequest(request->GetParams(), socket);
+			}
+			else if(method_id->Equals("workspace/didChangeWatchedFiles")) {
+				NotifyDidChangeWatchedFiles(request->GetParams(), socket);
 			}
 			else {
 				if(@is_debug) {
@@ -60,14 +112,19 @@ class LanguageServer {
 				};
 			};
 		}
-		# method
+		#
+		# Callbacks
+		#
 		else {
 			if(@is_debug) {
 				"method='{$method_id}', id={$id}"->PrintLine();
 			};
 
 			if(method_id->Equals("initialize")) {
-				CallbackInitialize(id, response->GetParams(), socket);
+				CallbackInitialize(id, request->GetParams(), socket);
+			}
+			else if(method_id->Equals("textDocument/completion")) {
+				CallbackCompletion(id, request->GetParams(), socket);
 			}
 			else {
 				if(@is_debug) {
@@ -77,27 +134,7 @@ class LanguageServer {
 		};
 	}
 
-	method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
-		
-	}
-
-	method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
-		workspace := params->FindElements("capabilities/workspace");
-		configuration := params->FindElements("capabilities/workspace/configuration");
-
-		# build response
-		response := JSONElement->New(JSONType->OBJECT);
-		capabilities := response->AddChild("capabilities");
-        completionProvider := capabilities->AddChild("completionProvider");
-        completionProvider->Insert("resolveProvider", true);
-        capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
-        node := MakeRpcResponse(id, response);
-
-        # write response
-        WriteString(socket, node->ToString());
-	}
-
-	# ---
+	# --- Utility methods ---
 
 	method : ReadString(socket : TCPSocket) ~ String {
 		line := socket->ReadLine();
@@ -129,7 +166,7 @@ class LanguageServer {
 		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
 	}
 
-	method : GetRpcResponse(socket : TCPSocket) ~ RpcResponse {
+	method : GetRpcRequest(socket : TCPSocket) ~ RpcRequest {
 		text := ReadString(socket);
 		if(<>text->IsEmpty()) {
 			json :=JSONParser->New(text);
@@ -145,7 +182,7 @@ class LanguageServer {
 				params := node->Get("params");
 
 				if(mthd <> Nil & params <> Nil) {
-					return RpcResponse->New(id, mthd, params);
+					return RpcRequest->New(id, mthd, params);
 				};
 			};
 		};
@@ -153,7 +190,7 @@ class LanguageServer {
 		return Nil;
 	}
 
-	method : MakeRpcResponse(id : Int, result : JSONElement) ~ JSONElement {
+	method : MakeRpcResult(id : Int, result : JSONElement) ~ JSONElement {
 		node := JSONElement->New(JSONType->OBJECT);
 
 		node->Insert("jsonrpc", "2.0");
@@ -172,7 +209,7 @@ class LanguageServer {
 	}
 }
 
-class : private : RpcResponse {
+class : private : RpcRequest {
 	@id : Int;
 	@mthd : String;
 	@params : JSONElement;
