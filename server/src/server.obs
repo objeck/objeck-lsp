@@ -4,8 +4,13 @@ use Collection.Generic;
 
 class Server {
 	function : Main(args : String[]) ~ Nil {
-		server := LanguageServer->New("localhost", 6013);
-		server->Listen();
+		if(args->Size() = 2) {
+			server := LanguageServer->New(args[0], args[0]->ToInt());
+			server->Listen();
+		}
+		else {
+			"--- TODO: read config file ---"->ErrorLine();
+		};
 	}
 }
 
@@ -13,6 +18,7 @@ class LanguageServer {
 	@address : String;
 	@port : Int;
 	@quit : Bool;
+	@is_initialized : Bool;
 	@is_debug : Bool;
 
 	New(address : String, port : Int) {
@@ -72,7 +78,7 @@ class LanguageServer {
 	#--- Handle notifications ---
 
 	method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
-		
+		@is_initialized := true;
 	}
 
 	method : NotifyCancelRequest(params : JSONElement, socket : TCPSocket) ~ Nil {
@@ -80,7 +86,7 @@ class LanguageServer {
 	}
 
 	method : NotifyDidChangeWatchedFiles(params : JSONElement, socket : TCPSocket) ~ Nil {
-			
+
 	}
 
 	# --- Process requests ---
