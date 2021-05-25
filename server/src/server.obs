@@ -60,6 +60,11 @@ class LanguageServer {
 		capabilities := request->AddChild("capabilities");
         completionProvider := capabilities->AddChild("completionProvider");
         completionProvider->Insert("resolveProvider", true);
+
+        workspace := capabilities->AddChild("workspace");
+        workspaceFolders := workspace->AddChild("workspaceFolders");
+        workspaceFolders->Insert("supported", true);
+
         capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
         
         # write response
@@ -67,10 +72,10 @@ class LanguageServer {
 	}
 
 	method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
-		uri := workspace := params->FindElements("textDocument/uri");
-		line_pos := workspace := params->FindElements("position/line");
-		char_pos := workspace := params->FindElements("position/character");
-		kind := workspace := params->FindElements("context/triggerKind");
+		uri := params->FindElements("textDocument/uri");
+		line_pos := params->FindElements("position/line");
+		char_pos := params->FindElements("position/character");
+		kind := params->FindElements("context/triggerKind");
 
 		"### file='{$uri}', line={$line_pos}, char={$char_pos}, kind={$kind} ###"->PrintLine();
 	}
@@ -100,7 +105,7 @@ class LanguageServer {
 		#
 		if(id->IsNeg()) {
 			if(@is_debug) {
-				"notification='{$method_id}'"->PrintLine();
+				"NOTIFICATION='{$method_id}'\n"->PrintLine();
 			};
 
 			if(method_id->Equals("initialized")) {
@@ -123,7 +128,7 @@ class LanguageServer {
 		#
 		else {
 			if(@is_debug) {
-				"method='{$method_id}', id={$id}"->PrintLine();
+				"METHOD='{$method_id}', id={$id}"->PrintLine();
 			};
 
 			if(method_id->Equals("initialize")) {
@@ -155,7 +160,7 @@ class LanguageServer {
 
 			text := String->New(buffer->ToUnicode());
 			if(@is_debug) {
-				"==> Read='{$text}'\n"->PrintLine();
+				"====\nREAD='{$text}'"->PrintLine();
 			};
 
 			return text;
@@ -166,7 +171,7 @@ class LanguageServer {
 
 	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
 		if(@is_debug) {
-			"==> Wrote='{$text}'\n"->PrintLine();
+			"WRITE='{$text}\n"->PrintLine();
 		};
 		length := text->Size();
 		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
@@ -184,6 +189,7 @@ class LanguageServer {
 				if(id_elem <> Nil) {
 					id := id_elem->GetValue()->ToInt();
 				};
+				
 				mthd := node->Get("method")->GetValue();
 				params := node->Get("params");
 
