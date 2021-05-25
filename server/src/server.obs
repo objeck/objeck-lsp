@@ -56,8 +56,8 @@ class LanguageServer {
 		configuration := params->FindElements("capabilities/workspace/configuration");
 
 		# build response
-		request := JSONElement->New(JSONType->OBJECT);
-		capabilities := request->AddChild("capabilities");
+		response := JSONElement->New(JSONType->OBJECT);
+		capabilities := response->AddChild("capabilities");
         completionProvider := capabilities->AddChild("completionProvider");
         completionProvider->Insert("resolveProvider", true);
 
@@ -68,7 +68,7 @@ class LanguageServer {
         capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
         
         # write response
-        WriteString(socket, MakeRpcResult(id, request)->ToString());
+        WriteString(socket, MakeRpcResult(id, response)->ToString());
 	}
 
 	method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
@@ -78,6 +78,13 @@ class LanguageServer {
 		kind := params->FindElements("context/triggerKind");
 
 		"### file='{$uri}', line={$line_pos}, char={$char_pos}, kind={$kind} ###"->PrintLine();
+
+		response := JSONElement->New(JSONType->OBJECT);
+		response->Insert("isIncomplete", true);
+		response->Insert("items", Nil);
+        
+        # write response
+        WriteString(socket, MakeRpcResult(id, response)->ToString());
 	}
 
 	#--- Handle notifications ---
@@ -189,7 +196,7 @@ class LanguageServer {
 				if(id_elem <> Nil) {
 					id := id_elem->GetValue()->ToInt();
 				};
-				
+
 				mthd := node->Get("method")->GetValue();
 				params := node->Get("params");
 
