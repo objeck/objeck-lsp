@@ -84,7 +84,7 @@ class LanguageServer {
 		response->Insert("items", Nil);
         
         # write response
-        WriteString(socket, MakeRpcResult(id, response)->ToString());
+        WriteString(socket, MakeRpcResult(id, Nil)->ToString());
 	}
 
 	#--- Handle notifications ---
@@ -178,7 +178,7 @@ class LanguageServer {
 
 	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
 		if(@is_debug) {
-			"WRITE='{$text}\n"->PrintLine();
+			"WRITE='{$text}'\n"->PrintLine();
 		};
 		length := text->Size();
 		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
