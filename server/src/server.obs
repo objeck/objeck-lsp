@@ -197,12 +197,12 @@ class LanguageServer {
 	}
 
 	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
-		length := text->Size();
-		out := "Content-Length: {$length}\r\n\r\n{$text}";
 		if(@is_debug) {
-			"WRITE='{$out}'"->PrintLine();
-		};		
-		socket->WriteString(out);
+			"WRITE='{$text}'"->PrintLine();
+		};	
+		
+		length := text->Size();
+		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
 	}
 
 	method : GetRpcRequest(socket : TCPSocket) ~ RpcRequest {
