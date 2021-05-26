@@ -79,9 +79,7 @@ class LanguageServer {
 
 		"### file='{$uri}', line={$line_pos}, char={$char_pos}, kind={$kind} ###"->PrintLine();
 
-		response := JSONElement->New(JSONType->OBJECT);
-		response->Insert("isIncomplete", true);
-		response->Insert("items", Nil);
+		response := JSONElement->New(JSONType->ARRAY);
         
         # write response
         WriteString(socket, MakeRpcResult(id, Nil)->ToString());
