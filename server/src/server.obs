@@ -21,10 +21,18 @@ class LanguageServer {
 	@is_initialized : Bool;
 	@is_debug : Bool;
 
+	@keywords : Vector<String>;
+
 	New(address : String, port : Int) {
 		@address := address;
 		@port := port;
 		@is_debug := true;
+
+		@keywords := Vector->New()<String>;
+		@keywords->AddBack("method");
+		@keywords->AddBack("function");
+		@keywords->AddBack("Int");
+		@keywords->AddBack("Float");
 	}
 
 	#--- Setup server ---
@@ -65,7 +73,7 @@ class LanguageServer {
         workspaceFolders := workspace->AddChild("workspaceFolders");
         workspaceFolders->Insert("supported", true);
 
-        capabilities->Insert("textDocumentSync", "TextDocumentSyncKind.Incremental");
+        capabilities->Insert("textDocumentSync", 2);
         
         # write response
         WriteString(socket, MakeRpcResult(id, response)->ToString());
@@ -74,15 +82,29 @@ class LanguageServer {
 	method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
 		uri := params->FindElements("textDocument/uri");
 		line_pos := params->FindElements("position/line");
-		char_pos := params->FindElements("position/character");
+		char_id := params->FindElements("position/character");
 		kind := params->FindElements("context/triggerKind");
 
-		"### file='{$uri}', line={$line_pos}, char={$char_pos}, kind={$kind} ###"->PrintLine();
+		if(@is_debug) {
+			"### file='{$uri}', line={$line_pos}, char={$char_id}, kind={$kind} ###"->PrintLine();
+		};
 
 		response := JSONElement->New(JSONType->ARRAY);
-        
+		
+		item := JSONElement->New(JSONType->OBJECT);
+		item->Insert("label", "TypeScript");
+		item->Insert("kind", 1);
+		item->Insert("data", 1);
+		response->Add(item);
+
+		item := JSONElement->New(JSONType->OBJECT);
+		item->Insert("label", "JavaScript");
+		item->Insert("kind", 1);
+		item->Insert("data", 2);
+		response->Add(item);
+
         # write response
-        WriteString(socket, MakeRpcResult(id, Nil)->ToString());
+        WriteString(socket, MakeRpcResult(id, response)->ToString());
 	}
 
 	#--- Handle notifications ---
@@ -175,11 +197,12 @@ class LanguageServer {
 	}
 
 	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
-		if(@is_debug) {
-			"WRITE='{$text}'\n"->PrintLine();
-		};
 		length := text->Size();
-		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
+		out := "Content-Length: {$length}\r\n\r\n{$text}";
+		if(@is_debug) {
+			"WRITE='{$out}'"->PrintLine();
+		};		
+		socket->WriteString(out);
 	}
 
 	method : GetRpcRequest(socket : TCPSocket) ~ RpcRequest {
@@ -195,10 +218,11 @@ class LanguageServer {
 					id := id_elem->GetValue()->ToInt();
 				};
 
+				ver := node->Get("jsonrpc");
 				mthd := node->Get("method")->GetValue();
 				params := node->Get("params");
 
-				if(mthd <> Nil & params <> Nil) {
+				if(ver <> Nil & ver->GetValue()->Equals("2.0") & mthd <> Nil) {
 					return RpcRequest->New(id, mthd, params);
 				};
 			};
@@ -212,7 +236,7 @@ class LanguageServer {
 
 		node->Insert("jsonrpc", "2.0");
 		if(result = Nil) {
-			node->Insert("result", JSONElement->New(JSONType->NULL ));
+			node->Insert("result", JSONElement->New(JSONType->NULL));
 		}
 		else {
 			node->Insert("result", result);
