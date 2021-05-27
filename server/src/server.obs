@@ -237,6 +237,7 @@ class Service from System.Concurrency.Thread {
 		if(index > 0) {
 			index += 2;
 			length := line->SubString(index, line->Size() - index)->ToInt();
+			# TODO: check length (buffer overflow)
 			buffer := Byte->New[length];
 			socket->ReadBuffer(0, buffer->Size(), buffer);
 
