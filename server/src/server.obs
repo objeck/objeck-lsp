@@ -54,6 +54,7 @@ class LanguageServer {
 					@quit := true;
 				};
 			};
+			socket->Close();
 		};
 	}
 
@@ -199,8 +200,7 @@ class LanguageServer {
 	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
 		if(@is_debug) {
 			"WRITE='{$text}'"->PrintLine();
-		};	
-		
+		};		
 		length := text->Size();
 		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
 	}
