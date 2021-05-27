@@ -1,10 +1,11 @@
+use Collection.Generic;
 use System.IO.Net;
 use Data.JSON;
-use Collection.Generic;
 
 class Server {
 	function : Main(args : String[]) ~ Nil {
 		if(args->Size() = 1) {
+			Service->Init();
 			LanguageServer->New(args[0]->ToInt())->Listen();
 		}
 		else {
@@ -42,18 +43,19 @@ class Service from System.Concurrency.Thread {
 	@quit : Bool;
 	@is_initialized : Bool;
 	@is_debug : Bool;
-	@keywords : Vector<String>;
+	@keywords : static : Vector<String>;
 
-	New(is_debug : Bool) {
-		Parent();
-
-		@is_debug := is_debug;
-
+	function : Init() ~ Nil {
 		@keywords := Vector->New()<String>;
 		@keywords->AddBack("method");
 		@keywords->AddBack("function");
 		@keywords->AddBack("Int");
 		@keywords->AddBack("Float");
+	}
+
+	New(is_debug : Bool) {
+		Parent();
+		@is_debug := is_debug;
 	}
 	
 	method : public : Run(param : Base) ~ Nil {
