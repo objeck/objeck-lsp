@@ -2,329 +2,426 @@ use Collection.Generic;
 use System.IO.Net;
 use Data.JSON;
 
-class Server {
-	function : Main(args : String[]) ~ Nil {
-		if(args->Size() = 1) {
-			Service->Init();
-			LanguageServer->New(args[0]->ToInt())->Listen();
-		}
-		else {
-			"--- TODO: read config file ---"->ErrorLine();
-		};
-	}
-}
+bundle LSP {
+	class ObjeckServer {
+		@port : Int;
+		@is_debug : Bool;
 
-class LanguageServer {
-	@port : Int;
-	@is_debug : Bool;
-
-	New(port : Int) {
-		@port := port;
-		@is_debug := true;
-	}
-
-	method : public : Listen() ~ Nil {
-		server := TCPSocketServer->New(6013);
-		leaving {
-			server->Close();
-		};
-
-		if(server->Listen(5)) {
-			while(true) {
-				Service->New(@is_debug)->Execute(server->Accept());
-			};
-		};
-	}
-}
-
-class Service from System.Concurrency.Thread {
-	@address : String;
-	@port : Int;
-	@quit : Bool;
-	@is_initialized : Bool;
-	@is_debug : Bool;
-	@keywords : static : Vector<String>;
-
-	function : Init() ~ Nil {
-		@keywords := Vector->New()<String>;
-		@keywords->AddBack("method");
-		@keywords->AddBack("function");
-		@keywords->AddBack("Int");
-		@keywords->AddBack("Float");
-	}
-
-	New(is_debug : Bool) {
-		Parent();
-		@is_debug := is_debug;
-	}
-	
-	method : public : Run(param : Base) ~ Nil {
-		socket := param->As(TCPSocket);
-
-		while(<>@quit) {
-			request := GetRpcRequest(socket);
-			if(request <> Nil) {
-				ProcessResponse(request, socket);
-			}	
+		function : Main(args : String[]) ~ Nil {
+			if(args->Size() = 1) {
+				Service->Init();
+				ObjeckServer->New(args[0]->ToInt())->Listen();
+			}
 			else {
-				@quit := true;
+				"--- TODO: read config file ---"->ErrorLine();
 			};
-		};
+		}
 
-		socket->Close();
+		New(port : Int) {
+			@port := port;
+			@is_debug := true;
+		}
+
+		method : public : Listen() ~ Nil {
+			server := TCPSocketServer->New(6013);
+			leaving {
+				server->Close();
+			};
+
+			if(server->Listen(5)) {
+				while(true) {
+					Service->New(@is_debug)->Execute(server->Accept());
+				};
+			};
+		}
 	}
 
-	#--- Handle callback ---
+	class Service from System.Concurrency.Thread {
+		@address : String;
+		@port : Int;
+		@quit : Bool;
+		@is_initialized : Bool;
+		@is_debug : Bool;
+		@documents : Map<String, Document>;
+		@keywords : static : Vector<String>;
 
-	method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
-		workspace := params->FindElements("capabilities/workspace");
-		configuration := params->FindElements("capabilities/workspace/configuration");
+		function : Init() ~ Nil {
+			@keywords := Vector->New()<String>;
+			@keywords->AddBack("method");
+			@keywords->AddBack("function");
+			@keywords->AddBack("Int");
+			@keywords->AddBack("Float");
+		}
 
-		# build response
-		response := JSONElement->New(JSONType->OBJECT);
-		capabilities := response->AddChild("capabilities");
-        completionProvider := capabilities->AddChild("completionProvider");
-        completionProvider->Insert("resolveProvider", true);
-
-        workspace := capabilities->AddChild("workspace");
-        workspaceFolders := workspace->AddChild("workspaceFolders");
-        workspaceFolders->Insert("supported", true);
-
-        capabilities->Insert("textDocumentSync", 2);
-        
-        # write response
-        WriteString(socket, MakeRpcResult(id, response)->ToString());
-	}
-
-	method : CallbackShutdown(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
-		if(@is_debug) {
-			"=> CallbackShutdown"->PrintLine();
-		};
-
-		@quit := true;
-	}	
-
-	method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
-		uri := params->FindElements("textDocument/uri");
-		line_pos := params->FindElements("position/line");
-		char_id := params->FindElements("position/character");
-		kind := params->FindElements("context/triggerKind");
-
-		if(@is_debug) {
-			"CallbackCompletion => file='{$uri}', line={$line_pos}, char={$char_id}, kind={$kind}"->PrintLine();
-		};
-
-		response := JSONElement->New(JSONType->ARRAY);		
-		each(i : @keywords) {
-			item := JSONElement->New(JSONType->OBJECT);
-			keyword := @keywords->Get(i);
-			item->Insert("label", keyword);
-			item->Insert("kind", 1);
-			item->Insert("data", i + 1);
-			item->Insert("detail", "{$keyword} details");
-      		item->Insert("documentation", "{$keyword} documentation");      		
-			response->Add(item);
-		};
-
-        # write response
-        WriteString(socket, MakeRpcResult(id, response)->ToString());
-	}
-
-	#--- Handle notifications ---
-
-	method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
-		@is_initialized := true;
-	}
-
-	method : NotifyCancel(params : JSONElement, socket : TCPSocket) ~ Nil {
-			
-	}
-
-	method : NotifyDidChangeWatchedFiles(params : JSONElement, socket : TCPSocket) ~ Nil {
-
-	}
-
-	method : NotifyDidOpen(params : JSONElement, socket : TCPSocket) ~ Nil {
-		text := params->FindElements("textDocument/text");
-
-		if(@is_debug) {
-			"NotifyDidOpen => text='{$text}"->PrintLine();
-		};
-	}
-
-	method : NotifyDidChange(params : JSONElement, socket : TCPSocket) ~ Nil {
-		changes := params->FindElements("contentChanges");
-
-		if(@is_debug) {
-			count := changes->Size();
-			"NotifyDidChange => count={$count}"->PrintLine();
-		};
-
-		each(i : changes) {
-			change := changes->Get(i);
-			change->Get("rangeLength")->GetValue()->PrintLine();
-			change->Get("text")->GetValue()->PrintLine();
-		};
-	}
-
-	# --- Process requests ---
-
-	method : ProcessResponse(request : RpcRequest, socket : TCPSocket) ~ Nil {
-		id := request->GetId();
-		method_id := request->GetMethod();
+		New(is_debug : Bool) {
+			Parent();
+			@is_debug := is_debug;
+			@documents := Map->New()<String, Document>;
+		}
 		
-		#
-		# Notification
-		#
-		if(id->IsNeg()) {
-			if(@is_debug) {
-				"NOTIFICATION='{$method_id}'\n"->PrintLine();
-			};
+		method : public : Run(param : Base) ~ Nil {
+			socket := param->As(TCPSocket);
 
-			if(method_id->Equals("initialized")) {
-				NotifyInitialized(request->GetParams(), socket);
-			}
-			else if(method_id->Equals("$/cancelRequest")) {
-				NotifyCancel(request->GetParams(), socket);
-			}
-			else if(method_id->Equals("workspace/didChangeWatchedFiles")) {
-				NotifyDidChangeWatchedFiles(request->GetParams(), socket);
-			}
-			else if(method_id->Equals("textDocument/didOpen")) {
-				NotifyDidOpen(request->GetParams(), socket);
-			}
-			else if(method_id->Equals("textDocument/didChange")) {
-				NotifyDidChange(request->GetParams(), socket);
-			}
-			else {
-				if(@is_debug) {
-					"*** Unknown notification='{$method_id}' ***"->PrintLine();
+			while(<>@quit) {
+				request := ReadRpcRequest(socket);
+				if(request <> Nil) {
+					ProcessResponse(request, socket);
+				}	
+				else {
+					@quit := true;
 				};
 			};
+
+			socket->Close();
 		}
-		#
-		# Callbacks
-		#
-		else {
+
+		#--- Handle callback ---
+
+		method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+			workspace := params->FindElements("capabilities/workspace");
+			configuration := params->FindElements("capabilities/workspace/configuration");
+
+			# build response
+			response := JSONElement->New(JSONType->OBJECT);
+			capabilities := response->AddChild("capabilities");
+	        completionProvider := capabilities->AddChild("completionProvider");
+	        completionProvider->Insert("resolveProvider", true);
+
+	        workspace := capabilities->AddChild("workspace");
+	        workspaceFolders := workspace->AddChild("workspaceFolders");
+	        workspaceFolders->Insert("supported", true);
+
+	        capabilities->Insert("textDocumentSync", 2);
+	        
+	        # write response
+	        WriteRpcRequest(id, response, socket);
+		}
+
+		method : CallbackShutdown(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
 			if(@is_debug) {
-				"METHOD='{$method_id}', id={$id}"->PrintLine();
+				"=> CallbackShutdown"->PrintLine();
 			};
 
-			if(method_id->Equals("initialize")) {
-				CallbackInitialize(id, request->GetParams(), socket);
-			}
-			else if(method_id->Equals("textDocument/completion")) {
-				CallbackCompletion(id, request->GetParams(), socket);
-			}
-			else if(method_id->Equals("shutdown")) {
-				CallbackShutdown(id, request->GetParams(), socket);
-			}
-			else {
-				if(@is_debug) {
-					"*** Unknown method='{$method_id}' ***"->PrintLine();
-				};
-			};
-		};
-	}
+			@quit := true;
+		}	
 
-	# --- Utility methods ---
+		method : CallbackCompletion(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+			uri := params->FindElements("textDocument/uri");
+			line_pos := params->FindElements("position/line");
+			char_id := params->FindElements("position/character");
+			kind := params->FindElements("context/triggerKind");
 
-	method : ReadString(socket : TCPSocket) ~ String {
-		line := socket->ReadLine();
-		socket->ReadLine();
-
-		index := line->Find(':');
-		if(index > 0) {
-			index += 2;
-			length := line->SubString(index, line->Size() - index)->ToInt();
-			# TODO: check length (buffer overflow)
-			buffer := Byte->New[length];
-			socket->ReadBuffer(0, buffer->Size(), buffer);
-
-			text := String->New(buffer->ToUnicode());
 			if(@is_debug) {
-				"====\nREAD='{$text}'"->PrintLine();
+				"CallbackCompletion => file='{$uri}', line={$line_pos}, char={$char_id}, kind={$kind}"->PrintLine();
 			};
 
-			return text;
-		};
+			response := JSONElement->New(JSONType->ARRAY);		
+			each(i : @keywords) {
+				item := JSONElement->New(JSONType->OBJECT);
+				keyword := @keywords->Get(i);
+				item->Insert("label", keyword);
+				item->Insert("kind", 1);
+				item->Insert("data", i + 1);
+				item->Insert("detail", "{$keyword} details");
+	      		item->Insert("documentation", "{$keyword} documentation");      		
+				response->Add(item);
+			};
 
-		return "";
-	}
+	        # write response
+	        WriteRpcRequest(id, response, socket);
+		}
 
-	method : WriteString(socket : TCPSocket, text : String) ~ Nil {
-		if(@is_debug) {
-			"WRITE='{$text}'"->PrintLine();
-		};		
-		length := text->Size();
-		socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
-	}
+		method : CallbackResolve(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+			# write response
+	        WriteRpcRequest(id, Nil, socket);
+		}
 
-	method : GetRpcRequest(socket : TCPSocket) ~ RpcRequest {
-		text := ReadString(socket);
-		if(<>text->IsEmpty()) {
-			json :=JSONParser->New(text);
-			if(json->Parse()) {
-				node := json->GetRoot();
+		#--- Handle notifications ---
+
+		method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
+			@is_initialized := true;
+		}
+
+		method : NotifyCancel(params : JSONElement, socket : TCPSocket) ~ Nil {
 				
-				id := -1;
-				id_elem := node->Get("id");
-				if(id_elem <> Nil) {
-					id := id_elem->GetValue()->ToInt();
+		}
+
+		method : NotifyDidChangeWatchedFiles(params : JSONElement, socket : TCPSocket) ~ Nil {
+
+		}
+
+		method : NotifyDidOpen(params : JSONElement, socket : TCPSocket) ~ Nil {
+			uri_elem := params->FindElements("textDocument/uri");
+			text_elem := params->FindElements("textDocument/text");
+
+			if(uri_elem <> Nil & text_elem <> Nil) {
+				uri := uri_elem->GetValue();
+				text := text_elem->GetValue();
+
+				if(@is_debug) {
+					"NotifyDidOpen => text='{$text}"->PrintLine();
 				};
 
-				ver := node->Get("jsonrpc");
-				mthd := node->Get("method")->GetValue();
-				params := node->Get("params");
+				document := Document->New(uri, text);
+				@documents->Insert(uri, document);
+			}
+			else {
+				"*** Failed: NotifyDidOpen ***"->ErrorLine();				
+			};
+		}
 
-				if(ver <> Nil & ver->GetValue()->Equals("2.0") & mthd <> Nil) {
-					return RpcRequest->New(id, mthd, params);
+		method : NotifyDidChange(params : JSONElement, socket : TCPSocket) ~ Nil {
+			changes := params->FindElements("contentChanges");
+
+			if(@is_debug) {
+				count := changes->Size();
+				"NotifyDidChange => count={$count}"->PrintLine();
+			};
+
+			each(i : changes) {
+				change := changes->Get(i);
+				range := change->Get("rangeLength")->GetValue();
+				text := change->Get("text")->GetValue();
+				
+				if(@is_debug) {
+					"\trange={$range}, text='{$text}'"->PrintLine();
 				};
 			};
-		};
-
-		return Nil;
-	}
-
-	method : MakeRpcResult(id : Int, result : JSONElement) ~ JSONElement {
-		node := JSONElement->New(JSONType->OBJECT);
-
-		node->Insert("jsonrpc", "2.0");
-		if(result = Nil) {
-			node->Insert("result", JSONElement->New(JSONType->NULL));
 		}
-		else {
-			node->Insert("result", result);
-		};
 
-		if(id > -1) {
-			node->Insert("id", id);
-		};
+		# --- Process requests ---
 
-		return node;
+		method : ProcessResponse(request : RpcRequest, socket : TCPSocket) ~ Nil {
+			id := request->GetId();
+			method_id := request->GetMethod();
+			
+			#
+			# Notification
+			#
+			if(id->IsNeg()) {
+				if(@is_debug) {
+					"NOTIFICATION='{$method_id}'\n"->PrintLine();
+				};
+
+				if(method_id->Equals("initialized")) {
+					NotifyInitialized(request->GetParams(), socket);
+				}
+				else if(method_id->Equals("$/cancelRequest")) {
+					NotifyCancel(request->GetParams(), socket);
+				}
+				else if(method_id->Equals("workspace/didChangeWatchedFiles")) {
+					NotifyDidChangeWatchedFiles(request->GetParams(), socket);
+				}
+				else if(method_id->Equals("textDocument/didOpen")) {
+					NotifyDidOpen(request->GetParams(), socket);
+				}
+				else if(method_id->Equals("textDocument/didChange")) {
+					NotifyDidChange(request->GetParams(), socket);
+				}
+				else {
+					if(@is_debug) {
+						"*** Unknown notification='{$method_id}' ***"->PrintLine();
+					};
+				};
+			}
+			#
+			# Callbacks
+			#
+			else {
+				if(@is_debug) {
+					"METHOD='{$method_id}', id={$id}"->PrintLine();
+				};
+
+				if(method_id->Equals("initialize")) {
+					CallbackInitialize(id, request->GetParams(), socket);
+				}
+				else if(method_id->Equals("textDocument/completion")) {
+					CallbackCompletion(id, request->GetParams(), socket);
+				}
+				else if(method_id->Equals("completionItem/resolve")) {
+					CallbackResolve(id, request->GetParams(), socket);
+				}
+				else if(method_id->Equals("shutdown")) {
+					CallbackShutdown(id, request->GetParams(), socket);
+				}
+				else {
+					if(@is_debug) {
+						"*** Unknown method='{$method_id}' ***"->PrintLine();
+					};
+				};
+			};
+		}
+
+		# --- Utility methods ---
+
+		method : ReadString(socket : TCPSocket) ~ String {
+			line := socket->ReadLine();
+			socket->ReadLine();
+
+			index := line->Find(':');
+			if(index > 0) {
+				index += 2;
+				length := line->SubString(index, line->Size() - index)->ToInt();
+				# TODO: check length (buffer overflow)
+				buffer := Byte->New[length];
+				socket->ReadBuffer(0, buffer->Size(), buffer);
+
+				text := String->New(buffer->ToUnicode());
+				if(@is_debug) {
+					"====\nREAD='{$text}'"->PrintLine();
+				};
+
+				return text;
+			};
+
+			return "";
+		}
+
+		method : WriteString(socket : TCPSocket, text : String) ~ Nil {
+			if(@is_debug) {
+				"WRITE='{$text}'"->PrintLine();
+			};		
+			length := text->Size();
+			socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
+		}
+
+		method : ReadRpcRequest(socket : TCPSocket) ~ RpcRequest {
+			text := ReadString(socket);
+			if(<>text->IsEmpty()) {
+				json :=JSONParser->New(text);
+				if(json->Parse()) {
+					node := json->GetRoot();
+					
+					id := -1;
+					id_elem := node->Get("id");
+					if(id_elem <> Nil) {
+						id := id_elem->GetValue()->ToInt();
+					};
+
+					ver := node->Get("jsonrpc");
+					mthd := node->Get("method")->GetValue();
+					params := node->Get("params");
+
+					if(ver <> Nil & ver->GetValue()->Equals("2.0") & mthd <> Nil) {
+						return RpcRequest->New(id, mthd, params);
+					};
+				};
+			};
+
+			return Nil;
+		}
+
+		method : WriteRpcRequest(id : Int, result : JSONElement, socket : TCPSocket) ~ Nil {
+			WriteString(socket, MakeRpcResponse(id, result)->ToString());
+		}
+
+		method : MakeRpcResponse(id : Int, result : JSONElement) ~ JSONElement {
+			node := JSONElement->New(JSONType->OBJECT);
+
+			node->Insert("jsonrpc", "2.0");
+			if(result = Nil) {
+				node->Insert("result", JSONElement->New(JSONType->NULL));
+			}
+			else {
+				node->Insert("result", result);
+			};
+
+			if(id > -1) {
+				node->Insert("id", id);
+			};
+
+			return node;
+		}
 	}
-}
 
-class : private : RpcRequest {
-	@id : Int;
-	@mthd : String;
-	@params : JSONElement;
+	class : private : RpcRequest {
+		@id : Int;
+		@mthd : String;
+		@params : JSONElement;
 
-	New(id : Int, mthd : String, params : JSONElement) {
-		@id := id;
-		@mthd := mthd;
-		@params := params;
+		New(id : Int, mthd : String, params : JSONElement) {
+			@id := id;
+			@mthd := mthd;
+			@params := params;
+		}
+
+		method : public : GetId() ~ Int {
+			return @id;
+		}
+
+		method : public : GetMethod() ~ String {
+			return @mthd;
+		}
+
+		method : public : GetParams() ~ JSONElement {
+			return @params;
+		}
 	}
 
-	method : public : GetId() ~ Int {
-		return @id;
-	}
+	class : private : Document {
+		@uri : String;
+		@document : Vector<String>;
 
-	method : public : GetMethod() ~ String {
-		return @mthd;
-	}
+		New(uri : String, text : String) {
+			@uri := uri;
+			@document := Vector->New()<String>;
+			LoadContent(text);
+		}
 
-	method : public : GetParams() ~ JSONElement {
-		return @params;
+		method : public : LoadContent(text : String) ~ Nil {
+			line := "";
+			state := 0;
+
+			size := text->Size();
+			for(i := 0; i < size; i += 1;) {
+				char := text->Get(i);				
+				if(char = '\\' & i + 1 < size) {
+					next_char := text->Get(i + 1);
+					if(next_char = 'r') {
+						i += 1;
+						char := '\r';
+					}
+					else if(next_char = 'n') {
+						i += 1;
+						char := '\n';
+					}
+					else if(next_char = 't') {
+						i += 1;
+						char := '\t';
+					};
+				};
+
+# "'{$char}'"->PrintLine();
+
+				if(char = '\r') {
+					state := 1;
+				}
+				else if(state = 1 & char = '\n') {
+					line += '\r'; line += '\n';
+					@document->AddBack(line);
+					line := "";
+					state := 0;
+				}
+				else if(char = '\n') {
+					line += '\n';
+					@document->AddBack(line);
+					line := "";
+					state := 0;
+				}
+				else {
+					line += char;
+				};
+			};
+
+			DumpDocument();
+		}
+
+		method : DumpDocument() ~ Nil {
+			each(i : @document) {
+				line := @document->Get(i);
+				size := line->Size();
+				"{$i},{$size}: '{$line}'"->PrintLine();
+			};
+		}
 	}
 }
