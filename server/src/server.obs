@@ -172,20 +172,32 @@ bundle LSP {
 		}
 
 		method : NotifyDidChange(params : JSONElement, socket : TCPSocket) ~ Nil {
-			changes := params->FindElements("contentChanges");
-
 			if(@is_debug) {
-				count := changes->Size();
-				"NotifyDidChange => count={$count}"->PrintLine();
+				"NotifyDidChange"->PrintLine();
 			};
 
-			each(i : changes) {
-				change := changes->Get(i);
-				range := change->Get("rangeLength")->GetValue();
-				text := change->Get("text")->GetValue();
-				
-				if(@is_debug) {
-					"\trange={$range}, text='{$text}'"->PrintLine();
+			document := @documents->Find(params->FindElements("textDocument/uri")->GetValue());
+			changes := params->FindElements("contentChanges");
+			if(document <> Nil & changes <> Nil) {
+				each(i : changes) {
+					change := changes->Get(i);
+
+					range_length := change->Get("rangeLength")->GetValue();
+					text := change->Get("text")->GetValue();
+
+					start_line := change->FindElements("range/start/line")->GetValue();
+					start_char := change->FindElements("range/start/character")->GetValue();
+
+					end_line := change->FindElements("range/end/line")->GetValue();
+					end_char := change->FindElements("range/end/character")->GetValue();
+					
+					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
+						if(@is_debug) {
+							"### range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+						};
+
+						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
+					};
 				};
 			};
 		}
@@ -367,6 +379,21 @@ bundle LSP {
 			@uri := uri;
 			@document := Vector->New()<String>;
 			LoadContent(text);
+		}
+
+		method : public : Update(range_length: Int, text : String, start_line: Int, start_char: Int, end_line: Int, end_char: Int) ~ Nil {
+			if(start_line = end_line) {
+				line := @document->Get(start_line);
+				if(start_char = end_char) {
+					
+				}
+				else {
+
+				};
+			}
+			else {
+
+			};
 		}
 
 		method : public : LoadContent(text : String) ~ Nil {
