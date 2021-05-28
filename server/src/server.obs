@@ -30,7 +30,7 @@ bundle LSP {
 
 			if(server->Listen(5)) {
 				while(true) {
-					Service->New(@is_debug)->Execute(server->Accept());
+					Service->New(server->Accept(), @is_debug)->Execute(Nil);
 				};
 			};
 		}
@@ -43,6 +43,7 @@ bundle LSP {
 		@is_initialized : Bool;
 		@is_debug : Bool;
 		@documents : Map<String, Document>;
+		@socket : TCPSocket;
 		@keywords : static : Vector<String>;
 
 		function : Init() ~ Nil {
@@ -53,26 +54,25 @@ bundle LSP {
 			@keywords->AddBack("Float");
 		}
 
-		New(is_debug : Bool) {
+		New(socket : TCPSocket, is_debug : Bool) {
 			Parent();
+			@socket := socket;
 			@is_debug := is_debug;
 			@documents := Map->New()<String, Document>;
 		}
 		
 		method : public : Run(param : Base) ~ Nil {
-			socket := param->As(TCPSocket);
-
 			while(<>@quit) {
-				request := ReadRpcRequest(socket);
+				request := ReadRpcRequest(@socket);
 				if(request <> Nil) {
-					ProcessResponse(request, socket);
+					ProcessResponse(request, @socket);
 				}	
 				else {
 					@quit := true;
 				};
 			};
 
-			socket->Close();
+			@socket->Close();
 		}
 
 		#--- Handle callback ---
@@ -121,7 +121,7 @@ bundle LSP {
 				keyword := @keywords->Get(i);
 				item->Insert("label", keyword);
 				item->Insert("kind", 1);
-				item->Insert("data", i + 1);
+				item->Insert("data", i);
 				item->Insert("detail", "{$keyword} details");
 	      		item->Insert("documentation", "{$keyword} documentation");      		
 				response->Add(item);
@@ -132,8 +132,9 @@ bundle LSP {
 		}
 
 		method : CallbackResolve(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
+
 			# write response
-	        WriteRpcRequest(id, Nil, socket);
+	        WriteRpcRequest(id, params, socket);
 		}
 
 		#--- Handle notifications ---
