@@ -373,66 +373,63 @@ bundle LSP {
 
 	class : private : Document {
 		@uri : String;
-		@document : Vector<String>;
+		@text : String;
 
 		New(uri : String, text : String) {
 			@uri := uri;
-			@document := Vector->New()<String>;
-			LoadContent(text);
+			@text := text;
 		}
 
-		method : public : Update(range_length: Int, text : String, start_line: Int, start_char: Int, end_line: Int, end_char: Int) ~ Nil {
-			line := @document->Get(start_line);
-			if(line <> Nil) {
-
+		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
+			start := GetIndex(start_line, start_char);
+			end := GetIndex(end_line, end_char);
+			if(start > -1 & end > -1) {
+				"### {$start}, {$end} ###"->PrintLine();
+				if(start_char = end_char) {
+					@text->Insert(start, text);
+DumpDocument();					
+				};
 			};
 		}
 
-		method : public : LoadContent(text : String) ~ Nil {
-			line := "";
-			@document->AddBack(line);
+		method : public : GetIndex(line_pos : Int, char_pos : Int) ~ Int {
+			cur_line := 0;
+			cur_char := 0;
 
-			each(i : text) {
-				char := text->Get(i);
-								
-				if(char = '\\' & i + 1 < line->Size()) {
-					next_char := line->Get(i);
-					i += 1;
-					select(next_char) {
-						label 'r' {
-							line += '\r';
-						}
+			each(pos : @text) {
+				char := @text->Get(pos);
+				next_char := '\0';				
+				if(pos + 1 < @text->Size()) {
+					next_char := @text->Get(pos + 1);
+				};
 
-						label 'n' {
-							line += '\n';
-							line := "";
-							@document->AddBack(line);
-						}
-
-						label 't' {
-							line += '\t';
-						}
-
-						label '\\' {
-							line += '\\';
-						}
+				if(char = '\\') {
+					if(next_char = 'n') {
+							cur_line += 1;
 					};
+					
+					pos += 1;
+					cur_char += 2;
 				}
 				else {
-"### {$char} ###"->PrintLine();					
-					line += char;
+					cur_char += 1;
+				};
+
+				if(cur_line = line_pos) {
+					index := cur_char + char_pos;
+					if(cur_line = 0) {
+						index -= 1;
+					};
+					
+					return index;
 				};
 			};
 
-			DumpDocument();
+			return -1;
 		}
 
 		method : DumpDocument() ~ Nil {
-			each(i : @document) {
-				line := @document->Get(i);
-				size := line->Size();
-				"{$i},{$size}: '{$line}'"->PrintLine();
-			};
+			"TEXT='{$@text}'"->PrintLine();
 		}
 	}
 }
