@@ -171,6 +171,13 @@ bundle LSP {
 			};
 		}
 
+		method : NotifyDidSave(params : JSONElement, socket : TCPSocket) ~ Nil {
+			document := @documents->Find(params->FindElements("textDocument/uri")->GetValue());
+			if(document <> Nil) {
+				document->Save();
+			};
+		}
+
 		method : NotifyDidChange(params : JSONElement, socket : TCPSocket) ~ Nil {
 			if(@is_debug) {
 				"NotifyDidChange"->PrintLine();
@@ -192,10 +199,6 @@ bundle LSP {
 					end_char := change->FindElements("range/end/character")->GetValue();
 					
 					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
-						if(@is_debug) {
-							"### range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
-						};
-
 						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
 					};
 				};
@@ -230,6 +233,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/didChange")) {
 					NotifyDidChange(request->GetParams(), socket);
+				}
+				else if(method_id->Equals("textDocument/didSave")) {
+					NotifyDidSave(request->GetParams(), socket);
 				}
 				else {
 					if(@is_debug) {
@@ -356,6 +362,7 @@ bundle LSP {
 			@id := id;
 			@mthd := mthd;
 			@params := params;
+			@is_debug := true;
 		}
 
 		method : public : GetId() ~ Int {
@@ -374,6 +381,7 @@ bundle LSP {
 	class : private : Document {
 		@uri : String;
 		@text : String;
+		@is_debug : Bool;
 
 		New(uri : String, text : String) {
 			@uri := uri;
@@ -381,18 +389,29 @@ bundle LSP {
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
+			if(@is_debug) {
+				"### range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+			};
+
 			start := GetIndex(start_line, start_char);
 			end := GetIndex(end_line, end_char);
 			if(start > -1 & end > -1) {
-				"### {$start}, {$end} ###"->PrintLine();
-				if(start_char = end_char) {
-					@text->Insert(start, text);
-DumpDocument();					
+"### {$start}, {$end} ###"->PrintLine();
+				if(end > start) {
+					@text->Delete(start, range_length);
 				};
+				@text->Insert(start, text);
+DumpDocument();
 			};
 		}
 
-		method : public : GetIndex(line_pos : Int, char_pos : Int) ~ Int {
+		method : public : Save() ~ Nil {
+			if(@is_debug) {
+				"NotifyDidSave"->PrintLine();
+			};
+		}
+
+		method : GetIndex(line_pos : Int, char_pos : Int) ~ Int {
 			cur_line := 0;
 			cur_char := 0;
 
