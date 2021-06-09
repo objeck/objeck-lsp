@@ -394,10 +394,9 @@ bundle LSP {
 			};
 
 			start := GetIndex(start_line, start_char);
-			end := GetIndex(end_line, end_char);
-			if(start > -1 & end > -1) {
-"### {$start}, {$end} ###"->PrintLine();
-				if(end > start) {
+			if(start > -1) {
+"### {$start} ###"->PrintLine();
+				if(range_length > 0) {
 					@text->Delete(start, range_length);
 				};
 				@text->Insert(start, text);
