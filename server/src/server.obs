@@ -3,14 +3,14 @@ use System.IO.Net;
 use Data.JSON;
 
 bundle LSP {
-	class ObjeckServer {
+	class LintServer {
 		@port : Int;
 		@is_debug : Bool;
 
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 1) {
-				Service->Init();
-				ObjeckServer->New(args[0]->ToInt())->Listen();
+				LintService->Init();
+				LintServer->New(args[0]->ToInt())->Listen();
 			}
 			else {
 				"--- TODO: read config file ---"->ErrorLine();
@@ -30,13 +30,16 @@ bundle LSP {
 
 			if(server->Listen(5)) {
 				while(true) {
-					Service->New(server->Accept(), @is_debug)->Execute(Nil);
+					LintService->New(server->Accept(), @is_debug)->Execute(Nil);
 				};
 			};
 		}
 	}
 
-	class Service from System.Concurrency.Thread {
+	#~
+	Handles requests
+	~#
+	class LintService from System.Concurrency.Thread {
 		@address : String;
 		@port : Int;
 		@quit : Bool;
@@ -75,8 +78,9 @@ bundle LSP {
 			@socket->Close();
 		}
 
-		#--- Handle callback ---
-
+		#
+		#--- Handle callbacks ---
+		#
 		method : CallbackInitialize(id : Int, params : JSONElement, socket : TCPSocket) ~ Nil {
 			workspace := params->FindElements("capabilities/workspace");
 			configuration := params->FindElements("capabilities/workspace/configuration");
@@ -137,8 +141,9 @@ bundle LSP {
 	        WriteRpcRequest(id, params, socket);
 		}
 
+		#
 		#--- Handle notifications ---
-
+		#
 		method : NotifyInitialized(params : JSONElement, socket : TCPSocket) ~ Nil {
 			@is_initialized := true;
 		}
@@ -200,6 +205,8 @@ bundle LSP {
 					
 					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
 						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
+						response := document->Diagnose(socket);
+#						WriteRpcRequest(-1, response, socket);
 					};
 				};
 			};
@@ -353,6 +360,9 @@ bundle LSP {
 		}
 	}
 
+	#~
+	JSON Rpc request
+	~#
 	class : private : RpcRequest {
 		@id : Int;
 		@mthd : String;
@@ -378,6 +388,9 @@ bundle LSP {
 		}
 	}
 
+	#~
+	In-memory document
+	~#
 	class : private : Document {
 		@uri : String;
 		@text : String;
@@ -408,6 +421,18 @@ DumpDocument();
 			if(@is_debug) {
 				"NotifyDidSave"->PrintLine();
 			};
+		}
+
+		method : public : Diagnose(socket : TCPSocket) ~ JSONElement {
+			response := JSONElement->New(JSONType->ARRAY);
+#~
+			
+			each(i : @keywords) {
+				item := JSONElement->New(JSONType->OBJECT);
+				response->Add(item);
+			};
+~#
+			return response;
 		}
 
 		method : GetIndex(line_pos : Int, char_pos : Int) ~ Int {
@@ -448,6 +473,27 @@ DumpDocument();
 
 		method : DumpDocument() ~ Nil {
 			"TEXT='{$@text}'"->PrintLine();
+		}
+	}
+
+	#~
+	Diagnostic wrapper class
+	~#
+	class Diagnostic {
+		@message : String;
+		@severity : Diagnostic->Severity;
+		@source : String;
+
+		New(message : String) {
+			@message := message;
+			@source := "Objk-Lint";
+		}
+
+		consts Severity {
+			ERROR := 1,
+			WARNING := 2,
+			INFORMATION := 3,
+			HINT :=4
 		}
 	}
 }
