@@ -6,9 +6,13 @@ class Test {
 		text := FileReader->ReadFile("c:/users/objec/desktop/foo.txt");
 		
 		regex := RegEx->New("function");
-		found := regex->Find(text)<String>;
-		each(i : found) {
-			found->Get(i)->PrintLine();
+		results := regex->Find(text)<Result>;
+		each(i : results) {
+			results->Get(i)->GetStart()->PrintLine();
+			results->Get(i)->GetLength()->PrintLine();
+			"---"->PrintLine();
 		};
+
+		
 	}
 }

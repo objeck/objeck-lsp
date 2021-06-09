@@ -1,6 +1,7 @@
 use Collection.Generic;
 use System.IO.Net;
 use Data.JSON;
+use Query.RegEx;
 
 bundle LSP {
 	class LintServer {
@@ -205,8 +206,8 @@ bundle LSP {
 					
 					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
 						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
-						response := document->Diagnose(socket);
-#						WriteRpcRequest(-1, response, socket);
+						response := document->Diagnose();
+						WriteRpcRequest(-1, response, socket);
 					};
 				};
 			};
@@ -413,7 +414,7 @@ bundle LSP {
 					@text->Delete(start, range_length);
 				};
 				@text->Insert(start, text);
-DumpDocument();
+# DumpDocument();
 			};
 		}
 
@@ -423,15 +424,44 @@ DumpDocument();
 			};
 		}
 
-		method : public : Diagnose(socket : TCPSocket) ~ JSONElement {
+		method : public : Diagnose() ~ JSONElement {
 			response := JSONElement->New(JSONType->ARRAY);
-#~
-			
-			each(i : @keywords) {
+
+# text := System.IO.File.FileReader->ReadFile("c:/users/objec/desktop/foo.txt");
+		
+			foo := RegEx->New("function");
+			results := foo->Find(@text)<Result>;
+			each(i : 1) {
+				result := results->Get(i);
+
 				item := JSONElement->New(JSONType->OBJECT);
+
+				item->Insert("severity", 1);
+
+				range := JSONElement->New(JSONType->OBJECT);
+				start := result->GetStart();
+				range->Insert("line", 9);
+				range->Insert("start", start);
+				range->Insert("end", start + result->GetLength());
+				item->Insert("range", range);
+
+				item->Insert("message", "Is a function");
+				item->Insert("source", "objk-lint");
+
+#~
+				keyword := @keywords->Get(i);
+				item->Insert("severity", 1);
+				item->Insert("kind", 1);
+				item->Insert("data", i);
+				item->Insert("detail", "{$keyword} details");
+	      		item->Insert("documentation", "{$keyword} documentation");
+~#
+
 				response->Add(item);
 			};
-~#
+			
+"XXX text='{$response} XXXX"->PrintLine();
+
 			return response;
 		}
 
