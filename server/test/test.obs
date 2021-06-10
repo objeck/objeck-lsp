@@ -3,16 +3,14 @@ use System.IO.File;
 
 class Test {
 	function : Main(args : String[]) ~ Nil {
-		text := FileReader->ReadFile("c:/users/objec/desktop/foo.txt");
+		text := FileReader->ReadFile("c:/users/objec/desktop/foo.obs");
 		
-		regex := RegEx->New("function");
+		regex := RegEx->New("function(\\s*):(\\s*)(\\w+)");
 		results := regex->Find(text)<Result>;
 		each(i : results) {
 			results->Get(i)->GetStart()->PrintLine();
 			results->Get(i)->GetLength()->PrintLine();
 			"---"->PrintLine();
 		};
-
-		
 	}
 }

@@ -40,48 +40,13 @@ bundle LSP {
 	#~
 	Handles requests
 	~#
-	class LintService from System.Concurrency.Thread {
-		@address : String;
-		@port : Int;
-		@quit : Bool;
-		@is_initialized : Bool;
-		@is_debug : Bool;
-		@documents : Map<String, Document>;
-		@socket : TCPSocket;
-		@keywords : static : Vector<String>;
-		@id : Int;
-
-		function : Init() ~ Nil {
-			@keywords := Vector->New()<String>;
-			@keywords->AddBack("method");
-			@keywords->AddBack("function");
-			@keywords->AddBack("Int");
-			@keywords->AddBack("Float");
-		}
-
+	class LintService from LspWorker {
 		New(socket : TCPSocket, is_debug : Bool) {
-			Parent();
-			@socket := socket;
-			@is_debug := is_debug;
-			@documents := Map->New()<String, Document>;
-		}
-		
-		method : public : Run(param : Base) ~ Nil {
-			while(<>@quit) {
-				request := ReadRpcRequest();
-				if(request <> Nil) {
-					ProcessResponse(request);
-				}	
-				else {
-					@quit := true;
-				};
-			};
-
-			@socket->Close();
+			Parent(socket, is_debug);
 		}
 
 		#
-		#--- Handle callbacks ---
+		# Callbacks
 		#
 		method : CallbackInitialize(id : Int, params : JSONElement) ~ Nil {
 			workspace := params->FindElements("capabilities/workspace");
@@ -104,7 +69,7 @@ bundle LSP {
 		}
 
 		method : CallbackShutdown(id : Int, params : JSONElement) ~ Nil {
-			if(@is_debug) {
+			if(IsDebug()) {
 				"=> CallbackShutdown"->PrintLine();
 			};
 
@@ -117,14 +82,15 @@ bundle LSP {
 			char_id := params->FindElements("position/character");
 			kind := params->FindElements("context/triggerKind");
 
-			if(@is_debug) {
+			if(IsDebug()) {
 				"CallbackCompletion => file='{$uri}', line={$line_pos}, char={$char_id}, kind={$kind}"->PrintLine();
 			};
 
+			keywords := GetKeywords();
 			response := JSONElement->New(JSONType->ARRAY);		
-			each(i : @keywords) {
+			each(i : keywords) {
 				item := JSONElement->New(JSONType->OBJECT);
-				keyword := @keywords->Get(i);
+				keyword := keywords->Get(i);
 				item->Insert("label", keyword);
 				item->Insert("kind", 1);
 				item->Insert("data", i);
@@ -143,7 +109,7 @@ bundle LSP {
 		}
 
 		#
-		#--- Handle notifications ---
+		# Notifications ---
 		#
 		method : NotifyInitialized(params : JSONElement) ~ Nil {
 			@is_initialized := true;
@@ -165,12 +131,12 @@ bundle LSP {
 				uri := uri_elem->GetValue();
 				text := text_elem->GetValue();
 
-				if(@is_debug) {
+				if(IsDebug()) {
 					"NotifyDidOpen => text='{$text}"->PrintLine();
 				};
 
 				document := Document->New(uri, text);
-				@documents->Insert(uri, document);
+				AddDocument(uri, document);
 			}
 			else {
 				"*** Failed: NotifyDidOpen ***"->ErrorLine();				
@@ -178,19 +144,19 @@ bundle LSP {
 		}
 
 		method : NotifyDidSave(params : JSONElement) ~ Nil {
-			document := @documents->Find(params->FindElements("textDocument/uri")->GetValue());
+			document := GetDocument(params->FindElements("textDocument/uri")->GetValue());
 			if(document <> Nil) {
 				document->Save();
 			};
 		}
 
 		method : NotifyDidChange(params : JSONElement) ~ Nil {
-			if(@is_debug) {
+			if(IsDebug()) {
 				"NotifyDidChange"->PrintLine();
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			document := @documents->Find(uri);
+			document := GetDocument(uri);
 			changes := params->FindElements("contentChanges");
 			if(document <> Nil & changes <> Nil) {
 				each(i : changes) {
@@ -212,201 +178,6 @@ bundle LSP {
 
 				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnose());
 			};
-		}
-
-		# --- process requests ---
-		method : ProcessResponse(request : RpcRequest) ~ Nil {
-			id := request->GetId();
-			method_id := request->GetMethod();
-			
-			#
-			# Notification
-			#
-			if(id->IsNeg()) {
-				if(@is_debug) {
-					"NOTIFICATION='{$method_id}'\n"->PrintLine();
-				};
-
-				if(method_id->Equals("initialized")) {
-					NotifyInitialized(request->GetParams());
-				}
-				else if(method_id->Equals("$/cancelRequest")) {
-					NotifyCancel(request->GetParams());
-				}
-				else if(method_id->Equals("workspace/didChangeWatchedFiles")) {
-					NotifyDidChangeWatchedFiles(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didOpen")) {
-					NotifyDidOpen(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didChange")) {
-					NotifyDidChange(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didSave")) {
-					NotifyDidSave(request->GetParams());
-				}
-				else {
-					if(@is_debug) {
-						"*** Unknown notification='{$method_id}' ***"->PrintLine();
-					};
-				};
-			}
-			#
-			# Callbacks
-			#
-			else {
-				if(@is_debug) {
-					"METHOD='{$method_id}', id={$id}"->PrintLine();
-				};
-
-				if(method_id->Equals("initialize")) {
-					CallbackInitialize(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/completion")) {
-					CallbackCompletion(id, request->GetParams());
-				}
-				else if(method_id->Equals("completionItem/resolve")) {
-					CallbackResolve(id, request->GetParams());
-				}
-				else if(method_id->Equals("shutdown")) {
-					CallbackShutdown(id, request->GetParams());
-				}
-				else {
-					if(@is_debug) {
-						"*** Unknown method='{$method_id}' ***"->PrintLine();
-					};
-				};
-			};
-		}
-
-		# --- utilities ---
-		method : ReadString() ~ String {
-			line := @socket->ReadLine();
-			@socket->ReadLine();
-
-			index := line->Find(':');
-			if(index > 0) {
-				index += 2;
-				length := line->SubString(index, line->Size() - index)->ToInt();
-				# TODO: check length (buffer overflow)
-				buffer := Byte->New[length];
-				@socket->ReadBuffer(0, buffer->Size(), buffer);
-
-				text := String->New(buffer->ToUnicode());
-				if(@is_debug) {
-					"====\nREAD='{$text}'"->PrintLine();
-				};
-
-				return text;
-			};
-
-			return "";
-		}
-
-		method : WriteString(text : String) ~ Nil {
-			if(@is_debug) {
-				"WRITE='{$text}'"->PrintLine();
-			};		
-			length := text->Size();
-			@socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
-		}
-
-		method : ReadRpcRequest() ~ RpcRequest {
-			text := ReadString();
-			if(<>text->IsEmpty()) {
-				json :=JSONParser->New(text);
-				if(json->Parse()) {
-					node := json->GetRoot();
-					
-					id := -1;
-					id_elem := node->Get("id");
-					if(id_elem <> Nil) {
-						id := id_elem->GetValue()->ToInt();
-					};
-
-					ver := node->Get("jsonrpc");
-					mthd := node->Get("method")->GetValue();
-					params := node->Get("params");
-
-					if(ver <> Nil & ver->GetValue()->Equals("2.0") & mthd <> Nil) {
-						return RpcRequest->New(id, mthd, params);
-					};
-				};
-			};
-
-			return Nil;
-		}
-
-		# --- response ---
-		method : WriteRpcResponse(id : Int, result : JSONElement) ~ Nil {
-			WriteString(MakeRpcResponse(id, result)->ToString());
-		}
-
-		method : MakeRpcResponse(id : Int, result : JSONElement) ~ JSONElement {
-			node := JSONElement->New(JSONType->OBJECT);
-
-			node->Insert("jsonrpc", "2.0");
-			if(result = Nil) {
-				node->Insert("result", JSONElement->New(JSONType->NULL));
-			}
-			else {
-				node->Insert("result", result);
-			};
-
-			if(id > -1) {
-				node->Insert("id", id);
-			};
-
-			return node;
-		}
-
-		# --- request ---
-		method : WriteRpcRequest(kind : String, result : JSONElement) ~ Nil {
-			WriteString(MakeRpcRequest(kind, result)->ToString());
-		}
-
-		method : MakeRpcRequest(kind : String, result : JSONElement) ~ JSONElement {
-			node := JSONElement->New(JSONType->OBJECT);
-
-			node->Insert("jsonrpc", "2.0");
-			node->Insert("method", kind);
-
-			if(result = Nil) {
-				node->Insert("params", JSONElement->New(JSONType->NULL));
-			}
-			else {
-				node->Insert("params", result);
-			};
-
-			return node;
-		}
-	}
-
-	#~
-	JSON-RPC request
-	~#
-	class : private : RpcRequest {
-		@id : Int;
-		@mthd : String;
-		@params : JSONElement;
-
-		New(id : Int, mthd : String, params : JSONElement) {
-			@id := id;
-			@mthd := mthd;
-			@params := params;
-			@is_debug := true;
-		}
-
-		method : public : GetId() ~ Int {
-			return @id;
-		}
-
-		method : public : GetMethod() ~ String {
-			return @mthd;
-		}
-
-		method : public : GetParams() ~ JSONElement {
-			return @params;
 		}
 	}
 
@@ -444,7 +215,7 @@ bundle LSP {
 		}
 
 		method : public : GetDiagnose() ~ JSONElement {
-			results := RegEx->New("function")->Find(@text)<Result>;
+			results := RegEx->New("function(\\s*):(\\s*)(\\w+)")->Find(@text)<Result>;
 			diagnostics := JSONElement->New(JSONType->ARRAY);
 			each(i : results) {
 				result := results->Get(i);
