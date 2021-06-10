@@ -249,9 +249,7 @@ bundle LSP {
 			request := JSONElement->New(JSONType->OBJECT);
 			request->Insert("uri", @uri);
 			request->Insert("diagnostics", diagnostics);
-
-# "==> text='{$request}'"->PrintLine();
-			
+						
 			return request;
 		}
 
