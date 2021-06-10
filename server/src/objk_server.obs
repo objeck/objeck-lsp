@@ -255,7 +255,7 @@ bundle LSP {
 			return request;
 		}
 
-		method : public : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
+		method : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
 			cur_line := 0;
 			cur_char := 0;
 
