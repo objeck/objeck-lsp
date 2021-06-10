@@ -207,15 +207,14 @@ bundle LSP {
 					
 					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
 						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
-						response := document->Diagnose(uri);
-						WriteRpcRequest("textDocument/publishDiagnostics", response);
 					};
 				};
+
+				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnose());
 			};
 		}
 
-		# --- Process requests ---
-
+		# --- process requests ---
 		method : ProcessResponse(request : RpcRequest) ~ Nil {
 			id := request->GetId();
 			method_id := request->GetMethod();
@@ -384,7 +383,7 @@ bundle LSP {
 	}
 
 	#~
-	JSON Rpc request
+	JSON-RPC request
 	~#
 	class : private : RpcRequest {
 		@id : Int;
@@ -426,16 +425,15 @@ bundle LSP {
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			if(@is_debug) {
-				"### range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+				"### Update: range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
 			};
 
-			start := GetIndex(start_line, start_char);
+			start := GetDocumentIndex(start_line, start_char);
 			if(start > -1) {
 				if(range_length > 0) {
 					@text->Delete(start, range_length);
 				};
 				@text->Insert(start, text);
-# DumpDocument();
 			};
 		}
 
@@ -445,37 +443,40 @@ bundle LSP {
 			};
 		}
 
-		method : public : Diagnose(uri : String) ~ JSONElement {
+		method : public : GetDiagnose() ~ JSONElement {
 			results := RegEx->New("function")->Find(@text)<Result>;
 			diagnostics := JSONElement->New(JSONType->ARRAY);
 			each(i : results) {
 				result := results->Get(i);
 
-				item := JSONElement->New(JSONType->OBJECT);
+				line_pos := IntHolder->New(); 
+				char_pos := IntHolder->New();
+				GetLineCharacterIndex(result->GetStart(), line_pos, char_pos);
 
-				item->Insert("severity", 1);
+				diagnostic := JSONElement->New(JSONType->OBJECT);
+
+				diagnostic->Insert("severity", 1);
+				diagnostic->Insert("message", "Is a function");
+				diagnostic->Insert("source", "objk-lint");
 
 				range := JSONElement->New(JSONType->OBJECT);
-				
+				# start
 				start := JSONElement->New(JSONType->OBJECT);
-				start->Insert("line", 0);
-				start->Insert("character", 1);
+				start->Insert("line", line_pos->Get());
+				start->Insert("character", char_pos->Get());
 				range->Insert("start", start);
-
+				# end
 				end := JSONElement->New(JSONType->OBJECT);
-				end->Insert("line", 0);
-				end->Insert("character", 3);
+				end->Insert("line", line_pos->Get());
+				end->Insert("character", char_pos->Get() + result->ToString()->Size());
 				range->Insert("end", end);
-
-				item->Insert("range", range);
-				item->Insert("message", "Is a function");
-				item->Insert("source", "objk-lint");
-
-				diagnostics->Add(item);
+				diagnostic->Insert("range", range);
+				
+				diagnostics->Add(diagnostic);
 			};
 			
 			request := JSONElement->New(JSONType->OBJECT);
-			request->Insert("uri", uri);
+			request->Insert("uri", @uri);
 			request->Insert("diagnostics", diagnostics);
 
 # "==> text='{$request}'"->PrintLine();
@@ -483,7 +484,36 @@ bundle LSP {
 			return request;
 		}
 
-		method : GetIndex(line_pos : Int, char_pos : Int) ~ Int {
+		method : public : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
+			cur_line := 0;
+			cur_char := 0;
+
+			for(pos := 0; pos < index; pos += 1;) {
+				char := @text->Get(pos);
+				next_char := '\0';				
+				if(pos + 1 < @text->Size()) {
+					next_char := @text->Get(pos + 1);
+				};
+
+				if(char = '\\') {
+					if(next_char = 'n') {
+							cur_line += 1;
+							cur_char := 0;
+					};
+					
+					pos += 1;
+					cur_char += 1;
+				}
+				else {
+					cur_char += 1;
+				};
+			};
+
+			line_pos->Set(cur_line);
+			char_pos->Set(cur_char - 1);
+		}
+
+		method : GetDocumentIndex(line_pos : Int, char_pos : Int) ~ Int {
 			cur_line := 0;
 			cur_char := 0;
 
