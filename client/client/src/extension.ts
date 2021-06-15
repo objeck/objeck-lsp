@@ -37,7 +37,7 @@ export function activate(context: ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: [{ scheme: 'file', language: 'objeck' }],
+		documentSelector: [{ scheme: 'file', language: 'plaintext'}],
 		synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.clientrc')
         }

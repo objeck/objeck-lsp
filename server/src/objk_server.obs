@@ -92,7 +92,7 @@ bundle LSP {
 				item := JSONElement->New(JSONType->OBJECT);
 				keyword := keywords->Get(i);
 				item->Insert("label", keyword);
-				item->Insert("kind", 1);
+				item->Insert("kind", 7);
 				item->Insert("data", i);
 				item->Insert("detail", "{$keyword} details");
 	      		item->Insert("documentation", "{$keyword} documentation");      		
@@ -322,27 +322,6 @@ bundle LSP {
 			if(@is_debug) {
 				"TEXT='{$@text}'"->PrintLine();
 			};
-		}
-	}
-
-	#~
-	Diagnostic wrapper class
-	~#
-	class Diagnostic {
-		@message : String;
-		@severity : Diagnostic->Severity;
-		@source : String;
-
-		New(message : String) {
-			@message := message;
-			@source := "Objk-Lint";
-		}
-
-		consts Severity {
-			ERROR := 1,
-			WARNING := 2,
-			INFORMATION := 3,
-			HINT :=4
 		}
 	}
 }
