@@ -63,6 +63,7 @@ bundle LSP {
 	        workspaceFolders->Insert("supported", true);
 
 	        capabilities->Insert("textDocumentSync", 2);
+	        capabilities->Insert("documentSymbolProvider", true);
 	        
 	        # write response
 	        WriteRpcResponse(id, response);
@@ -100,6 +101,44 @@ bundle LSP {
 			};
 
 	        # write response
+	        WriteRpcResponse(id, response);
+		}
+
+		method : CallbackDocumentSymbol(id : Int, params : JSONElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri");
+
+			response := JSONElement->New(JSONType->ARRAY);
+			each(i : 1) {
+				item := JSONElement->New(JSONType->OBJECT);
+
+				name := "Foo_";
+				name += i;
+
+				item->Insert("name", name);
+				item->Insert("kind", 5);
+
+				location := JSONElement->New(JSONType->OBJECT);
+				location->Insert("uri", uri);
+				
+				range := JSONElement->New(JSONType->OBJECT);
+				
+				start := JSONElement->New(JSONType->OBJECT);
+				start->Insert("line", 5);
+				start->Insert("character", 1);
+				range->Insert("start", start);
+
+				end := JSONElement->New(JSONType->OBJECT);
+				end->Insert("line", 5);
+				end->Insert("character", 6);
+				range->Insert("end", end);
+
+				location->Insert("range", range);				
+
+				item->Insert("location", location);
+				response->Add(item);
+			};
+
+			# write response
 	        WriteRpcResponse(id, response);
 		}
 

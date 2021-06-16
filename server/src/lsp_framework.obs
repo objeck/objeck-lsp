@@ -69,6 +69,7 @@ bundle LSP {
 		method : virtual : CallbackShutdown(id : Int, params : JSONElement) ~ Nil;
 		method : virtual : CallbackCompletion(id : Int, params : JSONElement) ~ Nil;
 		method : virtual : CallbackResolve(id : Int, params : JSONElement) ~ Nil;
+		method : virtual : CallbackDocumentSymbol(id : Int, params : JSONElement) ~ Nil;
 
 		method : AddDocument(uri : String, document : Document) ~ Nil {
 			@documents->Insert(uri, document);
@@ -113,9 +114,7 @@ bundle LSP {
 					};
 				};
 			}
-			#
-			# Callbacks
-			#
+			# callback
 			else {
 				if(@is_debug) {
 					"METHOD='{$method_id}', id={$id}"->PrintLine();
@@ -129,6 +128,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("completionItem/resolve")) {
 					CallbackResolve(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/documentSymbol")) {
+					CallbackDocumentSymbol(id, request->GetParams());
 				}
 				else if(method_id->Equals("shutdown")) {
 					CallbackShutdown(id, request->GetParams());
