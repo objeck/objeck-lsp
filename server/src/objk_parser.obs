@@ -12,6 +12,8 @@ class SnippetParser {
 	@buffer_index : Int;
 	@cur_char : Char;
 	@nxt_char : Char;
+	@line : Int;
+	@line_index : Int;
 	@files : String[];
 	@uses : Vector<String>;
 	@bundles : Map<String, BundleSnippet>;
@@ -74,6 +76,7 @@ class SnippetParser {
 		if(@buffer_index < @buffer->Size()) {
 			@cur_char := @buffer->Get(@buffer_index);
 			@buffer_index += 1;
+			@line_index += 1;
 			if(@buffer_index < @buffer->Size()) {
 				@nxt_char := @buffer->Get(@buffer_index);
 			}
@@ -91,6 +94,7 @@ class SnippetParser {
 		while(@buffer_index < @buffer->Size() & (@cur_char = ' ' | @cur_char = '\t' | @cur_char = '\r' | @cur_char = '\n')) {
 			if(@cur_char = '\n') {
 				@line += 1;
+				@line_index := 0;
 			};
 
 			NextChar();
@@ -160,7 +164,7 @@ class SnippetParser {
 		};
 		block->Append(" {");
 		
-		bundle_block := BundleSnippet->New(block, @uses);
+		bundle_block := BundleSnippet->New(block, @uses, @line, @char_pos);
 		if(bundle_block->IsParsed()) {
 			SetBundle(bundle_block);
 		}
@@ -362,12 +366,16 @@ class SnippetParser {
 class Snippet {
 	@buffer : String;
 	@buffer_index : Int;
+	@line : Int;
+	@char_pos : Int;
 	@cur_char : Char;
 	@nxt_char : Char;
 	@parsed : Bool;
 	
-	New(buffer : String) {
+	New(buffer : String, line : Int, char_pos : Int) {
 		@buffer := buffer;
+		@line := line;
+		@char_pos := char_pos;
 		@buffer_index := 0;
 		@parsed := false;
 		NextChar();
@@ -530,6 +538,14 @@ class Snippet {
 		return name;
 	}	
 
+	method : public : GetLine() ~ Int {
+		return @line;
+	}
+
+	method : public : GetCharPos() ~ Int {
+		return @char_pos;
+	}
+
 	method : public : virtual : IsParsed() ~ Bool;
 
 	method : virtual : Parse() ~ Bool;
@@ -542,15 +558,15 @@ class BundleSnippet from Snippet {
 	@enums : Map<String, EnumConstSnippet>;
 	@uses : Vector<String>;
 
-	New(uses : Vector<String>) {
-		Parent("");
+	New(uses : Vector<String>, line : Int, char_pos : Int) {
+		Parent("", line, char_pos);
 		@uses := uses;
 		@classes := Map->New()<String, ClassSnippet>;
 		@enums := Map->New()<String, EnumConstSnippet>;
 	}
 
-	New(buffer : String, uses : Vector<String>) {
-		Parent(buffer);
+	New(buffer : String, uses : Vector<String>, line : Int, char_pos : Int) {
+		Parent(buffer, line, char_pos);
 		@uses := uses;
 		@classes := Map->New()<String, ClassSnippet>;
 		@enums := Map->New()<String, EnumConstSnippet>;
