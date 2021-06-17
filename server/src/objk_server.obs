@@ -115,10 +115,10 @@ bundle LSP {
 				name += i;
 
 				item->Insert("name", name);
-				item->Insert("kind", 5);
+				item->Insert("kind", 12);
 
 				location := JSONElement->New(JSONType->OBJECT);
-				location->Insert("uri", uri);
+#				location->Insert("uri", uri);
 				
 				range := JSONElement->New(JSONType->OBJECT);
 				
@@ -133,6 +133,7 @@ bundle LSP {
 				range->Insert("end", end);
 
 				location->Insert("range", range);				
+				location->Insert("selectionRange", range);
 
 				item->Insert("location", location);
 				response->Add(item);
