@@ -10,8 +10,11 @@ bundle Data.Parser {
 		function : Main(args : String[]) ~ Nil {
 			text := System.IO.File.FileReader->ReadFile(args[0]);
 # text->PrintLine();			
-			scanner := Scanner->New(text);
-			scanner->Scan();
+			tokens := Scanner->New(text)->Scan()<Token>;
+			each(i : tokens) {
+				token := tokens->Get(i);
+				token->ToString()->PrintLine();
+			};
 		}
 
 		function : EscapeText(text : String) ~ String {
@@ -58,6 +61,7 @@ bundle Data.Parser {
 	# Scanner
 	#
 	class : private : Scanner {
+		@tokens : Vector<Token>;
 		@buffer : Char[];
 		@buffer_index : Int;
 		@cur_char : Char;
@@ -67,7 +71,8 @@ bundle Data.Parser {
 
 		New(text : String) {
 			@buffer := text->ToCharArray();
-			@buffer_index := 0;	
+			@buffer_index := 0;
+			@tokens := Vector->New()<Token>;	
 		}
 
 		method : NextChar() ~ Nil {
@@ -89,7 +94,6 @@ bundle Data.Parser {
 		method : Whitespace() ~ Nil {
 			while(@cur_char = ' ' | @cur_char = '\t' | @cur_char = '\r' | @cur_char = '\n') {
 				if(@cur_char = '\n') {
-					NextChar();
 					@line_num += 1;
 					@line_index := 0;
 				};
@@ -100,26 +104,36 @@ bundle Data.Parser {
 
 		method : Identifier() ~ Nil {
 			start := @buffer_index;
-			start_index := @line_index;
+			start_index := @line_index - 1;
 
 			while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '.' | @cur_char = '_' | @cur_char = '@') {
 				NextChar();
 			};
 
 			ident := String->New(@buffer, start - 1, @buffer_index - start);
-"--> IDENT: value='{$ident}': line={$@line_num}, char={$start_index}"->PrintLine();
+			@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
 		}
 
 		method : Number() ~ Nil {
 			start := @buffer_index;
 			start_index := @line_index;
 
-			while(@cur_char->IsDigit() | @cur_char = 'u' | @cur_char = 'x') {
+			is_float := false;
+			while(@cur_char->IsDigit() | @cur_char = '.' | @cur_char = 'u' | @cur_char = 'x') {
+				if(@cur_char = '.') {
+					is_float := true;
+				};
+
 				NextChar();
 			};
-			end :=  @buffer_index;
 
-"--> NUM: {$start}, {$end}: line={$@line_num}, char={$start_index}"->PrintLine();
+			ident := String->New(@buffer, start - 1, @buffer_index - start);
+			if(is_float) {
+				@tokens->AddBack(Token->New(Token->Type->IDENT, ident->ToInt(), @line_num, start_index));
+			}
+			else {
+				@tokens->AddBack(Token->New(Token->Type->IDENT, ident->ToFloat(), @line_num, start_index));
+			};
 		}
 
 		method : public : Scan() ~ Vector<Token> {
@@ -139,54 +153,176 @@ bundle Data.Parser {
 					select(@cur_char) {
 						label ';' {
 							start_index := @line_index - 1;
-							"--> SEMI-COLON: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->SEMI_COLON, @line_num, start_index));
 							NextChar();
 						}
 
 						label ',' {
 							start_index := @line_index - 1;
-							"--> COMMA: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->COMMA, @line_num, start_index));
 							NextChar();
 						}
 
 						label '{' {
 							start_index := @line_index - 1;
-							"--> OPN: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->OPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '}' {
 							start_index := @line_index - 1;
-							"--> CPN: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->CPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label ':' {
 							start_index := @line_index - 1;
-							"--> COLON: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->COLON, @line_num, start_index));
 							NextChar();
 						}
 
 						label '~' {
 							start_index := @line_index - 1;
-							"--> TILDE: line={$@line_num}, char={$start_index}"->PrintLine();
+							@tokens->AddBack(Token->New(Token->Type->TILDE, @line_num, start_index));
 							NextChar();
 						}
 
 						other {
-							code := @cur_char->ToInt();
-							"### other: value='{$@cur_char}', id={$code} ###"->PrintLine();
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
 						}
 					};
 				};
 			};
 
-			return Nil;
+			return @tokens;
 		}
 	}
 
 	class : private : Token {
-		New() {
+		@type : Token->Type;
+		@line_num : Int;
+		@line_index : Int;
+		@str_value : String;
+		@int_value : Int;
+		@float_value : Float;
+		@char_value : Char;
+
+		enum Type {
+			IDENT,
+			INT,
+			FLOAT,
+			CHAR,
+			SEMI_COLON,
+			COLON,
+			COMMA,
+			TILDE,
+			OPN,
+			CPN,
+			OTHER
+		}
+
+		New(type : Token->Type, line_num : Int, line_index : Int) {
+			@type := type;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : Token->Type, str_value : String, line_num : Int, line_index : Int) {
+			@type := type;
+			@str_value := str_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : Token->Type, int_value : Int, line_num : Int, line_index : Int) {
+			@type := type;
+			@int_value := int_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : Token->Type, float_value : Float, line_num : Int, line_index : Int) {
+			@type := type;
+			@float_value := float_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : Token->Type, char_value : Char, line_num : Int, line_index : Int) {
+			@type := type;
+			@char_value := char_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		method : public : GetStringValue() ~ String {
+			return @str_value;
+		}
+
+		method : public : GetIntValue() ~ Int {
+			return @int_value;
+		}
+
+		method : public : GetFloatValue() ~ Float {
+			return @float_value;
+		}
+
+		method : public : GetCharValue() ~ Char {
+			return @char_value;
+		}
+
+		method : public : ToString() ~ String {
+			buffer := "type=";
+
+			select(@type) {
+				label Token->Type->IDENT {
+					buffer += "IDENT, value='{$@str_value}'";
+				}
+
+				label Token->Type->INT {
+					buffer += "INT, value={$@int_value}";
+				}
+				
+				label Token->Type->FLOAT {
+					buffer += "FLOAT, value={$@float_value}";
+				}
+				
+				label Token->Type->CHAR {
+					buffer += "CHAR, value='{$@char_value}'";
+				}
+				
+				label Token->Type->SEMI_COLON {
+					buffer += "SEMI_COLON";
+				}
+				
+				label Token->Type->COLON {
+					buffer += "ICOLONNT";
+				}
+				
+				label Token->Type->COMMA {
+					buffer += "COMMA";
+				}
+				
+				label Token->Type->TILDE {
+					buffer += "TILDE";
+				}
+				
+				label Token->Type->OPN {
+					buffer += "OPN";
+				}
+				
+				label Token->Type->CPN {
+					buffer += "CPN";
+				}
+				
+				label Token->Type->OTHER {
+					buffer += "OTHER";
+				}
+			};
+			buffer += ", line={$@line_num}, line_pos={$@line_index}";
+
+			return buffer;
 		}
 	}
 }
