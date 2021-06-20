@@ -127,7 +127,6 @@ bundle Data.Parser {
 						NextChar();
 					}				
 					while(@cur_char <> '\n');
-					NextChar();
 				};
 
 				Whitespace();
