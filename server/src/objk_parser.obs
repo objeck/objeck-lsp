@@ -68,11 +68,21 @@ bundle Data.Parser {
 		@next_char : Char;
 		@line_num : Int;
 		@line_index : Int;
+		@keywords : Hash<String, Token->Type>;
 
 		New(text : String) {
 			@buffer := text->ToCharArray();
 			@buffer_index := 0;
-			@tokens := Vector->New()<Token>;	
+			@tokens := Vector->New()<Token>;
+
+			@keywords := Hash->New()<String, Token->Type>;
+			@keywords->Insert("class", Type->CLASS_ID);
+			@keywords->Insert("enum", Type->ENUM_ID);
+			@keywords->Insert("consts", Type->CONSTS_ID);
+			@keywords->Insert("function", Type->FUNCTION_ID);
+			@keywords->Insert("method", Type->METHOD_ID);
+			@keywords->Insert("public", Type->PUBLIC_ID);
+			@keywords->Insert("private", Type->PRIVATE_ID);
 		}
 
 		method : NextChar() ~ Nil {
@@ -131,9 +141,17 @@ bundle Data.Parser {
 			while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '.' | @cur_char = '_' | @cur_char = '@') {
 				NextChar();
 			};
-
 			ident := String->New(@buffer, start - 1, @buffer_index - start);
-			@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
+
+			type := @keywords->Find(ident);
+			if(type = Token->Type->OTHER) {
+				@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
+			}
+			else {
+"--- {$ident} ---"->PrintLine();
+				@tokens->AddBack(Token->New(type, @line_num, start_index));
+
+			};
 		}
 
 		method : Number() ~ Nil {
@@ -162,7 +180,8 @@ bundle Data.Parser {
 			NextChar();
 
 			# --- while ---
-			each(i : 20) {
+			stop := false;
+			while(<>stop) {
 				Whitespace();
 				Comment();
 
@@ -241,7 +260,7 @@ bundle Data.Parser {
 					};
 				};
 			};
-
+"0000"->PrintLine();
 			return @tokens;
 		}
 	}
@@ -254,9 +273,9 @@ bundle Data.Parser {
 		@int_value : Int;
 		@float_value : Float;
 		@char_value : Char;
-		@keywords : Hash<String, Token->Type>;
 
 		enum Type {
+			OTHER,
 			IDENT,
 			INT,
 			FLOAT,
@@ -277,16 +296,13 @@ bundle Data.Parser {
 			FUNCTION_ID,
 			METHOD_ID,
 			PUBLIC_ID,
-			PRIVATE_ID,
-			OTHER
+			PRIVATE_ID
 		}
 
 		New(type : Token->Type, line_num : Int, line_index : Int) {
 			@type := type;
 			@line_num := line_num;
 			@line_index := line_index;
-
-			LoadKeywords();
 		}
 
 		New(type : Token->Type, str_value : String, line_num : Int, line_index : Int) {
@@ -294,8 +310,6 @@ bundle Data.Parser {
 			@str_value := str_value;
 			@line_num := line_num;
 			@line_index := line_index;
-
-			LoadKeywords();
 		}
 
 		New(type : Token->Type, int_value : Int, line_num : Int, line_index : Int) {
@@ -303,8 +317,6 @@ bundle Data.Parser {
 			@int_value := int_value;
 			@line_num := line_num;
 			@line_index := line_index;
-
-			LoadKeywords();
 		}
 
 		New(type : Token->Type, float_value : Float, line_num : Int, line_index : Int) {
@@ -312,8 +324,6 @@ bundle Data.Parser {
 			@float_value := float_value;
 			@line_num := line_num;
 			@line_index := line_index;
-
-			LoadKeywords();
 		}
 
 		New(type : Token->Type, char_value : Char, line_num : Int, line_index : Int) {
@@ -321,19 +331,6 @@ bundle Data.Parser {
 			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
-
-			LoadKeywords();
-		}
-
-		method : LoadKeywords() ~ Nil {
-			@keywords := Hash->New()<String, Token->Type>;
-			@keywords->Insert("class", Type->CLASS_ID);
-			@keywords->Insert("enum", Type->ENUM_ID);
-			@keywords->Insert("consts", Type->CONSTS_ID);
-			@keywords->Insert("function", Type->FUNCTION_ID);
-			@keywords->Insert("method", Type->METHOD_ID);
-			@keywords->Insert("public", Type->PUBLIC_ID);
-			@keywords->Insert("private", Type->PRIVATE_ID);
 		}
 
 		method : public : GetStringValue() ~ String {
