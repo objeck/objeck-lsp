@@ -102,6 +102,28 @@ bundle Data.Parser {
 			};
 		}
 
+		method : Comment() ~ Nil {
+			while(@cur_char = '#') {
+				if(@next_char = '~') {
+					do {
+						NextChar();
+					}				
+					while(@cur_char <> '~' & @next_char <> '#');
+					NextChar();
+					NextChar();
+				}
+				else {
+					do {
+						NextChar();
+					}				
+					while(@cur_char <> '\n');
+					NextChar();
+				};
+
+				Whitespace();
+			};
+		}
+
 		method : Identifier() ~ Nil {
 			start := @buffer_index;
 			start_index := @line_index - 1;
@@ -142,6 +164,7 @@ bundle Data.Parser {
 			# --- while ---
 			each(i : 20) {
 				Whitespace();
+				Comment();
 
 				if(@cur_char->IsChar() | @cur_char = '@' | @cur_char = '_') {
 					Identifier();
@@ -165,11 +188,23 @@ bundle Data.Parser {
 
 						label '{' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OPN, @line_num, start_index));
+							@tokens->AddBack(Token->New(Token->Type->OCPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '}' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->CCPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label '(' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->OPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label ')' {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->CPN, @line_num, start_index));
 							NextChar();
@@ -184,6 +219,18 @@ bundle Data.Parser {
 						label '~' {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->TILDE, @line_num, start_index));
+							NextChar();
+						}
+
+						label '[' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->OBR, @line_num, start_index));
+							NextChar();
+						}
+
+						label ']' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->CBR, @line_num, start_index));
 							NextChar();
 						}
 
@@ -207,6 +254,7 @@ bundle Data.Parser {
 		@int_value : Int;
 		@float_value : Float;
 		@char_value : Char;
+		@keywords : Hash<String, Token->Type>;
 
 		enum Type {
 			IDENT,
@@ -219,6 +267,17 @@ bundle Data.Parser {
 			TILDE,
 			OPN,
 			CPN,
+			OCPN,
+			CCPN,
+			OBR,
+			CBR,
+			CLASS_ID,
+			ENUM_ID,
+			CONSTS_ID,
+			FUNCTION_ID,
+			METHOD_ID,
+			PUBLIC_ID,
+			PRIVATE_ID,
 			OTHER
 		}
 
@@ -226,6 +285,8 @@ bundle Data.Parser {
 			@type := type;
 			@line_num := line_num;
 			@line_index := line_index;
+
+			LoadKeywords();
 		}
 
 		New(type : Token->Type, str_value : String, line_num : Int, line_index : Int) {
@@ -233,6 +294,8 @@ bundle Data.Parser {
 			@str_value := str_value;
 			@line_num := line_num;
 			@line_index := line_index;
+
+			LoadKeywords();
 		}
 
 		New(type : Token->Type, int_value : Int, line_num : Int, line_index : Int) {
@@ -240,6 +303,8 @@ bundle Data.Parser {
 			@int_value := int_value;
 			@line_num := line_num;
 			@line_index := line_index;
+
+			LoadKeywords();
 		}
 
 		New(type : Token->Type, float_value : Float, line_num : Int, line_index : Int) {
@@ -247,6 +312,8 @@ bundle Data.Parser {
 			@float_value := float_value;
 			@line_num := line_num;
 			@line_index := line_index;
+
+			LoadKeywords();
 		}
 
 		New(type : Token->Type, char_value : Char, line_num : Int, line_index : Int) {
@@ -254,6 +321,19 @@ bundle Data.Parser {
 			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
+
+			LoadKeywords();
+		}
+
+		method : LoadKeywords() ~ Nil {
+			@keywords := Hash->New()<String, Token->Type>;
+			@keywords->Insert("class", Type->CLASS_ID);
+			@keywords->Insert("enum", Type->ENUM_ID);
+			@keywords->Insert("consts", Type->CONSTS_ID);
+			@keywords->Insert("function", Type->FUNCTION_ID);
+			@keywords->Insert("method", Type->METHOD_ID);
+			@keywords->Insert("public", Type->PUBLIC_ID);
+			@keywords->Insert("private", Type->PRIVATE_ID);
 		}
 
 		method : public : GetStringValue() ~ String {
@@ -297,7 +377,7 @@ bundle Data.Parser {
 				}
 				
 				label Token->Type->COLON {
-					buffer += "ICOLONNT";
+					buffer += "COLON";
 				}
 				
 				label Token->Type->COMMA {
@@ -308,6 +388,14 @@ bundle Data.Parser {
 					buffer += "TILDE";
 				}
 				
+				label Token->Type->OCPN {
+					buffer += "OCPN";
+				}
+				
+				label Token->Type->CCPN {
+					buffer += "CCPN";
+				}
+
 				label Token->Type->OPN {
 					buffer += "OPN";
 				}
@@ -315,9 +403,17 @@ bundle Data.Parser {
 				label Token->Type->CPN {
 					buffer += "CPN";
 				}
+
+				label Token->Type->OBR {
+					buffer += "OBR";
+				}
+
+				label Token->Type->CBR {
+					buffer += "CBR";
+				}
 				
 				label Token->Type->OTHER {
-					buffer += "OTHER";
+					buffer += "OTHER, value='{$@char_value}'";
 				}
 			};
 			buffer += ", line={$@line_num}, line_pos={$@line_index}";
