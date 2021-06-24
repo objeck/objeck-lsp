@@ -202,7 +202,24 @@ count := tokens->Size();
 		}
 
 		method : ParseChar() ~ Nil {
+			NextChar();
 
+			if(@cur_char = '\\') {
+				select(@cur_char) {
+					label 'r' {
+
+					}
+
+					label 'n' {
+						
+					}
+				};
+			}
+			else {
+
+			};
+
+			NextChar();
 		}
 
 		method : public : Scan() ~ Vector<Token> {
