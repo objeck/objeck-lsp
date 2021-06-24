@@ -55,21 +55,21 @@ bundle LSP {
 		#
 		# Notifications
 		#
-		method : virtual : NotifyInitialized(params : JSONElement) ~ Nil;
-		method : virtual : NotifyCancel(params : JSONElement) ~ Nil;
-		method : virtual : NotifyDidOpen(params : JSONElement) ~ Nil;
-		method : virtual : NotifyDidChange(params : JSONElement) ~ Nil;
-		method : virtual : NotifyDidChangeWatchedFiles(params : JSONElement) ~ Nil;
-		method : virtual : NotifyDidSave(params : JSONElement) ~ Nil;
+		method : virtual : NotifyInitialized(params : JsonElement) ~ Nil;
+		method : virtual : NotifyCancel(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidOpen(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidChange(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidChangeWatchedFiles(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidSave(params : JsonElement) ~ Nil;
 
 		#
 		# Callbacks
 		#
-		method : virtual : CallbackInitialize(id : Int, params : JSONElement) ~ Nil;
-		method : virtual : CallbackShutdown(id : Int, params : JSONElement) ~ Nil;
-		method : virtual : CallbackCompletion(id : Int, params : JSONElement) ~ Nil;
-		method : virtual : CallbackResolve(id : Int, params : JSONElement) ~ Nil;
-		method : virtual : CallbackDocumentSymbol(id : Int, params : JSONElement) ~ Nil;
+		method : virtual : CallbackInitialize(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackShutdown(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackCompletion(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackResolve(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
 
 		method : AddDocument(uri : String, document : Document) ~ Nil {
 			@documents->Insert(uri, document);
@@ -178,7 +178,7 @@ bundle LSP {
 		method : ReadRpcRequest() ~ RpcRequest {
 			text := ReadString();
 			if(<>text->IsEmpty()) {
-				json :=JSONParser->New(text);
+				json :=JsonParser->New(text);
 				if(json->Parse()) {
 					node := json->GetRoot();
 					
@@ -202,16 +202,16 @@ bundle LSP {
 		}
 
 		# --- response ---
-		method : WriteRpcResponse(id : Int, result : JSONElement) ~ Nil {
+		method : WriteRpcResponse(id : Int, result : JsonElement) ~ Nil {
 			WriteString(MakeRpcResponse(id, result)->ToString());
 		}
 
-		method : MakeRpcResponse(id : Int, result : JSONElement) ~ JSONElement {
-			node := JSONElement->New(JSONType->OBJECT);
+		method : MakeRpcResponse(id : Int, result : JsonElement) ~ JsonElement {
+			node := JsonElement->New(JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
 			if(result = Nil) {
-				node->Insert("result", JSONElement->New(JSONType->NULL));
+				node->Insert("result", JsonElement->New(JsonType->NULL));
 			}
 			else {
 				node->Insert("result", result);
@@ -225,18 +225,18 @@ bundle LSP {
 		}
 
 		# --- request ---
-		method : WriteRpcRequest(kind : String, result : JSONElement) ~ Nil {
+		method : WriteRpcRequest(kind : String, result : JsonElement) ~ Nil {
 			WriteString(MakeRpcRequest(kind, result)->ToString());
 		}
 
-		method : MakeRpcRequest(kind : String, result : JSONElement) ~ JSONElement {
-			node := JSONElement->New(JSONType->OBJECT);
+		method : MakeRpcRequest(kind : String, result : JsonElement) ~ JsonElement {
+			node := JsonElement->New(JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
 			node->Insert("method", kind);
 
 			if(result = Nil) {
-				node->Insert("params", JSONElement->New(JSONType->NULL));
+				node->Insert("params", JsonElement->New(JsonType->NULL));
 			}
 			else {
 				node->Insert("params", result);
@@ -247,14 +247,14 @@ bundle LSP {
 	}
 
 	#~
-	JSON-RPC request
+	Json-RPC request
 	~#
 	class : private : RpcRequest {
 		@id : Int;
 		@mthd : String;
-		@params : JSONElement;
+		@params : JsonElement;
 
-		New(id : Int, mthd : String, params : JSONElement) {
+		New(id : Int, mthd : String, params : JsonElement) {
 			@id := id;
 			@mthd := mthd;
 			@params := params;
@@ -269,7 +269,7 @@ bundle LSP {
 			return @mthd;
 		}
 
-		method : public : GetParams() ~ JSONElement {
+		method : public : GetParams() ~ JsonElement {
 			return @params;
 		}
 	}

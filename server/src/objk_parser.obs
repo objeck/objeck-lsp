@@ -9,11 +9,12 @@ bundle Data.Parser {
 		#--- start testing ---
 		function : Main(args : String[]) ~ Nil {
 			text := System.IO.File.FileReader->ReadFile(args[0]);
-# text->PrintLine();			
+text->PrintLine();
 			tokens := Scanner->New(text)->Scan()<Token>;
+count := tokens->Size();
+"--- {$count} ---"->PrintLine();
 			each(i : tokens) {
-				token := tokens->Get(i);
-				token->ToString()->PrintLine();
+				tokens->Get(i)->ToString()->PrintLine();
 			};
 		}
 
@@ -83,6 +84,13 @@ bundle Data.Parser {
 			@keywords->Insert("method", IntHolder->New(Type->METHOD_ID));
 			@keywords->Insert("public", IntHolder->New(Type->PUBLIC_ID));
 			@keywords->Insert("private", IntHolder->New(Type->PRIVATE_ID));
+
+			@keywords->Insert("Nil", IntHolder->New(Type->NIL_ID));
+			@keywords->Insert("String", IntHolder->New(Type->STRING_ID));
+			@keywords->Insert("Int", IntHolder->New(Type->INT_ID));
+			@keywords->Insert("Float", IntHolder->New(Type->FLOAT_ID));
+			@keywords->Insert("Char", IntHolder->New(Type->CHAR_ID));
+			@keywords->Insert("Byte", IntHolder->New(Type->BYTE_ID));
 		}
 
 		method : NextChar() ~ Nil {
@@ -133,7 +141,7 @@ bundle Data.Parser {
 			};
 		}
 
-		method : Identifier() ~ Nil {
+		method : ParseIdentifier() ~ Nil {
 			start := @buffer_index;
 			start_index := @line_index - 1;
 
@@ -144,17 +152,19 @@ bundle Data.Parser {
 
 			found := @keywords->Find(ident);
 			if(found <> Nil) {
-"--- {$ident} ---"->PrintLine();
+# "--- keyword: {$ident} ---"->PrintLine();
 				type := found->Get()->As(Token->Type);
 				@tokens->AddBack(Token->New(type, ident, @line_num, start_index));
 			}
 			else {
-				@tokens->AddBack(Token->New(Token->Type->IDENT, @line_num, start_index));
+# "--- ident: {$ident} ---"->PrintLine();
+
+				@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
 
 			};
 		}
 
-		method : Number() ~ Nil {
+		method : ParseNumber() ~ Nil {
 			start := @buffer_index;
 			start_index := @line_index;
 
@@ -176,19 +186,44 @@ bundle Data.Parser {
 			};
 		}
 
+		method : ParseString() ~ Nil {
+			start := @buffer_index;
+			start_index := @line_index;
+
+			do {
+				NextChar();
+			}
+			while(@cur_char <> '"');
+
+			ident := String->New(@buffer, start, @buffer_index - start - 1);
+			NextChar();
+
+			@tokens->AddBack(Token->New(Token->Type->STRING, ident, @line_num, start_index));
+		}
+
+		method : ParseChar() ~ Nil {
+
+		}
+
 		method : public : Scan() ~ Vector<Token> {
 			NextChar();
 
 			# --- while ---
-			while(true) {
+			while(@cur_char <> '\0') {
 				Whitespace();
 				Comment();
 
 				if(@cur_char->IsChar() | @cur_char = '@' | @cur_char = '_') {
-					Identifier();
+					ParseIdentifier();
 				}
 				else if(@cur_char->IsDigit()) {
-					Number();
+					ParseNumber();
+				}
+				else if(@cur_char = '"') {
+					ParseString();
+				}
+				else if(@cur_char = '\'') {
+					ParseChar();
 				}
 				else {
 					select(@cur_char) {
@@ -252,6 +287,26 @@ bundle Data.Parser {
 							NextChar();
 						}
 
+						label '-' {
+							if(@next_char = '>') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->MINUS, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '→' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+							NextChar();
+						}
+
 						other {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
@@ -276,6 +331,7 @@ bundle Data.Parser {
 		enum Type {
 			OTHER,
 			IDENT,
+			STRING,
 			INT,
 			FLOAT,
 			CHAR,
@@ -289,13 +345,21 @@ bundle Data.Parser {
 			CCPN,
 			OBR,
 			CBR,
+			MINUS,
+			ASSESSOR,
 			CLASS_ID,
 			ENUM_ID,
 			CONSTS_ID,
 			FUNCTION_ID,
 			METHOD_ID,
 			PUBLIC_ID,
-			PRIVATE_ID
+			PRIVATE_ID,
+			NIL_ID,
+			STRING_ID,
+			INT_ID,
+			FLOAT_ID,
+			CHAR_ID,
+			BYTE_ID
 		}
 
 		New(type : Token->Type, line_num : Int, line_index : Int) {
@@ -356,6 +420,10 @@ bundle Data.Parser {
 					buffer += "IDENT, value='{$@str_value}'";
 				}
 
+				label Token->Type->STRING {
+					buffer += "STRING, value='{$@str_value}'";
+				}
+
 				label Token->Type->INT {
 					buffer += "INT, value={$@int_value}";
 				}
@@ -367,11 +435,71 @@ bundle Data.Parser {
 				label Token->Type->CHAR {
 					buffer += "CHAR, value='{$@char_value}'";
 				}
+
+				label Token->Type->ASSESSOR {
+					buffer += "ASSESSOR";
+				}
+
+				label Token->Type->MINUS {
+					buffer += "MINUS";
+				}
 				
 				label Token->Type->SEMI_COLON {
 					buffer += "SEMI_COLON";
 				}
-				
+
+				label Token->Type->ENUM_ID {
+					buffer += "ENUM_ID";
+				}
+
+				label Token->Type->CONSTS_ID {
+					buffer += "CONSTS_ID";
+				}
+
+				label Token->Type->FUNCTION_ID {
+					buffer += "FUNCTION_ID";
+				}
+
+				label Token->Type->METHOD_ID {
+					buffer += "METHOD_ID";
+				}
+
+				label Token->Type->CLASS_ID {
+					buffer += "CLASS_ID";
+				}
+
+				label Token->Type->PUBLIC_ID {
+					buffer += "PUBLIC_ID";
+				}
+
+				label Token->Type->PRIVATE_ID {
+					buffer += "PRIVATE_ID";
+				}
+
+				label Token->Type->NIL_ID {
+					buffer += "NIL_ID";
+				}
+
+				label Token->Type->STRING_ID {
+					buffer += "STRING_ID";
+				}
+
+				label Token->Type->INT_ID {
+					buffer += "INT_ID";
+				}
+
+				label Token->Type->FLOAT_ID {
+					buffer += "FLOAT_ID";
+				}
+
+				label Token->Type->CHAR_ID {
+					buffer += "CHAR_ID";
+				}
+
+				label Token->Type->BYTE_ID {
+					buffer += "BYTE_ID";
+				}
+
 				label Token->Type->COLON {
 					buffer += "COLON";
 				}
