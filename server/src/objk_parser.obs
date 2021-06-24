@@ -121,20 +121,26 @@ count := tokens->Size();
 		}
 
 		method : Comment() ~ Nil {
-			while(@cur_char = '#') {
-				if(@next_char = '~') {
-					do {
+			if(@cur_char = '#') {
+				NextChar();
+
+				if(@cur_char = '~') {
+					NextChar();
+					while(<>(@cur_char = '~' & @next_char = '#')) {
+						if(@cur_char = '\n') {
+							@line_num += 1;
+						};
 						NextChar();
-					}				
-					while(@cur_char <> '~' & @next_char <> '#');
+					};
 					NextChar();
 					NextChar();
 				}
 				else {
-					do {
+					while(@cur_char <> '\n') {
 						NextChar();
-					}				
-					while(@cur_char <> '\n');
+					};
+					@line_num += 1;
+					NextChar();
 				};
 
 				Whitespace();
@@ -158,9 +164,7 @@ count := tokens->Size();
 			}
 			else {
 # "--- ident: {$ident} ---"->PrintLine();
-
 				@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
-
 			};
 		}
 
