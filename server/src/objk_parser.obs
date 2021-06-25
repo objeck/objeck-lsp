@@ -5,17 +5,51 @@ bundle Data.Parser {
 	# Parser
 	#
 	class Parser {
-		
-		#--- start testing ---
+		@text : String;
+		@tokens : Vector<Token>;
+		@token_index : Int;
+
+		New(file : String) {
+			@text := System.IO.File.FileReader->ReadFile(file);
+		}
+
 		function : Main(args : String[]) ~ Nil {
-			text := System.IO.File.FileReader->ReadFile(args[0]);
-text->PrintLine();
-			tokens := Scanner->New(text)->Scan()<Token>;
-count := tokens->Size();
-"--- {$count} ---"->PrintLine();
-			each(i : tokens) {
-				tokens->Get(i)->ToString()->PrintLine();
+			if(args->Size() = 1) {
+				Parser->New(args[0])->Parse()->PrintLine();
 			};
+		}
+
+		method : public : Parse() ~ Bool {
+			@tokens := Scanner->New(@text)->Scan()<Token>;
+			return ParseClass();
+		}
+
+		method : ParseClass() ~ Bool {
+			if(<>Match(Token->Type->CLASS_ID)) {
+				return false;
+			};
+			NexToken();
+
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NexToken();
+
+			return true;
+		}
+
+		method : NexToken() ~ Nil {
+			if(@token_index < @tokens->Size()) {
+				@token_index += 1;
+			};
+		}
+
+		method : Match(type : Token->Type) ~ Bool {
+			if(@token_index < @tokens->Size()) {
+				return @tokens->Get(@token_index)->GetType() = type;
+			};
+
+			return false;
 		}
 
 		function : EscapeText(text : String) ~ String {
@@ -45,12 +79,6 @@ count := tokens->Size();
 
 			return buffer;
 		}
-
-		#--- end testing ---
-
-		method : public : Parse() ~ Bool {
-			return false;
-		}
 	}
 
 	class : private : TreeNode {
@@ -74,8 +102,8 @@ count := tokens->Size();
 		New(text : String) {
 			@buffer := text->ToCharArray();
 			@buffer_index := 0;
-			@tokens := Vector->New()<Token>;
 
+			@tokens := Vector->New()<Token>;
 			@keywords := Hash->New()<String, IntHolder>;
 			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
 			@keywords->Insert("enum", IntHolder->New(Type->ENUM_ID));
@@ -84,7 +112,6 @@ count := tokens->Size();
 			@keywords->Insert("method", IntHolder->New(Type->METHOD_ID));
 			@keywords->Insert("public", IntHolder->New(Type->PUBLIC_ID));
 			@keywords->Insert("private", IntHolder->New(Type->PRIVATE_ID));
-
 			@keywords->Insert("Nil", IntHolder->New(Type->NIL_ID));
 			@keywords->Insert("String", IntHolder->New(Type->STRING_ID));
 			@keywords->Insert("Int", IntHolder->New(Type->INT_ID));
@@ -158,12 +185,10 @@ count := tokens->Size();
 
 			found := @keywords->Find(ident);
 			if(found <> Nil) {
-# "--- keyword: {$ident} ---"->PrintLine();
 				type := found->Get()->As(Token->Type);
 				@tokens->AddBack(Token->New(type, ident, @line_num, start_index));
 			}
 			else {
-# "--- ident: {$ident} ---"->PrintLine();
 				@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
 			};
 		}
@@ -229,7 +254,6 @@ count := tokens->Size();
 		method : public : Scan() ~ Vector<Token> {
 			NextChar();
 
-			# --- while ---
 			while(@cur_char <> '\0') {
 				Whitespace();
 				Comment();
@@ -415,6 +439,10 @@ count := tokens->Size();
 			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
+		}
+
+		method : public : GetType() ~ Token->Type {
+			return @type;
 		}
 
 		method : public : GetStringValue() ~ String {
