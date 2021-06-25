@@ -15,12 +15,14 @@ bundle Data.Parser {
 			@findings := Vector->New()<Finding>;
 		}
 
+#~
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 1) {
 				Parser->New(args[0])->Parse()->PrintLine();
 			};
 		}
-
+~#
+		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
 			return ParseClass();
