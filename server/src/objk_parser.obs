@@ -130,9 +130,6 @@ bundle Data.Parser {
 		}
 
 		method : ParseStatements() ~ Bool {
-# id := GetType()->As(Int);
-# "-- 0: id={$id} --"->PrintLine();
-
 			done := false;
 			do {
 				select(GetType()) {
@@ -162,6 +159,9 @@ bundle Data.Parser {
 							if(<>ParseExpression()) {
 								return false;
 							};
+						}
+						else {
+							return false;
 						};
 					}
 
@@ -169,13 +169,16 @@ bundle Data.Parser {
 						if(<>ParseExpression()) {
 							return false;
 						};
-						
+
 						# TOOD: ASSESSOR
 					}
+				};
 
-					other {
-						done := true;
-					}
+				if(Match(Token->Type->SEMI_COLON)) {
+					NextToken();
+				}
+				else {
+					done := true;
 				};
 			}
 			while(<>done);
@@ -188,6 +191,18 @@ bundle Data.Parser {
 		}
 
 		method : ParseParameters() ~ Bool {
+			if(<>Match(Token->Type->OPN)) {
+				return false;
+			};
+			NextToken();
+
+Dump(0);
+
+			if(<>Match(Token->Type->CPN)) {
+				return false;
+			};
+			NextToken();
+
 			return true;
 		}
 
@@ -248,32 +263,16 @@ bundle Data.Parser {
 			return false;
 		}
 
-		function : EscapeText(text : String) ~ String {
-			buffer := "";
 
-			each(i : text) {
-				char := text->Get(i);
+		method : Dump(id : Int) ~ Nil {
+			if(@token_index < @tokens->Size()) {
+				token := @tokens->Get(@token_index);
+				line := token->GetLine();
+				pos := token->GetPos();
+				type := token->GetType()->As(Int);
 
-				select(char) {
-					label '\r' {
-						buffer += "\\r";
-					}
-
-					label '\n' {
-						buffer += "\\n";
-					}
-
-					label '\t' {
-						buffer += "\\t";
-					}
-
-					other {
-						buffer += char;
-					}
-				};
+				"--- {$id}: type={$type}, line={$line}, pos={$pos} ---"->PrintLine();
 			};
-
-			return buffer;
 		}
 	}
 
@@ -678,6 +677,14 @@ bundle Data.Parser {
 
 		method : public : GetType() ~ Token->Type {
 			return @type;
+		}
+
+		method : public : GetLine() ~ Int {
+			return @line_num;
+		}
+
+		method : public : GetPos() ~ Int {
+			return @line_index;
 		}
 
 		method : public : GetStringValue() ~ String {
