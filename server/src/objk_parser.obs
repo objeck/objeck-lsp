@@ -15,13 +15,13 @@ bundle Data.Parser {
 			@findings := Vector->New()<Finding>;
 		}
 
-#~
+#~ ~#
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 1) {
 				Parser->New(args[0])->Parse()->PrintLine();
 			};
 		}
-~#
+#~ ~#
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
@@ -32,25 +32,181 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->CLASS_ID)) {
 				return false;
 			};
-			NexToken();
+			NextToken();
 
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-			NexToken();
+			NextToken();
+
+			if(<>Match(Token->Type->OCPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(Match(Token->Type->FUNCTION_ID)) {
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+
+				if(<>Match(Token->Type->IDENT)) {
+					return false;
+				};
+				NextToken();
+			}
+			else if(Match(Token->Type->METHOD_ID)) {
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+
+				if(<>Match(Token->Type->IDENT)) {
+					return false;
+				};
+				NextToken();
+			}
+			else {
+				return false;
+			};
+
+			# declarations
+			if(<>ParseDeclarations()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->TILDE)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>ParseType()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->OCPN)) {
+				return false;
+			};
+			NextToken();
+
+			# statements
+			if(<>ParseStatements()) {
+				return false;
+			};
 
 			return true;
 		}
 
-		method : NexToken() ~ Nil {
+		method : ParseDeclarations() ~ Bool {
+			if(<>Match(Token->Type->OPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->COLON)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>ParseType()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->CPN)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
+		}
+
+		method : ParseStatements() ~ Bool {
+id := GetType()->As(Int);
+"-- 0: id={$id} --"->PrintLine();
+
+			done := false;
+			do {
+				select(GetType()) {
+					label Token->Type->STRING_LIT
+					label Token->Type->INT_LIT
+					label Token->Type->FLOAT_LIT
+					label Token->Type->CHAR_LIT
+					label Token->Type->IDENT {
+						# TODO: logic, math, simple experssion
+						NextToken();	
+					}
+					
+					other {
+						done := true;
+					}
+				};
+			}
+			while(<>done);
+
+			return true;
+		}
+
+		method : ParseType() ~ Bool {
+			select(GetType()) {
+				label Token->Type->NIL_ID
+				label Token->Type->STRING_ID
+				label Token->Type->INT_ID
+				label Token->Type->FLOAT_ID
+				label Token->Type->CHAR_ID
+				label Token->Type->BYTE_ID {
+					NextToken();
+				}
+
+				label Token->Type->IDENT {
+					NextToken();
+				}
+
+				other {
+					return false;
+				}
+			};
+
+			if(Match(Token->Type->OBR)) {
+				while(Match(Token->Type->OBR)) {
+					NextToken();
+
+					if(<>Match(Token->Type->CBR)) {
+						return false;
+					};
+					NextToken();
+				};
+			};
+
+			return true;
+		}
+
+		method : NextToken() ~ Nil {
 			if(@token_index < @tokens->Size()) {
 				@token_index += 1;
 			};
 		}
 
-		method : Match(type : Token->Type) ~ Bool {
+		method : GetType() ~ Token->Type {
 			if(@token_index < @tokens->Size()) {
-				return @tokens->Get(@token_index)->GetType() = type;
+				return @tokens->Get(@token_index)->GetType();
+			};
+
+			return Token->Type->EOS;
+		}
+
+		method : Match(type : Token->Type, offset : Int := 0) ~ Bool {
+			index := @token_index + offset;
+			if(index < @tokens->Size()) {
+				return @tokens->Get(index)->GetType() = type;
 			};
 
 			return false;
@@ -231,7 +387,7 @@ bundle Data.Parser {
 			ident := String->New(@buffer, start, @buffer_index - start - 1);
 			NextChar();
 
-			@tokens->AddBack(Token->New(Token->Type->STRING, ident, @line_num, start_index));
+			@tokens->AddBack(Token->New(Token->Type->STRING_LIT, ident, @line_num, start_index));
 		}
 
 		method : ParseChar() ~ Nil {
@@ -364,6 +520,7 @@ bundle Data.Parser {
 				};
 			};
 
+			@tokens->AddBack(Token->New(Token->Type->EOS, @line_num, 0));
 			return @tokens;
 		}
 	}
@@ -379,11 +536,12 @@ bundle Data.Parser {
 
 		enum Type {
 			OTHER,
+			EOS,
 			IDENT,
-			STRING,
-			INT,
-			FLOAT,
-			CHAR,
+			STRING_LIT,
+			INT_LIT,
+			FLOAT_LIT,
+			CHAR_LIT,
 			SEMI_COLON,
 			COLON,
 			COMMA,
@@ -473,20 +631,20 @@ bundle Data.Parser {
 					buffer += "IDENT, value='{$@str_value}'";
 				}
 
-				label Token->Type->STRING {
-					buffer += "STRING, value='{$@str_value}'";
+				label Token->Type->STRING_LIT {
+					buffer += "STRING_LIT, value='{$@str_value}'";
 				}
 
-				label Token->Type->INT {
-					buffer += "INT, value={$@int_value}";
+				label Token->Type->INT_LIT {
+					buffer += "INT_LIT, value={$@int_value}";
 				}
 				
-				label Token->Type->FLOAT {
-					buffer += "FLOAT, value={$@float_value}";
+				label Token->Type->FLOAT_LIT {
+					buffer += "FLOAT_LIT, value={$@float_value}";
 				}
 				
-				label Token->Type->CHAR {
-					buffer += "CHAR, value='{$@char_value}'";
+				label Token->Type->CHAR_LIT {
+					buffer += "CHAR_LIT, value='{$@char_value}'";
 				}
 
 				label Token->Type->ASSESSOR {
