@@ -8,9 +8,11 @@ bundle Data.Parser {
 		@text : String;
 		@tokens : Vector<Token>;
 		@token_index : Int;
+		@findings : Vector<Finding>;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
+			@findings := Vector->New()<Finding>;
 		}
 
 		function : Main(args : String[]) ~ Nil {
@@ -81,7 +83,7 @@ bundle Data.Parser {
 		}
 	}
 
-	class : private : TreeNode {
+	class Finding {
 		New() {
 		}
 	}
