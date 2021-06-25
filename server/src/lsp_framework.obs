@@ -207,11 +207,11 @@ bundle LSP {
 		}
 
 		method : MakeRpcResponse(id : Int, result : JsonElement) ~ JsonElement {
-			node := JsonElement->New(JsonType->OBJECT);
+			node := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
 			if(result = Nil) {
-				node->Insert("result", JsonElement->New(JsonType->NULL));
+				node->Insert("result", JsonElement->New(JsonElement->JsonType->NULL));
 			}
 			else {
 				node->Insert("result", result);
@@ -230,13 +230,13 @@ bundle LSP {
 		}
 
 		method : MakeRpcRequest(kind : String, result : JsonElement) ~ JsonElement {
-			node := JsonElement->New(JsonType->OBJECT);
+			node := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
 			node->Insert("method", kind);
 
 			if(result = Nil) {
-				node->Insert("params", JsonElement->New(JsonType->NULL));
+				node->Insert("params", JsonElement->New(JsonElement->JsonType->NULL));
 			}
 			else {
 				node->Insert("params", result);

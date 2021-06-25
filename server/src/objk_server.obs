@@ -53,7 +53,7 @@ bundle LSP {
 			configuration := params->FindElements("capabilities/workspace/configuration");
 
 			# build response
-			response := JsonElement->New(JsonType->OBJECT);
+			response := JsonElement->New(JsonElement->JsonType->OBJECT);
 			capabilities := response->AddChild("capabilities");
 	        completionProvider := capabilities->AddChild("completionProvider");
 	        completionProvider->Insert("resolveProvider", true);
@@ -88,9 +88,9 @@ bundle LSP {
 			};
 
 			keywords := GetKeywords();
-			response := JsonElement->New(JsonType->ARRAY);		
+			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
 			each(i : keywords) {
-				item := JsonElement->New(JsonType->OBJECT);
+				item := JsonElement->New(JsonElement->JsonType->OBJECT);
 				keyword := keywords->Get(i);
 				item->Insert("label", keyword);
 				item->Insert("kind", 7);
@@ -107,9 +107,9 @@ bundle LSP {
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri");
 
-			response := JsonElement->New(JsonType->ARRAY);
+			response := JsonElement->New(JsonElement->JsonType->ARRAY);
 			each(i : 1) {
-				item := JsonElement->New(JsonType->OBJECT);
+				item := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 				name := "Foo_";
 				name += i;
@@ -117,17 +117,17 @@ bundle LSP {
 				item->Insert("name", name);
 				item->Insert("kind", 12);
 
-				location := JsonElement->New(JsonType->OBJECT);
+				location := JsonElement->New(JsonElement->JsonType->OBJECT);
 #				location->Insert("uri", uri);
 				
-				range := JsonElement->New(JsonType->OBJECT);
+				range := JsonElement->New(JsonElement->JsonType->OBJECT);
 				
-				start := JsonElement->New(JsonType->OBJECT);
+				start := JsonElement->New(JsonElement->JsonType->OBJECT);
 				start->Insert("line", 5);
 				start->Insert("character", 1);
 				range->Insert("start", start);
 
-				end := JsonElement->New(JsonType->OBJECT);
+				end := JsonElement->New(JsonElement->JsonType->OBJECT);
 				end->Insert("line", 5);
 				end->Insert("character", 6);
 				range->Insert("end", end);
@@ -216,7 +216,7 @@ bundle LSP {
 					};
 				};
 
-				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnose());
+				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnoses());
 			};
 		}
 	}
@@ -254,9 +254,9 @@ bundle LSP {
 			};
 		}
 
-		method : public : GetDiagnose() ~ JsonElement {
+		method : public : GetDiagnoses() ~ JsonElement {
 			results := RegEx->New("function(\\s*):(\\s*)(\\w+)")->Find(@text)<Result>;
-			diagnostics := JsonElement->New(JsonType->ARRAY);
+			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
 			each(i : results) {
 				result := results->Get(i);
 
@@ -264,20 +264,20 @@ bundle LSP {
 				char_pos := IntHolder->New();
 				GetLineCharacterIndex(result->GetStart(), line_pos, char_pos);
 
-				diagnostic := JsonElement->New(JsonType->OBJECT);
+				diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 				diagnostic->Insert("severity", 1);
 				diagnostic->Insert("message", "Is a function");
 				diagnostic->Insert("source", "objk-lint");
 
-				range := JsonElement->New(JsonType->OBJECT);
+				range := JsonElement->New(JsonElement->JsonType->OBJECT);
 				# start
-				start := JsonElement->New(JsonType->OBJECT);
+				start := JsonElement->New(JsonElement->JsonType->OBJECT);
 				start->Insert("line", line_pos->Get());
 				start->Insert("character", char_pos->Get());
 				range->Insert("start", start);
 				# end
-				end := JsonElement->New(JsonType->OBJECT);
+				end := JsonElement->New(JsonElement->JsonType->OBJECT);
 				end->Insert("line", line_pos->Get());
 				end->Insert("character", char_pos->Get() + result->ToString()->Size());
 				range->Insert("end", end);
@@ -286,7 +286,7 @@ bundle LSP {
 				diagnostics->Add(diagnostic);
 			};
 			
-			request := JsonElement->New(JsonType->OBJECT);
+			request := JsonElement->New(JsonElement->JsonType->OBJECT);
 			request->Insert("uri", @uri);
 			request->Insert("diagnostics", diagnostics);
 						
