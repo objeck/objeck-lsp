@@ -17,9 +17,15 @@ bundle Data.Parser {
 
 #~ ~#
 		function : Main(args : String[]) ~ Nil {
+			timer := System.Time.Timer->New();
+			timer->Start();			
+			
 			if(args->Size() = 1) {
 				Parser->New(args[0])->Parse()->PrintLine();
 			};
+
+			timer->End();
+			timer->GetElapsedTime()->PrintLine();
 		}
 #~ ~#
 		
