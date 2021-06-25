@@ -267,11 +267,7 @@ Dump(0);
 		method : Dump(id : Int) ~ Nil {
 			if(@token_index < @tokens->Size()) {
 				token := @tokens->Get(@token_index);
-				line := token->GetLine();
-				pos := token->GetPos();
-				type := token->GetType()->As(Int);
-
-				"--- {$id}: type={$type}, line={$line}, pos={$pos} ---"->PrintLine();
+				"--- {$id}: {$token} ---"->PrintLine();
 			};
 		}
 	}
