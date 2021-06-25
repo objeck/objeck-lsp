@@ -847,7 +847,7 @@ Dump(0);
 					buffer += "OTHER, value='{$@char_value}'";
 				}
 			};
-			buffer += ", line={$@line_num}, line_pos={$@line_index}";
+			buffer += ", line={$@line_num}, pos={$@line_index}";
 
 			return buffer;
 		}
