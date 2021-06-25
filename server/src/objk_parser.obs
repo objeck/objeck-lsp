@@ -130,8 +130,8 @@ bundle Data.Parser {
 		}
 
 		method : ParseStatements() ~ Bool {
-id := GetType()->As(Int);
-"-- 0: id={$id} --"->PrintLine();
+# id := GetType()->As(Int);
+# "-- 0: id={$id} --"->PrintLine();
 
 			done := false;
 			do {
@@ -142,9 +142,37 @@ id := GetType()->As(Int);
 					label Token->Type->CHAR_LIT
 					label Token->Type->IDENT {
 						# TODO: logic, math, simple experssion
-						NextToken();	
+						NextToken();
+
+						if(Match(Token->Type->ASSESSOR)) {
+							NextToken();
+
+							if(<>Match(Token->Type->IDENT)) {
+								return false;
+							};
+							NextToken();
+
+							if(<>ParseParameters()) {
+								return false;
+							};
+						}
+						else if(Match(Token->Type->ASSIGN)) {
+							NextToken();
+
+							if(<>ParseExpression()) {
+								return false;
+							};
+						};
 					}
-					
+
+					label Token->Type->OPN {
+						if(<>ParseExpression()) {
+							return false;
+						};
+						
+						# TOOD: ASSESSOR
+					}
+
 					other {
 						done := true;
 					}
@@ -152,6 +180,14 @@ id := GetType()->As(Int);
 			}
 			while(<>done);
 
+			return true;
+		}
+
+		method : ParseExpression() ~ Bool {
+			return true;
+		}
+
+		method : ParseParameters() ~ Bool {
 			return true;
 		}
 
@@ -468,10 +504,24 @@ id := GetType()->As(Int);
 							NextChar();
 						}
 
-						label ':' {
+						label '=' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->COLON, @line_num, start_index));
+							@tokens->AddBack(Token->New(Token->Type->EQL, @line_num, start_index));
 							NextChar();
+						}
+
+						label ':' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->ASSIGN, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->COLON, @line_num, start_index));
+								NextChar();
+							};
 						}
 
 						label '~' {
@@ -492,6 +542,24 @@ id := GetType()->As(Int);
 							NextChar();
 						}
 
+						label '+' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->ADD, @line_num, start_index));
+							NextChar();
+						}
+						
+						label '*' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->MUL, @line_num, start_index));
+							NextChar();
+						}
+
+						label '/' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->DIV, @line_num, start_index));
+							NextChar();
+						}
+
 						label '-' {
 							if(@next_char = '>') {
 								NextChar();
@@ -501,7 +569,7 @@ id := GetType()->As(Int);
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->MINUS, @line_num, start_index));
+								@tokens->AddBack(Token->New(Token->Type->SUB, @line_num, start_index));
 								NextChar();
 							};
 						}
@@ -543,6 +611,11 @@ id := GetType()->As(Int);
 			FLOAT_LIT,
 			CHAR_LIT,
 			SEMI_COLON,
+			EQL,
+			ADD,
+			SUB,
+			MUL,
+			DIV,
 			COLON,
 			COMMA,
 			TILDE,
@@ -552,8 +625,8 @@ id := GetType()->As(Int);
 			CCPN,
 			OBR,
 			CBR,
-			MINUS,
 			ASSESSOR,
+			ASSIGN,
 			CLASS_ID,
 			ENUM_ID,
 			CONSTS_ID,
@@ -651,10 +724,6 @@ id := GetType()->As(Int);
 					buffer += "ASSESSOR";
 				}
 
-				label Token->Type->MINUS {
-					buffer += "MINUS";
-				}
-				
 				label Token->Type->SEMI_COLON {
 					buffer += "SEMI_COLON";
 				}
@@ -665,6 +734,30 @@ id := GetType()->As(Int);
 
 				label Token->Type->CONSTS_ID {
 					buffer += "CONSTS_ID";
+				}
+
+				label Token->Type->EQL {
+					buffer += "EQL";
+				}
+
+				label Token->Type->ADD {
+					buffer += "ADD";
+				}
+
+				label Token->Type->SUB {
+					buffer += "SUB";
+				}
+
+				label Token->Type->MUL {
+					buffer += "MUL";
+				}
+
+				label Token->Type->DIV {
+					buffer += "DIV";
+				}
+
+				label Token->Type->ASSIGN {
+					buffer += "ASSIGN";
 				}
 
 				label Token->Type->FUNCTION_ID {
