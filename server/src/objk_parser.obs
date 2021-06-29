@@ -31,7 +31,25 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
+
+			ParseUses();
 			return ParseClass();
+		}
+
+		method : ParseUses() ~ Bool {
+			if(<>Match(Token->Type->USE_ID)) {
+				return false;
+			};
+			NextToken();
+Dump(0);
+
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+Dump(1);			
+
+			return true;
 		}
 
 		method : ParseClass() ~ Bool {
@@ -202,8 +220,6 @@ bundle Data.Parser {
 			};
 			NextToken();
 
-Dump(0);
-
 			if(<>Match(Token->Type->CPN)) {
 				return false;
 			};
@@ -303,6 +319,7 @@ Dump(0);
 			@tokens := Vector->New()<Token>;
 			@keywords := Hash->New()<String, IntHolder>;
 			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
+			@keywords->Insert("use", IntHolder->New(Type->USE_ID));
 			@keywords->Insert("enum", IntHolder->New(Type->ENUM_ID));
 			@keywords->Insert("consts", IntHolder->New(Type->CONSTS_ID));
 			@keywords->Insert("function", IntHolder->New(Type->FUNCTION_ID));
@@ -629,6 +646,7 @@ Dump(0);
 			ASSESSOR,
 			ASSIGN,
 			CLASS_ID,
+			USE_ID,
 			ENUM_ID,
 			CONSTS_ID,
 			FUNCTION_ID,
@@ -779,6 +797,10 @@ Dump(0);
 
 				label Token->Type->CLASS_ID {
 					buffer += "CLASS_ID";
+				}
+
+				label Token->Type->USE_ID {
+					buffer += "USE_ID";
 				}
 
 				label Token->Type->PUBLIC_ID {
