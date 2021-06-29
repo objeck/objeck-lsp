@@ -31,6 +31,7 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
+Debug();
 
 			ParseUses();
 			return ParseClass();
@@ -41,13 +42,13 @@ bundle Data.Parser {
 				return false;
 			};
 			NextToken();
-Dump(0);
+Debug(0);
 
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
 			NextToken();
-Dump(1);			
+Debug(1);			
 
 			return true;
 		}
@@ -285,8 +286,14 @@ Dump(1);
 			return false;
 		}
 
+		method : Debug() ~ Nil {
+			each(i : @tokens) {
+				token := @tokens->Get(i);
+				"{$i}: {$token}"->PrintLine();
+			};
+		}
 
-		method : Dump(id : Int) ~ Nil {
+		method : Debug(id : Int) ~ Nil {
 			if(@token_index < @tokens->Size()) {
 				token := @tokens->Get(@token_index);
 				"--- {$id}: {$token} ---"->PrintLine();
@@ -422,10 +429,10 @@ Dump(1);
 
 			ident := String->New(@buffer, start - 1, @buffer_index - start);
 			if(is_float) {
-				@tokens->AddBack(Token->New(Token->Type->IDENT, ident->ToInt(), @line_num, start_index));
+				@tokens->AddBack(Token->New(ident->ToInt(), @line_num, start_index));
 			}
 			else {
-				@tokens->AddBack(Token->New(Token->Type->IDENT, ident->ToFloat(), @line_num, start_index));
+				@tokens->AddBack(Token->New(ident->ToFloat(), @line_num, start_index));
 			};
 		}
 
@@ -486,6 +493,34 @@ Dump(1);
 				}
 				else {
 					select(@cur_char) {
+						label '<' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->LES_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->LES, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '>' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->GTR_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->GTR, @line_num, start_index));
+								NextChar();
+							};
+						}
+
 						label ';' {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->SEMI_COLON, @line_num, start_index));
@@ -578,6 +613,12 @@ Dump(1);
 							NextChar();
 						}
 
+						label '%' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->MOD, @line_num, start_index));
+							NextChar();
+						}
+
 						label '-' {
 							if(@next_char = '>') {
 								NextChar();
@@ -595,6 +636,12 @@ Dump(1);
 						label '→' {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+							NextChar();
+						}
+
+						label '\0' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->EOS, @line_num, start_index));
 							NextChar();
 						}
 
@@ -628,12 +675,17 @@ Dump(1);
 			INT_LIT,
 			FLOAT_LIT,
 			CHAR_LIT,
+			LES,
+			GTR,
+			LES_EQL,
+			GTR_EQL,
 			SEMI_COLON,
 			EQL,
 			ADD,
 			SUB,
 			MUL,
 			DIV,
+			MOD,
 			COLON,
 			COMMA,
 			TILDE,
@@ -674,16 +726,23 @@ Dump(1);
 			@line_index := line_index;
 		}
 
-		New(type : Token->Type, int_value : Int, line_num : Int, line_index : Int) {
-			@type := type;
+		New(int_value : Int, line_num : Int, line_index : Int) {
+			@type := Token->Type->INT_LIT;
 			@int_value := int_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
-		New(type : Token->Type, float_value : Float, line_num : Int, line_index : Int) {
-			@type := type;
+		New(float_value : Float, line_num : Int, line_index : Int) {
+			@type := Token->Type->FLOAT_LIT;
 			@float_value := float_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(char_value : Char, line_num : Int, line_index : Int) {
+			@type := Token->Type->CHAR_LIT;
+			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
@@ -755,6 +814,22 @@ Dump(1);
 					buffer += "SEMI_COLON";
 				}
 
+				label Token->Type->LES {
+					buffer += "LES";
+				}
+
+				label Token->Type->LES_EQL {
+					buffer += "LES_EQL";
+				}
+
+				label Token->Type->GTR_EQL {
+					buffer += "GTR_EQL";
+				}
+
+				label Token->Type->GTR {
+					buffer += "GTR";
+				}
+
 				label Token->Type->ENUM_ID {
 					buffer += "ENUM_ID";
 				}
@@ -781,6 +856,10 @@ Dump(1);
 
 				label Token->Type->DIV {
 					buffer += "DIV";
+				}
+
+				label Token->Type->MOD {
+					buffer += "MOD";
 				}
 
 				label Token->Type->ASSIGN {
@@ -872,7 +951,8 @@ Dump(1);
 				}
 				
 				label Token->Type->OTHER {
-					buffer += "OTHER, value='{$@char_value}'";
+					id := @char_value->As(Int);
+					buffer += "OTHER: id={$id}, value='{$@char_value}'";
 				}
 			};
 			buffer += ", line={$@line_num}, pos={$@line_index}";
