@@ -429,10 +429,10 @@ Debug(1);
 
 			ident := String->New(@buffer, start - 1, @buffer_index - start);
 			if(is_float) {
-				@tokens->AddBack(Token->New(ident->ToInt(), @line_num, start_index));
+				@tokens->AddBack(Token->New(ident->ToFloat(), @line_num, start_index));
 			}
 			else {
-				@tokens->AddBack(Token->New(ident->ToFloat(), @line_num, start_index));
+				@tokens->AddBack(Token->New(ident->ToInt(), @line_num, start_index));
 			};
 		}
 
