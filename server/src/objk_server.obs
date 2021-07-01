@@ -105,10 +105,13 @@ bundle LSP {
 		}
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
-			uri := params->FindElements("textDocument/uri");
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			symbols := GetDocument(uri)->GetSymbols();
 
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);
-			each(i : 1) {
+			each(i : symbols) {
+				symbol := symbols->Get(i);
+
 				item := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 				name := "Foo_";
@@ -116,9 +119,6 @@ bundle LSP {
 
 				item->Insert("name", name);
 				item->Insert("kind", 12);
-
-				location := JsonElement->New(JsonElement->JsonType->OBJECT);
-#				location->Insert("uri", uri);
 				
 				range := JsonElement->New(JsonElement->JsonType->OBJECT);
 				
@@ -132,6 +132,7 @@ bundle LSP {
 				end->Insert("character", 6);
 				range->Insert("end", end);
 
+				location := JsonElement->New(JsonElement->JsonType->OBJECT);
 				location->Insert("range", range);				
 				location->Insert("selectionRange", range);
 
@@ -232,6 +233,12 @@ bundle LSP {
 		New(uri : String, text : String) {
 			@uri := uri;
 			@text := text;
+		}
+
+		method : public : GetSymbols() ~ Vector<Symbol> {
+			symbols := Vector->New()<Symbol>;
+
+			return symbols;
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
@@ -362,6 +369,32 @@ bundle LSP {
 			if(@is_debug) {
 				"TEXT='{$@text}'"->PrintLine();
 			};
+		}
+	}
+
+	class Symbol {
+		@name : String;
+		@kind : Int;
+		@start_line : Int;
+		@start_char : Int;
+		@end_line : Int;
+		@end_char : Int;
+
+		consts Type {
+			PACKAGE := 4,
+			CLASS := 5,
+			METHOD := 6,
+			ENUM := 10,
+			FUNCTION := 12
+		}
+
+		New(name : String, kind : Int, start_line : Int, start_char : Int, end_line : Int, end_char : Int) {
+			@name := name;
+			@kind := kind;
+			@start_line := start_line;
+			@start_char := start_char;
+			@end_line := end_line;
+			@end_char := end_char;
 		}
 	}
 }

@@ -328,11 +328,13 @@ Debug(1);
 			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
 			@keywords->Insert("use", IntHolder->New(Type->USE_ID));
 			@keywords->Insert("enum", IntHolder->New(Type->ENUM_ID));
+			@keywords->Insert("bundle", IntHolder->New(Type->BUNDLE_ID));
 			@keywords->Insert("consts", IntHolder->New(Type->CONSTS_ID));
 			@keywords->Insert("function", IntHolder->New(Type->FUNCTION_ID));
 			@keywords->Insert("method", IntHolder->New(Type->METHOD_ID));
 			@keywords->Insert("public", IntHolder->New(Type->PUBLIC_ID));
 			@keywords->Insert("private", IntHolder->New(Type->PRIVATE_ID));
+			@keywords->Insert("native", IntHolder->New(Type->NATIVE_ID));
 			@keywords->Insert("Nil", IntHolder->New(Type->NIL_ID));
 			@keywords->Insert("String", IntHolder->New(Type->STRING_ID));
 			@keywords->Insert("Int", IntHolder->New(Type->INT_ID));
@@ -705,6 +707,8 @@ Debug(1);
 			METHOD_ID,
 			PUBLIC_ID,
 			PRIVATE_ID,
+			BUNDLE_ID,
+			NATIVE_ID,
 			NIL_ID,
 			STRING_ID,
 			INT_ID,
@@ -888,6 +892,14 @@ Debug(1);
 
 				label Token->Type->PRIVATE_ID {
 					buffer += "PRIVATE_ID";
+				}
+
+				label Token->Type->BUNDLE_ID {
+					buffer += "BUNDLE_ID";
+				}
+
+				label Token->Type->NATIVE_ID {
+					buffer += "NATIVE_ID";
 				}
 
 				label Token->Type->NIL_ID {
