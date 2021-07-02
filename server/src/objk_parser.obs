@@ -48,7 +48,13 @@ Debug(0);
 				return false;
 			};
 			NextToken();
-Debug(1);			
+Debug(1);
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
+				return false;
+			};
+			NextToken();
+Debug(2);			
 
 			return true;
 		}
@@ -68,6 +74,7 @@ Debug(1);
 				return false;
 			};
 			NextToken();
+Debug(3);			
 
 			if(Match(Token->Type->FUNCTION_ID)) {
 				NextToken();
@@ -94,6 +101,15 @@ Debug(1);
 					return false;
 				};
 				NextToken();
+			}
+			else if(Match(Token->Type->IDENT)) {
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+Debug(4);
 			}
 			else {
 				return false;
@@ -335,6 +351,7 @@ Debug(1);
 			@keywords->Insert("public", IntHolder->New(Type->PUBLIC_ID));
 			@keywords->Insert("private", IntHolder->New(Type->PRIVATE_ID));
 			@keywords->Insert("native", IntHolder->New(Type->NATIVE_ID));
+			@keywords->Insert("static", IntHolder->New(Type->STATIC_ID));
 			@keywords->Insert("Nil", IntHolder->New(Type->NIL_ID));
 			@keywords->Insert("String", IntHolder->New(Type->STRING_ID));
 			@keywords->Insert("Int", IntHolder->New(Type->INT_ID));
@@ -709,6 +726,7 @@ Debug(1);
 			PRIVATE_ID,
 			BUNDLE_ID,
 			NATIVE_ID,
+			STATIC_ID,
 			NIL_ID,
 			STRING_ID,
 			INT_ID,
@@ -900,6 +918,10 @@ Debug(1);
 
 				label Token->Type->NATIVE_ID {
 					buffer += "NATIVE_ID";
+				}
+
+				label Token->Type->STATIC_ID {
+					buffer += "STATIC_ID";
 				}
 
 				label Token->Type->NIL_ID {
