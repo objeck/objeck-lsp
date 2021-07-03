@@ -74,56 +74,87 @@ Debug(2);
 				return false;
 			};
 			NextToken();
+
+			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
+				if(Match(Token->Type->FUNCTION_ID)) {
+Debug(4);								
+					NextToken();
+
+					if(<>Match(Token->Type->COLON)) {
+						return false;
+					};
+					NextToken();
+
+					if(<>Match(Token->Type->IDENT)) {
+						return false;
+					};
+					NextToken();
+
+					if(<>FooBar()) {
+						return false;
+					};
+				}
+				else if(Match(Token->Type->METHOD_ID)) {
+					NextToken();
+
+					if(<>Match(Token->Type->COLON)) {
+						return false;
+					};
+					NextToken();
+
+					if(<>Match(Token->Type->IDENT)) {
+						return false;
+					};
+					NextToken();
+
+					if(<>FooBar()) {
+						return false;
+					};
+				}
+				else if(Match(Token->Type->IDENT)) {
 Debug(3);			
+					NextToken();
 
-			if(Match(Token->Type->FUNCTION_ID)) {
-				NextToken();
+					if(<>Match(Token->Type->COLON)) {
+						return false;
+					};
+					NextToken();
 
-				if(<>Match(Token->Type->COLON)) {
-					return false;
+					if(Match(Token->Type->STATIC_ID)) {
+						NextToken();
+
+						if(<>Match(Token->Type->COLON)) {
+							return false;
+						};
+						NextToken();
+					};
+					
+					if(<>ParseType()) {
+						return false;
+					};
+
+					if(<>Match(Token->Type->SEMI_COLON)) {
+						return false;
+					};
+					NextToken();
 				};
-				NextToken();
-
-				if(<>Match(Token->Type->IDENT)) {
-					return false;
-				};
-				NextToken();
-			}
-			else if(Match(Token->Type->METHOD_ID)) {
-				NextToken();
-
-				if(<>Match(Token->Type->COLON)) {
-					return false;
-				};
-				NextToken();
-
-				if(<>Match(Token->Type->IDENT)) {
-					return false;
-				};
-				NextToken();
-			}
-			else if(Match(Token->Type->IDENT)) {
-				NextToken();
-
-				if(<>Match(Token->Type->COLON)) {
-					return false;
-				};
-				NextToken();
-Debug(4);
-			}
-			else {
-				return false;
 			};
 
+			return true;
+		}
+
+		method : FooBar() ~ Bool {
 			# declarations
 			if(<>ParseDeclarations()) {
 				return false;
 			};
+Debug(5);								
 
 			if(<>Match(Token->Type->TILDE)) {
 				return false;
 			};
 			NextToken();
+Debug(6);								
 
 			if(<>ParseType()) {
 				return false;
@@ -148,25 +179,23 @@ Debug(4);
 			};
 			NextToken();
 
-			if(<>Match(Token->Type->IDENT)) {
-				return false;
+			while(<>Match(Token->Type->CPN)) {
+				if(<>Match(Token->Type->IDENT)) {
+					return false;
+				};
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+
+				if(<>ParseType()) {
+					return false;
+				};
 			};
 			NextToken();
-
-			if(<>Match(Token->Type->COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseType()) {
-				return false;
-			};
-
-			if(<>Match(Token->Type->CPN)) {
-				return false;
-			};
-			NextToken();
-
+			
 			return true;
 		}
 
