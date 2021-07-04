@@ -73,7 +73,7 @@ bundle Data.Parser {
 			NextToken();
 
 			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
-				if(Match(Token->Type->FUNCTION_ID)) {
+				if(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID)) {
 					NextToken();
 
 					if(<>Match(Token->Type->COLON)) {
@@ -85,27 +85,29 @@ bundle Data.Parser {
 						return false;
 					};
 Debug(0);
-
 					NextToken();
 
-					if(<>FooBar()) {
+					# declarations
+					if(<>ParseDeclarations()) {
 						return false;
 					};
-				}
-				else if(Match(Token->Type->METHOD_ID)) {
-					NextToken();
 
-					if(<>Match(Token->Type->COLON)) {
+					if(<>Match(Token->Type->TILDE)) {
 						return false;
 					};
 					NextToken();
 
-					if(<>Match(Token->Type->IDENT)) {
+					if(<>ParseType()) {
+						return false;
+					};
+
+					if(<>Match(Token->Type->OCPN)) {
 						return false;
 					};
 					NextToken();
 
-					if(<>FooBar()) {
+					# statements
+					if(<>ParseStatements()) {
 						return false;
 					};
 				}
@@ -141,33 +143,7 @@ Debug(1);
 			return true;
 		}
 
-		method : FooBar() ~ Bool {
-			# declarations
-			if(<>ParseDeclarations()) {
-				return false;
-			};
-
-			if(<>Match(Token->Type->TILDE)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseType()) {
-				return false;
-			};
-
-			if(<>Match(Token->Type->OCPN)) {
-				return false;
-			};
-			NextToken();
-
-			# statements
-			if(<>ParseStatements()) {
-				return false;
-			};
-
-			return true;
-		}
+		
 
 		method : ParseDeclarations() ~ Bool {
 			if(<>Match(Token->Type->OPN)) {
