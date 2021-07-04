@@ -74,78 +74,93 @@ bundle Data.Parser {
 
 			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
 				if(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID)) {
-					NextToken();
-
-					if(<>Match(Token->Type->COLON)) {
-						return false;
-					};
-					NextToken();
-
-					if(<>Match(Token->Type->IDENT)) {
-						return false;
-					};
-Debug(0);
-					NextToken();
-
-					# declarations
-					if(<>ParseDeclarations()) {
-						return false;
-					};
-
-					if(<>Match(Token->Type->TILDE)) {
-						return false;
-					};
-					NextToken();
-
-					if(<>ParseType()) {
-						return false;
-					};
-
-					if(<>Match(Token->Type->OCPN)) {
-						return false;
-					};
-					NextToken();
-
-					# statements
-					if(<>ParseStatements()) {
+					if(<>ParseFunctionMethod()) {
 						return false;
 					};
 				}
 				else if(Match(Token->Type->IDENT)) {
-Debug(1);
-					NextToken();
-
-					if(<>Match(Token->Type->COLON)) {
+					if(<>ParseDeclaration()) {
 						return false;
 					};
-					NextToken();
-
-					if(Match(Token->Type->STATIC_ID)) {
-						NextToken();
-
-						if(<>Match(Token->Type->COLON)) {
-							return false;
-						};
-						NextToken();
-					};
-					
-					if(<>ParseType()) {
-						return false;
-					};
-
-					if(<>Match(Token->Type->SEMI_COLON)) {
-						return false;
-					};
-					NextToken();
 				};
 			};
 
 			return true;
 		}
 
-		
+		method : ParseFunctionMethod() ~ Bool {
+			NextToken();
 
-		method : ParseDeclarations() ~ Bool {
+			if(<>Match(Token->Type->COLON)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+
+			# declarations
+			if(<>ParseDeclarationParameters()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->TILDE)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>ParseType()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->OCPN)) {
+				return false;
+			};
+			NextToken();
+
+			# statements
+			if(<>ParseStatements()) {
+				return false;
+			};
+
+			return true;
+		}
+
+		method : ParseDeclaration() ~ Bool {
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+			
+			if(<>Match(Token->Type->COLON)) {
+				return false;
+			};
+			NextToken();
+
+			if(Match(Token->Type->STATIC_ID)) {
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+			};
+			
+			if(<>ParseType()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
+		}
+
+		method : ParseDeclarationParameters() ~ Bool {
 			if(<>Match(Token->Type->OPN)) {
 				return false;
 			};
@@ -155,7 +170,6 @@ Debug(1);
 				if(<>Match(Token->Type->IDENT)) {
 					return false;
 				};
-Debug(1);				
 				NextToken();
 
 				if(<>Match(Token->Type->COLON)) {
@@ -176,7 +190,6 @@ Debug(1);
 			done := false;
 			do {
 				if(Match(Token->Type->IDENT)) {
-Debug(2);
 					NextToken();
 
 					if(Match(Token->Type->ASSIGN)) {
@@ -187,7 +200,7 @@ Debug(2);
 						};
 					}
 					else if(Match(Token->Type->OPN)) {
-						if(<>ParseParameters()) {	
+						if(<>ParseCallParameters()) {	
 							return false;
 						};
 					}
@@ -228,7 +241,7 @@ Debug(2);
 						};
 						NextToken();
 
-						if(<>ParseParameters()) {
+						if(<>ParseCallParameters()) {
 							return false;
 						};
 					};
@@ -240,7 +253,7 @@ Debug(2);
 			return false;
 		}
 
-		method : ParseParameters() ~ Bool {
+		method : ParseCallParameters() ~ Bool {
 			if(<>Match(Token->Type->OPN)) {
 				return false;
 			};
