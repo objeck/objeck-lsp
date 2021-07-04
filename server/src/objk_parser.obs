@@ -280,6 +280,20 @@ Dump(3);
 			};
 			NextToken();
 Dump(4);
+			if(<>Match(Token->Type->OCPN)) {
+				return false;
+			};
+			NextToken();
+
+			# statements
+			if(<>ParseStatements()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->CCPN)) {
+				return false;
+			};
+			NextToken();
 
 			return true;
 		}
