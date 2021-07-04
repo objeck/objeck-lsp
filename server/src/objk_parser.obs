@@ -82,6 +82,11 @@ bundle Data.Parser {
 					if(<>ParseDeclaration()) {
 						return false;
 					};
+
+					if(<>Match(Token->Type->SEMI_COLON)) {
+						return false;
+					};
+					NextToken();
 				};
 			};
 
@@ -133,7 +138,7 @@ bundle Data.Parser {
 				return false;
 			};
 			NextToken();
-			
+
 			if(<>Match(Token->Type->COLON)) {
 				return false;
 			};
@@ -152,10 +157,7 @@ bundle Data.Parser {
 				return false;
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
+			
 
 			return true;
 		}
