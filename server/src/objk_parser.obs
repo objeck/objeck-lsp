@@ -107,6 +107,15 @@ Dump(0);
 			};
 			NextToken();
 
+			if(Match(Token->Type->NATIVE_ID)) {
+				NextToken();
+
+				if(<>Match(Token->Type->COLON)) {
+					return false;
+				};
+				NextToken();
+			};
+
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
@@ -137,6 +146,11 @@ Dump(2);
 				return false;
 			};
 
+			if(<>Match(Token->Type->CCPN)) {
+				return false;
+			};
+			NextToken();
+			
 			return true;
 		}
 
