@@ -85,7 +85,7 @@ bundle Data.Parser {
 						return false;
 					};
 Debug(0);
-					
+
 					NextToken();
 
 					if(<>FooBar()) {
@@ -103,7 +103,6 @@ Debug(0);
 					if(<>Match(Token->Type->IDENT)) {
 						return false;
 					};
-Debug(1);
 					NextToken();
 
 					if(<>FooBar()) {
@@ -111,6 +110,7 @@ Debug(1);
 					};
 				}
 				else if(Match(Token->Type->IDENT)) {
+Debug(1);
 					NextToken();
 
 					if(<>Match(Token->Type->COLON)) {
@@ -179,6 +179,7 @@ Debug(1);
 				if(<>Match(Token->Type->IDENT)) {
 					return false;
 				};
+Debug(1);				
 				NextToken();
 
 				if(<>Match(Token->Type->COLON)) {
@@ -198,36 +199,29 @@ Debug(1);
 		method : ParseStatements() ~ Bool {
 			done := false;
 			do {
-				select(GetType()) {
-					label Token->Type->IDENT {
+				if(Match(Token->Type->IDENT)) {
+Debug(2);
+					NextToken();
+
+					if(Match(Token->Type->ASSIGN)) {
 						NextToken();
 
-						if(Match(Token->Type->ASSIGN)) {
-							NextToken();
-
-							if(<>ParseExpression()) {
-								return false;
-							};
-						}
-						else if(Match(Token->Type->OPN)) {
-							if(<>ParseParameters()) {	
-								return false;
-							};
-						}
-						else {
-							return false;
-						};
-					}
-
-					label Token->Type->OPN {
 						if(<>ParseExpression()) {
 							return false;
 						};
 					}
-				};
+					else if(Match(Token->Type->OPN)) {
+						if(<>ParseParameters()) {	
+							return false;
+						};
+					}
+					else {
+						return false;
+					};
 
-				if(Match(Token->Type->SEMI_COLON) | Match(Token->Type->ASSESSOR)) {
-					NextToken();
+					if(Match(Token->Type->SEMI_COLON) | Match(Token->Type->ASSESSOR)) {
+						NextToken();
+					};
 				}
 				else {
 					done := true;
