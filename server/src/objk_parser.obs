@@ -31,7 +31,7 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-# Dump();
+Dump();
 
 			ParseUses();
 			return ParseClass();
