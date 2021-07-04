@@ -31,7 +31,7 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-Debug();
+# Debug();
 
 			ParseUses();
 			return ParseClass();
@@ -42,19 +42,16 @@ Debug();
 				return false;
 			};
 			NextToken();
-Debug(0);
 
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
 			NextToken();
-Debug(1);
 
 			if(<>Match(Token->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
-Debug(2);			
 
 			return true;
 		}
@@ -77,7 +74,6 @@ Debug(2);
 
 			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
 				if(Match(Token->Type->FUNCTION_ID)) {
-Debug(4);								
 					NextToken();
 
 					if(<>Match(Token->Type->COLON)) {
@@ -88,6 +84,8 @@ Debug(4);
 					if(<>Match(Token->Type->IDENT)) {
 						return false;
 					};
+Debug(0);
+					
 					NextToken();
 
 					if(<>FooBar()) {
@@ -105,6 +103,7 @@ Debug(4);
 					if(<>Match(Token->Type->IDENT)) {
 						return false;
 					};
+Debug(1);
 					NextToken();
 
 					if(<>FooBar()) {
@@ -112,7 +111,6 @@ Debug(4);
 					};
 				}
 				else if(Match(Token->Type->IDENT)) {
-Debug(3);			
 					NextToken();
 
 					if(<>Match(Token->Type->COLON)) {
@@ -148,13 +146,11 @@ Debug(3);
 			if(<>ParseDeclarations()) {
 				return false;
 			};
-Debug(5);								
 
 			if(<>Match(Token->Type->TILDE)) {
 				return false;
 			};
 			NextToken();
-Debug(6);								
 
 			if(<>ParseType()) {
 				return false;
@@ -203,30 +199,18 @@ Debug(6);
 			done := false;
 			do {
 				select(GetType()) {
-					label Token->Type->STRING_LIT
-					label Token->Type->INT_LIT
-					label Token->Type->FLOAT_LIT
-					label Token->Type->CHAR_LIT
 					label Token->Type->IDENT {
-						# TODO: logic, math, simple experssion
 						NextToken();
 
-						if(Match(Token->Type->ASSESSOR)) {
-							NextToken();
-
-							if(<>Match(Token->Type->IDENT)) {
-								return false;
-							};
-							NextToken();
-
-							if(<>ParseParameters()) {
-								return false;
-							};
-						}
-						else if(Match(Token->Type->ASSIGN)) {
+						if(Match(Token->Type->ASSIGN)) {
 							NextToken();
 
 							if(<>ParseExpression()) {
+								return false;
+							};
+						}
+						else if(Match(Token->Type->OPN)) {
+							if(<>ParseParameters()) {	
 								return false;
 							};
 						}
@@ -239,12 +223,10 @@ Debug(6);
 						if(<>ParseExpression()) {
 							return false;
 						};
-
-						# TOOD: ASSESSOR
 					}
 				};
 
-				if(Match(Token->Type->SEMI_COLON)) {
+				if(Match(Token->Type->SEMI_COLON) | Match(Token->Type->ASSESSOR)) {
 					NextToken();
 				}
 				else {
@@ -257,7 +239,35 @@ Debug(6);
 		}
 
 		method : ParseExpression() ~ Bool {
-			return true;
+			select(GetType()) {
+				label Token->Type->STRING_LIT
+				label Token->Type->INT_LIT
+				label Token->Type->FLOAT_LIT {
+					NextToken();
+					return true;
+				}
+
+				label Token->Type->IDENT {
+					NextToken();
+
+					if(Match(Token->Type->ASSESSOR)) {
+						NextToken();
+
+						if(<>Match(Token->Type->IDENT)) {
+							return false;
+						};
+						NextToken();
+
+						if(<>ParseParameters()) {
+							return false;
+						};
+					};
+
+					return true;
+				}
+			};
+
+			return false;
 		}
 
 		method : ParseParameters() ~ Bool {
