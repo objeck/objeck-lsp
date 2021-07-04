@@ -229,11 +229,56 @@ Dump(3);
 						NextToken();
 					};
 				}
+				else if(Match(Token->Type->EACH_ID)) {
+					if(<>ParseEach()) {
+						return false;
+					};
+				}
+				else if(Match(Token->Type->FOR_ID)) {
+					NextToken();
+
+				}
+				else if(Match(Token->Type->IF_ID) | Match(Token->Type->WHILE_ID)) {
+					NextToken();
+
+				}
 				else {
 					done := true;
 				};
 			}
 			while(<>done);
+
+			return true;
+		}
+
+		method : ParseEach() ~ Bool {
+			NextToken();
+
+			if(<>Match(Token->Type->OPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->COLON)) {
+				return false;
+			};
+			NextToken();
+
+			# TODO: int_lit, float_list, etc.
+			if(<>Match(Token->Type->IDENT)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->CPN)) {
+				return false;
+			};
+			NextToken();
 Dump(4);
 
 			return true;
@@ -401,6 +446,7 @@ Dump(4);
 			@keywords->Insert("each", IntHolder->New(Type->EACH_ID));
 			@keywords->Insert("for", IntHolder->New(Type->FOR_ID));
 			@keywords->Insert("while", IntHolder->New(Type->WHILE_ID));
+			@keywords->Insert("if", IntHolder->New(Type->IF_ID));
 		}
 
 		method : NextChar() ~ Nil {
@@ -778,7 +824,8 @@ Dump(4);
 			BYTE_ID,
 			EACH_ID,
 			FOR_ID,
-			WHILE_ID
+			WHILE_ID,
+			IF_ID
 		}
 
 		New(type : Token->Type, line_num : Int, line_index : Int) {
@@ -1004,6 +1051,10 @@ Dump(4);
 
 				label Token->Type->WHILE_ID {
 					buffer += "WHILE_ID";
+				}
+
+				label Token->Type->IF_ID {
+					buffer += "IF_ID";
 				}
 
 				label Token->Type->COLON {
