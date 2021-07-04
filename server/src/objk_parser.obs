@@ -234,6 +234,7 @@ Dump(3);
 				};
 			}
 			while(<>done);
+Dump(4);
 
 			return true;
 		}
@@ -397,6 +398,9 @@ Dump(3);
 			@keywords->Insert("Float", IntHolder->New(Type->FLOAT_ID));
 			@keywords->Insert("Char", IntHolder->New(Type->CHAR_ID));
 			@keywords->Insert("Byte", IntHolder->New(Type->BYTE_ID));
+			@keywords->Insert("each", IntHolder->New(Type->EACH_ID));
+			@keywords->Insert("for", IntHolder->New(Type->FOR_ID));
+			@keywords->Insert("while", IntHolder->New(Type->WHILE_ID));
 		}
 
 		method : NextChar() ~ Nil {
@@ -771,7 +775,10 @@ Dump(3);
 			INT_ID,
 			FLOAT_ID,
 			CHAR_ID,
-			BYTE_ID
+			BYTE_ID,
+			EACH_ID,
+			FOR_ID,
+			WHILE_ID
 		}
 
 		New(type : Token->Type, line_num : Int, line_index : Int) {
@@ -985,6 +992,18 @@ Dump(3);
 
 				label Token->Type->BYTE_ID {
 					buffer += "BYTE_ID";
+				}
+
+				label Token->Type->EACH_ID {
+					buffer += "EACH_ID";
+				}
+
+				label Token->Type->FOR_ID {
+					buffer += "FOR_ID";
+				}
+
+				label Token->Type->WHILE_ID {
+					buffer += "WHILE_ID";
 				}
 
 				label Token->Type->COLON {
