@@ -31,7 +31,7 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-# Debug();
+# Dump();
 
 			ParseUses();
 			return ParseClass();
@@ -65,6 +65,8 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(0);
+
 			NextToken();
 
 			if(<>Match(Token->Type->OCPN)) {
@@ -74,7 +76,7 @@ bundle Data.Parser {
 
 			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
 				if(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID)) {
-					if(<>ParseFunctionMethod()) {
+					if(<>ParseMethod()) {
 						return false;
 					};
 				}
@@ -93,7 +95,7 @@ bundle Data.Parser {
 			return true;
 		}
 
-		method : ParseFunctionMethod() ~ Bool {
+		method : ParseMethod() ~ Bool {
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -104,6 +106,7 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(2);			
 			NextToken();
 
 			# declarations
@@ -137,6 +140,7 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(1);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -157,8 +161,6 @@ bundle Data.Parser {
 				return false;
 			};
 
-			
-
 			return true;
 		}
 
@@ -169,18 +171,12 @@ bundle Data.Parser {
 			NextToken();
 
 			while(<>Match(Token->Type->CPN)) {
-				if(<>Match(Token->Type->IDENT)) {
+				if(<>ParseDeclaration()) {
 					return false;
 				};
-				NextToken();
 
-				if(<>Match(Token->Type->COLON)) {
-					return false;
-				};
-				NextToken();
-
-				if(<>ParseType()) {
-					return false;
+				if(Match(Token->Type->COLON)) {
+					NextToken();
 				};
 			};
 			NextToken();
@@ -192,6 +188,8 @@ bundle Data.Parser {
 			done := false;
 			do {
 				if(Match(Token->Type->IDENT)) {
+Dump(3);
+
 					NextToken();
 
 					if(Match(Token->Type->ASSIGN)) {
@@ -326,14 +324,14 @@ bundle Data.Parser {
 			return false;
 		}
 
-		method : Debug() ~ Nil {
+		method : Dump() ~ Nil {
 			each(i : @tokens) {
 				token := @tokens->Get(i);
 				"{$i}: {$token}"->PrintLine();
 			};
 		}
 
-		method : Debug(id : Int) ~ Nil {
+		method : Dump(id : Int) ~ Nil {
 			if(@token_index < @tokens->Size()) {
 				token := @tokens->Get(@token_index);
 				"--- {$id}: {$token} ---"->PrintLine();
