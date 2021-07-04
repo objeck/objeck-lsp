@@ -66,7 +66,6 @@ bundle Data.Parser {
 				return false;
 			};
 Dump(0);
-
 			NextToken();
 
 			if(<>Match(Token->Type->OCPN)) {
@@ -74,7 +73,8 @@ Dump(0);
 			};
 			NextToken();
 
-			while(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID) | Match(Token->Type->IDENT)) {
+			done := false;
+			do {
 				if(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID)) {
 					if(<>ParseMethod()) {
 						return false;
@@ -89,8 +89,12 @@ Dump(0);
 						return false;
 					};
 					NextToken();
+				}
+				else {
+					done := true;
 				};
-			};
+			}
+			while(<>done);
 
 			return true;
 		}
@@ -189,7 +193,6 @@ Dump(1);
 			do {
 				if(Match(Token->Type->IDENT)) {
 Dump(3);
-
 					NextToken();
 
 					if(Match(Token->Type->ASSIGN)) {
