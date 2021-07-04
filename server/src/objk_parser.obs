@@ -241,6 +241,7 @@ Dump(3);
 				else if(Match(Token->Type->IF_ID) | Match(Token->Type->WHILE_ID)) {
 					NextToken();
 
+"$$$"->PrintLine();
 				}
 				else {
 					done := true;
@@ -279,11 +280,12 @@ Dump(3);
 				return false;
 			};
 			NextToken();
-Dump(4);
+
 			if(<>Match(Token->Type->OCPN)) {
 				return false;
 			};
 			NextToken();
+Dump(4);
 
 			# statements
 			if(<>ParseStatements()) {
