@@ -31,7 +31,7 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-Dump();
+# Dump();
 
 			ParseUses();
 			return ParseClass();
@@ -65,7 +65,6 @@ Dump();
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-Dump(0);
 			NextToken();
 
 			if(<>Match(Token->Type->OCPN)) {
@@ -119,7 +118,6 @@ Dump(0);
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-Dump(2);			
 			NextToken();
 
 			# declarations
@@ -158,7 +156,7 @@ Dump(2);
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-Dump(1);
+Dump(0);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -205,28 +203,61 @@ Dump(1);
 		method : ParseStatements() ~ Bool {
 			done := false;
 			do {
-				if(Match(Token->Type->IDENT)) {
-Dump(3);
-					NextToken();
+				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
+					if(<>ParseDeclaration()) {
+						return false;
+					};
 
 					if(Match(Token->Type->ASSIGN)) {
 						NextToken();
+Dump(1);
 
 						if(<>ParseExpression()) {
 							return false;
 						};
-					}
-					else if(Match(Token->Type->OPN)) {
-						if(<>ParseCallParameters()) {	
-							return false;
-						};
-					}
-					else {
+Dump(2);
+					};
+
+					if(<>Match(Token->Type->SEMI_COLON)) {
 						return false;
+					};
+					NextToken();
+Dump(3);
+				}
+				else if(Match(Token->Type->IDENT)) {
+					NextToken();
+
+					select(GetType()) {
+						label Token->Type->ASSIGN
+						label Token->Type->ADD_EQL
+						label Token->Type->SUB_EQL
+						label Token->Type->MUL_EQL
+						label Token->Type->DIV_EQL {
+							NextToken();
+
+							if(<>ParseExpression()) {
+								return false;
+							};
+						}
+						
+						label Token->Type->OPN {
+							if(<>ParseCallParameters()) {	
+								return false;
+							};
+						}
+
+						other { 
+							return false;
+						}
 					};
 
 					if(Match(Token->Type->SEMI_COLON) | Match(Token->Type->ASSESSOR)) {
 						NextToken();
+					};
+				}
+				else if(Match(Token->Type->RETURN_ID)) {
+					if(<>ParseReturn()) {
+						return false;
 					};
 				}
 				else if(Match(Token->Type->EACH_ID)) {
@@ -235,13 +266,14 @@ Dump(3);
 					};
 				}
 				else if(Match(Token->Type->FOR_ID)) {
-					NextToken();
-
+					if(<>ParseFor()) {
+						return false;
+					};
 				}
 				else if(Match(Token->Type->IF_ID) | Match(Token->Type->WHILE_ID)) {
-					NextToken();
-
-"$$$"->PrintLine();
+					if(<>ParseIfWhile()) {
+						return false;
+					};
 				}
 				else {
 					done := true;
@@ -252,6 +284,65 @@ Dump(3);
 			return true;
 		}
 
+		method : ParseReturn() ~ Bool {
+			NextToken();
+
+			if(<>ParseExpression()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
+		}
+
+		method : ParseIfWhile() ~ Bool {
+			NextToken();
+
+			if(<>Match(Token->Type->OPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>ParseExpression()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->CPN)) {
+				return false;
+			};
+			NextToken();
+
+			# statements
+			if(<>Match(Token->Type->OCPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>ParseStatements()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->CCPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
+		}
+
+		method : ParseFor() ~ Bool {
+			return false;
+		}
+		
 		method : ParseEach() ~ Bool {
 			NextToken();
 
@@ -281,18 +372,22 @@ Dump(3);
 			};
 			NextToken();
 
+			# statements
 			if(<>Match(Token->Type->OCPN)) {
 				return false;
 			};
 			NextToken();
-Dump(4);
 
-			# statements
 			if(<>ParseStatements()) {
 				return false;
 			};
 
 			if(<>Match(Token->Type->CCPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -309,6 +404,12 @@ Dump(4);
 				};
 
 				select(GetType()) {
+					label Token->Type->EQL
+					label Token->Type->NEQL
+					label Token->Type->LES
+					label Token->Type->GTR
+					label Token->Type->LES_EQL
+					label Token->Type->GTR_EQL
 					label Token->Type->ADD
 					label Token->Type->SUB
 					label Token->Type->MUL
@@ -328,8 +429,6 @@ Dump(4);
 		}
 
 		method : ParseSimpleExpression() ~ Bool {
-Dump(5);
-
 			select(GetType()) {
 				label Token->Type->STRING_LIT
 				label Token->Type->INT_LIT
@@ -349,6 +448,11 @@ Dump(5);
 						};
 						NextToken();
 
+						if(<>ParseCallParameters()) {
+							return false;
+						};
+					}
+					else if(Match(Token->Type->OPN)) {
 						if(<>ParseCallParameters()) {
 							return false;
 						};
@@ -479,6 +583,7 @@ Dump(5);
 
 			@tokens := Vector->New()<Token>;
 			@keywords := Hash->New()<String, IntHolder>;
+			@keywords->Insert("return", IntHolder->New(Type->RETURN_ID));
 			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
 			@keywords->Insert("use", IntHolder->New(Type->USE_ID));
 			@keywords->Insert("enum", IntHolder->New(Type->ENUM_ID));
@@ -661,6 +766,12 @@ Dump(5);
 								@tokens->AddBack(Token->New(Token->Type->LES_EQL, @line_num, start_index));
 								NextChar();
 							}
+							else if(@next_char = '>') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->NEQL, @line_num, start_index));
+								NextChar();
+							}
 							else {
 								start_index := @line_index - 1;
 								@tokens->AddBack(Token->New(Token->Type->LES, @line_num, start_index));
@@ -757,21 +868,45 @@ Dump(5);
 						}
 
 						label '+' {
-							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->ADD, @line_num, start_index));
-							NextChar();
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->ADD_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->ADD, @line_num, start_index));
+								NextChar();
+							};
 						}
 						
 						label '*' {
-							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->MUL, @line_num, start_index));
-							NextChar();
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->MUL_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->MUL, @line_num, start_index));
+								NextChar();
+							};
 						}
 
 						label '/' {
-							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->DIV, @line_num, start_index));
-							NextChar();
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->DIV_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->DIV, @line_num, start_index));
+								NextChar();
+							};
 						}
 
 						label '%' {
@@ -785,6 +920,12 @@ Dump(5);
 								NextChar();
 								start_index := @line_index - 1;
 								@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+								NextChar();
+							}
+							else if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(Token->New(Token->Type->SUB_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
@@ -836,17 +977,22 @@ Dump(5);
 			INT_LIT,
 			FLOAT_LIT,
 			CHAR_LIT,
+			EQL,
+			NEQL,
 			LES,
 			GTR,
 			LES_EQL,
 			GTR_EQL,
 			SEMI_COLON,
-			EQL,
 			ADD,
 			SUB,
 			MUL,
 			DIV,
 			MOD,
+			ADD_EQL,
+			SUB_EQL,
+			MUL_EQL,
+			DIV_EQL,
 			COLON,
 			COMMA,
 			TILDE,
@@ -858,6 +1004,7 @@ Dump(5);
 			CBR,
 			ASSESSOR,
 			ASSIGN,
+			RETURN_ID,
 			CLASS_ID,
 			USE_ID,
 			ENUM_ID,
@@ -1006,8 +1153,28 @@ Dump(5);
 					buffer += "CONSTS_ID";
 				}
 
+				label Token->Type->ADD_EQL {
+					buffer += "ADD_EQL";
+				}
+
+				label Token->Type->SUB_EQL {
+					buffer += "SUB_EQL";
+				}
+
+				label Token->Type->MUL_EQL {
+					buffer += "MUL_EQL";
+				}
+
+				label Token->Type->DIV_EQL {
+					buffer += "DIV_EQL";
+				}
+
 				label Token->Type->EQL {
 					buffer += "EQL";
+				}
+
+				label Token->Type->NEQL {
+					buffer += "NEQL";
 				}
 
 				label Token->Type->ADD {
@@ -1044,6 +1211,10 @@ Dump(5);
 
 				label Token->Type->CLASS_ID {
 					buffer += "CLASS_ID";
+				}
+
+				label Token->Type->RETURN_ID {
+					buffer += "RETURN_ID";
 				}
 
 				label Token->Type->USE_ID {
