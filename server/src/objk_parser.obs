@@ -402,14 +402,16 @@ Dump(5);
 			};
 
 			if(Match(Token->Type->OBR)) {
-				while(Match(Token->Type->OBR)) {
-					NextToken();
+				NextToken();
 
-					if(<>Match(Token->Type->CBR)) {
-						return false;
-					};
+				while(Match(Token->Type->COMMA)) {
 					NextToken();
 				};
+
+				if(<>Match(Token->Type->CBR)) {
+					return false;
+				};
+				NextToken();
 			};
 
 			return true;
