@@ -301,6 +301,35 @@ Dump(4);
 		}
 
 		method : ParseExpression() ~ Bool {
+			done := false;
+
+			do {
+				if(<>ParseSimpleExpression()) {
+					return false;
+				};
+
+				select(GetType()) {
+					label Token->Type->ADD
+					label Token->Type->SUB
+					label Token->Type->MUL
+					label Token->Type->DIV
+					label Token->Type->MOD {
+						NextToken();
+					}
+
+					other {
+						done := true;
+					}
+				};
+			}
+			while(<>done);
+
+			return true;
+		}
+
+		method : ParseSimpleExpression() ~ Bool {
+Dump(5);
+
 			select(GetType()) {
 				label Token->Type->STRING_LIT
 				label Token->Type->INT_LIT
@@ -337,6 +366,12 @@ Dump(4);
 				return false;
 			};
 			NextToken();
+
+			if(<>Match(Token->Type->CPN)) {
+				if(<>ParseExpression()) {
+					return false;
+				};
+			};
 
 			if(<>Match(Token->Type->CPN)) {
 				return false;
