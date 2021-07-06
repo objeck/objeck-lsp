@@ -118,6 +118,7 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(0);
 			NextToken();
 
 			# declarations
@@ -156,7 +157,6 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-Dump(0);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -191,7 +191,7 @@ Dump(0);
 					return false;
 				};
 
-				if(Match(Token->Type->COLON)) {
+				if(Match(Token->Type->COMMA)) {
 					NextToken();
 				};
 			};
@@ -210,21 +210,19 @@ Dump(0);
 
 					if(Match(Token->Type->ASSIGN)) {
 						NextToken();
-Dump(1);
 
 						if(<>ParseExpression()) {
 							return false;
 						};
-Dump(2);
 					};
 
 					if(<>Match(Token->Type->SEMI_COLON)) {
 						return false;
 					};
 					NextToken();
-Dump(3);
 				}
 				else if(Match(Token->Type->IDENT)) {
+Dump(2);
 					NextToken();
 
 					select(GetType()) {
@@ -443,13 +441,29 @@ Dump(3);
 					if(Match(Token->Type->ASSESSOR)) {
 						NextToken();
 
-						if(<>Match(Token->Type->IDENT)) {
-							return false;
-						};
-						NextToken();
+						if(Match(Token->Type->IDENT)) {
+							NextToken();
 
-						if(<>ParseCallParameters()) {
-							return false;
+							if(<>ParseCallParameters()) {
+								return false;
+							};
+						}
+						else if(Match(Token->Type->AS_ID)) {
+							NextToken();
+
+							if(<>Match(Token->Type->OPN)) {
+								return false;
+							};
+							NextToken();
+
+							if(<>ParseType()) {
+								return false;
+							};
+
+							if(<>Match(Token->Type->CPN)) {
+								return false;
+							};
+							NextToken();
 						};
 					}
 					else if(Match(Token->Type->OPN)) {
@@ -459,6 +473,30 @@ Dump(3);
 					};
 
 					return true;
+				}
+
+				label Token->Type->INT_ID
+				label Token->Type->FLOAT_ID
+				label Token->Type->CHAR_ID
+				label Token->Type->BYTE_ID {
+Dump(4);
+					NextToken();
+
+				}
+
+				label Token->Type->OPN {
+					NextToken();
+
+					if(<>ParseExpression()) {
+						return false;
+					};
+
+					if(<>Match(Token->Type->CPN)) {
+						return false;
+					};
+					NextToken();
+
+					return true;	
 				}
 			};
 
@@ -605,6 +643,7 @@ Dump(3);
 			@keywords->Insert("for", IntHolder->New(Type->FOR_ID));
 			@keywords->Insert("while", IntHolder->New(Type->WHILE_ID));
 			@keywords->Insert("if", IntHolder->New(Type->IF_ID));
+			@keywords->Insert("As", IntHolder->New(Type->AS_ID));
 		}
 
 		method : NextChar() ~ Nil {
@@ -1025,7 +1064,8 @@ Dump(3);
 			EACH_ID,
 			FOR_ID,
 			WHILE_ID,
-			IF_ID
+			IF_ID,
+			AS_ID
 		}
 
 		New(type : Token->Type, line_num : Int, line_index : Int) {
@@ -1271,6 +1311,10 @@ Dump(3);
 
 				label Token->Type->FOR_ID {
 					buffer += "FOR_ID";
+				}
+
+				label Token->Type->AS_ID {
+					buffer += "AS_ID";
 				}
 
 				label Token->Type->WHILE_ID {
