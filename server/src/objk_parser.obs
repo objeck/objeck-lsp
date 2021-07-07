@@ -274,16 +274,27 @@ Dump(-1);
 					};
 				}
 				else if(Match(Token->Type->IF_ID)) {
-					if(<>ParseIfWhile(false)) {
+					if(<>ParseIfWhile()) {
 						return false;
 					};
+
+					if(Match(Token->Type->SEMI_COLON)) {
+						NextToken();
+					}
+					else if(Match(Token->Type->ELSE_ID)) {
+						if(Match(Token->Type->IF_ID, 1)) {
+							NextToken();
+						};
+
+						if(<>ParseIfWhile()) {
+							return false;
+						};
+					};
+
+					#  | 
 Dump(2);
 				}
-				else if(Match(Token->Type->WHILE_ID) | Match(Token->Type->ELSE_ID)) {
-Dump(3);
-					if(<>ParseIfWhile(true)) {
-						return false;
-					};
+				else if(Match(Token->Type->WHILE_ID)) {
 				}
 				else {
 					done := true;
@@ -309,7 +320,7 @@ Dump(3);
 			return true;
 		}
 
-		method : ParseIfWhile(is_while : Bool := false) ~ Bool {
+		method : ParseIfWhile() ~ Bool {
 			NextToken();
 
 			if(<>Match(Token->Type->OPN)) {
@@ -340,14 +351,6 @@ Dump(3);
 				return false;
 			};
 			NextToken();
-
-			if(is_while) {
-Dump(99);					
-				if(<>Match(Token->Type->SEMI_COLON)) {
-					return false;
-				};
-				NextToken();
-			};
 
 			return true;
 		}
