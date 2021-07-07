@@ -284,7 +284,6 @@ Dump(2);
 						};
 
 						if(<>ParseBody()) {
-Dump(3);
 							return false;
 						};
 
@@ -343,7 +342,7 @@ Dump(3);
 
 		method : ParseBody() ~ Bool {
 			NextToken();
-			
+
 			# statements
 			if(<>Match(Token->Type->OCPN)) {
 				return false;
@@ -561,6 +560,7 @@ Dump(3);
 
 			if(<>Match(Token->Type->CPN)) {
 				if(<>ParseExpression()) {
+Dump(3);					
 					return false;
 				};
 			};
