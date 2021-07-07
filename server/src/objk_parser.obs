@@ -420,47 +420,13 @@ Dump(0);
 			return true;
 		}
 
-		method : ParseCallParameters() ~ Bool {
-			if(<>Match(Token->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>Match(Token->Type->CPN)) {
-				if(<>ParseExpression()) {
-					return false;
-				};
-Dump(1);
-			};
-
-			if(<>Match(Token->Type->CPN)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
-		method : ParseReturn() ~ Bool {
-			NextToken();
-
-			if(<>ParseExpression()) {
-				return false;
-			};
-
-			if(<>Match(Token->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
 		method : ParseSimpleExpression() ~ Bool {
 			select(GetType()) {
 				label Token->Type->STRING_LIT
 				label Token->Type->INT_LIT
 				label Token->Type->FLOAT_LIT {
+Dump(2);
+
 					NextToken();
 					return true;
 				}
@@ -556,6 +522,50 @@ Dump(1);
 			};
 
 			return false;
+		}
+
+		method : ParseCallParameters() ~ Bool {
+			if(<>Match(Token->Type->OPN)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(Token->Type->CPN)) {
+				if(<>ParseExpression()) {
+					return false;
+				};
+				if(Match(Token->Type->COMMA)) {
+					NextToken();
+
+					if(<>ParseExpression()) {
+						return false;
+					};
+Dump(2);
+
+				};
+			};
+
+			if(<>Match(Token->Type->CPN)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
+		}
+
+		method : ParseReturn() ~ Bool {
+			NextToken();
+
+			if(<>ParseExpression()) {
+				return false;
+			};
+
+			if(<>Match(Token->Type->SEMI_COLON)) {
+				return false;
+			};
+			NextToken();
+
+			return true;
 		}
 
 		method : ParseType() ~ Bool {
