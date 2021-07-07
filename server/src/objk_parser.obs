@@ -430,6 +430,7 @@ Dump(0);
 				if(<>ParseExpression()) {
 					return false;
 				};
+Dump(1);
 			};
 
 			if(<>Match(Token->Type->CPN)) {
@@ -454,7 +455,7 @@ Dump(0);
 
 			return true;
 		}
-		
+
 		method : ParseSimpleExpression() ~ Bool {
 			select(GetType()) {
 				label Token->Type->STRING_LIT
