@@ -293,7 +293,6 @@ Dump(0);
 					NextToken();
 				}
 				else if(Match(Token->Type->WHILE_ID)) {
-Dump(3);					
 					if(<>ParseIfWhile()) {
 						return false;
 					};
@@ -332,6 +331,8 @@ Dump(3);
 		}
 
 		method : ParseFor() ~ Bool {
+Dump(3);					
+			
 			return false;
 		}
 		
