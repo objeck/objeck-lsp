@@ -275,6 +275,7 @@ Dump(0);
 					if(<>ParseIfWhile()) {
 						return false;
 					};
+
 					while(Match(Token->Type->ELSE_ID)) {
 						if(Match(Token->Type->IF_ID, 1)) {
 							NextToken();
@@ -290,9 +291,17 @@ Dump(0);
 						return false;
 					};
 					NextToken();
-
 				}
 				else if(Match(Token->Type->WHILE_ID)) {
+Dump(3);					
+					if(<>ParseIfWhile()) {
+						return false;
+					};
+
+					if(<>Match(Token->Type->SEMI_COLON)) {
+						return false;
+					};
+					NextToken();
 				}
 				else {
 					done := true;
