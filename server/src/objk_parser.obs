@@ -149,7 +149,7 @@ Dump(0);
 				return false;
 			};
 			NextToken();
-			
+
 			return true;
 		}
 
@@ -222,7 +222,7 @@ Dump(0);
 					NextToken();
 				}
 				else if(Match(Token->Type->IDENT)) {
-Dump(2);
+Dump(1);
 					NextToken();
 
 					select(GetType()) {
@@ -244,7 +244,12 @@ Dump(2);
 							};
 						}
 
+						label Token->Type->ASSESSOR {
+							NextToken();
+						}
+
 						other { 
+Dump(-1);
 							return false;
 						}
 					};
@@ -268,8 +273,15 @@ Dump(2);
 						return false;
 					};
 				}
-				else if(Match(Token->Type->IF_ID) | Match(Token->Type->WHILE_ID)) {
-					if(<>ParseIfWhile()) {
+				else if(Match(Token->Type->IF_ID)) {
+					if(<>ParseIfWhile(false)) {
+						return false;
+					};
+Dump(2);
+				}
+				else if(Match(Token->Type->WHILE_ID) | Match(Token->Type->ELSE_ID)) {
+Dump(3);
+					if(<>ParseIfWhile(true)) {
 						return false;
 					};
 				}
@@ -297,7 +309,7 @@ Dump(2);
 			return true;
 		}
 
-		method : ParseIfWhile() ~ Bool {
+		method : ParseIfWhile(is_while : Bool := false) ~ Bool {
 			NextToken();
 
 			if(<>Match(Token->Type->OPN)) {
@@ -329,10 +341,13 @@ Dump(2);
 			};
 			NextToken();
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
-				return false;
+			if(is_while) {
+Dump(99);					
+				if(<>Match(Token->Type->SEMI_COLON)) {
+					return false;
+				};
+				NextToken();
 			};
-			NextToken();
 
 			return true;
 		}
@@ -470,6 +485,18 @@ Dump(2);
 						if(<>ParseCallParameters()) {
 							return false;
 						};
+					}
+					else if(Match(Token->Type->OBR)) {
+						NextToken();
+
+						if(<>ParseExpression()) {
+							return false;
+						};
+
+						if(<>Match(Token->Type->CBR)) {
+							return false;
+						};
+						NextToken();
 					};
 
 					return true;
@@ -479,9 +506,22 @@ Dump(2);
 				label Token->Type->FLOAT_ID
 				label Token->Type->CHAR_ID
 				label Token->Type->BYTE_ID {
-Dump(4);
 					NextToken();
 
+					if(<>Match(Token->Type->ASSESSOR)) {
+						return false;
+					};
+					NextToken();
+
+					if(Match(Token->Type->IDENT)) {
+						NextToken();
+
+						if(<>ParseCallParameters()) {
+							return false;
+						};
+					};
+
+					return true;
 				}
 
 				label Token->Type->OPN {
@@ -643,6 +683,7 @@ Dump(4);
 			@keywords->Insert("for", IntHolder->New(Type->FOR_ID));
 			@keywords->Insert("while", IntHolder->New(Type->WHILE_ID));
 			@keywords->Insert("if", IntHolder->New(Type->IF_ID));
+			@keywords->Insert("else", IntHolder->New(Type->ELSE_ID));
 			@keywords->Insert("As", IntHolder->New(Type->AS_ID));
 		}
 
@@ -1065,6 +1106,7 @@ Dump(4);
 			FOR_ID,
 			WHILE_ID,
 			IF_ID,
+			ELSE_ID,
 			AS_ID
 		}
 
@@ -1323,6 +1365,10 @@ Dump(4);
 
 				label Token->Type->IF_ID {
 					buffer += "IF_ID";
+				}
+
+				label Token->Type->ELSE_ID {
+					buffer += "ELSE_ID";
 				}
 
 				label Token->Type->COLON {
