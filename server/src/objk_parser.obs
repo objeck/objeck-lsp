@@ -277,22 +277,24 @@ Dump(-1);
 					if(<>ParseIfWhile()) {
 						return false;
 					};
-
-					if(Match(Token->Type->SEMI_COLON)) {
-						NextToken();
-					}
-					else if(Match(Token->Type->ELSE_ID)) {
+					while(Match(Token->Type->ELSE_ID)) {
+Dump(2);
 						if(Match(Token->Type->IF_ID, 1)) {
 							NextToken();
 						};
 
-						if(<>ParseIfWhile()) {
+						if(<>ParseBody()) {
+Dump(3);
 							return false;
 						};
-					};
 
-					#  | 
-Dump(2);
+					};
+					
+					if(<>Match(Token->Type->SEMI_COLON)) {
+						return false;
+					};
+					NextToken();
+
 				}
 				else if(Match(Token->Type->WHILE_ID)) {
 				}
@@ -335,8 +337,13 @@ Dump(2);
 			if(<>Match(Token->Type->CPN)) {
 				return false;
 			};
-			NextToken();
+			
+			return ParseBody();
+		}
 
+		method : ParseBody() ~ Bool {
+			NextToken();
+			
 			# statements
 			if(<>Match(Token->Type->OCPN)) {
 				return false;
