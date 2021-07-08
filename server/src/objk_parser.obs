@@ -422,7 +422,6 @@ Dump(3);
 			};
 			NextToken();
 
-			# TODO: int_lit, float_list, etc.
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
@@ -504,6 +503,7 @@ Dump(5);
 		method : ParseSimpleExpression() ~ Bool {
 			select(GetType()) {
 				label Token->Type->STRING_LIT
+				label Token->Type->CHAR_LIT
 				label Token->Type->INT_LIT
 				label Token->Type->FLOAT_LIT {
 					NextToken();
@@ -894,21 +894,41 @@ Dump(5);
 			NextChar();
 
 			if(@cur_char = '\\') {
-				select(@cur_char) {
+				select(@next_char) {
 					label 'r' {
-
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(Token->New('\r', @line_num, start_index));
 					}
 
 					label 'n' {
-						
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(Token->New('\n', @line_num, start_index));
+					}
+
+					label 't' {
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(Token->New('\t', @line_num, start_index));
 					}
 				};
 			}
 			else {
-
+				start_index := @line_index - 1;
+				@tokens->AddBack(Token->New(@cur_char, @line_num, start_index));
 			};
 
 			NextChar();
+			if(@cur_char = '\'') {
+				NextChar();
+				
+			}
+			else {
+				start_index := @line_index - 1;
+				@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
+				NextChar();
+			};
 		}
 
 		method : public : Scan() ~ Vector<Token> {
