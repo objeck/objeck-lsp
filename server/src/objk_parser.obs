@@ -31,27 +31,28 @@ bundle Data.Parser {
 		
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-# Dump();
+Dump();
 
 			ParseUses();
 			return ParseClass();
 		}
 
 		method : ParseUses() ~ Bool {
-			if(<>Match(Token->Type->USE_ID)) {
-				return false;
-			};
-			NextToken();
+			if(Match(Token->Type->USE_ID)) {
+				while(Match(Token->Type->USE_ID)) {					
+					NextToken();
 
-			if(<>Match(Token->Type->IDENT)) {
-				return false;
-			};
-			NextToken();
+					if(<>Match(Token->Type->IDENT)) {
+						return false;
+					};
+					NextToken();
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
-				return false;
+					if(<>Match(Token->Type->SEMI_COLON)) {
+						return false;
+					};
+					NextToken();
+				};
 			};
-			NextToken();
 
 			return true;
 		}
@@ -65,6 +66,8 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(1);			
+
 			NextToken();
 
 			if(<>Match(Token->Type->OCPN)) {
@@ -123,6 +126,7 @@ bundle Data.Parser {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+Dump(2);			
 			NextToken();
 
 			# declarations
@@ -208,7 +212,7 @@ bundle Data.Parser {
 			done := false;
 
 			do {
-# Dump(0);				
+Dump(3);				
 				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
@@ -465,12 +469,14 @@ bundle Data.Parser {
 			done := false;
 
 			do {
-# Dump(1);				
+Dump(4);				
 				if(<>ParseSimpleExpression()) {
 					return false;
 				};
-
+Dump(5);
 				select(GetType()) {
+					label Token->Type->AND
+					label Token->Type->OR
 					label Token->Type->EQL
 					label Token->Type->NEQL
 					label Token->Type->LES
@@ -507,33 +513,37 @@ bundle Data.Parser {
 
 				label Token->Type->IDENT {
 					NextToken();
-
+					
 					if(Match(Token->Type->ASSESSOR)) {
-						NextToken();
-
-						if(Match(Token->Type->IDENT)) {
+						while(Match(Token->Type->ASSESSOR)) {
 							NextToken();
 
-							if(<>ParseCallParameters()) {
-								return false;
-							};
-						}
-						else if(Match(Token->Type->AS_ID)) {
-							NextToken();
+							if(Match(Token->Type->IDENT)) {
+								NextToken();
 
-							if(<>Match(Token->Type->OPN)) {
-								return false;
-							};
-							NextToken();
+								if(Match(Token->Type->OPN)) {
+									if(<>ParseCallParameters()) {
+										return false;
+									};
+								};
+							}
+							else if(Match(Token->Type->AS_ID)) {
+								NextToken();
 
-							if(<>ParseType()) {
-								return false;
-							};
+								if(<>Match(Token->Type->OPN)) {
+									return false;
+								};
+								NextToken();
 
-							if(<>Match(Token->Type->CPN)) {
-								return false;
+								if(<>ParseType()) {
+									return false;
+								};
+
+								if(<>Match(Token->Type->CPN)) {
+									return false;
+								};
+								NextToken();
 							};
-							NextToken();
 						};
 					}
 					else if(Match(Token->Type->OPN)) {
@@ -553,6 +563,12 @@ bundle Data.Parser {
 						};
 						NextToken();
 					};
+
+					return true;
+				}
+
+				label Token->Type->NIL_ID {
+					NextToken();
 
 					return true;
 				}
@@ -1012,6 +1028,18 @@ bundle Data.Parser {
 							NextChar();
 						}
 
+						label '&' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->AND, @line_num, start_index));
+							NextChar();
+						}
+
+						label '|' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(Token->New(Token->Type->OR, @line_num, start_index));
+							NextChar();
+						}
+
 						label '[' {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->OBR, @line_num, start_index));
@@ -1107,6 +1135,7 @@ bundle Data.Parser {
 						other {
 							start_index := @line_index - 1;
 							@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
+							NextChar();
 						}
 					};
 				};
@@ -1153,6 +1182,8 @@ bundle Data.Parser {
 			COLON,
 			COMMA,
 			TILDE,
+			AND,
+			OR,
 			OPN,
 			CPN,
 			OCPN,
@@ -1458,6 +1489,14 @@ bundle Data.Parser {
 				
 				label Token->Type->TILDE {
 					buffer += "TILDE";
+				}
+
+				label Token->Type->AND {
+					buffer += "AND";
+				}
+
+				label Token->Type->OR {
+					buffer += "OR";
 				}
 				
 				label Token->Type->OCPN {
