@@ -821,7 +821,7 @@ Dump(5);
 
 				if(@cur_char = '~') {
 					NextChar();
-					while(<>(@cur_char = '~' & @next_char = '#')) {
+					while(<>(@cur_char = '~' & @next_char = '#') & @cur_char <> '\0') {
 						if(@cur_char = '\n') {
 							@line_num += 1;
 						};
@@ -831,7 +831,7 @@ Dump(5);
 					NextChar();
 				}
 				else {
-					while(@cur_char <> '\n') {
+					while(@cur_char <> '\n' & @cur_char <> '\0') {
 						NextChar();
 					};
 					@line_num += 1;
@@ -890,7 +890,7 @@ Dump(5);
 			do {
 				NextChar();
 			}
-			while(@cur_char <> '"');
+			while(@cur_char <> '"' & @cur_char <> '\0');
 
 			ident := String->New(@buffer, start, @buffer_index - start - 1);
 			NextChar();
