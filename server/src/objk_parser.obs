@@ -199,6 +199,14 @@ Dump(2);
 					return false;
 				};
 
+				if(Match(Token->Type->ASSIGN)) {
+					NextToken();
+
+					if(<>ParseExpression()) {
+						return false;
+					};
+				};
+
 				if(Match(Token->Type->COMMA)) {
 					NextToken();
 				};
