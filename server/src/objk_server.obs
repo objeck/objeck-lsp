@@ -106,10 +106,10 @@ bundle LSP {
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			symbols := GetDocument(uri)->GetSymbols();
-
+			response := GetDocument(uri)->GetSymbols();
+#~
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);
-			each(i : symbols) {
+			each(i : 2) {
 				symbol := symbols->Get(i);
 
 				item := JsonElement->New(JsonElement->JsonType->OBJECT);
@@ -139,7 +139,7 @@ bundle LSP {
 				item->Insert("location", location);
 				response->Add(item);
 			};
-
+~#
 			# write response
 	        WriteRpcResponse(id, response);
 		}
@@ -235,10 +235,21 @@ bundle LSP {
 			@text := text;
 		}
 
-		method : public : GetSymbols() ~ Vector<Symbol> {
-			symbols := Vector->New()<Symbol>;
+		# TODO: hacked...
+		method : public : GetSymbols() ~ JsonElement {
+			out := Web.HTTP.Url->Decode(@uri);
+			out->Delete(0, "file:///"->Size());
+			out->PrintLine();
+"############# {$out} #############"->PrintLine();	
 
-			return symbols;
+			parser := Parser->New(out);
+			if(parser->Parse()) {
+				obj := parser->GetSymbolsObj();
+"############# {$obj} #############"->PrintLine();			
+				return obj;
+			};
+
+			return Nil;
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
