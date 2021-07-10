@@ -48,6 +48,11 @@ bundle LSP {
 		#
 		# Callbacks
 		#
+		method : CallbackReferences(id : Int, params : JsonElement) ~ Nil {
+			
+		}
+
+
 		method : CallbackInitialize(id : Int, params : JsonElement) ~ Nil {
 			workspace := params->FindElements("capabilities/workspace");
 			configuration := params->FindElements("capabilities/workspace/configuration");
@@ -58,12 +63,14 @@ bundle LSP {
 	        completionProvider := capabilities->AddChild("completionProvider");
 	        completionProvider->Insert("resolveProvider", true);
 
+
 	        workspace := capabilities->AddChild("workspace");
 	        workspaceFolders := workspace->AddChild("workspaceFolders");
 	        workspaceFolders->Insert("supported", true);
 
 	        capabilities->Insert("textDocumentSync", 2);
 	        capabilities->Insert("documentSymbolProvider", true);
+	        capabilities->Insert("referencesProvider", true);
 	        
 	        # write response
 	        WriteRpcResponse(id, response);
