@@ -47,7 +47,7 @@ bundle LSP {
 
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-# Dump();
+DumpTokens();
 
 			ParseUses();
 			return ParseClass();
@@ -787,7 +787,7 @@ bundle LSP {
 			return false;
 		}
 
-		method : Dump() ~ Nil {
+		method : DumpTokens() ~ Nil {
 			each(i : @tokens) {
 				token := @tokens->Get(i);
 				"{$i}: {$token}"->PrintLine();
@@ -945,12 +945,14 @@ bundle LSP {
 		method : ParseString() ~ Nil {
 			start := @buffer_index;
 			start_index := @line_index;
-
+			
+			prev_char := '\0';
 			do {
+				prev_char := @cur_char;
 				NextChar();
 			}
-			while(@cur_char <> '"' & @cur_char <> '\0');
-
+			while(<>(@cur_char = '"' & prev_char <> '\\') & @cur_char <> '\0');
+			
 			ident := String->New(@buffer, start, @buffer_index - start - 1);
 			NextChar();
 
