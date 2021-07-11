@@ -9,15 +9,16 @@ bundle LSP {
 		@tokens : Vector<Token>;
 		@token_index : Int;
 		@findings : Vector<Finding>;
-		@symbols : Vector<Symbol>;
+		@symbol_scope : Stack<Symbol>;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
 			@findings := Vector->New()<Finding>;
 			@symbols := Vector->New()<Symbol>;
+			@symbol_scope := Stack->New()<Symbol>;
 		}
 
-#~
+#~ ~#
 		function : Main(args : String[]) ~ Nil {
 			timer := System.Time.Timer->New();
 			timer->Start();			
@@ -25,23 +26,20 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(args[0]);
 				if(parser->Parse()) {
-					symbols := parser->GetSymbolsObj()->ToString();
-					"Foo = {$symbols}"->PrintLine();
+#					symbols := parser->GetSymbolsObj()->ToString();
+#					"Foo = {$symbols}"->PrintLine();
 				};
 			};
 
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-~#
+#~ ~#
 
 		method : public : GetSymbolsObj() ~ Data.JSON.JsonElement {
 			builder := Data.JSON.JsonBuilder->New();
 
 			builder->PushArray();
-			each(i : @symbols) {
-				builder->Add(@symbols->Get(i)->GetObj());
-			};
 			obj := builder->Pop();
 
 			return obj;
@@ -84,8 +82,9 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-# Dump(1);			
-
+			symbol := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CLASS);
+			symbol->SetStart(GetToken());
+			@symbol_scope->Push(symbol);
 			NextToken();
 
 			if(<>Match(Token->Type->OCPN)) {
@@ -121,6 +120,8 @@ bundle LSP {
 			};
 			NextToken();
 
+@symbol_scope->Pop()->ToString()->PrintLine();
+
 			return true;
 		}
 
@@ -144,7 +145,14 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+			parent := @symbol_scope->Top();
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+			child->SetStart(GetToken());
+			parent->AddChild(child);
+			@symbol_scope->Push(child);
+			NextToken();
 
+#~
 			# create symbol
 			symbol : Symbol;
 			token := @tokens->Get(@token_index);
@@ -160,6 +168,7 @@ bundle LSP {
 			token := @tokens->Get(@token_index);
 			symbol->SetEnd(token->GetLine(), token->GetPos());
 			@symbols->AddBack(symbol);
+~#
 
 			# declarations
 			if(<>ParseDeclarationParameters()) {
@@ -190,6 +199,8 @@ bundle LSP {
 			};
 			NextToken();
 
+			@symbol_scope->Pop();
+
 			return true;
 		}
 
@@ -197,6 +208,12 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+
+			parent := @symbol_scope->Top();
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child->SetStart(GetToken());
+			parent->AddChild(child);
+# Dump(2);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -252,7 +269,6 @@ bundle LSP {
 			done := false;
 
 			do {
-# Dump(3);				
 				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
@@ -320,6 +336,10 @@ bundle LSP {
 		}
 
 		method : ParseSimpleStatement() ~ Bool {
+			if(Match(Token->Type->IDENT)) {
+# Dump(4);				
+			};
+
 			NextToken();
 
 			select(GetType()) {
@@ -455,6 +475,7 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+# Dump(3);			
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -465,6 +486,7 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
+# Dump(3);
 			NextToken();
 
 			if(<>Match(Token->Type->CPN)) {
@@ -551,6 +573,7 @@ bundle LSP {
 				}
 
 				label Token->Type->IDENT {
+# Dump(4);
 					NextToken();
 					
 					if(Match(Token->Type->ASSESSOR)) {
@@ -558,6 +581,7 @@ bundle LSP {
 							NextToken();
 
 							if(Match(Token->Type->IDENT)) {
+# Dump(5);
 								NextToken();
 
 								if(Match(Token->Type->OPN)) {
@@ -624,6 +648,7 @@ bundle LSP {
 					NextToken();
 
 					if(Match(Token->Type->IDENT)) {
+# Dump(6);
 						NextToken();
 
 						if(<>ParseCallParameters()) {
@@ -743,6 +768,14 @@ bundle LSP {
 			};
 
 			return Token->Type->EOS;
+		}
+
+		method : GetToken() ~ Token {
+			if(@token_index < @tokens->Size()) {
+				return @tokens->Get(@token_index);
+			};
+
+			return Nil;
 		}
 
 		method : Match(type : Token->Type, offset : Int := 0) ~ Bool {
@@ -1597,23 +1630,72 @@ bundle LSP {
 		}
 	}
 
-	class SymbolTable {
-		@stack : Stack<Map<String, Token>>;
+	#
+	# Symbol
+	#
+	class Symbol {
+		@name : String;
+		@kind : Symbol->Kind;
+		@pos : Token;
+		@parent : Symbol;
+		@children : Vector<Symbol>;
 
-		New() {
-			@stack := Stack->New()<Map<String, Token>>;
+		consts Kind {
+			MODULE := 9,
+			CLASS := 7,
+			INTERFACE := 8,
+			ENUM := 13,
+			METHOD := 2,
+			FUNCTION := 3,
+			CONSTRUCTOR := 4,
+			STRUCT := 22,
+			VARIABLE := 13
 		}
 
-		method : public : NewScope() ~ Nil {
-
+		New(name : String, kind : Symbol->Kind, parent : Symbol := Nil) {
+			@name := name;
+			@kind := kind;
+			@parent := parent;
+			@children := Vector->New()<Symbol>;
 		}
 
-		method : public : PreviousScope() ~ Nil {
-			
+		method : public : AddChild(child : Symbol) ~ Nil {
+			@children->AddBack(child);
+		}
+
+		method : public : SetStart(start : Token) ~ Nil {
+			@pos := start;
+		}
+
+		method : public : ToString() ~ String {
+			return ToString(0);
+		}
+
+		method : ToString(depth : Int) ~ String {
+			kind := @kind->As(Int);
+			line := @pos->GetLine();
+			start_pos := @pos->GetPos();
+			end_pos := start_pos + @name->Size();
+
+			buffer := "";
+			each(i : depth) {
+				buffer += '\t';
+			};
+
+			buffer += "[name={$@name}, kind={$kind}, line={$line}, start_pos={$start_pos}, end_pos={$end_pos}]";
+			if(@children <> Nil) {
+				each(i : @children) {
+					child := @children->Get(i);
+					buffer += '\n';
+					buffer += child->ToString(depth + 1);
+				};
+			};
+
+			return buffer;
 		}
 	}
 
-	#
+	#~
 	# Symbol
 	#
 	class Symbol {
@@ -1689,4 +1771,5 @@ bundle LSP {
 			return doc;
 		}
 	}
+	~#
 }
