@@ -389,30 +389,4 @@ bundle LSP {
 			};
 		}
 	}
-
-	class Symbol {
-		@name : String;
-		@kind : Int;
-		@start_line : Int;
-		@start_char : Int;
-		@end_line : Int;
-		@end_char : Int;
-
-		consts Type {
-			PACKAGE := 4,
-			CLASS := 5,
-			METHOD := 6,
-			ENUM := 10,
-			FUNCTION := 12
-		}
-
-		New(name : String, kind : Int, start_line : Int, start_char : Int, end_line : Int, end_char : Int) {
-			@name := name;
-			@kind := kind;
-			@start_line := start_line;
-			@start_char := start_char;
-			@end_line := end_line;
-			@end_char := end_char;
-		}
-	}
 }

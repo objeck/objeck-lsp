@@ -769,11 +769,6 @@ bundle LSP {
 		}
 	}
 
-	class Finding {
-		New() {
-		}
-	}
-
 	#
 	# Scanner
 	#
@@ -1211,6 +1206,9 @@ bundle LSP {
 		}
 	}
 
+	#
+	# Token
+	#
 	class : private : Token {
 		@type : Token->Type;
 		@line_num : Int;
@@ -1596,6 +1594,22 @@ bundle LSP {
 			buffer += ", line={$@line_num}, pos={$@line_index}";
 
 			return buffer;
+		}
+	}
+
+	class SymbolTable {
+		@stack : Stack<Map<String, Token>>;
+
+		New() {
+			@stack := Stack->New()<Map<String, Token>>;
+		}
+
+		method : public : NewScope() ~ Nil {
+
+		}
+
+		method : public : PreviousScope() ~ Nil {
+			
 		}
 	}
 
