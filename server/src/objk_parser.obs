@@ -702,6 +702,10 @@ bundle LSP {
 			};
 			NextToken();
 
+			if(<>ParseGeneric()) {
+				return false;
+			};
+
 			return true;
 		}
 
@@ -748,6 +752,27 @@ bundle LSP {
 				};
 
 				if(<>Match(Token->Type->CBR)) {
+					return false;
+				};
+				NextToken();
+			};
+
+			if(<>ParseGeneric()) {
+				return false;
+			};
+
+			return true;
+		}
+
+		method : ParseGeneric() ~ Bool {
+			if(Match(Token->Type->LES)) {
+				NextToken();
+
+				if(<>ParseType()) {
+					return false;
+				};
+
+				if(<>Match(Token->Type->GTR)) {
 					return false;
 				};
 				NextToken();
