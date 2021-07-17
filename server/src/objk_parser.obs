@@ -26,7 +26,7 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(args[0]);
 				if(parser->Parse()) {
-#					symbols := parser->GetSymbolsObj()->ToString();
+#					symbols := parser->GetSymbolJson()->ToString();
 #					"Foo = {$symbols}"->PrintLine();
 				};
 			};
@@ -36,10 +36,13 @@ bundle LSP {
 		}
 #~ ~#
 
-		method : public : GetSymbolsObj() ~ Data.JSON.JsonElement {
+		method : public : GetSymbolJson() ~ Data.JSON.JsonElement {
 			builder := Data.JSON.JsonBuilder->New();
 
 			builder->PushArray();
+			
+			
+			
 			obj := builder->Pop();
 
 			return obj;
@@ -47,7 +50,7 @@ bundle LSP {
 
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-DumpTokens();
+# DumpTokens();
 
 			ParseUses();
 			return ParseClass();
@@ -213,7 +216,6 @@ DumpTokens();
 			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
-Dump(2);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -270,7 +272,7 @@ Dump(2);
 
 			do {
 				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
-Dump(9);
+Dump(1);
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
 					};
@@ -490,7 +492,6 @@ Dump(9);
 			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
-Dump(4);			
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -506,7 +507,6 @@ Dump(4);
 			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
-Dump(5);
 			NextToken();
 
 			if(<>Match(Token->Type->CPN)) {
@@ -597,7 +597,6 @@ Dump(5);
 					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
 					child->SetStart(GetToken());
 					parent->AddChild(child);
-Dump(6);
 					NextToken();
 					
 					if(Match(Token->Type->ASSESSOR)) {
@@ -605,7 +604,19 @@ Dump(6);
 							NextToken();
 
 							if(Match(Token->Type->IDENT)) {
-Dump(7);
+								parent := @symbol_scope->Top();
+								child : Symbol;
+								if(GetToken()->GetStringValue()->Equals("New")) {
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CONSTRUCTOR, parent);
+								}
+								else if(Match(Token->Type->OPN, 1)) {
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+								}
+								else {
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+								};
+								child->SetStart(GetToken());
+								parent->AddChild(child);
 								NextToken();
 
 								if(Match(Token->Type->OPN)) {
@@ -682,7 +693,6 @@ Dump(7);
 						};
 						child->SetStart(GetToken());
 						parent->AddChild(child);
-Dump(8);
 						NextToken();
 
 						if(<>ParseCallParameters()) {
@@ -1718,7 +1728,7 @@ Dump(8);
 			return ToString(0);
 		}
 
-		method : ToString(depth : Int) ~ String {
+		method : public : ToString(depth : Int) ~ String {
 			kind := @kind->As(Int);
 			line := @pos->GetLine();
 			start_pos := @pos->GetPos();
@@ -1740,49 +1750,13 @@ Dump(8);
 
 			return buffer;
 		}
-	}
 
-	#~
-	# Symbol
-	#
-	class Symbol {
-		@name : String;
-		@kind : Symbol->Kind;
-
-		@start_line : Int;
-		@start_index : Int;
-
-		@end_line : Int;
-		@end_index : Int;
-
-		consts Kind {
-			MODULE := 9,
-			CLASS := 7,
-			INTERFACE := 8,
-			ENUM := 13,
-			METHOD := 2,
-			FUNCTION := 3,
-			CONSTRUCTOR := 4,
-			STRUCT := 22
-		}
-
-		New(kind : Symbol->Kind, name : String) {
-			@kind := kind;
-			@name := name;
-		}
-
-		method : public : SetStart(start_line : Int, start_index : Int) ~ Nil {
-			@start_line := start_line;
-			@start_index := start_index;
-		}
-
-		method : public : SetEnd(end_line : Int, end_index : Int) ~ Nil {
-			@end_line := end_line;
-			@end_index := end_index;
-		}
-
-		method : public : GetObj() ~ Data.JSON.JsonElement {
+		method : public : ToJson() ~ Data.JSON.JsonElement {
 			builder := Data.JSON.JsonBuilder->New();
+
+			start_line := end_line := @pos->GetLine();
+			start_index := @pos->GetPos();
+			end_index := start_index + @name->Size();
 			
 			obj := builder->PushObject();
 			obj->Insert("kind", @kind->As(Int));
@@ -1791,25 +1765,25 @@ Dump(8);
 
 					builder->PushObject("range");
 						obj := builder->PushObject("start");
-						obj->Insert("line", @start_line);
-						obj->Insert("character", @start_index);
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
 						builder->Pop();
 
 						obj := builder->PushObject("end");
-						obj->Insert("line", @end_line);
-						obj->Insert("character", @end_index);
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
 						builder->Pop();
 					builder->Pop();
 
 					builder->PushObject("selectionRange");
 						obj := builder->PushObject("start");
-						obj->Insert("line", @start_line);
-						obj->Insert("character", @start_index);
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
 						builder->Pop();
 
 						obj := builder->PushObject("end");
-						obj->Insert("line", @end_line);
-						obj->Insert("character", @end_index);
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
 						builder->Pop();
 					builder->Pop();
 
@@ -1818,5 +1792,4 @@ Dump(8);
 			return doc;
 		}
 	}
-	~#
 }
