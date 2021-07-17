@@ -47,7 +47,7 @@ bundle LSP {
 
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
-# DumpTokens();
+DumpTokens();
 
 			ParseUses();
 			return ParseClass();
@@ -213,7 +213,7 @@ bundle LSP {
 			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
-# Dump(2);
+Dump(2);
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -270,6 +270,7 @@ bundle LSP {
 
 			do {
 				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
+Dump(9);
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
 					};
@@ -337,7 +338,16 @@ bundle LSP {
 
 		method : ParseSimpleStatement() ~ Bool {
 			if(Match(Token->Type->IDENT)) {
-# Dump(4);				
+				parent := @symbol_scope->Top();
+				child : Symbol;
+				if(Match(Token->Type->OPN, 1)) {
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+				}
+				else {
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+				};
+				child->SetStart(GetToken());
+				parent->AddChild(child);
 			};
 
 			NextToken();
@@ -475,7 +485,12 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-# Dump(3);			
+
+			parent := @symbol_scope->Top();
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child->SetStart(GetToken());
+			parent->AddChild(child);
+Dump(4);			
 			NextToken();
 
 			if(<>Match(Token->Type->COLON)) {
@@ -486,7 +501,12 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-# Dump(3);
+
+			parent := @symbol_scope->Top();
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child->SetStart(GetToken());
+			parent->AddChild(child);
+Dump(5);
 			NextToken();
 
 			if(<>Match(Token->Type->CPN)) {
@@ -573,7 +593,11 @@ bundle LSP {
 				}
 
 				label Token->Type->IDENT {
-# Dump(4);
+					parent := @symbol_scope->Top();
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+					child->SetStart(GetToken());
+					parent->AddChild(child);
+Dump(6);
 					NextToken();
 					
 					if(Match(Token->Type->ASSESSOR)) {
@@ -581,7 +605,7 @@ bundle LSP {
 							NextToken();
 
 							if(Match(Token->Type->IDENT)) {
-# Dump(5);
+Dump(7);
 								NextToken();
 
 								if(Match(Token->Type->OPN)) {
@@ -648,7 +672,17 @@ bundle LSP {
 					NextToken();
 
 					if(Match(Token->Type->IDENT)) {
-# Dump(6);
+						parent := @symbol_scope->Top();
+						child : Symbol;
+						if(Match(Token->Type->OPN, 1)) {
+							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+						}
+						else {
+							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+						};
+						child->SetStart(GetToken());
+						parent->AddChild(child);
+Dump(8);
 						NextToken();
 
 						if(<>ParseCallParameters()) {
@@ -684,10 +718,11 @@ bundle LSP {
 			};
 			NextToken();
 
-			if(<>Match(Token->Type->CPN)) {
+			while(<>Match(Token->Type->CPN)) {
 				if(<>ParseExpression()) {
 					return false;
 				};
+
 				if(Match(Token->Type->COMMA)) {
 					NextToken();
 
@@ -701,6 +736,18 @@ bundle LSP {
 				return false;
 			};
 			NextToken();
+
+			while(Match(Token->Type->LES)) {
+				NextToken();
+				if(<>ParseType()) {
+					return false;
+				};
+
+				if(<>Match(Token->Type->GTR)) {
+					return false;
+				};
+				NextToken();
+			};
 
 			return true;
 		}
@@ -1643,14 +1690,12 @@ bundle LSP {
 		@children : Vector<Symbol>;
 
 		consts Kind {
-			MODULE := 9,
-			CLASS := 7,
-			INTERFACE := 8,
-			ENUM := 13,
-			METHOD := 2,
-			FUNCTION := 3,
-			CONSTRUCTOR := 4,
-			STRUCT := 22,
+			PACKAGE := 4,
+			CLASS := 5,
+			METHOD := 6,
+			CONSTRUCTOR := 9,
+			ENUM := 10,
+			FUNCTION := 12,
 			VARIABLE := 13
 		}
 
