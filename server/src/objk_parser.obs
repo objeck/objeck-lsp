@@ -10,6 +10,7 @@ bundle LSP {
 		@token_index : Int;
 		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Symbol>;
+		@root : Symbol;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
@@ -18,7 +19,7 @@ bundle LSP {
 			@symbol_scope := Stack->New()<Symbol>;
 		}
 
-#~ ~#
+#~
 		function : Main(args : String[]) ~ Nil {
 			timer := System.Time.Timer->New();
 			timer->Start();			
@@ -26,26 +27,18 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(args[0]);
 				if(parser->Parse()) {
-#					symbols := parser->GetSymbolJson()->ToString();
-#					"Foo = {$symbols}"->PrintLine();
+					symbols := parser->ToJson()->ToString();
+					"Foo = {$symbols}"->PrintLine();
 				};
 			};
 
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-#~ ~#
+~#
 
-		method : public : GetSymbolJson() ~ Data.JSON.JsonElement {
-			builder := Data.JSON.JsonBuilder->New();
-
-			builder->PushArray();
-			
-			
-			
-			obj := builder->Pop();
-
-			return obj;
+		method : public : ToJson() ~ Data.JSON.JsonElement {
+			return @root->ToJson();
 		}
 
 		method : public : Parse() ~ Bool {
@@ -123,7 +116,9 @@ bundle LSP {
 			};
 			NextToken();
 
-@symbol_scope->Pop()->ToString()->PrintLine();
+			@root := @symbol_scope->Pop();
+
+@root->ToString()->PrintLine();			
 
 			return true;
 		}
@@ -1752,6 +1747,12 @@ Dump(1);
 		}
 
 		method : public : ToJson() ~ Data.JSON.JsonElement {
+			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+			ToJson(array);
+			return array;
+		}
+
+		method : public : ToJson(array : Data.JSON.JsonElement) ~ Nil {
 			builder := Data.JSON.JsonBuilder->New();
 
 			start_line := end_line := @pos->GetLine();
@@ -1787,9 +1788,13 @@ Dump(1);
 						builder->Pop();
 					builder->Pop();
 
-			doc := builder->PopAll();
+			array->Add(builder->PopAll());
 
-			return doc;
+			if(@children <> Nil) {
+				each(i : @children) {
+					@children->Get(i)->ToJson(array);
+				};
+			};
 		}
 	}
 }

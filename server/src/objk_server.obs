@@ -251,7 +251,7 @@ bundle LSP {
 
 			parser := Parser->New(out);
 			if(parser->Parse()) {
-				obj := parser->GetSymbolJson();
+				obj := parser->ToJson();
 "############# {$obj} #############"->PrintLine();			
 				return obj;
 			};
