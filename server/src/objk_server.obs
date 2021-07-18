@@ -247,20 +247,53 @@ bundle LSP {
 		}
 
 		# TODO: hacked...
+		method : public : GetSymbols() ~ JsonElement {
+			out := Web.HTTP.Url->Decode(@uri);
+			out->Delete(0, "file:///"->Size());
+			out->PrintLine();
+"############# GetSymbols #############"->PrintLine();	
+
+			parser := Parser->New(out);
+			if(parser->Parse()) {
+				return parser->GetSymbols();
+			};
+			
+			return Nil;
+		}
+
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
 out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
 			out->PrintLine();
-"############# {$out} #############"->PrintLine();
+"############# GetReferences #############"->PrintLine();
 
 			index := GetDocumentIndex(line_pos, char_pos);
+			search := FindReference(index);
+			
+			parser := Parser->New(out);
+			if(parser->Parse()) {
+				return parser->GetReferences(search, @uri);
+			};
+
+			return Nil;
+		}
+
+		method : FindReference(index : Int) ~ String {
+			found :=  "";
 
 			string := @text;
-			substring : String;
 			if(index > -1 & index < string->Size()) {
 				start := index;
 				while(start > -1 & (string->Get(start)->IsChar() | string->Get(start) = '@' | string->Get(start) = '_')) {
 					start -= 1;
+				};
+
+				second := string->Get(start + 1);
+				if(start > -1) {
+					first := string->Get(start);
+					if(first = '\\' & (second = 't' | second = 'n' | second = 'r')) {
+						start += 1;
+					};
 				};
 
 				end := index;
@@ -269,35 +302,11 @@ out := Web.HTTP.Url->Decode(@uri);
 				};
 
 				if(start <> end) {
-					substring := string->SubString(start + 1, end - start - 1);
-					"pos: {$start},{$end} '{$substring}'"->PrintLine();
+					found := string->SubString(start + 1, end - start - 1);
 				};
 			};
 
-			parser := Parser->New(out);
-			if(parser->Parse()) {
-				obj := parser->GetReferences(substring, @uri);
-"############# {$obj} #############"->PrintLine();			
-				return obj;
-			};
-
-			return Nil;
-		}
-
-		method : public : GetSymbols() ~ JsonElement {
-			out := Web.HTTP.Url->Decode(@uri);
-			out->Delete(0, "file:///"->Size());
-			out->PrintLine();
-"############# {$out} #############"->PrintLine();	
-
-			parser := Parser->New(out);
-			if(parser->Parse()) {
-				obj := parser->GetSymbols();
-"############# {$obj} #############"->PrintLine();			
-				return obj;
-			};
-
-			return Nil;
+			return found;
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
