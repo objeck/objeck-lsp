@@ -201,7 +201,7 @@ bundle LSP {
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -331,10 +331,10 @@ Dump(1);
 				parent := @symbol_scope->Top();
 				child : Symbol;
 				if(Match(Token->Type->OPN, 1)) {
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
 				}
 				else {
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 				};
 				child->SetStart(GetToken());
 				parent->AddChild(child);
@@ -477,7 +477,7 @@ Dump(1);
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -492,7 +492,7 @@ Dump(1);
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -582,7 +582,7 @@ Dump(1);
 
 				label Token->Type->IDENT {
 					parent := @symbol_scope->Top();
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 					child->SetStart(GetToken());
 					parent->AddChild(child);
 					NextToken();
@@ -595,13 +595,13 @@ Dump(1);
 								parent := @symbol_scope->Top();
 								child : Symbol;
 								if(GetToken()->GetStringValue()->Equals("New")) {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CONSTRUCTOR, parent);
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CONSTRUCTOR_REF, parent);
 								}
 								else if(Match(Token->Type->OPN, 1)) {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
 								}
 								else {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 								};
 								child->SetStart(GetToken());
 								parent->AddChild(child);
@@ -674,10 +674,10 @@ Dump(1);
 						parent := @symbol_scope->Top();
 						child : Symbol;
 						if(Match(Token->Type->OPN, 1)) {
-							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
 						}
 						else {
-							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE, parent);
+							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
 						};
 						child->SetStart(GetToken());
 						parent->AddChild(child);
@@ -1688,14 +1688,15 @@ Dump(1);
 		@children : Vector<Symbol>;
 
 		consts Kind {
-			PACKAGE := 4,
-			CLASS := 5,
-			METHOD := 6,
-			CONSTRUCTOR := 9,
-			ENUM := 10,
-			FUNCTION := 12,
-			VARIABLE := 13,
-			####
+			# REFS
+			PACKAGE_REF:= 4,
+			CLASS_REF := 5,
+			METHOD_REF := 6,
+			CONSTRUCTOR_REF := 9,
+			ENUM_REF := 10,
+			FUNCTION_REF := 12,
+			VARIABLE_REF := 13,
+			# SYMS
 			CLASS_SYM := 105,
 			FUNCTION_SYM := 112,
 			METHOD_SYM := 106,
