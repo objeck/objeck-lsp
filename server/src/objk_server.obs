@@ -68,7 +68,6 @@ bundle LSP {
 	        completionProvider := capabilities->AddChild("completionProvider");
 	        completionProvider->Insert("resolveProvider", true);
 
-
 	        workspace := capabilities->AddChild("workspace");
 	        workspaceFolders := workspace->AddChild("workspaceFolders");
 	        workspaceFolders->Insert("supported", true);
@@ -120,39 +119,6 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			response := GetDocument(uri)->GetSymbols();
 			WriteRpcResponse(id, response);
-#~
-			response := JsonElement->New(JsonElement->JsonType->ARRAY);
-			each(i : 2) {
-				symbol := symbols->Get(i);
-
-				item := JsonElement->New(JsonElement->JsonType->OBJECT);
-
-				name := "Foo_";
-				name += i;
-
-				item->Insert("name", name);
-				item->Insert("kind", 12);
-				
-				range := JsonElement->New(JsonElement->JsonType->OBJECT);
-				
-				start := JsonElement->New(JsonElement->JsonType->OBJECT);
-				start->Insert("line", 5);
-				start->Insert("character", 1);
-				range->Insert("start", start);
-
-				end := JsonElement->New(JsonElement->JsonType->OBJECT);
-				end->Insert("line", 5);
-				end->Insert("character", 6);
-				range->Insert("end", end);
-
-				location := JsonElement->New(JsonElement->JsonType->OBJECT);
-				location->Insert("range", range);				
-				location->Insert("selectionRange", range);
-
-				item->Insert("location", location);
-				response->Add(item);
-			};
-~#			
 		}
 
 		method : CallbackResolve(id : Int, params : JsonElement) ~ Nil {
@@ -191,7 +157,7 @@ bundle LSP {
 				AddDocument(uri, document);
 			}
 			else {
-				"*** Failed: NotifyDidOpen ***"->ErrorLine();				
+				"*** Failed: NotifyDidOpen ***"->ErrorLine();		
 			};
 		}
 
@@ -247,6 +213,16 @@ bundle LSP {
 		}
 
 		# TODO: hacked...
+		method : public : GetDiagnoses() ~ JsonElement {
+			out := Web.HTTP.Url->Decode(@uri);
+			out->Delete(0, "file:///"->Size());
+			parser := Parser->New(out);
+
+			result := parser->Parse();
+"################ {$result} ################"->PrintLine();		
+			return parser->GetDiagnoses(@uri);
+		}
+
 		method : public : GetSymbols() ~ JsonElement {
 			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
@@ -328,45 +304,6 @@ bundle LSP {
 			if(@is_debug) {
 				"NotifyDidSave"->PrintLine();
 			};
-		}
-
-		method : public : GetDiagnoses() ~ JsonElement {
-			results := RegEx->New("function(\\s*):(\\s*)(\\w+)")->Find(@text)<Result>;
-			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
-			each(i : results) {
-				result := results->Get(i);
-
-				line_pos := IntHolder->New(); 
-				char_pos := IntHolder->New();
-				GetLineCharacterIndex(result->GetStart(), line_pos, char_pos);
-
-				diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
-
-				diagnostic->Insert("severity", 1);
-				diagnostic->Insert("message", "Is a function");
-				diagnostic->Insert("source", "objk-lint");
-
-				range := JsonElement->New(JsonElement->JsonType->OBJECT);
-				# start
-				start := JsonElement->New(JsonElement->JsonType->OBJECT);
-				start->Insert("line", line_pos->Get());
-				start->Insert("character", char_pos->Get());
-				range->Insert("start", start);
-				# end
-				end := JsonElement->New(JsonElement->JsonType->OBJECT);
-				end->Insert("line", line_pos->Get());
-				end->Insert("character", char_pos->Get() + result->ToString()->Size());
-				range->Insert("end", end);
-				diagnostic->Insert("range", range);
-				
-				diagnostics->Add(diagnostic);
-			};
-			
-			request := JsonElement->New(JsonElement->JsonType->OBJECT);
-			request->Insert("uri", @uri);
-			request->Insert("diagnostics", diagnostics);
-						
-			return request;
 		}
 
 		method : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {

@@ -11,6 +11,7 @@ bundle LSP {
 		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Entity>;
 		@entities : Entity;
+		@diagnose : Token;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
@@ -25,10 +26,12 @@ bundle LSP {
 			
 			if(args->Size() = 1) {
 				parser := Parser->New(args[0]);
-				if(parser->Parse()) {
-					symbols := parser->ToJson()->ToString();
-					"Foo = {$symbols}"->PrintLine();
-				};
+				parser->Parse()->PrintLine();
+#				if(parser->Parse()) {
+
+					result := parser->GetDiagnoses("");
+					"Result = {$result}"->PrintLine();
+#				};
 			};
 
 			timer->End();
@@ -44,12 +47,62 @@ bundle LSP {
 			return @entities->GetReferences(find, uri);
 		}
 
+		method : public : GetDiagnoses(uri : String) ~ Data.JSON.JsonElement {
+			diagnostics := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+
+			if(@diagnose <> Nil) {
+				start_line := end_line := @diagnose->GetLine();
+				start_index := @diagnose->GetPos();
+				end_index := start_index + 3;
+
+				each(i : 1) {
+					diagnostic := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+
+					diagnostic->Insert("severity", 1);
+					diagnostic->Insert("message", "Is a function");
+					diagnostic->Insert("source", "objk-lint");
+
+					range := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					# start
+					start := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					start->Insert("line", start_line);
+					start->Insert("character", start_index);
+					range->Insert("start", start);
+					# end
+					end := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					end->Insert("line", start_line);
+					end->Insert("character", end_index);
+					range->Insert("end", end);
+					diagnostic->Insert("range", range);
+					
+					diagnostics->Add(diagnostic);
+				};
+			};
+			
+			request := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+			request->Insert("uri", uri);
+			request->Insert("diagnostics", diagnostics);
+			
+			return request;
+		}
+
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
 # DumpTokens();
 
-			ParseUses();
-			return ParseClass();
+			result := ParseUses();
+			if(<>result) {
+				@diagnose := GetToken();
+				return false;
+			};
+
+			result := ParseClass();
+			if(<>result) {
+				@diagnose := GetToken();
+				return false;
+			};
+
+			return true;
 		}
 
 		method : ParseUses() ~ Bool {
