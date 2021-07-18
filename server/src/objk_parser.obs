@@ -9,13 +9,13 @@ bundle LSP {
 		@tokens : Vector<Token>;
 		@token_index : Int;
 		@findings : Vector<Finding>;
-		@symbol_scope : Stack<Symbol>;
-		@symbols : Symbol;
+		@symbol_scope : Stack<Entity>;
+		@entities : Entity;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
 			@findings := Vector->New()<Finding>;
-			@symbol_scope := Stack->New()<Symbol>;
+			@symbol_scope := Stack->New()<Entity>;
 		}
 
 #~
@@ -37,11 +37,11 @@ bundle LSP {
 ~#
 
 		method : public : GetSymbols() ~ Data.JSON.JsonElement {
-			return @symbols->GetSymbols();
+			return @entities->GetSymbols();
 		}
 
 		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
-			return @symbols->GetReferences(find, uri);
+			return @entities->GetReferences(find, uri);
 		}
 
 		method : public : Parse() ~ Bool {
@@ -81,7 +81,7 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-			symbol := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CLASS_SYM);
+			symbol := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
 			symbol->SetStart(GetToken());
 			@symbol_scope->Push(symbol);
 			NextToken();
@@ -119,9 +119,7 @@ bundle LSP {
 			};
 			NextToken();
 
-			@symbols := @symbol_scope->Pop();
-
-# @symbols->ToString()->PrintLine();			
+			@entities := @symbol_scope->Pop();
 
 			return true;
 		}
@@ -148,12 +146,12 @@ bundle LSP {
 			};
 			parent := @symbol_scope->Top();
 			
-			child : Symbol;
+			child : Entity;
 			if(is_func) {
-				child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_SYM);
+				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_SYM);
 			}
 			else {
-				child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->METHOD_SYM);
+				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->METHOD_SYM);
 			};
 			child->SetStart(GetToken());
 
@@ -201,7 +199,7 @@ bundle LSP {
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -329,12 +327,12 @@ Dump(1);
 		method : ParseSimpleStatement() ~ Bool {
 			if(Match(Token->Type->IDENT)) {
 				parent := @symbol_scope->Top();
-				child : Symbol;
+				child : Entity;
 				if(Match(Token->Type->OPN, 1)) {
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
+					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 				}
 				else {
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 				};
 				child->SetStart(GetToken());
 				parent->AddChild(child);
@@ -477,7 +475,7 @@ Dump(1);
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -492,7 +490,7 @@ Dump(1);
 			};
 
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 			child->SetStart(GetToken());
 			parent->AddChild(child);
 			NextToken();
@@ -582,7 +580,7 @@ Dump(1);
 
 				label Token->Type->IDENT {
 					parent := @symbol_scope->Top();
-					child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 					child->SetStart(GetToken());
 					parent->AddChild(child);
 					NextToken();
@@ -593,15 +591,15 @@ Dump(1);
 
 							if(Match(Token->Type->IDENT)) {
 								parent := @symbol_scope->Top();
-								child : Symbol;
+								child : Entity;
 								if(GetToken()->GetStringValue()->Equals("New")) {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CONSTRUCTOR_REF, parent);
+									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CONSTRUCTOR_REF, parent);
 								}
 								else if(Match(Token->Type->OPN, 1)) {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
+									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 								}
 								else {
-									child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 								};
 								child->SetStart(GetToken());
 								parent->AddChild(child);
@@ -672,12 +670,12 @@ Dump(1);
 
 					if(Match(Token->Type->IDENT)) {
 						parent := @symbol_scope->Top();
-						child : Symbol;
+						child : Entity;
 						if(Match(Token->Type->OPN, 1)) {
-							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_REF, parent);
+							child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 						}
 						else {
-							child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->VARIABLE_REF, parent);
+							child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 						};
 						child->SetStart(GetToken());
 						parent->AddChild(child);
@@ -1678,14 +1676,14 @@ Dump(1);
 	}
 
 	#
-	# Symbol
+	# Entity
 	#
-	class Symbol {
+	class Entity {
 		@name : String;
-		@kind : Symbol->Kind;
+		@kind : Entity->Kind;
 		@pos : Token;
-		@parent : Symbol;
-		@children : Vector<Symbol>;
+		@parent : Entity;
+		@children : Vector<Entity>;
 
 		consts Kind {
 			# REFS
@@ -1703,14 +1701,14 @@ Dump(1);
 			CONSTRUCTOR_SYM := 109
 		}
 
-		New(name : String, kind : Symbol->Kind, parent : Symbol := Nil) {
+		New(name : String, kind : Entity->Kind, parent : Entity := Nil) {
 			@name := name;
 			@kind := kind;
 			@parent := parent;
-			@children := Vector->New()<Symbol>;
+			@children := Vector->New()<Entity>;
 		}
 
-		method : public : AddChild(child : Symbol) ~ Nil {
+		method : public : AddChild(child : Entity) ~ Nil {
 			@children->AddBack(child);
 		}
 
@@ -1801,6 +1799,7 @@ Dump(1);
 				obj := builder->PushObject();
 				obj->Insert("kind", @kind->As(Int) - 100);
 				obj->Insert("name", @name);
+				
 					builder->PushObject("location");
 
 						builder->PushObject("range");

@@ -267,7 +267,10 @@ bundle LSP {
 
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
-			
+			if(@is_debug) {
+				"### Get Reference: index={$index}, search='{$search}' ###"->PrintLine();
+			};
+
 			parser := Parser->New(out);
 			if(parser->Parse()) {
 				return parser->GetReferences(search, @uri);
