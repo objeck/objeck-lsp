@@ -251,21 +251,19 @@ bundle LSP {
 			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
 			out->PrintLine();
-"############# GetSymbols #############"->PrintLine();	
 
 			parser := Parser->New(out);
 			if(parser->Parse()) {
 				return parser->GetSymbols();
 			};
-			
+
 			return Nil;
 		}
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-out := Web.HTTP.Url->Decode(@uri);
+			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
 			out->PrintLine();
-"############# GetReferences #############"->PrintLine();
 
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
@@ -288,11 +286,13 @@ out := Web.HTTP.Url->Decode(@uri);
 					start -= 1;
 				};
 
-				second := string->Get(start + 1);
-				if(start > -1) {
-					first := string->Get(start);
-					if(first = '\\' & (second = 't' | second = 'n' | second = 'r')) {
-						start += 1;
+				if(start + 1 < string->Size()) {
+					second := string->Get(start + 1);
+					if(start > -1) {
+						first := string->Get(start);
+						if(first = '\\' & (second = 't' | second = 'n' | second = 'r')) {
+							start += 1;
+						};
 					};
 				};
 
