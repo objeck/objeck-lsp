@@ -9,7 +9,6 @@ bundle LSP {
 		@text : String;
 		@tokens : Vector<ScannerToken>;
 		@token_index : Int;
-		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Entity>;
 		@entities : Entity;
 
@@ -18,7 +17,6 @@ bundle LSP {
 
 		New(text : String) {
 			@text := text;
-			@findings := Vector->New()<Finding>;
 			@symbol_scope := Stack->New()<Entity>;
 		}
 
