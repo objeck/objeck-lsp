@@ -10,12 +10,11 @@ bundle LSP {
 		@token_index : Int;
 		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Symbol>;
-		@root : Symbol;
+		@symbols : Symbol;
 
 		New(file : String) {
 			@text := System.IO.File.FileReader->ReadFile(file);
 			@findings := Vector->New()<Finding>;
-			@symbols := Vector->New()<Symbol>;
 			@symbol_scope := Stack->New()<Symbol>;
 		}
 
@@ -37,8 +36,8 @@ bundle LSP {
 		}
 ~#
 
-		method : public : ToJson() ~ Data.JSON.JsonElement {
-			return @root->ToJson();
+		method : public : GetSymbols() ~ Data.JSON.JsonElement {
+			return @symbols->ToJson();
 		}
 
 		method : public : Parse() ~ Bool {
@@ -116,9 +115,9 @@ bundle LSP {
 			};
 			NextToken();
 
-			@root := @symbol_scope->Pop();
+			@symbols := @symbol_scope->Pop();
 
-@root->ToString()->PrintLine();			
+@symbols->ToString()->PrintLine();			
 
 			return true;
 		}

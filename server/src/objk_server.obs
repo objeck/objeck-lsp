@@ -49,7 +49,8 @@ bundle LSP {
 		# Callbacks
 		#
 		method : CallbackReferences(id : Int, params : JsonElement) ~ Nil {
-			
+			uri := params->FindElements("textDocument/uri")->GetValue();
+#			response := GetDocument(uri)->GetSymbols();
 		}
 
 
@@ -251,7 +252,7 @@ bundle LSP {
 
 			parser := Parser->New(out);
 			if(parser->Parse()) {
-				obj := parser->ToJson();
+				obj := parser->GetSymbols();
 "############# {$obj} #############"->PrintLine();			
 				return obj;
 			};
