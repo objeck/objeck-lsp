@@ -194,7 +194,10 @@ bundle LSP {
 					};
 				};
 
-				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnoses());
+				diagnose := document->GetDiagnoses();
+				if(diagnose <> Nil) {
+					WriteRpcRequest("textDocument/publishDiagnostics", diagnose);
+				};
 			};
 		}
 	}
@@ -206,6 +209,7 @@ bundle LSP {
 		@uri : String;
 		@text : String;
 		@is_debug : Bool;
+		@update_count : Int;
 
 		New(uri : String, text : String) {
 			@uri := uri;
@@ -214,18 +218,16 @@ bundle LSP {
 
 		# TODO: hacked...
 		method : public : GetDiagnoses() ~ JsonElement {
-#			out := Web.HTTP.Url->Decode(@uri);
-#			out->Delete(0, "file:///"->Size());
-			
-			parser := Parser->New(@text);
-			result := parser->Parse();
-			return parser->GetDiagnoses(@uri);
+			if(@update_count = 3) {
+				parser := Parser->New(@text);
+				result := parser->Parse();
+				return parser->GetDiagnoses(@uri);
+			};
+
+			return Nil;
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
-#			out := Web.HTTP.Url->Decode(@uri);
-#			out->Delete(0, "file:///"->Size());
-
 			parser := Parser->New(@text);
 			if(parser->Parse()) {
 				return parser->GetSymbols();
@@ -235,9 +237,6 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-#			out := Web.HTTP.Url->Decode(@uri);
-#			out->Delete(0, "file:///"->Size());
-
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
 			if(@is_debug) {
@@ -286,11 +285,15 @@ bundle LSP {
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
-			start := GetDocumentIndex(start_line, start_char);
-#			if(@is_debug) {
-				"### Update: foo={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
-#			};
+			@update_count += 1;
+			if(@update_count > 3) {
+				@update_count := 0;
+			};
 
+			start := GetDocumentIndex(start_line, start_char);
+			if(@is_debug) {
+				"### Update: foo={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+			};
 			
 			if(start > -1) {
 				if(range_length > 0) {
@@ -410,7 +413,7 @@ bundle LSP {
 					out += cur_char;
 				};
 			};
-			
+
 			return out;
 		}
 
