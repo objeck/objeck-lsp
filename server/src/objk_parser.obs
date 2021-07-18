@@ -37,11 +37,11 @@ bundle LSP {
 ~#
 
 		method : public : GetSymbols() ~ Data.JSON.JsonElement {
-			return @symbols->ToJson();
+			return @symbols->GetSymbols();
 		}
 
 		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
-			return @symbols->Foo(find, uri);
+			return @symbols->GetReferences(find, uri);
 		}
 
 		method : public : Parse() ~ Bool {
@@ -81,7 +81,7 @@ bundle LSP {
 			if(<>Match(Token->Type->IDENT)) {
 				return false;
 			};
-			symbol := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CLASS);
+			symbol := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->CLASS_SYM);
 			symbol->SetStart(GetToken());
 			@symbol_scope->Push(symbol);
 			NextToken();
@@ -147,29 +147,19 @@ bundle LSP {
 				return false;
 			};
 			parent := @symbol_scope->Top();
-			child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION, parent);
+			
+			child : Symbol;
+			if(is_func) {
+				child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->FUNCTION_SYM);
+			}
+			else {
+				child := Symbol->New(GetToken()->GetStringValue(), Symbol->Kind->METHOD_SYM);
+			};
 			child->SetStart(GetToken());
+
 			parent->AddChild(child);
 			@symbol_scope->Push(child);
 			NextToken();
-
-#~
-			# create symbol
-			symbol : Symbol;
-			token := @tokens->Get(@token_index);
-			if(is_func) {
-				symbol := Symbol->New(Symbol->Kind->FUNCTION, token->GetStringValue());
-			}
-			else {
-				symbol := Symbol->New(Symbol->Kind->METHOD, token->GetStringValue());
-			};
-			symbol->SetStart(token->GetLine(), token->GetPos());
-			NextToken();
-
-			token := @tokens->Get(@token_index);
-			symbol->SetEnd(token->GetLine(), token->GetPos());
-			@symbols->AddBack(symbol);
-~#
 
 			# declarations
 			if(<>ParseDeclarationParameters()) {
@@ -1704,7 +1694,12 @@ Dump(1);
 			CONSTRUCTOR := 9,
 			ENUM := 10,
 			FUNCTION := 12,
-			VARIABLE := 13
+			VARIABLE := 13,
+			####
+			CLASS_SYM := 105,
+			FUNCTION_SYM := 112,
+			METHOD_SYM := 106,
+			CONSTRUCTOR_SYM := 109
 		}
 
 		New(name : String, kind : Symbol->Kind, parent : Symbol := Nil) {
@@ -1749,13 +1744,13 @@ Dump(1);
 			return buffer;
 		}
 
-		method : public : Foo(find : String, uri : String) ~ Data.JSON.JsonElement {
+		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
 			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
-			Foo(find, uri, array);
+			GetReferences(find, uri, array);
 			return array;
 		}
 
-		method : public : Foo(find : String, uri : String, array : Data.JSON.JsonElement) ~ Nil {
+		method : public : GetReferences(find : String, uri : String, array : Data.JSON.JsonElement) ~ Nil {
 find->PrintLine();			
 			if(@name->Equals(find)) {
 				builder := Data.JSON.JsonBuilder->New();
@@ -1784,27 +1779,27 @@ find->PrintLine();
 
 			if(@children <> Nil) {
 				each(i : @children) {
-					@children->Get(i)->Foo(find, uri, array);
+					@children->Get(i)->GetReferences(find, uri, array);
 				};
 			};
 		}
 
-		method : public : ToJson() ~ Data.JSON.JsonElement {
+		method : public : GetSymbols() ~ Data.JSON.JsonElement {
 			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
-			ToJson(array);
+			GetSymbols(array);
 			return array;
 		}
 
-		method : public : ToJson(array : Data.JSON.JsonElement) ~ Nil {
+		method : public : GetSymbols(array : Data.JSON.JsonElement) ~ Nil {
 			builder := Data.JSON.JsonBuilder->New();
 
-			if(@kind = Symbol->Kind->CLASS | @kind = Symbol->Kind->METHOD | @kind = Symbol->Kind->CONSTRUCTOR | @kind = Symbol->Kind->FUNCTION) {
+			if(@kind = Symbol->Kind->CLASS_SYM | @kind = Symbol->Kind->CONSTRUCTOR_SYM | @kind = Symbol->Kind->FUNCTION_SYM | @kind = Symbol->Kind->METHOD_SYM) {
 				start_line := end_line := @pos->GetLine();
 				start_index := @pos->GetPos();
 				end_index := start_index + @name->Size();
 				
 				obj := builder->PushObject();
-				obj->Insert("kind", @kind->As(Int));
+				obj->Insert("kind", @kind->As(Int) - 100);
 				obj->Insert("name", @name);
 					builder->PushObject("location");
 
@@ -1837,7 +1832,7 @@ find->PrintLine();
 
 			if(@children <> Nil) {
 				each(i : @children) {
-					@children->Get(i)->ToJson(array);
+					@children->Get(i)->GetSymbols(array);
 				};
 			};
 		}
