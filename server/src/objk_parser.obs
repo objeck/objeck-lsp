@@ -1,4 +1,5 @@
 use Collection.Generic;
+use Data.JSON;
 
 bundle LSP {
 	#
@@ -6,14 +7,14 @@ bundle LSP {
 	#
 	class Parser {
 		@text : String;
-		@tokens : Vector<Token>;
+		@tokens : Vector<ScannerToken>;
 		@token_index : Int;
 		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Entity>;
 		@entities : Entity;
 
-		@diagnose_start : Token;
-		@diagnose_end : Token;
+		@diagnose_start : ScannerToken;
+		@diagnose_end : ScannerToken;
 
 		New(text : String) {
 			@text := text;
@@ -41,16 +42,16 @@ bundle LSP {
 		}
 ~#
 
-		method : public : GetSymbols() ~ Data.JSON.JsonElement {
+		method : public : GetSymbols() ~ JsonElement {
 			return @entities->GetSymbols();
 		}
 
-		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
+		method : public : GetReferences(find : String, uri : String) ~ JsonElement {
 			return @entities->GetReferences(find, uri);
 		}
 
-		method : public : GetDiagnoses(uri : String) ~ Data.JSON.JsonElement {
-			diagnostics := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+		method : public : GetDiagnoses(uri : String) ~ JsonElement {
+			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 			if(@diagnose_start <> Nil) {
 				start_line := @diagnose_start->GetLine();
@@ -60,20 +61,20 @@ bundle LSP {
 				end_index := @diagnose_end->GetPos();
 
 				each(i : 1) {
-					diagnostic := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 					diagnostic->Insert("severity", 1);
 					diagnostic->Insert("message", "Unexpected token");
 					diagnostic->Insert("source", "objk-linter");
 
-					range := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					range := JsonElement->New(JsonElement->JsonType->OBJECT);
 					# start
-					start := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					start := JsonElement->New(JsonElement->JsonType->OBJECT);
 					start->Insert("line", start_line);
 					start->Insert("character", start_index);
 					range->Insert("start", start);
 					# end
-					end := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+					end := JsonElement->New(JsonElement->JsonType->OBJECT);
 					end->Insert("line", start_line);
 					end->Insert("character", end_index);
 					range->Insert("end", end);
@@ -83,7 +84,7 @@ bundle LSP {
 				};
 			};
 			
-			request := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
+			request := JsonElement->New(JsonElement->JsonType->OBJECT);
 			request->Insert("uri", uri);
 			request->Insert("diagnostics", diagnostics);
 			
@@ -91,7 +92,7 @@ bundle LSP {
 		}
 
 		method : public : Parse() ~ Bool {
-			@tokens := Scanner->New(@text)->Scan()<Token>;
+			@tokens := Scanner->New(@text)->Scan()<ScannerToken>;
 # DumpTokens();
 
 			result := ParseUses();
@@ -112,16 +113,16 @@ bundle LSP {
 		}
 
 		method : ParseUses() ~ Bool {
-			if(Match(Token->Type->USE_ID)) {
-				while(Match(Token->Type->USE_ID)) {					
+			if(Match(ScannerToken->Type->USE_ID)) {
+				while(Match(ScannerToken->Type->USE_ID)) {					
 					NextToken();
 
-					if(<>Match(Token->Type->IDENT)) {
+					if(<>Match(ScannerToken->Type->IDENT)) {
 						return false;
 					};
 					NextToken();
 
-					if(<>Match(Token->Type->SEMI_COLON)) {
+					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 						return false;
 					};
 					NextToken();
@@ -132,12 +133,12 @@ bundle LSP {
 		}
 
 		method : ParseClass() ~ Bool {
-			if(<>Match(Token->Type->CLASS_ID)) {
+			if(<>Match(ScannerToken->Type->CLASS_ID)) {
 				return false;
 			};
 			NextToken();
 
-			if(<>Match(Token->Type->IDENT)) {
+			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
 			symbol := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
@@ -145,24 +146,24 @@ bundle LSP {
 			@symbol_scope->Push(symbol);
 			NextToken();
 
-			if(<>Match(Token->Type->OCPN)) {
+			if(<>Match(ScannerToken->Type->OCPN)) {
 				return false;
 			};
 			NextToken();
 
 			done := false;
 			do {
-				if(Match(Token->Type->FUNCTION_ID) | Match(Token->Type->METHOD_ID)) {
-					if(<>ParseMethod(Match(Token->Type->FUNCTION_ID))) {
+				if(Match(ScannerToken->Type->FUNCTION_ID) | Match(ScannerToken->Type->METHOD_ID)) {
+					if(<>ParseMethod(Match(ScannerToken->Type->FUNCTION_ID))) {
 						return false;
 					};
 				}
-				else if(Match(Token->Type->IDENT)) {
+				else if(Match(ScannerToken->Type->IDENT)) {
 					if(<>ParseDeclaration()) {
 						return false;
 					};
 
-					if(<>Match(Token->Type->SEMI_COLON)) {
+					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 						return false;
 					};
 					NextToken();
@@ -173,7 +174,7 @@ bundle LSP {
 			}
 			while(<>done);
 
-			if(<>Match(Token->Type->CCPN)) {
+			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
 			NextToken();
@@ -186,21 +187,21 @@ bundle LSP {
 		method : ParseMethod(is_func : Bool) ~ Bool {
 			NextToken();
 
-			if(<>Match(Token->Type->COLON)) {
+			if(<>Match(ScannerToken->Type->COLON)) {
 				return false;
 			};
 			NextToken();
 
-			if(Match(Token->Type->NATIVE_ID)) {
+			if(Match(ScannerToken->Type->NATIVE_ID)) {
 				NextToken();
 
-				if(<>Match(Token->Type->COLON)) {
+				if(<>Match(ScannerToken->Type->COLON)) {
 					return false;
 				};
 				NextToken();
 			};
 
-			if(<>Match(Token->Type->IDENT)) {
+			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
 			parent := @symbol_scope->Top();
@@ -223,7 +224,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->TILDE)) {
+			if(<>Match(ScannerToken->Type->TILDE)) {
 				return false;
 			};
 			NextToken();
@@ -232,7 +233,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->OCPN)) {
+			if(<>Match(ScannerToken->Type->OCPN)) {
 				return false;
 			};
 			NextToken();
@@ -242,7 +243,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->CCPN)) {
+			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
 			NextToken();
@@ -253,7 +254,7 @@ bundle LSP {
 		}
 
 		method : ParseDeclaration() ~ Bool {
-			if(<>Match(Token->Type->IDENT)) {
+			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
 
@@ -263,15 +264,15 @@ bundle LSP {
 			parent->AddChild(child);
 			NextToken();
 
-			if(<>Match(Token->Type->COLON)) {
+			if(<>Match(ScannerToken->Type->COLON)) {
 				return false;
 			};
 			NextToken();
 
-			if(Match(Token->Type->STATIC_ID)) {
+			if(Match(ScannerToken->Type->STATIC_ID)) {
 				NextToken();
 
-				if(<>Match(Token->Type->COLON)) {
+				if(<>Match(ScannerToken->Type->COLON)) {
 					return false;
 				};
 				NextToken();
@@ -285,17 +286,17 @@ bundle LSP {
 		}
 
 		method : ParseDeclarationParameters() ~ Bool {
-			if(<>Match(Token->Type->OPN)) {
+			if(<>Match(ScannerToken->Type->OPN)) {
 				return false;
 			};
 			NextToken();
 
-			while(<>Match(Token->Type->CPN)) {
+			while(<>Match(ScannerToken->Type->CPN)) {
 				if(<>ParseDeclaration()) {
 					return false;
 				};
 
-				if(Match(Token->Type->ASSIGN)) {
+				if(Match(ScannerToken->Type->ASSIGN)) {
 					NextToken();
 
 					if(<>ParseExpression()) {
@@ -303,7 +304,7 @@ bundle LSP {
 					};
 				};
 
-				if(Match(Token->Type->COMMA)) {
+				if(Match(ScannerToken->Type->COMMA)) {
 					NextToken();
 				};
 			};
@@ -316,39 +317,39 @@ bundle LSP {
 			done := false;
 
 			do {
-				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
+				if(Match(ScannerToken->Type->IDENT) & Match(ScannerToken->Type->COLON, 1)) {
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
 					};
 				}
-				else if(Match(Token->Type->IDENT) | Match(Token->Type->STRING_LIT)) {
+				else if(Match(ScannerToken->Type->IDENT) | Match(ScannerToken->Type->STRING_LIT)) {
 					if(<>ParseSimpleStatement()) {
 						return false;
 					};
 
 				}
-				else if(Match(Token->Type->RETURN_ID)) {
+				else if(Match(ScannerToken->Type->RETURN_ID)) {
 					if(<>ParseReturn()) {
 						return false;
 					};
 				}
-				else if(Match(Token->Type->EACH_ID)) {
+				else if(Match(ScannerToken->Type->EACH_ID)) {
 					if(<>ParseEach()) {
 						return false;
 					};
 				}
-				else if(Match(Token->Type->FOR_ID)) {
+				else if(Match(ScannerToken->Type->FOR_ID)) {
 					if(<>ParseFor()) {
 						return false;
 					};
 				}
-				else if(Match(Token->Type->IF_ID)) {
+				else if(Match(ScannerToken->Type->IF_ID)) {
 					if(<>ParseIfWhile()) {
 						return false;
 					};
 
-					while(Match(Token->Type->ELSE_ID)) {
-						if(Match(Token->Type->IF_ID, 1)) {
+					while(Match(ScannerToken->Type->ELSE_ID)) {
+						if(Match(ScannerToken->Type->IF_ID, 1)) {
 							NextToken();
 						};
 
@@ -358,17 +359,17 @@ bundle LSP {
 
 					};
 					
-					if(<>Match(Token->Type->SEMI_COLON)) {
+					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 						return false;
 					};
 					NextToken();
 				}
-				else if(Match(Token->Type->WHILE_ID)) {
+				else if(Match(ScannerToken->Type->WHILE_ID)) {
 					if(<>ParseIfWhile()) {
 						return false;
 					};
 
-					if(<>Match(Token->Type->SEMI_COLON)) {
+					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 						return false;
 					};
 					NextToken();
@@ -383,10 +384,10 @@ bundle LSP {
 		}
 
 		method : ParseSimpleStatement() ~ Bool {
-			if(Match(Token->Type->IDENT)) {
+			if(Match(ScannerToken->Type->IDENT)) {
 				parent := @symbol_scope->Top();
 				child : Entity;
-				if(Match(Token->Type->OPN, 1)) {
+				if(Match(ScannerToken->Type->OPN, 1)) {
 					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 				}
 				else {
@@ -399,11 +400,11 @@ bundle LSP {
 			NextToken();
 
 			select(GetType()) {
-				label Token->Type->ASSIGN
-				label Token->Type->ADD_EQL
-				label Token->Type->SUB_EQL
-				label Token->Type->MUL_EQL
-				label Token->Type->DIV_EQL {
+				label ScannerToken->Type->ASSIGN
+				label ScannerToken->Type->ADD_EQL
+				label ScannerToken->Type->SUB_EQL
+				label ScannerToken->Type->MUL_EQL
+				label ScannerToken->Type->DIV_EQL {
 					NextToken();
 
 					if(<>ParseExpression()) {
@@ -411,13 +412,13 @@ bundle LSP {
 					};
 				}
 				
-				label Token->Type->OPN {
+				label ScannerToken->Type->OPN {
 					if(<>ParseCallParameters()) {	
 						return false;
 					};
 				}
 
-				label Token->Type->ASSESSOR {
+				label ScannerToken->Type->ASSESSOR {
 					NextToken();
 				}
 
@@ -426,7 +427,7 @@ bundle LSP {
 				}
 			};
 
-			if(Match(Token->Type->SEMI_COLON) | Match(Token->Type->ASSESSOR)) {
+			if(Match(ScannerToken->Type->SEMI_COLON) | Match(ScannerToken->Type->ASSESSOR)) {
 				NextToken();
 			};
 
@@ -438,7 +439,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(Match(Token->Type->ASSIGN)) {
+			if(Match(ScannerToken->Type->ASSIGN)) {
 				NextToken();
 
 				if(<>ParseExpression()) {
@@ -446,7 +447,7 @@ bundle LSP {
 				};
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
+			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -457,7 +458,7 @@ bundle LSP {
 		method : ParseIfWhile() ~ Bool {
 			NextToken();
 
-			if(<>Match(Token->Type->OPN)) {
+			if(<>Match(ScannerToken->Type->OPN)) {
 				return false;
 			};
 			NextToken();
@@ -466,7 +467,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->CPN)) {
+			if(<>Match(ScannerToken->Type->CPN)) {
 				return false;
 			};
 			
@@ -476,17 +477,17 @@ bundle LSP {
 		method : ParseFor() ~ Bool {
 			NextToken();
 
-			if(<>Match(Token->Type->OPN)) {
+			if(<>Match(ScannerToken->Type->OPN)) {
 				return false;
 			};
 			NextToken();
 
-			if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
+			if(Match(ScannerToken->Type->IDENT) & Match(ScannerToken->Type->COLON, 1)) {
 				if(<>ParseAssignmentDeclaration()) {
 					return false;
 				};
 			}
-			else if(Match(Token->Type->IDENT)) {
+			else if(Match(ScannerToken->Type->IDENT)) {
 				if(<>ParseSimpleStatement()) {
 					return false;
 				};
@@ -499,7 +500,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
+			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -512,7 +513,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
+			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -523,27 +524,12 @@ bundle LSP {
 		method : ParseEach() ~ Bool {
 			NextToken();
 
-			if(<>Match(Token->Type->OPN)) {
+			if(<>Match(ScannerToken->Type->OPN)) {
 				return false;
 			};
 			NextToken();
 
-			if(<>Match(Token->Type->IDENT)) {
-				return false;
-			};
-
-			parent := @symbol_scope->Top();
-			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-			child->SetStart(GetToken());
-			parent->AddChild(child);
-			NextToken();
-
-			if(<>Match(Token->Type->COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>Match(Token->Type->IDENT)) {
+			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
 
@@ -553,7 +539,22 @@ bundle LSP {
 			parent->AddChild(child);
 			NextToken();
 
-			if(<>Match(Token->Type->CPN)) {
+			if(<>Match(ScannerToken->Type->COLON)) {
+				return false;
+			};
+			NextToken();
+
+			if(<>Match(ScannerToken->Type->IDENT)) {
+				return false;
+			};
+
+			parent := @symbol_scope->Top();
+			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
+			child->SetStart(GetToken());
+			parent->AddChild(child);
+			NextToken();
+
+			if(<>Match(ScannerToken->Type->CPN)) {
 				return false;
 			};
 			
@@ -561,7 +562,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
+			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -573,7 +574,7 @@ bundle LSP {
 			NextToken();
 
 			# statements
-			if(<>Match(Token->Type->OCPN)) {
+			if(<>Match(ScannerToken->Type->OCPN)) {
 				return false;
 			};
 			NextToken();
@@ -582,7 +583,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->CCPN)) {
+			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
 			NextToken();
@@ -599,19 +600,19 @@ bundle LSP {
 				};
 
 				select(GetType()) {
-					label Token->Type->AND
-					label Token->Type->OR
-					label Token->Type->EQL
-					label Token->Type->NEQL
-					label Token->Type->LES
-					label Token->Type->GTR
-					label Token->Type->LES_EQL
-					label Token->Type->GTR_EQL
-					label Token->Type->ADD
-					label Token->Type->SUB
-					label Token->Type->MUL
-					label Token->Type->DIV
-					label Token->Type->MOD {
+					label ScannerToken->Type->AND
+					label ScannerToken->Type->OR
+					label ScannerToken->Type->EQL
+					label ScannerToken->Type->NEQL
+					label ScannerToken->Type->LES
+					label ScannerToken->Type->GTR
+					label ScannerToken->Type->LES_EQL
+					label ScannerToken->Type->GTR_EQL
+					label ScannerToken->Type->ADD
+					label ScannerToken->Type->SUB
+					label ScannerToken->Type->MUL
+					label ScannerToken->Type->DIV
+					label ScannerToken->Type->MOD {
 						NextToken();
 					}
 
@@ -627,33 +628,33 @@ bundle LSP {
 
 		method : ParseSimpleExpression() ~ Bool {
 			select(GetType()) {
-				label Token->Type->STRING_LIT
-				label Token->Type->CHAR_LIT
-				label Token->Type->INT_LIT
-				label Token->Type->FLOAT_LIT {
+				label ScannerToken->Type->STRING_LIT
+				label ScannerToken->Type->CHAR_LIT
+				label ScannerToken->Type->INT_LIT
+				label ScannerToken->Type->FLOAT_LIT {
 					NextToken();
 
 					return true;
 				}
 
-				label Token->Type->IDENT {
+				label ScannerToken->Type->IDENT {
 					parent := @symbol_scope->Top();
 					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
 					child->SetStart(GetToken());
 					parent->AddChild(child);
 					NextToken();
 					
-					if(Match(Token->Type->ASSESSOR)) {
-						while(Match(Token->Type->ASSESSOR)) {
+					if(Match(ScannerToken->Type->ASSESSOR)) {
+						while(Match(ScannerToken->Type->ASSESSOR)) {
 							NextToken();
 
-							if(Match(Token->Type->IDENT)) {
+							if(Match(ScannerToken->Type->IDENT)) {
 								parent := @symbol_scope->Top();
 								child : Entity;
 								if(GetToken()->GetStringValue()->Equals("New")) {
 									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CONSTRUCTOR_REF, parent);
 								}
-								else if(Match(Token->Type->OPN, 1)) {
+								else if(Match(ScannerToken->Type->OPN, 1)) {
 									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 								}
 								else {
@@ -663,16 +664,16 @@ bundle LSP {
 								parent->AddChild(child);
 								NextToken();
 
-								if(Match(Token->Type->OPN)) {
+								if(Match(ScannerToken->Type->OPN)) {
 									if(<>ParseCallParameters()) {
 										return false;
 									};
 								};
 							}
-							else if(Match(Token->Type->AS_ID)) {
+							else if(Match(ScannerToken->Type->AS_ID)) {
 								NextToken();
 
-								if(<>Match(Token->Type->OPN)) {
+								if(<>Match(ScannerToken->Type->OPN)) {
 									return false;
 								};
 								NextToken();
@@ -681,26 +682,26 @@ bundle LSP {
 									return false;
 								};
 
-								if(<>Match(Token->Type->CPN)) {
+								if(<>Match(ScannerToken->Type->CPN)) {
 									return false;
 								};
 								NextToken();
 							};
 						};
 					}
-					else if(Match(Token->Type->OPN)) {
+					else if(Match(ScannerToken->Type->OPN)) {
 						if(<>ParseCallParameters()) {
 							return false;
 						};
 					}
-					else if(Match(Token->Type->OBR)) {
+					else if(Match(ScannerToken->Type->OBR)) {
 						NextToken();
 
 						if(<>ParseExpression()) {
 							return false;
 						};
 
-						if(<>Match(Token->Type->CBR)) {
+						if(<>Match(ScannerToken->Type->CBR)) {
 							return false;
 						};
 						NextToken();
@@ -709,27 +710,27 @@ bundle LSP {
 					return true;
 				}
 
-				label Token->Type->NIL_ID {
+				label ScannerToken->Type->NIL_ID {
 					NextToken();
 
 					return true;
 				}
 
-				label Token->Type->INT_ID
-				label Token->Type->FLOAT_ID
-				label Token->Type->CHAR_ID
-				label Token->Type->BYTE_ID {
+				label ScannerToken->Type->INT_ID
+				label ScannerToken->Type->FLOAT_ID
+				label ScannerToken->Type->CHAR_ID
+				label ScannerToken->Type->BYTE_ID {
 					NextToken();
 
-					if(<>Match(Token->Type->ASSESSOR)) {
+					if(<>Match(ScannerToken->Type->ASSESSOR)) {
 						return false;
 					};
 					NextToken();
 
-					if(Match(Token->Type->IDENT)) {
+					if(Match(ScannerToken->Type->IDENT)) {
 						parent := @symbol_scope->Top();
 						child : Entity;
-						if(Match(Token->Type->OPN, 1)) {
+						if(Match(ScannerToken->Type->OPN, 1)) {
 							child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
 						}
 						else {
@@ -747,14 +748,14 @@ bundle LSP {
 					return true;
 				}
 
-				label Token->Type->OPN {
+				label ScannerToken->Type->OPN {
 					NextToken();
 
 					if(<>ParseExpression()) {
 						return false;
 					};
 
-					if(<>Match(Token->Type->CPN)) {
+					if(<>Match(ScannerToken->Type->CPN)) {
 						return false;
 					};
 					NextToken();
@@ -767,17 +768,17 @@ bundle LSP {
 		}
 
 		method : ParseCallParameters() ~ Bool {
-			if(<>Match(Token->Type->OPN)) {
+			if(<>Match(ScannerToken->Type->OPN)) {
 				return false;
 			};
 			NextToken();
 
-			while(<>Match(Token->Type->CPN)) {
+			while(<>Match(ScannerToken->Type->CPN)) {
 				if(<>ParseExpression()) {
 					return false;
 				};
 
-				if(Match(Token->Type->COMMA)) {
+				if(Match(ScannerToken->Type->COMMA)) {
 					NextToken();
 
 					if(<>ParseExpression()) {
@@ -786,18 +787,18 @@ bundle LSP {
 				};
 			};
 
-			if(<>Match(Token->Type->CPN)) {
+			if(<>Match(ScannerToken->Type->CPN)) {
 				return false;
 			};
 			NextToken();
 
-			while(Match(Token->Type->LES)) {
+			while(Match(ScannerToken->Type->LES)) {
 				NextToken();
 				if(<>ParseType()) {
 					return false;
 				};
 
-				if(<>Match(Token->Type->GTR)) {
+				if(<>Match(ScannerToken->Type->GTR)) {
 					return false;
 				};
 				NextToken();
@@ -813,7 +814,7 @@ bundle LSP {
 				return false;
 			};
 
-			if(<>Match(Token->Type->SEMI_COLON)) {
+			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
 				return false;
 			};
 			NextToken();
@@ -823,16 +824,16 @@ bundle LSP {
 
 		method : ParseType() ~ Bool {
 			select(GetType()) {
-				label Token->Type->NIL_ID
-				label Token->Type->STRING_ID
-				label Token->Type->INT_ID
-				label Token->Type->FLOAT_ID
-				label Token->Type->CHAR_ID
-				label Token->Type->BYTE_ID {
+				label ScannerToken->Type->NIL_ID
+				label ScannerToken->Type->STRING_ID
+				label ScannerToken->Type->INT_ID
+				label ScannerToken->Type->FLOAT_ID
+				label ScannerToken->Type->CHAR_ID
+				label ScannerToken->Type->BYTE_ID {
 					NextToken();
 				}
 
-				label Token->Type->IDENT {
+				label ScannerToken->Type->IDENT {
 					NextToken();
 				}
 
@@ -841,14 +842,14 @@ bundle LSP {
 				}
 			};
 
-			if(Match(Token->Type->OBR)) {
+			if(Match(ScannerToken->Type->OBR)) {
 				NextToken();
 
-				while(Match(Token->Type->COMMA)) {
+				while(Match(ScannerToken->Type->COMMA)) {
 					NextToken();
 				};
 
-				if(<>Match(Token->Type->CBR)) {
+				if(<>Match(ScannerToken->Type->CBR)) {
 					return false;
 				};
 				NextToken();
@@ -863,15 +864,15 @@ bundle LSP {
 			};
 		}
 
-		method : GetType() ~ Token->Type {
+		method : GetType() ~ ScannerToken->Type {
 			if(@token_index < @tokens->Size()) {
 				return @tokens->Get(@token_index)->GetType();
 			};
 
-			return Token->Type->EOS;
+			return ScannerToken->Type->EOS;
 		}
 
-		method : GetToken(offset : Int := 0) ~ Token {
+		method : GetToken(offset : Int := 0) ~ ScannerToken {
 			if(@token_index + offset < @tokens->Size()) {
 				return @tokens->Get(@token_index + offset);
 			};
@@ -879,7 +880,7 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : Match(type : Token->Type, offset : Int := 0) ~ Bool {
+		method : Match(type : ScannerToken->Type, offset : Int := 0) ~ Bool {
 			index := @token_index + offset;
 			if(index < @tokens->Size()) {
 				return @tokens->Get(index)->GetType() = type;
@@ -907,7 +908,7 @@ bundle LSP {
 	# Scanner
 	#
 	class : private : Scanner {
-		@tokens : Vector<Token>;
+		@tokens : Vector<ScannerToken>;
 		@buffer : Char[];
 		@buffer_index : Int;
 		@cur_char : Char;
@@ -920,7 +921,7 @@ bundle LSP {
 			@buffer := text->ToCharArray();
 			@buffer_index := 0;
 
-			@tokens := Vector->New()<Token>;
+			@tokens := Vector->New()<ScannerToken>;
 			@keywords := Hash->New()<String, IntHolder>;
 			@keywords->Insert("return", IntHolder->New(Type->RETURN_ID));
 			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
@@ -1013,11 +1014,11 @@ bundle LSP {
 
 			found := @keywords->Find(ident);
 			if(found <> Nil) {
-				type := found->Get()->As(Token->Type);
-				@tokens->AddBack(Token->New(type, ident, @line_num, start_index));
+				type := found->Get()->As(ScannerToken->Type);
+				@tokens->AddBack(ScannerToken->New(type, ident, @line_num, start_index));
 			}
 			else {
-				@tokens->AddBack(Token->New(Token->Type->IDENT, ident, @line_num, start_index));
+				@tokens->AddBack(ScannerToken->New(ScannerToken->Type->IDENT, ident, @line_num, start_index));
 			};
 		}
 
@@ -1036,10 +1037,10 @@ bundle LSP {
 
 			ident := String->New(@buffer, start - 1, @buffer_index - start);
 			if(is_float) {
-				@tokens->AddBack(Token->New(ident->ToFloat(), @line_num, start_index));
+				@tokens->AddBack(ScannerToken->New(ident->ToFloat(), @line_num, start_index));
 			}
 			else {
-				@tokens->AddBack(Token->New(ident->ToInt(), @line_num, start_index));
+				@tokens->AddBack(ScannerToken->New(ident->ToInt(), @line_num, start_index));
 			};
 		}
 
@@ -1057,7 +1058,7 @@ bundle LSP {
 			ident := String->New(@buffer, start, @buffer_index - start - 1);
 			NextChar();
 
-			@tokens->AddBack(Token->New(Token->Type->STRING_LIT, ident, @line_num, start_index));
+			@tokens->AddBack(ScannerToken->New(ScannerToken->Type->STRING_LIT, ident, @line_num, start_index));
 		}
 
 		method : ParseChar() ~ Nil {
@@ -1068,25 +1069,25 @@ bundle LSP {
 					label 'r' {
 						NextChar();
 						start_index := @line_index - 1;
-						@tokens->AddBack(Token->New('\r', @line_num, start_index));
+						@tokens->AddBack(ScannerToken->New('\r', @line_num, start_index));
 					}
 
 					label 'n' {
 						NextChar();
 						start_index := @line_index - 1;
-						@tokens->AddBack(Token->New('\n', @line_num, start_index));
+						@tokens->AddBack(ScannerToken->New('\n', @line_num, start_index));
 					}
 
 					label 't' {
 						NextChar();
 						start_index := @line_index - 1;
-						@tokens->AddBack(Token->New('\t', @line_num, start_index));
+						@tokens->AddBack(ScannerToken->New('\t', @line_num, start_index));
 					}
 				};
 			}
 			else {
 				start_index := @line_index - 1;
-				@tokens->AddBack(Token->New(@cur_char, @line_num, start_index));
+				@tokens->AddBack(ScannerToken->New(@cur_char, @line_num, start_index));
 			};
 
 			NextChar();
@@ -1096,12 +1097,12 @@ bundle LSP {
 			}
 			else {
 				start_index := @line_index - 1;
-				@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
+				@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OTHER, @cur_char, @line_num, start_index));
 				NextChar();
 			};
 		}
 
-		method : public : Scan() ~ Vector<Token> {
+		method : public : Scan() ~ Vector<ScannerToken> {
 			NextChar();
 
 			while(@cur_char <> '\0') {
@@ -1126,18 +1127,18 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->LES_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->LES_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else if(@next_char = '>') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->NEQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->NEQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->LES, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->LES, @line_num, start_index));
 								NextChar();
 							};
 						}
@@ -1146,55 +1147,55 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->GTR_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->GTR_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->GTR, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->GTR, @line_num, start_index));
 								NextChar();
 							};
 						}
 
 						label ';' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->SEMI_COLON, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SEMI_COLON, @line_num, start_index));
 							NextChar();
 						}
 
 						label ',' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->COMMA, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->COMMA, @line_num, start_index));
 							NextChar();
 						}
 
 						label '{' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OCPN, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OCPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '}' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->CCPN, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CCPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '(' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OPN, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label ')' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->CPN, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CPN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '=' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->EQL, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EQL, @line_num, start_index));
 							NextChar();
 						}
 
@@ -1202,43 +1203,43 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->ASSIGN, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSIGN, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->COLON, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->COLON, @line_num, start_index));
 								NextChar();
 							};
 						}
 
 						label '~' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->TILDE, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->TILDE, @line_num, start_index));
 							NextChar();
 						}
 
 						label '&' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->AND, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->AND, @line_num, start_index));
 							NextChar();
 						}
 
 						label '|' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OR, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OR, @line_num, start_index));
 							NextChar();
 						}
 
 						label '[' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OBR, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OBR, @line_num, start_index));
 							NextChar();
 						}
 
 						label ']' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->CBR, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CBR, @line_num, start_index));
 							NextChar();
 						}
 
@@ -1246,12 +1247,12 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->ADD_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ADD_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->ADD, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ADD, @line_num, start_index));
 								NextChar();
 							};
 						}
@@ -1260,12 +1261,12 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->MUL_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MUL_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->MUL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MUL, @line_num, start_index));
 								NextChar();
 							};
 						}
@@ -1274,19 +1275,19 @@ bundle LSP {
 							if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->DIV_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->DIV_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->DIV, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->DIV, @line_num, start_index));
 								NextChar();
 							};
 						}
 
 						label '%' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->MOD, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MOD, @line_num, start_index));
 							NextChar();
 						}
 
@@ -1294,59 +1295,59 @@ bundle LSP {
 							if(@next_char = '>') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSESSOR, @line_num, start_index));
 								NextChar();
 							}
 							else if(@next_char = '=') {
 								NextChar();
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->SUB_EQL, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SUB_EQL, @line_num, start_index));
 								NextChar();
 							}
 							else {
 								start_index := @line_index - 1;
-								@tokens->AddBack(Token->New(Token->Type->SUB, @line_num, start_index));
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SUB, @line_num, start_index));
 								NextChar();
 							};
 						}
 						
 						label'←' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->ASSIGN, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSIGN, @line_num, start_index));
 							NextChar();
 						}
 
 						label '→' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->ASSESSOR, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSESSOR, @line_num, start_index));
 							NextChar();
 						}
 
 						label '\0' {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->EOS, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EOS, @line_num, start_index));
 							NextChar();
 						}
 
 						other {
 							start_index := @line_index - 1;
-							@tokens->AddBack(Token->New(Token->Type->OTHER, @cur_char, @line_num, start_index));
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OTHER, @cur_char, @line_num, start_index));
 							NextChar();
 						}
 					};
 				};
 			};
 
-			@tokens->AddBack(Token->New(Token->Type->EOS, @line_num, 0));
+			@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EOS, @line_num, 0));
 			return @tokens;
 		}
 	}
 
 	#
-	# Token
+	# ScannerToken
 	#
-	class : private : Token {
-		@type : Token->Type;
+	class : private : ScannerToken {
+		@type : ScannerToken->Type;
 		@line_num : Int;
 		@line_index : Int;
 		@str_value : String;
@@ -1417,13 +1418,13 @@ bundle LSP {
 			AS_ID
 		}
 
-		New(type : Token->Type, line_num : Int, line_index : Int) {
+		New(type : ScannerToken->Type, line_num : Int, line_index : Int) {
 			@type := type;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
-		New(type : Token->Type, str_value : String, line_num : Int, line_index : Int) {
+		New(type : ScannerToken->Type, str_value : String, line_num : Int, line_index : Int) {
 			@type := type;
 			@str_value := str_value;
 			@line_num := line_num;
@@ -1431,34 +1432,34 @@ bundle LSP {
 		}
 
 		New(int_value : Int, line_num : Int, line_index : Int) {
-			@type := Token->Type->INT_LIT;
+			@type := ScannerToken->Type->INT_LIT;
 			@int_value := int_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
 		New(float_value : Float, line_num : Int, line_index : Int) {
-			@type := Token->Type->FLOAT_LIT;
+			@type := ScannerToken->Type->FLOAT_LIT;
 			@float_value := float_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
 		New(char_value : Char, line_num : Int, line_index : Int) {
-			@type := Token->Type->CHAR_LIT;
+			@type := ScannerToken->Type->CHAR_LIT;
 			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
-		New(type : Token->Type, char_value : Char, line_num : Int, line_index : Int) {
+		New(type : ScannerToken->Type, char_value : Char, line_num : Int, line_index : Int) {
 			@type := type;
 			@char_value := char_value;
 			@line_num := line_num;
 			@line_index := line_index;
 		}
 
-		method : public : GetType() ~ Token->Type {
+		method : public : GetType() ~ ScannerToken->Type {
 			return @type;
 		}
 
@@ -1490,239 +1491,239 @@ bundle LSP {
 			buffer := "type=";
 
 			select(@type) {
-				label Token->Type->IDENT {
+				label ScannerToken->Type->IDENT {
 					buffer += "IDENT, value='{$@str_value}'";
 				}
 
-				label Token->Type->STRING_LIT {
+				label ScannerToken->Type->STRING_LIT {
 					buffer += "STRING_LIT, value='{$@str_value}'";
 				}
 
-				label Token->Type->INT_LIT {
+				label ScannerToken->Type->INT_LIT {
 					buffer += "INT_LIT, value={$@int_value}";
 				}
 				
-				label Token->Type->FLOAT_LIT {
+				label ScannerToken->Type->FLOAT_LIT {
 					buffer += "FLOAT_LIT, value={$@float_value}";
 				}
 				
-				label Token->Type->CHAR_LIT {
+				label ScannerToken->Type->CHAR_LIT {
 					buffer += "CHAR_LIT, value='{$@char_value}'";
 				}
 
-				label Token->Type->ASSESSOR {
+				label ScannerToken->Type->ASSESSOR {
 					buffer += "ASSESSOR";
 				}
 
-				label Token->Type->SEMI_COLON {
+				label ScannerToken->Type->SEMI_COLON {
 					buffer += "SEMI_COLON";
 				}
 
-				label Token->Type->LES {
+				label ScannerToken->Type->LES {
 					buffer += "LES";
 				}
 
-				label Token->Type->LES_EQL {
+				label ScannerToken->Type->LES_EQL {
 					buffer += "LES_EQL";
 				}
 
-				label Token->Type->GTR_EQL {
+				label ScannerToken->Type->GTR_EQL {
 					buffer += "GTR_EQL";
 				}
 
-				label Token->Type->GTR {
+				label ScannerToken->Type->GTR {
 					buffer += "GTR";
 				}
 
-				label Token->Type->ENUM_ID {
+				label ScannerToken->Type->ENUM_ID {
 					buffer += "ENUM_ID";
 				}
 
-				label Token->Type->CONSTS_ID {
+				label ScannerToken->Type->CONSTS_ID {
 					buffer += "CONSTS_ID";
 				}
 
-				label Token->Type->ADD_EQL {
+				label ScannerToken->Type->ADD_EQL {
 					buffer += "ADD_EQL";
 				}
 
-				label Token->Type->SUB_EQL {
+				label ScannerToken->Type->SUB_EQL {
 					buffer += "SUB_EQL";
 				}
 
-				label Token->Type->MUL_EQL {
+				label ScannerToken->Type->MUL_EQL {
 					buffer += "MUL_EQL";
 				}
 
-				label Token->Type->DIV_EQL {
+				label ScannerToken->Type->DIV_EQL {
 					buffer += "DIV_EQL";
 				}
 
-				label Token->Type->EQL {
+				label ScannerToken->Type->EQL {
 					buffer += "EQL";
 				}
 
-				label Token->Type->NEQL {
+				label ScannerToken->Type->NEQL {
 					buffer += "NEQL";
 				}
 
-				label Token->Type->ADD {
+				label ScannerToken->Type->ADD {
 					buffer += "ADD";
 				}
 
-				label Token->Type->SUB {
+				label ScannerToken->Type->SUB {
 					buffer += "SUB";
 				}
 
-				label Token->Type->MUL {
+				label ScannerToken->Type->MUL {
 					buffer += "MUL";
 				}
 
-				label Token->Type->DIV {
+				label ScannerToken->Type->DIV {
 					buffer += "DIV";
 				}
 
-				label Token->Type->MOD {
+				label ScannerToken->Type->MOD {
 					buffer += "MOD";
 				}
 
-				label Token->Type->ASSIGN {
+				label ScannerToken->Type->ASSIGN {
 					buffer += "ASSIGN";
 				}
 
-				label Token->Type->FUNCTION_ID {
+				label ScannerToken->Type->FUNCTION_ID {
 					buffer += "FUNCTION_ID";
 				}
 
-				label Token->Type->METHOD_ID {
+				label ScannerToken->Type->METHOD_ID {
 					buffer += "METHOD_ID";
 				}
 
-				label Token->Type->CLASS_ID {
+				label ScannerToken->Type->CLASS_ID {
 					buffer += "CLASS_ID";
 				}
 
-				label Token->Type->RETURN_ID {
+				label ScannerToken->Type->RETURN_ID {
 					buffer += "RETURN_ID";
 				}
 
-				label Token->Type->USE_ID {
+				label ScannerToken->Type->USE_ID {
 					buffer += "USE_ID";
 				}
 
-				label Token->Type->PUBLIC_ID {
+				label ScannerToken->Type->PUBLIC_ID {
 					buffer += "PUBLIC_ID";
 				}
 
-				label Token->Type->PRIVATE_ID {
+				label ScannerToken->Type->PRIVATE_ID {
 					buffer += "PRIVATE_ID";
 				}
 
-				label Token->Type->BUNDLE_ID {
+				label ScannerToken->Type->BUNDLE_ID {
 					buffer += "BUNDLE_ID";
 				}
 
-				label Token->Type->NATIVE_ID {
+				label ScannerToken->Type->NATIVE_ID {
 					buffer += "NATIVE_ID";
 				}
 
-				label Token->Type->STATIC_ID {
+				label ScannerToken->Type->STATIC_ID {
 					buffer += "STATIC_ID";
 				}
 
-				label Token->Type->NIL_ID {
+				label ScannerToken->Type->NIL_ID {
 					buffer += "NIL_ID";
 				}
 
-				label Token->Type->STRING_ID {
+				label ScannerToken->Type->STRING_ID {
 					buffer += "STRING_ID";
 				}
 
-				label Token->Type->INT_ID {
+				label ScannerToken->Type->INT_ID {
 					buffer += "INT_ID";
 				}
 
-				label Token->Type->FLOAT_ID {
+				label ScannerToken->Type->FLOAT_ID {
 					buffer += "FLOAT_ID";
 				}
 
-				label Token->Type->CHAR_ID {
+				label ScannerToken->Type->CHAR_ID {
 					buffer += "CHAR_ID";
 				}
 
-				label Token->Type->BYTE_ID {
+				label ScannerToken->Type->BYTE_ID {
 					buffer += "BYTE_ID";
 				}
 
-				label Token->Type->EACH_ID {
+				label ScannerToken->Type->EACH_ID {
 					buffer += "EACH_ID";
 				}
 
-				label Token->Type->FOR_ID {
+				label ScannerToken->Type->FOR_ID {
 					buffer += "FOR_ID";
 				}
 
-				label Token->Type->AS_ID {
+				label ScannerToken->Type->AS_ID {
 					buffer += "AS_ID";
 				}
 
-				label Token->Type->WHILE_ID {
+				label ScannerToken->Type->WHILE_ID {
 					buffer += "WHILE_ID";
 				}
 
-				label Token->Type->IF_ID {
+				label ScannerToken->Type->IF_ID {
 					buffer += "IF_ID";
 				}
 
-				label Token->Type->ELSE_ID {
+				label ScannerToken->Type->ELSE_ID {
 					buffer += "ELSE_ID";
 				}
 
-				label Token->Type->COLON {
+				label ScannerToken->Type->COLON {
 					buffer += "COLON";
 				}
 				
-				label Token->Type->COMMA {
+				label ScannerToken->Type->COMMA {
 					buffer += "COMMA";
 				}
 				
-				label Token->Type->TILDE {
+				label ScannerToken->Type->TILDE {
 					buffer += "TILDE";
 				}
 
-				label Token->Type->AND {
+				label ScannerToken->Type->AND {
 					buffer += "AND";
 				}
 
-				label Token->Type->OR {
+				label ScannerToken->Type->OR {
 					buffer += "OR";
 				}
 				
-				label Token->Type->OCPN {
+				label ScannerToken->Type->OCPN {
 					buffer += "OCPN";
 				}
 				
-				label Token->Type->CCPN {
+				label ScannerToken->Type->CCPN {
 					buffer += "CCPN";
 				}
 
-				label Token->Type->OPN {
+				label ScannerToken->Type->OPN {
 					buffer += "OPN";
 				}
 				
-				label Token->Type->CPN {
+				label ScannerToken->Type->CPN {
 					buffer += "CPN";
 				}
 
-				label Token->Type->OBR {
+				label ScannerToken->Type->OBR {
 					buffer += "OBR";
 				}
 
-				label Token->Type->CBR {
+				label ScannerToken->Type->CBR {
 					buffer += "CBR";
 				}
 				
-				label Token->Type->OTHER {
+				label ScannerToken->Type->OTHER {
 					id := @char_value->As(Int);
 					buffer += "OTHER: id={$id}, value='{$@char_value}'";
 				}
@@ -1739,7 +1740,7 @@ bundle LSP {
 	class Entity {
 		@name : String;
 		@kind : Entity->Kind;
-		@pos : Token;
+		@pos : ScannerToken;
 		@parent : Entity;
 		@children : Vector<Entity>;
 
@@ -1770,7 +1771,7 @@ bundle LSP {
 			@children->AddBack(child);
 		}
 
-		method : public : SetStart(start : Token) ~ Nil {
+		method : public : SetStart(start : ScannerToken) ~ Nil {
 			@pos := start;
 		}
 
@@ -1801,15 +1802,15 @@ bundle LSP {
 			return buffer;
 		}
 
-		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
-			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+		method : public : GetReferences(find : String, uri : String) ~ JsonElement {
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
 			GetReferences(find, uri, array);
 			return array;
 		}
 
-		method : public : GetReferences(find : String, uri : String, array : Data.JSON.JsonElement) ~ Nil {
+		method : public : GetReferences(find : String, uri : String, array : JsonElement) ~ Nil {
 			if(@kind->As(Int) <= 100 & @name->Equals(find)) {
-				builder := Data.JSON.JsonBuilder->New();
+				builder := JsonBuilder->New();
 
 				start_line := end_line := @pos->GetLine();
 				start_index := @pos->GetPos();
@@ -1840,14 +1841,14 @@ bundle LSP {
 			};
 		}
 
-		method : public : GetSymbols() ~ Data.JSON.JsonElement {
-			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+		method : public : GetSymbols() ~ JsonElement {
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
 			GetSymbols(array);
 			return array;
 		}
 
-		method : public : GetSymbols(array : Data.JSON.JsonElement) ~ Nil {
-			builder := Data.JSON.JsonBuilder->New();
+		method : public : GetSymbols(array : JsonElement) ~ Nil {
+			builder := JsonBuilder->New();
 
 			if(@kind->As(Int) > 100) {
 				start_line := end_line := @pos->GetLine();
