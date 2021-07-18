@@ -410,8 +410,7 @@ bundle LSP {
 					out += cur_char;
 				};
 			};
-out->PrintLine();
-
+			
 			return out;
 		}
 

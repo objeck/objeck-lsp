@@ -15,7 +15,6 @@ bundle LSP {
 
 		New(text : String) {
 			@text := text;
-text->PrintLine();			
 			@findings := Vector->New()<Finding>;
 			@symbol_scope := Stack->New()<Entity>;
 		}
