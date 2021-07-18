@@ -59,8 +59,8 @@ bundle LSP {
 					diagnostic := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
 
 					diagnostic->Insert("severity", 1);
-					diagnostic->Insert("message", "Is a function");
-					diagnostic->Insert("source", "objk-lint");
+					diagnostic->Insert("message", "Unexpected token");
+					diagnostic->Insert("source", "objk-linter");
 
 					range := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
 					# start
