@@ -250,7 +250,6 @@ bundle LSP {
 		method : public : GetSymbols() ~ JsonElement {
 			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
-			out->PrintLine();
 
 			parser := Parser->New(out);
 			if(parser->Parse()) {
@@ -263,7 +262,6 @@ bundle LSP {
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
 			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());
-			out->PrintLine();
 
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
