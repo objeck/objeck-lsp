@@ -11,7 +11,9 @@ bundle LSP {
 		@findings : Vector<Finding>;
 		@symbol_scope : Stack<Entity>;
 		@entities : Entity;
-		@diagnose : Token;
+
+		@diagnose_start : Token;
+		@diagnose_end : Token;
 
 		New(text : String) {
 			@text := text;
@@ -50,10 +52,12 @@ bundle LSP {
 		method : public : GetDiagnoses(uri : String) ~ Data.JSON.JsonElement {
 			diagnostics := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
 
-			if(@diagnose <> Nil) {
-				start_line := end_line := @diagnose->GetLine();
-				start_index := @diagnose->GetPos();
-				end_index := start_index + 3;
+			if(@diagnose_start <> Nil) {
+				start_line := @diagnose_start->GetLine();
+				start_index := @diagnose_start->GetPos();
+				
+				end_line := @diagnose_end->GetLine();
+				end_index := @diagnose_end->GetPos();
 
 				each(i : 1) {
 					diagnostic := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->OBJECT);
@@ -92,13 +96,15 @@ bundle LSP {
 
 			result := ParseUses();
 			if(<>result) {
-				@diagnose := GetToken();
+				@diagnose_start := GetToken();
+				@diagnose_end := GetToken(1);
 				return false;
 			};
 
 			result := ParseClass();
 			if(<>result) {
-				@diagnose := GetToken();
+				@diagnose_start := GetToken();
+				@diagnose_end := GetToken(1);
 				return false;
 			};
 
@@ -865,9 +871,9 @@ bundle LSP {
 			return Token->Type->EOS;
 		}
 
-		method : GetToken() ~ Token {
-			if(@token_index < @tokens->Size()) {
-				return @tokens->Get(@token_index);
+		method : GetToken(offset : Int := 0) ~ Token {
+			if(@token_index + offset < @tokens->Size()) {
+				return @tokens->Get(@token_index + offset);
 			};
 
 			return Nil;
