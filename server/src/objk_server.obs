@@ -209,7 +209,7 @@ bundle LSP {
 
 		New(uri : String, text : String) {
 			@uri := uri;
-			@text := text;
+			@text := GetText(text);
 		}
 
 		# TODO: hacked...
@@ -217,8 +217,7 @@ bundle LSP {
 #			out := Web.HTTP.Url->Decode(@uri);
 #			out->Delete(0, "file:///"->Size());
 			
-			out := GetText();
-			parser := Parser->New(out);
+			parser := Parser->New(@text);
 			result := parser->Parse();
 			return parser->GetDiagnoses(@uri);
 		}
@@ -227,8 +226,7 @@ bundle LSP {
 #			out := Web.HTTP.Url->Decode(@uri);
 #			out->Delete(0, "file:///"->Size());
 
-			out := GetText();
-			parser := Parser->New(out);
+			parser := Parser->New(@text);
 			if(parser->Parse()) {
 				return parser->GetSymbols();
 			};
@@ -240,14 +238,13 @@ bundle LSP {
 #			out := Web.HTTP.Url->Decode(@uri);
 #			out->Delete(0, "file:///"->Size());
 
-			out := GetText();
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
 			if(@is_debug) {
 				"### Get Reference: index={$index}, search='{$search}' ###"->PrintLine();
 			};
 
-			parser := Parser->New(out);
+			parser := Parser->New(@text);
 			if(parser->Parse()) {
 				return parser->GetReferences(search, @uri);
 			};
@@ -289,16 +286,17 @@ bundle LSP {
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
-			if(@is_debug) {
-				"### Update: range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
-			};
-
 			start := GetDocumentIndex(start_line, start_char);
+#			if(@is_debug) {
+				"### Update: foo={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+#			};
+
+			
 			if(start > -1) {
 				if(range_length > 0) {
 					@text->Delete(start, range_length);
 				};
-				@text->Insert(start, text);
+				@text->Insert(start, GetText(text));
 			};
 		}
 
@@ -348,17 +346,10 @@ bundle LSP {
 					next_char := @text->Get(pos + 1);
 				};
 
-				if(char = '\\') {
-					if(next_char = 'n') {
-							cur_line += 1;
-					};
-					
-					pos += 1;
-					cur_char += 2;
-				}
-				else {
-					cur_char += 1;
+				if(char = '\n') {
+					cur_line += 1;					
 				};
+				cur_char += 1;
 
 				if(cur_line = line_pos) {
 					index := cur_char + char_pos;
@@ -373,14 +364,14 @@ bundle LSP {
 			return -1;
 		}
 
-		method : GetText() ~ String {
+		method : GetText(text : String) ~ String {
 			out := "";
 
-			each(i : @text) {
-				cur_char := @text->Get(i);
+			each(i : text) {
+				cur_char := text->Get(i);
 				next_char := '\0';
-				if(i + 1 < @text->Size()) {
-					next_char := @text->Get(i + 1);
+				if(i + 1 < text->Size()) {
+					next_char := text->Get(i + 1);
 				};
 
 				if(cur_char = '\\') {
