@@ -50,7 +50,11 @@ bundle LSP {
 		#
 		method : CallbackReferences(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-#			response := GetDocument(uri)->GetSymbols();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos:= params->FindElements("position/character")->GetValue();
+
+			response := GetDocument(uri)->GetReferences(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
 		}
 
 
@@ -115,6 +119,7 @@ bundle LSP {
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			response := GetDocument(uri)->GetSymbols();
+			WriteRpcResponse(id, response);
 #~
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);
 			each(i : 2) {
@@ -147,9 +152,7 @@ bundle LSP {
 				item->Insert("location", location);
 				response->Add(item);
 			};
-~#
-			# write response
-	        WriteRpcResponse(id, response);
+~#			
 		}
 
 		method : CallbackResolve(id : Int, params : JsonElement) ~ Nil {
@@ -244,6 +247,43 @@ bundle LSP {
 		}
 
 		# TODO: hacked...
+		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
+out := Web.HTTP.Url->Decode(@uri);
+			out->Delete(0, "file:///"->Size());
+			out->PrintLine();
+"############# {$out} #############"->PrintLine();
+
+			index := GetDocumentIndex(line_pos, char_pos);
+
+			string := @text;
+			substring : String;
+			if(index > -1 & index < string->Size()) {
+				start := index;
+				while(start > -1 & (string->Get(start)->IsChar() | string->Get(start) = '@' | string->Get(start) = '_')) {
+					start -= 1;
+				};
+
+				end := index;
+				while(end < string->Size() & (string->Get(end)->IsChar() | string->Get(end) = '@' | string->Get(end) = '_')) {
+					end += 1;
+				};
+
+				if(start <> end) {
+					substring := string->SubString(start + 1, end - start - 1);
+					"pos: {$start},{$end} '{$substring}'"->PrintLine();
+				};
+			};
+
+			parser := Parser->New(out);
+			if(parser->Parse()) {
+				obj := parser->GetReferences(substring, @uri);
+"############# {$obj} #############"->PrintLine();			
+				return obj;
+			};
+
+			return Nil;
+		}
+
 		method : public : GetSymbols() ~ JsonElement {
 			out := Web.HTTP.Url->Decode(@uri);
 			out->Delete(0, "file:///"->Size());

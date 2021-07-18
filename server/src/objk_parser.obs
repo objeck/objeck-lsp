@@ -40,6 +40,10 @@ bundle LSP {
 			return @symbols->ToJson();
 		}
 
+		method : public : GetReferences(find : String, uri : String) ~ Data.JSON.JsonElement {
+			return @symbols->Foo(find, uri);
+		}
+
 		method : public : Parse() ~ Bool {
 			@tokens := Scanner->New(@text)->Scan()<Token>;
 # DumpTokens();
@@ -1743,6 +1747,46 @@ Dump(1);
 			};
 
 			return buffer;
+		}
+
+		method : public : Foo(find : String, uri : String) ~ Data.JSON.JsonElement {
+			array := Data.JSON.JsonElement->New(Data.JSON.JsonElement->JsonType->ARRAY);
+			Foo(find, uri, array);
+			return array;
+		}
+
+		method : public : Foo(find : String, uri : String, array : Data.JSON.JsonElement) ~ Nil {
+find->PrintLine();			
+			if(@name->Equals(find)) {
+				builder := Data.JSON.JsonBuilder->New();
+
+				start_line := end_line := @pos->GetLine();
+				start_index := @pos->GetPos();
+				end_index := start_index + @name->Size();
+				
+				builder->PushObject();
+				builder->Insert("uri", uri);
+
+				builder->PushObject("range");
+					obj := builder->PushObject("start");
+					obj->Insert("line", start_line);
+					obj->Insert("character", start_index);
+					builder->Pop();
+
+					obj := builder->PushObject("end");
+					obj->Insert("line", end_line);
+					obj->Insert("character", end_index);
+					builder->Pop();
+				builder->Pop();
+
+				array->Add(builder->Pop());
+			};
+
+			if(@children <> Nil) {
+				each(i : @children) {
+					@children->Get(i)->Foo(find, uri, array);
+				};
+			};
 		}
 
 		method : public : ToJson() ~ Data.JSON.JsonElement {
