@@ -121,7 +121,7 @@ bundle LSP {
 
 			@symbols := @symbol_scope->Pop();
 
-@symbols->ToString()->PrintLine();			
+# @symbols->ToString()->PrintLine();			
 
 			return true;
 		}
@@ -1751,8 +1751,7 @@ Dump(1);
 		}
 
 		method : public : GetReferences(find : String, uri : String, array : Data.JSON.JsonElement) ~ Nil {
-find->PrintLine();			
-			if(@name->Equals(find)) {
+			if(@kind->As(Int) <= 100 & @name->Equals(find)) {
 				builder := Data.JSON.JsonBuilder->New();
 
 				start_line := end_line := @pos->GetLine();
@@ -1793,7 +1792,7 @@ find->PrintLine();
 		method : public : GetSymbols(array : Data.JSON.JsonElement) ~ Nil {
 			builder := Data.JSON.JsonBuilder->New();
 
-			if(@kind = Symbol->Kind->CLASS_SYM | @kind = Symbol->Kind->CONSTRUCTOR_SYM | @kind = Symbol->Kind->FUNCTION_SYM | @kind = Symbol->Kind->METHOD_SYM) {
+			if(@kind->As(Int) > 100) {
 				start_line := end_line := @pos->GetLine();
 				start_index := @pos->GetPos();
 				end_index := start_index + @name->Size();
