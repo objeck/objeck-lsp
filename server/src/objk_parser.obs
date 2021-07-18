@@ -13,8 +13,8 @@ bundle LSP {
 		@entities : Entity;
 		@diagnose : Token;
 
-		New(file : String) {
-			@text := System.IO.File.FileReader->ReadFile(file);
+		New(text : String) {
+			@text := text;
 			@findings := Vector->New()<Finding>;
 			@symbol_scope := Stack->New()<Entity>;
 		}
@@ -25,7 +25,7 @@ bundle LSP {
 			timer->Start();			
 			
 			if(args->Size() = 1) {
-				parser := Parser->New(args[0]);
+				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				parser->Parse()->PrintLine();
 #				if(parser->Parse()) {
 

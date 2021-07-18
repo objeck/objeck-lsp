@@ -214,19 +214,20 @@ bundle LSP {
 
 		# TODO: hacked...
 		method : public : GetDiagnoses() ~ JsonElement {
-			out := Web.HTTP.Url->Decode(@uri);
-			out->Delete(0, "file:///"->Size());
+#			out := Web.HTTP.Url->Decode(@uri);
+#			out->Delete(0, "file:///"->Size());
+			
+			out := GetText();
 			parser := Parser->New(out);
-
 			result := parser->Parse();
-"################ {$result} ################"->PrintLine();		
 			return parser->GetDiagnoses(@uri);
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
-			out := Web.HTTP.Url->Decode(@uri);
-			out->Delete(0, "file:///"->Size());
+#			out := Web.HTTP.Url->Decode(@uri);
+#			out->Delete(0, "file:///"->Size());
 
+			out := GetText();
 			parser := Parser->New(out);
 			if(parser->Parse()) {
 				return parser->GetSymbols();
@@ -236,9 +237,10 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-			out := Web.HTTP.Url->Decode(@uri);
-			out->Delete(0, "file:///"->Size());
+#			out := Web.HTTP.Url->Decode(@uri);
+#			out->Delete(0, "file:///"->Size());
 
+			out := GetText();
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index);
 			if(@is_debug) {
@@ -369,6 +371,57 @@ bundle LSP {
 			};
 
 			return -1;
+		}
+
+		method : GetText() ~ String {
+			out := "";
+
+			each(i : @text) {
+				cur_char := @text->Get(i);
+				next_char := '\0';
+				if(i + 1 < @text->Size()) {
+					next_char := @text->Get(i + 1);
+				};
+
+				if(cur_char = '\\') {
+					select(next_char) {
+						label 't' {
+							out += '\t';
+							i += 1;
+						}
+
+						label 'r' {
+							out += '\r';
+							i += 1;
+						}
+
+						label 'n' {
+							out += '\n';
+							i += 1;
+						}
+
+						label '\\' {
+							out += '\\';
+							i += 1;
+						}
+
+						label '"' {
+							out += '"';
+							i += 1;
+						}
+
+						other {
+							out += cur_char;
+						}
+					};
+				}
+				else {
+					out += cur_char;
+				};
+			};
+out->PrintLine();
+
+			return out;
 		}
 
 		method : DumpDocument() ~ Nil {
