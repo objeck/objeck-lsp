@@ -258,7 +258,6 @@ bundle LSP {
 
 			do {
 				if(Match(Token->Type->IDENT) & Match(Token->Type->COLON, 1)) {
-Dump(1);
 					if(<>ParseAssignmentDeclaration()) {
 						return false;
 					};
@@ -1799,7 +1798,7 @@ Dump(1);
 				obj := builder->PushObject();
 				obj->Insert("kind", @kind->As(Int) - 100);
 				obj->Insert("name", @name);
-				
+
 					builder->PushObject("location");
 
 						builder->PushObject("range");
