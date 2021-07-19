@@ -234,7 +234,7 @@ bundle LSP {
 			search := FindReference(index - 1);
 			
 			if(@is_debug) {
-				"### Get Reference: index={$index}, search='{$search}' ###"->PrintLine();
+				"### Get Reference: line_pos={$line_pos}, char_pos={$char_pos}, index={$index}, search='{$search}' ###"->PrintLine();
 			};
 
 			parser := Parser->New(@text);
@@ -242,7 +242,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			return parser->GetReferences(search, @uri);
+			return parser->GetReferences(search, line_pos, char_pos, @uri);
 		}
 
 		method : FindReference(index : Int) ~ String {
