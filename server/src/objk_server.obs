@@ -127,7 +127,7 @@ bundle LSP {
 		}
 
 		#
-		# Notifications ---
+		# Notifications
 		#
 		method : NotifyInitialized(params : JsonElement) ~ Nil {
 			@is_initialized := true;
@@ -210,6 +210,7 @@ bundle LSP {
 		New(uri : String, text : String) {
 			@uri := uri;
 			@text := GetText(text);
+			@is_debug := true;
 		}
 
 		# TODO: hacked...
@@ -230,7 +231,7 @@ bundle LSP {
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
 			index := GetDocumentIndex(line_pos, char_pos);
-			search := FindReference(index);
+			search := FindReference(index - 1);
 			
 			if(@is_debug) {
 				"### Get Reference: index={$index}, search='{$search}' ###"->PrintLine();
@@ -252,16 +253,6 @@ bundle LSP {
 				start := index;
 				while(start > -1 & (string->Get(start)->IsChar() | string->Get(start) = '@' | string->Get(start) = '_')) {
 					start -= 1;
-				};
-
-				if(start + 1 < string->Size()) {
-					second := string->Get(start + 1);
-					if(start > -1) {
-						first := string->Get(start);
-						if(first = '\\' & (second = 't' | second = 'n' | second = 'r')) {
-							start += 1;
-						};
-					};
 				};
 
 				end := index;

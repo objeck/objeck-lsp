@@ -10,7 +10,7 @@ bundle LSP {
 		@tokens : Vector<ScannerToken>;
 		@token_index : Int;
 		@symbol_scope : Stack<Entity>;
-		@entities : Entity;
+		@root_entity : Entity;
 
 		@diagnose_start : ScannerToken;
 		@diagnose_end : ScannerToken;
@@ -20,32 +20,32 @@ bundle LSP {
 			@symbol_scope := Stack->New()<Entity>;
 		}
 
-#~
+
 		function : Main(args : String[]) ~ Nil {
 			timer := System.Time.Timer->New();
 			timer->Start();			
 			
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
-				parser->Parse()->PrintLine();
-#				if(parser->Parse()) {
-
-					result := parser->GetDiagnoses("");
-					"Result = {$result}"->PrintLine();
-#				};
+				if(parser->Parse()) {
+					parser->Foo();
+				};
 			};
 
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-~#
+
+		method : public : Foo() ~ Nil {
+			"-- {$@root_entity} --"->PrintLine();
+		}
 
 		method : public : GetSymbols() ~ JsonElement {
-			return @entities->GetSymbols();
+			return @root_entity->GetSymbols();
 		}
 
 		method : public : GetReferences(find : String, uri : String) ~ JsonElement {
-			return @entities->GetReferences(find, uri);
+			return @root_entity->GetReferences(find, uri);
 		}
 
 		method : public : GetDiagnoses(uri : String) ~ JsonElement {
@@ -134,13 +134,14 @@ bundle LSP {
 			if(<>Match(ScannerToken->Type->CLASS_ID)) {
 				return false;
 			};
+			start_pos := GetToken();
 			NextToken();
 
 			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
 			symbol := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
-			symbol->SetStart(GetToken());
+			symbol->SetStart(start_pos);
 			@symbol_scope->Push(symbol);
 			NextToken();
 
@@ -175,14 +176,16 @@ bundle LSP {
 			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
+			symbol->SetEnd(GetToken());
 			NextToken();
 
-			@entities := @symbol_scope->Pop();
-
+			@root_entity := @symbol_scope->Pop();
+			
 			return true;
 		}
 
 		method : ParseMethod(is_func : Bool) ~ Bool {
+			start_pos := GetToken();
 			NextToken();
 
 			if(<>Match(ScannerToken->Type->COLON)) {
@@ -211,7 +214,7 @@ bundle LSP {
 			else {
 				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->METHOD_SYM);
 			};
-			child->SetStart(GetToken());
+			child->SetStart(start_pos);
 
 			parent->AddChild(child);
 			@symbol_scope->Push(child);
@@ -244,6 +247,7 @@ bundle LSP {
 			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
+			child->SetEnd(GetToken());
 			NextToken();
 
 			@symbol_scope->Pop();
@@ -1738,7 +1742,8 @@ bundle LSP {
 	class Entity {
 		@name : String;
 		@kind : Entity->Kind;
-		@pos : ScannerToken;
+		@start_pos : ScannerToken;
+		@end_pos : ScannerToken;
 		@parent : Entity;
 		@children : Vector<Entity>;
 
@@ -1769,8 +1774,12 @@ bundle LSP {
 			@children->AddBack(child);
 		}
 
-		method : public : SetStart(start : ScannerToken) ~ Nil {
-			@pos := start;
+		method : public : SetStart(start_pos : ScannerToken) ~ Nil {
+			@start_pos := start_pos;
+		}
+
+		method : public : SetEnd(end_pos : ScannerToken) ~ Nil {
+			@end_pos := end_pos;
 		}
 
 		method : public : ToString() ~ String {
@@ -1779,16 +1788,24 @@ bundle LSP {
 
 		method : public : ToString(depth : Int) ~ String {
 			kind := @kind->As(Int);
-			line := @pos->GetLine();
-			start_pos := @pos->GetPos();
-			end_pos := start_pos + @name->Size();
+			start_line := end_line := @start_pos->GetLine();
+			start_pos := @start_pos->GetPos();
+			
+			end_pos : Int;
+			if(@end_pos = Nil) {
+				end_pos := start_pos + @name->Size();
+			}
+			else {
+				end_pos := @end_pos->GetPos();
+				end_line := @end_pos->GetLine();
+			};
 
 			buffer := "";
 			each(i : depth) {
 				buffer += '\t';
 			};
 
-			buffer += "[name={$@name}, kind={$kind}, line={$line}, start_pos={$start_pos}, end_pos={$end_pos}]";
+			buffer += "[name={$@name}, kind={$kind}, start_line={$start_line}, start_pos={$start_pos}; end_line={$end_line}, end_pos={$end_pos}]";
 			if(@children <> Nil) {
 				each(i : @children) {
 					child := @children->Get(i);
@@ -1810,8 +1827,8 @@ bundle LSP {
 			if(@kind->As(Int) <= 100 & @name->Equals(find)) {
 				builder := JsonBuilder->New();
 
-				start_line := end_line := @pos->GetLine();
-				start_index := @pos->GetPos();
+				start_line := end_line := @start_pos->GetLine();
+				start_index := @start_pos->GetPos();
 				end_index := start_index + @name->Size();
 				
 				builder->PushObject();
@@ -1849,8 +1866,8 @@ bundle LSP {
 			builder := JsonBuilder->New();
 
 			if(@kind->As(Int) > 100) {
-				start_line := end_line := @pos->GetLine();
-				start_index := @pos->GetPos();
+				start_line := end_line := @start_pos->GetLine();
+				start_index := @start_pos->GetPos();
 				end_index := start_index + @name->Size();
 				
 				obj := builder->PushObject();
