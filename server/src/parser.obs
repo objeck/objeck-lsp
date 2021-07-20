@@ -20,7 +20,7 @@ bundle LSP {
 			@symbol_scope := Stack->New()<Entity>;
 		}
 
-#~ ~#
+#~
 		function : Main(args : String[]) ~ Nil {
 			timer := System.Time.Timer->New();
 			timer->Start();			
@@ -35,10 +35,10 @@ bundle LSP {
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-#~ ~#
+~#
 
 		method : public : Debug() ~ Nil {
-			@root_entity->GetReferences("fitness", 83, 11, "file:///xyz");			
+			@root_entity->GetReferences("fitness", 83, 11, "file:///xyz")->ToString()->PrintLine();			
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
@@ -947,6 +947,10 @@ bundle LSP {
 			return @name;
 		}
 
+		method : public : GetKind() ~ Entity->Kind {
+			return @kind;
+		}
+
 		method : public : GetChildren() ~ Vector<Entity> {
 			return @children;
 		}
@@ -1016,21 +1020,25 @@ bundle LSP {
 			for(i := 0; <>found & i < entities->Size(); i += 1;) {
 				entity := entities->Get(i);
 
-				start := entity->GetStart();
-				end := entity->GetEnd();
-				if(start <> Nil & end <> Nil) {
-					start_line := start->GetLine();
-					start_pos := start->GetPos();
+				if(entity->GetKind() <> Entity->Kind->CLASS_SYM) {
+					start := entity->GetStart();
+					end := entity->GetEnd();
+					if(start <> Nil & end <> Nil) {
+						start_line := start->GetLine();
+						start_pos := start->GetPos();
 
-					end_line := end->GetLine();
-					end_pos := end->GetPos();
-					
-					if(start_line <= line_pos & end_line >= line_pos) {
-"=== Criteria: start_line={$start_line}, line_pos={$line_pos}, end_line={$end_line} ==="->PrintLine();
-						children := entity->GetChildren();
-						if(children <> Nil) {
-							each(i : children) {
-								AddReference(children->Get(i), uri, array);
+						end_line := end->GetLine();
+						end_pos := end->GetPos();
+
+						if(start_line <= line_pos & end_line >= line_pos) {
+							children := entity->GetChildren();
+							if(children <> Nil) {
+								each(i : children) {
+									child := children->Get(i);
+									if(child->GetName()->Equals(find)) {
+										AddReference(child, uri, array);
+									};
+								};
 							};
 						};
 					};
@@ -1047,7 +1055,7 @@ bundle LSP {
 			start_index := entity->GetStart()->GetPos();
 			end_index := start_index + entity->GetName()->Size();
 
-"== {$start_line} =="->PrintLine();
+# "== {$start_line} =="->PrintLine();
 			
 			builder->PushObject();
 			builder->Insert("uri", uri);
