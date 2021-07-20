@@ -28,7 +28,7 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				if(parser->Parse()) {
-					parser->Debug();
+					parser->Debug2();
 				};
 			};
 
@@ -39,6 +39,10 @@ bundle LSP {
 
 		method : public : Debug() ~ Nil {
 			@root_entity->GetReferences("fitness", 83, 11, "file:///xyz")->ToString()->PrintLine();			
+		}
+
+		method : public : Debug2() ~ Nil {
+			@root_entity->ToString()->PrintLine();			
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
@@ -101,7 +105,7 @@ bundle LSP {
 				return false;
 			};
 
-			result := ParseClass();
+			result := ParseBundle();
 			if(<>result) {
 				@diagnose_start := GetToken();
 				@diagnose_end := GetToken(1);
@@ -131,6 +135,21 @@ bundle LSP {
 			return true;
 		}
 
+		method : ParseBundle() ~ Bool {
+			root := Entity->New("Default", Entity->Kind->PACKAGE_SYM);			
+			root->SetStart(GetToken());
+			@symbol_scope->Push(root);
+
+			if(<>ParseClass()) {
+				return false;
+			};
+
+			root->SetEnd(GetToken());
+			@root_entity := @symbol_scope->Pop();
+
+			return true;
+		}
+
 		method : ParseClass() ~ Bool {
 			if(<>Match(ScannerToken->Type->CLASS_ID)) {
 				return false;
@@ -141,9 +160,12 @@ bundle LSP {
 			if(<>Match(ScannerToken->Type->IDENT)) {
 				return false;
 			};
-			symbol := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
-			symbol->SetStart(start_pos);
-			@symbol_scope->Push(symbol);
+
+			parent := @symbol_scope->Top();
+			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
+			parent->AddChild(child);
+			child->SetStart(start_pos);
+			@symbol_scope->Push(child);
 			NextToken();
 
 			if(<>Match(ScannerToken->Type->OCPN)) {
@@ -177,10 +199,10 @@ bundle LSP {
 			if(<>Match(ScannerToken->Type->CCPN)) {
 				return false;
 			};
-			symbol->SetEnd(GetToken());
+			child->SetEnd(GetToken());
 			NextToken();
 
-			@root_entity := @symbol_scope->Pop();
+			@symbol_scope->Pop();
 			
 			return true;
 		}
@@ -930,6 +952,7 @@ bundle LSP {
 			VARIABLE_REF := 13,
 			# SYMS
 			SYM := 100,
+			PACKAGE_SYM := 104,
 			CLASS_SYM := 105,
 			FUNCTION_SYM := 112,
 			METHOD_SYM := 106,
@@ -1004,7 +1027,7 @@ bundle LSP {
 
 			buffer += "[name={$@name}, kind={$kind}, start_line={$start_line}, start_pos={$start_pos}; end_line={$end_line}, end_pos={$end_pos}]";
 			
-			if(false #~ @children <> Nil ~#) {
+			if(@children <> Nil) {
 				each(i : @children) {
 					child := @children->Get(i);
 					buffer += '\n';
@@ -1020,35 +1043,35 @@ bundle LSP {
 			entities := ToVector();
 
 "=== Search: find={$find}, line_pos={$line_pos}, char_pos={$char_pos} ==="->PrintLine();
-			entity : Entity;
+
 			found := false;
+			entity : Entity;
 			for(i := 0; <>found & i < entities->Size(); i += 1;) {
 				entity := entities->Get(i);
-
-				if(entity->GetKind() <> Entity->Kind->CLASS_SYM) {
+				if(entity->GetKind() = Entity->Kind->FUNCTION_SYM) {
 					start := entity->GetStart();
+					start_line := start->GetLine();
+					start_pos := start->GetPos();
+
 					end := entity->GetEnd();
-					if(start <> Nil & end <> Nil) {
-						start_line := start->GetLine();
-						start_pos := start->GetPos();
+					end_line := end->GetLine();
+					end_pos := end->GetPos();
 
-						end_line := end->GetLine();
-						end_pos := end->GetPos();
-
-						if(start_line <= line_pos & end_line >= line_pos) {
-							found := true;
-						};
+					if(start_line <= line_pos & end_line >= line_pos) {
+						found := true;
 					};
 				};
 			};
 
-			parent := @self;
-			if(parent <> Nil) {
-				children := parent->GetChildren();
-				each(i : children) {
-					child := children->Get(i);
-					if(child->GetName()->Equals(find)) {
-						AddReference(child, uri, array);
+			if(entity <> Nil) {
+				parent := entity->GetParent();
+				if(parent <> Nil) {
+					children := parent->GetChildren();
+					each(i : children) {
+						child := children->Get(i);
+						if(child->GetName()->Equals(find)) {
+							AddReference(child, uri, array);
+						};
 					};
 				};
 			};
