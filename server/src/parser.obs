@@ -210,10 +210,10 @@ bundle LSP {
 			
 			child : Entity;
 			if(is_func) {
-				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_SYM);
+				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_SYM, parent);
 			}
 			else {
-				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->METHOD_SYM);
+				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->METHOD_SYM, parent);
 			};
 			child->SetStart(start_pos);
 
@@ -1042,17 +1042,25 @@ bundle LSP {
 				};
 			};
 
-			parent := entity->GetParent();
+			parent := @self;
 			if(parent <> Nil) {
-
-			};
-
-			children := entity->GetChildren();
-			if(children <> Nil) {
+				children := parent->GetChildren();
 				each(i : children) {
 					child := children->Get(i);
 					if(child->GetName()->Equals(find)) {
 						AddReference(child, uri, array);
+					};
+				};
+			};
+
+			if(found) {
+				children := entity->GetChildren();
+				if(children <> Nil) {
+					each(i : children) {
+						child := children->Get(i);
+						if(child->GetName()->Equals(find)) {
+							AddReference(child, uri, array);
+						};
 					};
 				};
 			};
@@ -1067,7 +1075,7 @@ bundle LSP {
 			start_index := entity->GetStart()->GetPos();
 			end_index := start_index + entity->GetName()->Size();
 
-# "== {$start_line} =="->PrintLine();
+"== {$start_line} =="->PrintLine();
 			
 			builder->PushObject();
 			builder->Insert("uri", uri);
