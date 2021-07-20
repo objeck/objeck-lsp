@@ -1,0 +1,834 @@
+use Collection.Generic;
+use Data.JSON;
+
+bundle LSP {
+	#
+	# Scanner
+	#
+	class : private : Scanner {
+		@tokens : Vector<ScannerToken>;
+		@buffer : Char[];
+		@buffer_index : Int;
+		@cur_char : Char;
+		@next_char : Char;
+		@line_num : Int;
+		@line_index : Int;
+		@keywords : Hash<String, IntHolder>;
+
+		New(text : String) {
+			@buffer := text->ToCharArray();
+			@buffer_index := 0;
+
+			@tokens := Vector->New()<ScannerToken>;
+			@keywords := Hash->New()<String, IntHolder>;
+			@keywords->Insert("return", IntHolder->New(Type->RETURN_ID));
+			@keywords->Insert("class", IntHolder->New(Type->CLASS_ID));
+			@keywords->Insert("use", IntHolder->New(Type->USE_ID));
+			@keywords->Insert("enum", IntHolder->New(Type->ENUM_ID));
+			@keywords->Insert("bundle", IntHolder->New(Type->BUNDLE_ID));
+			@keywords->Insert("consts", IntHolder->New(Type->CONSTS_ID));
+			@keywords->Insert("function", IntHolder->New(Type->FUNCTION_ID));
+			@keywords->Insert("method", IntHolder->New(Type->METHOD_ID));
+			@keywords->Insert("public", IntHolder->New(Type->PUBLIC_ID));
+			@keywords->Insert("private", IntHolder->New(Type->PRIVATE_ID));
+			@keywords->Insert("native", IntHolder->New(Type->NATIVE_ID));
+			@keywords->Insert("static", IntHolder->New(Type->STATIC_ID));
+			@keywords->Insert("Nil", IntHolder->New(Type->NIL_ID));
+			@keywords->Insert("String", IntHolder->New(Type->STRING_ID));
+			@keywords->Insert("Int", IntHolder->New(Type->INT_ID));
+			@keywords->Insert("Float", IntHolder->New(Type->FLOAT_ID));
+			@keywords->Insert("Char", IntHolder->New(Type->CHAR_ID));
+			@keywords->Insert("Byte", IntHolder->New(Type->BYTE_ID));
+			@keywords->Insert("each", IntHolder->New(Type->EACH_ID));
+			@keywords->Insert("for", IntHolder->New(Type->FOR_ID));
+			@keywords->Insert("while", IntHolder->New(Type->WHILE_ID));
+			@keywords->Insert("if", IntHolder->New(Type->IF_ID));
+			@keywords->Insert("else", IntHolder->New(Type->ELSE_ID));
+			@keywords->Insert("As", IntHolder->New(Type->AS_ID));
+		}
+
+		method : NextChar() ~ Nil {
+			if(@buffer_index + 1 < @buffer->Size()) {
+				@cur_char := @buffer[@buffer_index++];
+				@line_index += 1;
+				@next_char := @buffer[@buffer_index];
+			}
+			else if(@buffer_index < @buffer->Size()) {
+				@cur_char := @buffer[@buffer_index++];
+				@line_index += 1;				
+				@next_char := '\0';
+			}
+			else {
+				@cur_char := @next_char := '\0';
+			};
+		}
+
+		method : Whitespace() ~ Nil {
+			while(@cur_char = ' ' | @cur_char = '\t' | @cur_char = '\r' | @cur_char = '\n') {
+				if(@cur_char = '\n') {
+					@line_num += 1;
+					@line_index := 0;
+				};
+
+				NextChar();
+			};
+		}
+
+		method : Comment() ~ Nil {
+			if(@cur_char = '#') {
+				NextChar();
+
+				if(@cur_char = '~') {
+					NextChar();
+					while(<>(@cur_char = '~' & @next_char = '#') & @cur_char <> '\0') {
+						if(@cur_char = '\n') {
+							@line_num += 1;
+						};
+						NextChar();
+					};
+					NextChar();
+					NextChar();
+				}
+				else {
+					while(@cur_char <> '\n' & @cur_char <> '\0') {
+						NextChar();
+					};
+					@line_num += 1;
+					NextChar();
+				};
+
+				Whitespace();
+			};
+		}
+
+		method : ParseIdentifier() ~ Nil {
+			start := @buffer_index;
+			start_index := @line_index - 1;
+
+			while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '.' | @cur_char = '_' | @cur_char = '@') {
+				NextChar();
+			};
+			ident := String->New(@buffer, start - 1, @buffer_index - start);
+
+			found := @keywords->Find(ident);
+			if(found <> Nil) {
+				type := found->Get()->As(ScannerToken->Type);
+				@tokens->AddBack(ScannerToken->New(type, ident, @line_num, start_index));
+			}
+			else {
+				@tokens->AddBack(ScannerToken->New(ScannerToken->Type->IDENT, ident, @line_num, start_index));
+			};
+		}
+
+		method : ParseNumber() ~ Nil {
+			start := @buffer_index;
+			start_index := @line_index;
+
+			is_float := false;
+			while(@cur_char->IsDigit() | @cur_char = '.' | @cur_char = 'u' | @cur_char = 'x') {
+				if(@cur_char = '.') {
+					is_float := true;
+				};
+
+				NextChar();
+			};
+
+			ident := String->New(@buffer, start - 1, @buffer_index - start);
+			if(is_float) {
+				@tokens->AddBack(ScannerToken->New(ident->ToFloat(), @line_num, start_index));
+			}
+			else {
+				@tokens->AddBack(ScannerToken->New(ident->ToInt(), @line_num, start_index));
+			};
+		}
+
+		method : ParseString() ~ Nil {
+			start := @buffer_index;
+			start_index := @line_index;
+
+			prev_char := '\0';
+			do {
+				prev_char := @cur_char;
+				NextChar();
+			}
+			while(<>(@cur_char = '"' & prev_char <> '\\') & @cur_char <> '\0');
+
+			ident := String->New(@buffer, start, @buffer_index - start - 1);
+			NextChar();
+
+			@tokens->AddBack(ScannerToken->New(ScannerToken->Type->STRING_LIT, ident, @line_num, start_index));
+		}
+
+		method : ParseChar() ~ Nil {
+			NextChar();
+
+			if(@cur_char = '\\') {
+				select(@next_char) {
+					label 'r' {
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(ScannerToken->New('\r', @line_num, start_index));
+					}
+
+					label 'n' {
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(ScannerToken->New('\n', @line_num, start_index));
+					}
+
+					label 't' {
+						NextChar();
+						start_index := @line_index - 1;
+						@tokens->AddBack(ScannerToken->New('\t', @line_num, start_index));
+					}
+				};
+			}
+			else {
+				start_index := @line_index - 1;
+				@tokens->AddBack(ScannerToken->New(@cur_char, @line_num, start_index));
+			};
+
+			NextChar();
+			if(@cur_char = '\'') {
+				NextChar();
+				
+			}
+			else {
+				start_index := @line_index - 1;
+				@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OTHER, @cur_char, @line_num, start_index));
+				NextChar();
+			};
+		}
+
+		method : public : Scan() ~ Vector<ScannerToken> {
+			NextChar();
+
+			while(@cur_char <> '\0') {
+				Whitespace();
+				Comment();
+
+				if(@cur_char->IsChar() | @cur_char = '@' | @cur_char = '_') {
+					ParseIdentifier();
+				}
+				else if(@cur_char->IsDigit()) {
+					ParseNumber();
+				}
+				else if(@cur_char = '"') {
+					ParseString();
+				}
+				else if(@cur_char = '\'') {
+					ParseChar();
+				}
+				else {
+					select(@cur_char) {
+						label '<' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->LES_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else if(@next_char = '>') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->NEQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->LES, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '>' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->GTR_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->GTR, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label ';' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SEMI_COLON, @line_num, start_index));
+							NextChar();
+						}
+
+						label ',' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->COMMA, @line_num, start_index));
+							NextChar();
+						}
+
+						label '{' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OCPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label '}' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CCPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label '(' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label ')' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CPN, @line_num, start_index));
+							NextChar();
+						}
+
+						label '=' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EQL, @line_num, start_index));
+							NextChar();
+						}
+
+						label ':' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSIGN, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->COLON, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '~' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->TILDE, @line_num, start_index));
+							NextChar();
+						}
+
+						label '&' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->AND, @line_num, start_index));
+							NextChar();
+						}
+
+						label '|' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OR, @line_num, start_index));
+							NextChar();
+						}
+
+						label '[' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OBR, @line_num, start_index));
+							NextChar();
+						}
+
+						label ']' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->CBR, @line_num, start_index));
+							NextChar();
+						}
+
+						label '+' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ADD_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ADD, @line_num, start_index));
+								NextChar();
+							};
+						}
+						
+						label '*' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MUL_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MUL, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '/' {
+							if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->DIV_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->DIV, @line_num, start_index));
+								NextChar();
+							};
+						}
+
+						label '%' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->MOD, @line_num, start_index));
+							NextChar();
+						}
+
+						label '-' {
+							if(@next_char = '>') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSESSOR, @line_num, start_index));
+								NextChar();
+							}
+							else if(@next_char = '=') {
+								NextChar();
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SUB_EQL, @line_num, start_index));
+								NextChar();
+							}
+							else {
+								start_index := @line_index - 1;
+								@tokens->AddBack(ScannerToken->New(ScannerToken->Type->SUB, @line_num, start_index));
+								NextChar();
+							};
+						}
+						
+						label'←' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSIGN, @line_num, start_index));
+							NextChar();
+						}
+
+						label '→' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->ASSESSOR, @line_num, start_index));
+							NextChar();
+						}
+
+						label '\0' {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EOS, @line_num, start_index));
+							NextChar();
+						}
+
+						other {
+							start_index := @line_index - 1;
+							@tokens->AddBack(ScannerToken->New(ScannerToken->Type->OTHER, @cur_char, @line_num, start_index));
+							NextChar();
+						}
+					};
+				};
+			};
+
+			@tokens->AddBack(ScannerToken->New(ScannerToken->Type->EOS, @line_num, 0));
+			return @tokens;
+		}
+	}
+
+	#
+	# ScannerToken
+	#
+	class : private : ScannerToken {
+		@type : ScannerToken->Type;
+		@line_num : Int;
+		@line_index : Int;
+		@str_value : String;
+		@int_value : Int;
+		@float_value : Float;
+		@char_value : Char;
+
+		enum Type {
+			OTHER,
+			EOS,
+			IDENT,
+			STRING_LIT,
+			INT_LIT,
+			FLOAT_LIT,
+			CHAR_LIT,
+			EQL,
+			NEQL,
+			LES,
+			GTR,
+			LES_EQL,
+			GTR_EQL,
+			SEMI_COLON,
+			ADD,
+			SUB,
+			MUL,
+			DIV,
+			MOD,
+			ADD_EQL,
+			SUB_EQL,
+			MUL_EQL,
+			DIV_EQL,
+			COLON,
+			COMMA,
+			TILDE,
+			AND,
+			OR,
+			OPN,
+			CPN,
+			OCPN,
+			CCPN,
+			OBR,
+			CBR,
+			ASSESSOR,
+			ASSIGN,
+			RETURN_ID,
+			CLASS_ID,
+			USE_ID,
+			ENUM_ID,
+			CONSTS_ID,
+			FUNCTION_ID,
+			METHOD_ID,
+			PUBLIC_ID,
+			PRIVATE_ID,
+			BUNDLE_ID,
+			NATIVE_ID,
+			STATIC_ID,
+			NIL_ID,
+			STRING_ID,
+			INT_ID,
+			FLOAT_ID,
+			CHAR_ID,
+			BYTE_ID,
+			EACH_ID,
+			FOR_ID,
+			WHILE_ID,
+			IF_ID,
+			ELSE_ID,
+			AS_ID
+		}
+
+		New(type : ScannerToken->Type, line_num : Int, line_index : Int) {
+			@type := type;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : ScannerToken->Type, str_value : String, line_num : Int, line_index : Int) {
+			@type := type;
+			@str_value := str_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(int_value : Int, line_num : Int, line_index : Int) {
+			@type := ScannerToken->Type->INT_LIT;
+			@int_value := int_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(float_value : Float, line_num : Int, line_index : Int) {
+			@type := ScannerToken->Type->FLOAT_LIT;
+			@float_value := float_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(char_value : Char, line_num : Int, line_index : Int) {
+			@type := ScannerToken->Type->CHAR_LIT;
+			@char_value := char_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		New(type : ScannerToken->Type, char_value : Char, line_num : Int, line_index : Int) {
+			@type := type;
+			@char_value := char_value;
+			@line_num := line_num;
+			@line_index := line_index;
+		}
+
+		method : public : GetType() ~ ScannerToken->Type {
+			return @type;
+		}
+
+		method : public : GetLine() ~ Int {
+			return @line_num;
+		}
+
+		method : public : GetPos() ~ Int {
+			return @line_index;
+		}
+
+		method : public : GetStringValue() ~ String {
+			return @str_value;
+		}
+
+		method : public : GetIntValue() ~ Int {
+			return @int_value;
+		}
+
+		method : public : GetFloatValue() ~ Float {
+			return @float_value;
+		}
+
+		method : public : GetCharValue() ~ Char {
+			return @char_value;
+		}
+
+		method : public : ToString() ~ String {
+			buffer := "type=";
+
+			select(@type) {
+				label ScannerToken->Type->IDENT {
+					buffer += "IDENT, value='{$@str_value}'";
+				}
+
+				label ScannerToken->Type->STRING_LIT {
+					buffer += "STRING_LIT, value='{$@str_value}'";
+				}
+
+				label ScannerToken->Type->INT_LIT {
+					buffer += "INT_LIT, value={$@int_value}";
+				}
+				
+				label ScannerToken->Type->FLOAT_LIT {
+					buffer += "FLOAT_LIT, value={$@float_value}";
+				}
+				
+				label ScannerToken->Type->CHAR_LIT {
+					buffer += "CHAR_LIT, value='{$@char_value}'";
+				}
+
+				label ScannerToken->Type->ASSESSOR {
+					buffer += "ASSESSOR";
+				}
+
+				label ScannerToken->Type->SEMI_COLON {
+					buffer += "SEMI_COLON";
+				}
+
+				label ScannerToken->Type->LES {
+					buffer += "LES";
+				}
+
+				label ScannerToken->Type->LES_EQL {
+					buffer += "LES_EQL";
+				}
+
+				label ScannerToken->Type->GTR_EQL {
+					buffer += "GTR_EQL";
+				}
+
+				label ScannerToken->Type->GTR {
+					buffer += "GTR";
+				}
+
+				label ScannerToken->Type->ENUM_ID {
+					buffer += "ENUM_ID";
+				}
+
+				label ScannerToken->Type->CONSTS_ID {
+					buffer += "CONSTS_ID";
+				}
+
+				label ScannerToken->Type->ADD_EQL {
+					buffer += "ADD_EQL";
+				}
+
+				label ScannerToken->Type->SUB_EQL {
+					buffer += "SUB_EQL";
+				}
+
+				label ScannerToken->Type->MUL_EQL {
+					buffer += "MUL_EQL";
+				}
+
+				label ScannerToken->Type->DIV_EQL {
+					buffer += "DIV_EQL";
+				}
+
+				label ScannerToken->Type->EQL {
+					buffer += "EQL";
+				}
+
+				label ScannerToken->Type->NEQL {
+					buffer += "NEQL";
+				}
+
+				label ScannerToken->Type->ADD {
+					buffer += "ADD";
+				}
+
+				label ScannerToken->Type->SUB {
+					buffer += "SUB";
+				}
+
+				label ScannerToken->Type->MUL {
+					buffer += "MUL";
+				}
+
+				label ScannerToken->Type->DIV {
+					buffer += "DIV";
+				}
+
+				label ScannerToken->Type->MOD {
+					buffer += "MOD";
+				}
+
+				label ScannerToken->Type->ASSIGN {
+					buffer += "ASSIGN";
+				}
+
+				label ScannerToken->Type->FUNCTION_ID {
+					buffer += "FUNCTION_ID";
+				}
+
+				label ScannerToken->Type->METHOD_ID {
+					buffer += "METHOD_ID";
+				}
+
+				label ScannerToken->Type->CLASS_ID {
+					buffer += "CLASS_ID";
+				}
+
+				label ScannerToken->Type->RETURN_ID {
+					buffer += "RETURN_ID";
+				}
+
+				label ScannerToken->Type->USE_ID {
+					buffer += "USE_ID";
+				}
+
+				label ScannerToken->Type->PUBLIC_ID {
+					buffer += "PUBLIC_ID";
+				}
+
+				label ScannerToken->Type->PRIVATE_ID {
+					buffer += "PRIVATE_ID";
+				}
+
+				label ScannerToken->Type->BUNDLE_ID {
+					buffer += "BUNDLE_ID";
+				}
+
+				label ScannerToken->Type->NATIVE_ID {
+					buffer += "NATIVE_ID";
+				}
+
+				label ScannerToken->Type->STATIC_ID {
+					buffer += "STATIC_ID";
+				}
+
+				label ScannerToken->Type->NIL_ID {
+					buffer += "NIL_ID";
+				}
+
+				label ScannerToken->Type->STRING_ID {
+					buffer += "STRING_ID";
+				}
+
+				label ScannerToken->Type->INT_ID {
+					buffer += "INT_ID";
+				}
+
+				label ScannerToken->Type->FLOAT_ID {
+					buffer += "FLOAT_ID";
+				}
+
+				label ScannerToken->Type->CHAR_ID {
+					buffer += "CHAR_ID";
+				}
+
+				label ScannerToken->Type->BYTE_ID {
+					buffer += "BYTE_ID";
+				}
+
+				label ScannerToken->Type->EACH_ID {
+					buffer += "EACH_ID";
+				}
+
+				label ScannerToken->Type->FOR_ID {
+					buffer += "FOR_ID";
+				}
+
+				label ScannerToken->Type->AS_ID {
+					buffer += "AS_ID";
+				}
+
+				label ScannerToken->Type->WHILE_ID {
+					buffer += "WHILE_ID";
+				}
+
+				label ScannerToken->Type->IF_ID {
+					buffer += "IF_ID";
+				}
+
+				label ScannerToken->Type->ELSE_ID {
+					buffer += "ELSE_ID";
+				}
+
+				label ScannerToken->Type->COLON {
+					buffer += "COLON";
+				}
+				
+				label ScannerToken->Type->COMMA {
+					buffer += "COMMA";
+				}
+				
+				label ScannerToken->Type->TILDE {
+					buffer += "TILDE";
+				}
+
+				label ScannerToken->Type->AND {
+					buffer += "AND";
+				}
+
+				label ScannerToken->Type->OR {
+					buffer += "OR";
+				}
+				
+				label ScannerToken->Type->OCPN {
+					buffer += "OCPN";
+				}
+				
+				label ScannerToken->Type->CCPN {
+					buffer += "CCPN";
+				}
+
+				label ScannerToken->Type->OPN {
+					buffer += "OPN";
+				}
+				
+				label ScannerToken->Type->CPN {
+					buffer += "CPN";
+				}
+
+				label ScannerToken->Type->OBR {
+					buffer += "OBR";
+				}
+
+				label ScannerToken->Type->CBR {
+					buffer += "CBR";
+				}
+				
+				label ScannerToken->Type->OTHER {
+					id := @char_value->As(Int);
+					buffer += "OTHER: id={$id}, value='{$@char_value}'";
+				}
+			};
+			buffer += ", line={$@line_num}, pos={$@line_index}";
+
+			return buffer;
+		}
+	}
+}
