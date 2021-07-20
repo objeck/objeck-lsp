@@ -951,6 +951,10 @@ bundle LSP {
 			return @kind;
 		}
 
+		method : public : GetParent() ~ Entity {
+			return @parent;
+		}
+
 		method : public : GetChildren() ~ Vector<Entity> {
 			return @children;
 		}
@@ -1016,6 +1020,7 @@ bundle LSP {
 			entities := ToVector();
 
 "=== Search: find={$find}, line_pos={$line_pos}, char_pos={$char_pos} ==="->PrintLine();
+			entity : Entity;
 			found := false;
 			for(i := 0; <>found & i < entities->Size(); i += 1;) {
 				entity := entities->Get(i);
@@ -1031,16 +1036,23 @@ bundle LSP {
 						end_pos := end->GetPos();
 
 						if(start_line <= line_pos & end_line >= line_pos) {
-							children := entity->GetChildren();
-							if(children <> Nil) {
-								each(i : children) {
-									child := children->Get(i);
-									if(child->GetName()->Equals(find)) {
-										AddReference(child, uri, array);
-									};
-								};
-							};
+							found := true;
 						};
+					};
+				};
+			};
+
+			parent := entity->GetParent();
+			if(parent <> Nil) {
+
+			};
+
+			children := entity->GetChildren();
+			if(children <> Nil) {
+				each(i : children) {
+					child := children->Get(i);
+					if(child->GetName()->Equals(find)) {
+						AddReference(child, uri, array);
 					};
 				};
 			};
