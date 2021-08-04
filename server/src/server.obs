@@ -222,6 +222,10 @@ bundle LSP {
 
 		method : public : GetSymbols() ~ JsonElement {
 			parser := Parser->New(@text);
+			leaving {
+				parser->Release();
+			};
+
 			if(<>parser->Parse()) {
 				return Nil;
 			};
@@ -230,6 +234,7 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
+#~			
 			index := GetDocumentIndex(line_pos, char_pos);
 			search := FindReference(index - 1);
 			
@@ -238,36 +243,19 @@ bundle LSP {
 			};
 
 			parser := Parser->New(@text);
+			leaving {
+				parser->Release();
+			};
+
 			if(<>parser->Parse()) {
 				return Nil;
 			};
 
 			return parser->GetReferences(search, line_pos, char_pos, @uri);
+~#
+			return Nil;			
 		}
-
-		method : FindReference(index : Int) ~ String {
-			found :=  "";
-
-			string := @text;
-			if(index > -1 & index < string->Size()) {
-				start := index;
-				while(start > -1 & (string->Get(start)->IsChar() | string->Get(start) = '@' | string->Get(start) = '_')) {
-					start -= 1;
-				};
-
-				end := index;
-				while(end < string->Size() & (string->Get(end)->IsChar() | string->Get(end) = '@' | string->Get(end) = '_')) {
-					end += 1;
-				};
-
-				if(start <> end) {
-					found := string->SubString(start + 1, end - start - 1);
-				};
-			};
-
-			return found;
-		}
-
+		
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {
