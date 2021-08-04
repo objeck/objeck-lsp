@@ -11,11 +11,14 @@ bundle LSP {
 		@is_debug : Bool;
 
 		New(text : String) {
-			@analysis := Analyzer->ParseString(text,"collect.obl");
+			if(text <> Nil) {
+				@analysis := Analyzer->ParseString(text,"collect.obl");
+			};
+
 			@is_debug := true;
 		}
 
-#~
+
 		function : Main(args : String[]) ~ Nil {
 			parser : Parser;
 			leaving {
@@ -28,16 +31,23 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				if(parser->Parse()) {
-					parser->GetSymbols()->ToString()->PrintLine();
+					root := parser->GetSymbols();
+					if(root <> Nil) {
+						root->ToString()->PrintLine();
+					};
 				};
 			};
 
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-~#
+
 
 		method : public : GetSymbols() ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
 			symbol := @analysis->GetSymbols();
 			if(symbol <> Nil) {
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);
@@ -154,16 +164,20 @@ bundle LSP {
 		}
 
 		method : public : Parse() ~ Bool {
+			if(@analysis = Nil) {
+				return false;
+			};
+
 			return @analysis->IsParsed();
 		}
 
 		method : public : Release() ~ Nil {
-			@analysis->Release();
+			if(@analysis <> Nil) {
+				@analysis->Release();
+			};
 		}
-
-
 	}
-	
+
 #~
 	#
 	# Entity

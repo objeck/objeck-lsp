@@ -216,6 +216,10 @@ bundle LSP {
 		# TODO: hacked...
 		method : public : GetDiagnoses() ~ JsonElement {
 			parser := Parser->New(@text);
+			leaving {
+				parser->Release();
+			};
+			
 			parser->Parse();
 			return parser->GetDiagnoses(@uri);
 		}
@@ -255,7 +259,7 @@ bundle LSP {
 ~#
 			return Nil;			
 		}
-		
+
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {
