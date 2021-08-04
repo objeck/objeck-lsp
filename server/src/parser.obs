@@ -1,4 +1,5 @@
 use Collection.Generic;
+use System.Diagnostics;
 use Data.JSON;
 
 bundle LSP {
@@ -6,29 +7,28 @@ bundle LSP {
 	# Parser
 	#
 	class Parser {
-		@text : String;
-		@tokens : Vector<ScannerToken>;
-		@token_index : Int;
-		@symbol_scope : Stack<Entity>;
-		@root_entity : Entity;
-
-		@diagnose_start : ScannerToken;
-		@diagnose_end : ScannerToken;
+		@analysis : AnalysisTree;
+		@is_debug : Bool;
 
 		New(text : String) {
-			@text := text;
-			@symbol_scope := Stack->New()<Entity>;
+			@analysis := Analyzer->ParseString(text,"collect.obl");
+			@is_debug := true;
 		}
 
 #~
 		function : Main(args : String[]) ~ Nil {
+			parser : Parser;
+			leaving {
+				parser->Release();
+			};
+
 			timer := System.Time.Timer->New();
 			timer->Start();			
 			
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				if(parser->Parse()) {
-					parser->Debug2();
+					parser->GetSymbols()->ToString()->PrintLine();
 				};
 			};
 
@@ -37,23 +37,80 @@ bundle LSP {
 		}
 ~#
 
-		method : public : Debug() ~ Nil {
-			@root_entity->GetReferences("fitness", 83, 11, "file:///xyz")->ToString()->PrintLine();			
-		}
-
-		method : public : Debug2() ~ Nil {
-			@root_entity->ToString()->PrintLine();			
-		}
-
 		method : public : GetSymbols() ~ JsonElement {
-			return @root_entity->GetSymbols();
+			symbol := @analysis->GetSymbols();
+			if(symbol <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				children := symbol->GetSymbols();
+				if(children <> Nil) {
+					each(i : children) {
+						GetSymbols(children[i], array);
+					};
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : GetSymbols(symbol : Symbol, array : JsonElement) ~ Nil {
+			builder := JsonBuilder->New();
+			
+			start_line := symbol->GetStartLine();
+			start_index := symbol->GetStartPosition();	
+
+			end_line := symbol->GetEndLine();			
+			end_index := symbol->GetEndPosition();
+			
+			obj := builder->PushObject();
+			obj->Insert("kind", symbol->GetKind());
+			obj->Insert("name", symbol->GetName());
+
+				builder->PushObject("location");
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+					builder->PushObject("selectionRange");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+			array->Add(builder->PopAll());
+			
+			children := symbol->GetSymbols();
+			if(children <> Nil) {
+				each(i : children) {
+					GetSymbols(children[i], array);
+				};
+			};
 		}
 
 		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-			return @root_entity->GetReferences(find, line_pos, char_pos, uri);
+#			return @root_entity->GetReferences(find, line_pos, char_pos, uri);
+			return Nil;
 		}
 
 		method : public : GetDiagnoses(uri : String) ~ JsonElement {
+#~			
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 			if(@diagnose_start <> Nil) {
@@ -92,841 +149,19 @@ bundle LSP {
 			request->Insert("diagnostics", diagnostics);
 			
 			return request;
+~#		
+			return Nil;	
 		}
 
 		method : public : Parse() ~ Bool {
-			@tokens := Scanner->New(@text)->Scan()<ScannerToken>;
-# DumpTokens();
-
-			result := ParseUses();
-			if(<>result) {
-				@diagnose_start := GetToken();
-				@diagnose_end := GetToken(1);
-				return false;
-			};
-
-			result := ParseBundle();
-			if(<>result) {
-				@diagnose_start := GetToken();
-				@diagnose_end := GetToken(1);
-				return false;
-			};
-
-			return true;
+			return @analysis->IsParsed();
 		}
 
-		method : ParseUses() ~ Bool {
-			if(Match(ScannerToken->Type->USE_ID)) {
-				while(Match(ScannerToken->Type->USE_ID)) {					
-					NextToken();
-
-					if(<>Match(ScannerToken->Type->IDENT)) {
-						return false;
-					};
-					NextToken();
-
-					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-						return false;
-					};
-					NextToken();
-				};
-			};
-
-			return true;
+		method : public : Release() ~ Nil {
+			@analysis->Release();
 		}
 
-		method : ParseBundle() ~ Bool {
-			root := Entity->New("Default", Entity->Kind->PACKAGE_SYM);			
-			root->SetStart(GetToken());
-			@symbol_scope->Push(root);
 
-			if(<>ParseClass()) {
-				return false;
-			};
-
-			root->SetEnd(GetToken());
-			@root_entity := @symbol_scope->Pop();
-
-			return true;
-		}
-
-		method : ParseClass() ~ Bool {
-			if(<>Match(ScannerToken->Type->CLASS_ID)) {
-				return false;
-			};
-			start_pos := GetToken();
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->IDENT)) {
-				return false;
-			};
-
-			parent := @symbol_scope->Top();
-			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CLASS_SYM);
-			parent->AddChild(child);
-			child->SetStart(start_pos);
-			@symbol_scope->Push(child);
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->OCPN)) {
-				return false;
-			};
-			NextToken();
-
-			done := false;
-			do {
-				if(Match(ScannerToken->Type->FUNCTION_ID) | Match(ScannerToken->Type->METHOD_ID)) {
-					if(<>ParseMethod(Match(ScannerToken->Type->FUNCTION_ID))) {
-						return false;
-					};
-				}
-				else if(Match(ScannerToken->Type->IDENT)) {
-					if(<>ParseDeclaration()) {
-						return false;
-					};
-
-					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-						return false;
-					};
-					NextToken();
-				}
-				else {
-					done := true;
-				};
-			}
-			while(<>done);
-
-			if(<>Match(ScannerToken->Type->CCPN)) {
-				return false;
-			};
-			child->SetEnd(GetToken());
-			NextToken();
-
-			@symbol_scope->Pop();
-			
-			return true;
-		}
-
-		method : ParseMethod(is_func : Bool) ~ Bool {
-			start_pos := GetToken();
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(Match(ScannerToken->Type->NATIVE_ID)) {
-				NextToken();
-
-				if(<>Match(ScannerToken->Type->COLON)) {
-					return false;
-				};
-				NextToken();
-			};
-
-			if(<>Match(ScannerToken->Type->IDENT)) {
-				return false;
-			};
-			parent := @symbol_scope->Top();
-			
-			child : Entity;
-			if(is_func) {
-				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_SYM, parent);
-			}
-			else {
-				child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->METHOD_SYM, parent);
-			};
-			child->SetStart(start_pos);
-
-			parent->AddChild(child);
-			@symbol_scope->Push(child);
-			NextToken();
-
-			# declarations
-			if(<>ParseDeclarationParameters()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->TILDE)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseType()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->OCPN)) {
-				return false;
-			};
-			NextToken();
-
-			# statements
-			if(<>ParseStatements()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->CCPN)) {
-				return false;
-			};
-			child->SetEnd(GetToken());
-			NextToken();
-
-			@symbol_scope->Pop();
-
-			return true;
-		}
-
-		method : ParseDeclaration() ~ Bool {
-			if(<>Match(ScannerToken->Type->IDENT)) {
-				return false;
-			};
-
-			parent := @symbol_scope->Top();
-			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-			child->SetStart(GetToken());
-			parent->AddChild(child);
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(Match(ScannerToken->Type->STATIC_ID)) {
-				NextToken();
-
-				if(<>Match(ScannerToken->Type->COLON)) {
-					return false;
-				};
-				NextToken();
-			};
-			
-			if(<>ParseType()) {
-				return false;
-			};
-
-			return true;
-		}
-
-		method : ParseDeclarationParameters() ~ Bool {
-			if(<>Match(ScannerToken->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			while(<>Match(ScannerToken->Type->CPN)) {
-				if(<>ParseDeclaration()) {
-					return false;
-				};
-
-				if(Match(ScannerToken->Type->ASSIGN)) {
-					NextToken();
-
-					if(<>ParseExpression()) {
-						return false;
-					};
-				};
-
-				if(Match(ScannerToken->Type->COMMA)) {
-					NextToken();
-				};
-			};
-			NextToken();
-			
-			return true;
-		}
-
-		method : ParseStatements() ~ Bool {
-			done := false;
-
-			do {
-				if(Match(ScannerToken->Type->IDENT) & Match(ScannerToken->Type->COLON, 1)) {
-					if(<>ParseAssignmentDeclaration()) {
-						return false;
-					};
-				}
-				else if(Match(ScannerToken->Type->IDENT) | Match(ScannerToken->Type->STRING_LIT)) {
-					if(<>ParseSimpleStatement()) {
-						return false;
-					};
-
-				}
-				else if(Match(ScannerToken->Type->RETURN_ID)) {
-					if(<>ParseReturn()) {
-						return false;
-					};
-				}
-				else if(Match(ScannerToken->Type->EACH_ID)) {
-					if(<>ParseEach()) {
-						return false;
-					};
-				}
-				else if(Match(ScannerToken->Type->FOR_ID)) {
-					if(<>ParseFor()) {
-						return false;
-					};
-				}
-				else if(Match(ScannerToken->Type->IF_ID)) {
-					if(<>ParseIfWhile()) {
-						return false;
-					};
-
-					while(Match(ScannerToken->Type->ELSE_ID)) {
-						if(Match(ScannerToken->Type->IF_ID, 1)) {
-							NextToken();
-						};
-
-						if(<>ParseBody()) {
-							return false;
-						};
-
-					};
-					
-					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-						return false;
-					};
-					NextToken();
-				}
-				else if(Match(ScannerToken->Type->WHILE_ID)) {
-					if(<>ParseIfWhile()) {
-						return false;
-					};
-
-					if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-						return false;
-					};
-					NextToken();
-				}
-				else {
-					done := true;
-				};
-			}
-			while(<>done);
-
-			return true;
-		}
-
-		method : ParseSimpleStatement() ~ Bool {
-			if(Match(ScannerToken->Type->IDENT)) {
-				parent := @symbol_scope->Top();
-				child : Entity;
-				if(Match(ScannerToken->Type->OPN, 1)) {
-					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
-				}
-				else {
-					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-				};
-				child->SetStart(GetToken());
-				parent->AddChild(child);
-			};
-
-			NextToken();
-
-			select(GetType()) {
-				label ScannerToken->Type->ASSIGN
-				label ScannerToken->Type->ADD_EQL
-				label ScannerToken->Type->SUB_EQL
-				label ScannerToken->Type->MUL_EQL
-				label ScannerToken->Type->DIV_EQL {
-					NextToken();
-
-					if(<>ParseExpression()) {
-						return false;
-					};
-				}
-				
-				label ScannerToken->Type->OPN {
-					if(<>ParseCallParameters()) {	
-						return false;
-					};
-				}
-
-				label ScannerToken->Type->ASSESSOR {
-					NextToken();
-				}
-
-				other { 
-					return false;
-				}
-			};
-
-			if(Match(ScannerToken->Type->SEMI_COLON) | Match(ScannerToken->Type->ASSESSOR)) {
-				NextToken();
-			};
-
-			return true;
-		}
-
-		method : ParseAssignmentDeclaration() ~ Bool {
-			if(<>ParseDeclaration()) {
-				return false;
-			};
-
-			if(Match(ScannerToken->Type->ASSIGN)) {
-				NextToken();
-
-				if(<>ParseExpression()) {
-					return false;
-				};
-			};
-
-			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
-		method : ParseIfWhile() ~ Bool {
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseExpression()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->CPN)) {
-				return false;
-			};
-			
-			return ParseBody();
-		}
-
-		method : ParseFor() ~ Bool {
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			if(Match(ScannerToken->Type->IDENT) & Match(ScannerToken->Type->COLON, 1)) {
-				if(<>ParseAssignmentDeclaration()) {
-					return false;
-				};
-			}
-			else if(Match(ScannerToken->Type->IDENT)) {
-				if(<>ParseSimpleStatement()) {
-					return false;
-				};
-			}
-			else {
-				return false;
-			};
-
-			if(<>ParseExpression()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseSimpleStatement()) {
-				return false;
-			};
-						
-			if(<> ParseBody()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-		
-		method : ParseEach() ~ Bool {
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->IDENT)) {
-				return false;
-			};
-
-			parent := @symbol_scope->Top();
-			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-			child->SetStart(GetToken());
-			parent->AddChild(child);
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->COLON)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->IDENT)) {
-				return false;
-			};
-
-			parent := @symbol_scope->Top();
-			child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-			child->SetStart(GetToken());
-			parent->AddChild(child);
-			NextToken();
-
-			if(<>Match(ScannerToken->Type->CPN)) {
-				return false;
-			};
-			
-			if(<>ParseBody()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
-		method : ParseBody() ~ Bool {
-			NextToken();
-
-			# statements
-			if(<>Match(ScannerToken->Type->OCPN)) {
-				return false;
-			};
-			NextToken();
-
-			if(<>ParseStatements()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->CCPN)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
-		method : ParseExpression() ~ Bool {
-			done := false;
-
-			do {
-				if(<>ParseSimpleExpression()) {
-					return false;
-				};
-
-				select(GetType()) {
-					label ScannerToken->Type->AND
-					label ScannerToken->Type->OR
-					label ScannerToken->Type->EQL
-					label ScannerToken->Type->NEQL
-					label ScannerToken->Type->LES
-					label ScannerToken->Type->GTR
-					label ScannerToken->Type->LES_EQL
-					label ScannerToken->Type->GTR_EQL
-					label ScannerToken->Type->ADD
-					label ScannerToken->Type->SUB
-					label ScannerToken->Type->MUL
-					label ScannerToken->Type->DIV
-					label ScannerToken->Type->MOD {
-						NextToken();
-					}
-
-					other {
-						done := true;
-					}
-				};
-			}
-			while(<>done);
-
-			return true;
-		}
-
-		method : ParseSimpleExpression() ~ Bool {
-			select(GetType()) {
-				label ScannerToken->Type->STRING_LIT
-				label ScannerToken->Type->CHAR_LIT
-				label ScannerToken->Type->INT_LIT
-				label ScannerToken->Type->FLOAT_LIT {
-					NextToken();
-
-					return true;
-				}
-
-				label ScannerToken->Type->IDENT {
-					parent := @symbol_scope->Top();
-					child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-					child->SetStart(GetToken());
-					parent->AddChild(child);
-					NextToken();
-					
-					if(Match(ScannerToken->Type->ASSESSOR)) {
-						while(Match(ScannerToken->Type->ASSESSOR)) {
-							NextToken();
-
-							if(Match(ScannerToken->Type->IDENT)) {
-								parent := @symbol_scope->Top();
-								child : Entity;
-								if(GetToken()->GetStringValue()->Equals("New")) {
-									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->CONSTRUCTOR_REF, parent);
-								}
-								else if(Match(ScannerToken->Type->OPN, 1)) {
-									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
-								}
-								else {
-									child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-								};
-								child->SetStart(GetToken());
-								parent->AddChild(child);
-								NextToken();
-
-								if(Match(ScannerToken->Type->OPN)) {
-									if(<>ParseCallParameters()) {
-										return false;
-									};
-								};
-							}
-							else if(Match(ScannerToken->Type->AS_ID)) {
-								NextToken();
-
-								if(<>Match(ScannerToken->Type->OPN)) {
-									return false;
-								};
-								NextToken();
-
-								if(<>ParseType()) {
-									return false;
-								};
-
-								if(<>Match(ScannerToken->Type->CPN)) {
-									return false;
-								};
-								NextToken();
-							};
-						};
-					}
-					else if(Match(ScannerToken->Type->OPN)) {
-						if(<>ParseCallParameters()) {
-							return false;
-						};
-					}
-					else if(Match(ScannerToken->Type->OBR)) {
-						NextToken();
-
-						if(<>ParseExpression()) {
-							return false;
-						};
-
-						if(<>Match(ScannerToken->Type->CBR)) {
-							return false;
-						};
-						NextToken();
-					};
-
-					return true;
-				}
-
-				label ScannerToken->Type->NIL_ID {
-					NextToken();
-
-					return true;
-				}
-
-				label ScannerToken->Type->INT_ID
-				label ScannerToken->Type->FLOAT_ID
-				label ScannerToken->Type->CHAR_ID
-				label ScannerToken->Type->BYTE_ID {
-					NextToken();
-
-					if(<>Match(ScannerToken->Type->ASSESSOR)) {
-						return false;
-					};
-					NextToken();
-
-					if(Match(ScannerToken->Type->IDENT)) {
-						parent := @symbol_scope->Top();
-						child : Entity;
-						if(Match(ScannerToken->Type->OPN, 1)) {
-							child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->FUNCTION_REF, parent);
-						}
-						else {
-							child := Entity->New(GetToken()->GetStringValue(), Entity->Kind->VARIABLE_REF, parent);
-						};
-						child->SetStart(GetToken());
-						parent->AddChild(child);
-						NextToken();
-
-						if(<>ParseCallParameters()) {
-							return false;
-						};
-					};
-
-					return true;
-				}
-
-				label ScannerToken->Type->OPN {
-					NextToken();
-
-					if(<>ParseExpression()) {
-						return false;
-					};
-
-					if(<>Match(ScannerToken->Type->CPN)) {
-						return false;
-					};
-					NextToken();
-
-					return true;	
-				}
-			};
-
-			return false;
-		}
-
-		method : ParseCallParameters() ~ Bool {
-			if(<>Match(ScannerToken->Type->OPN)) {
-				return false;
-			};
-			NextToken();
-
-			while(<>Match(ScannerToken->Type->CPN)) {
-				if(<>ParseExpression()) {
-					return false;
-				};
-
-				if(Match(ScannerToken->Type->COMMA)) {
-					NextToken();
-
-					if(<>ParseExpression()) {
-						return false;
-					};
-				};
-			};
-
-			if(<>Match(ScannerToken->Type->CPN)) {
-				return false;
-			};
-			NextToken();
-
-			while(Match(ScannerToken->Type->LES)) {
-				NextToken();
-				if(<>ParseType()) {
-					return false;
-				};
-
-				if(<>Match(ScannerToken->Type->GTR)) {
-					return false;
-				};
-				NextToken();
-			};
-
-			return true;
-		}
-
-		method : ParseReturn() ~ Bool {
-			NextToken();
-
-			if(<>ParseExpression()) {
-				return false;
-			};
-
-			if(<>Match(ScannerToken->Type->SEMI_COLON)) {
-				return false;
-			};
-			NextToken();
-
-			return true;
-		}
-
-		method : ParseType() ~ Bool {
-			select(GetType()) {
-				label ScannerToken->Type->NIL_ID
-				label ScannerToken->Type->STRING_ID
-				label ScannerToken->Type->INT_ID
-				label ScannerToken->Type->FLOAT_ID
-				label ScannerToken->Type->CHAR_ID
-				label ScannerToken->Type->BYTE_ID {
-					NextToken();
-				}
-
-				label ScannerToken->Type->IDENT {
-					NextToken();
-				}
-
-				other {
-					return false;
-				}
-			};
-
-			if(Match(ScannerToken->Type->OBR)) {
-				NextToken();
-
-				while(Match(ScannerToken->Type->COMMA)) {
-					NextToken();
-				};
-
-				if(<>Match(ScannerToken->Type->CBR)) {
-					return false;
-				};
-				NextToken();
-			};
-
-			return true;
-		}
-
-		method : NextToken() ~ Nil {
-			if(@token_index < @tokens->Size()) {
-				@token_index += 1;
-			};
-		}
-
-		method : GetType() ~ ScannerToken->Type {
-			if(@token_index < @tokens->Size()) {
-				return @tokens->Get(@token_index)->GetType();
-			};
-
-			return ScannerToken->Type->EOS;
-		}
-
-		method : GetToken(offset : Int := 0) ~ ScannerToken {
-			if(@token_index + offset < @tokens->Size()) {
-				return @tokens->Get(@token_index + offset);
-			};
-
-			return Nil;
-		}
-
-		method : Match(type : ScannerToken->Type, offset : Int := 0) ~ Bool {
-			index := @token_index + offset;
-			if(index < @tokens->Size()) {
-				return @tokens->Get(index)->GetType() = type;
-			};
-
-			return false;
-		}
-
-		method : DumpTokens() ~ Nil {
-			each(i : @tokens) {
-				token := @tokens->Get(i);
-				"{$i}: {$token}"->PrintLine();
-			};
-		}
-
-		method : Dump(id : Int) ~ Nil {
-			if(@token_index < @tokens->Size()) {
-				token := @tokens->Get(@token_index);
-				"--- {$id}: {$token} ---"->PrintLine();
-			};
-		}
 	}
 
 	#
@@ -935,8 +170,6 @@ bundle LSP {
 	class Entity {
 		@name : String;
 		@kind : Entity->Kind;
-		@start_pos : ScannerToken;
-		@end_pos : ScannerToken;
 		@parent : Entity;
 		@children : Vector<Entity>;
 
@@ -986,39 +219,14 @@ bundle LSP {
 			@children->AddBack(child);
 		}
 
-		method : public : GetStart() ~ ScannerToken {
-			return @start_pos;
-		}
-
-		method : public : SetStart(start_pos : ScannerToken) ~ Nil {
-			@start_pos := start_pos;
-		}
-
-		method : public : GetEnd() ~ ScannerToken {
-			return @end_pos;
-		}
-
-		method : public : SetEnd(end_pos : ScannerToken) ~ Nil {
-			@end_pos := end_pos;
-		}
-
 		method : public : ToString() ~ String {
 			return ToString(0);
 		}
 
 		method : public : ToString(depth : Int) ~ String {
+			start_line := start_pos := -1;
+			end_line := end_pos := -1;
 			kind := @kind->As(Int);
-			start_line := end_line := @start_pos->GetLine();
-			start_pos := @start_pos->GetPos();
-			
-			end_pos : Int;
-			if(@end_pos = Nil) {
-				end_pos := start_pos + @name->Size();
-			}
-			else {
-				end_pos := @end_pos->GetPos();
-				end_line := @end_pos->GetLine();
-			};
 
 			buffer := "";
 			each(i : depth) {
@@ -1039,6 +247,7 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
+#~			
 			array := JsonElement->New(JsonElement->JsonType->ARRAY);
 			entities := ToVector();
 
@@ -1089,9 +298,12 @@ bundle LSP {
 			};
 
 			return array;
+~#			
+			return Nil;
 		}
 
 		method : AddReference(entity : Entity, uri : String, array : JsonElement) ~ Nil {
+#~			
 			builder := JsonBuilder->New();
 
 			start_line := end_line := entity->GetStart()->GetLine();
@@ -1116,60 +328,7 @@ bundle LSP {
 			builder->Pop();
 
 			array->Add(builder->Pop());
-		}
-
-		method : public : GetSymbols() ~ JsonElement {
-			array := JsonElement->New(JsonElement->JsonType->ARRAY);
-			GetSymbols(array);
-			return array;
-		}
-
-		method : GetSymbols(array : JsonElement) ~ Nil {
-			builder := JsonBuilder->New();
-
-			if(@kind->As(Int) > 100) {
-				start_line := end_line := @start_pos->GetLine();
-				start_index := @start_pos->GetPos();
-				end_index := start_index + @name->Size();
-				
-				obj := builder->PushObject();
-				obj->Insert("kind", @kind->As(Int) - 100);
-				obj->Insert("name", @name);
-
-					builder->PushObject("location");
-
-						builder->PushObject("range");
-							obj := builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-							builder->Pop();
-						builder->Pop();
-
-						builder->PushObject("selectionRange");
-							obj := builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-							builder->Pop();
-						builder->Pop();
-
-				array->Add(builder->PopAll());
-			};
-
-			if(@children <> Nil) {
-				each(i : @children) {
-					@children->Get(i)->GetSymbols(array);
-				};
-			};
+~#			
 		}
 
 		method : public : ToVector() ~ Vector<Entity> {
