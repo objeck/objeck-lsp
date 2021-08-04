@@ -104,11 +104,6 @@ bundle LSP {
 			};
 		}
 
-		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-#			return @root_entity->GetReferences(find, line_pos, char_pos, uri);
-			return Nil;
-		}
-
 		method : public : GetDiagnoses(uri : String) ~ JsonElement {
 #~			
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
@@ -153,6 +148,11 @@ bundle LSP {
 			return Nil;	
 		}
 
+		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
+#			return @root_entity->GetReferences(find, line_pos, char_pos, uri);
+			return Nil;
+		}
+
 		method : public : Parse() ~ Bool {
 			return @analysis->IsParsed();
 		}
@@ -163,7 +163,8 @@ bundle LSP {
 
 
 	}
-
+	
+#~
 	#
 	# Entity
 	#
@@ -247,11 +248,11 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-#~			
+			
 			array := JsonElement->New(JsonElement->JsonType->ARRAY);
 			entities := ToVector();
 
-"=== Search: find={$find}, line_pos={$line_pos}, char_pos={$char_pos} ==="->PrintLine();
+			"=== Search: find={$find}, line_pos={$line_pos}, char_pos={$char_pos} ==="->PrintLine();
 
 			found := false;
 			entity : Entity;
@@ -298,19 +299,19 @@ bundle LSP {
 			};
 
 			return array;
-~#			
+			
 			return Nil;
 		}
 
 		method : AddReference(entity : Entity, uri : String, array : JsonElement) ~ Nil {
-#~			
+			
 			builder := JsonBuilder->New();
 
 			start_line := end_line := entity->GetStart()->GetLine();
 			start_index := entity->GetStart()->GetPos();
 			end_index := start_index + entity->GetName()->Size();
 
-"== {$start_line} =="->PrintLine();
+			"== {$start_line} =="->PrintLine();
 			
 			builder->PushObject();
 			builder->Insert("uri", uri);
@@ -328,7 +329,7 @@ bundle LSP {
 			builder->Pop();
 
 			array->Add(builder->Pop());
-~#			
+			
 		}
 
 		method : public : ToVector() ~ Vector<Entity> {
@@ -348,4 +349,5 @@ bundle LSP {
 			};
 		}
 	}
+~#
 }
