@@ -156,8 +156,12 @@ bundle LSP {
 			};
 		}
 
-		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-#			return @root_entity->GetReferences(find, line_pos, char_pos, uri);
+		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
+			symbol := @analysis->FindReferences(line_pos, char_pos);
+			if(symbol <> Nil) {
+
+			};
+
 			return Nil;
 		}
 

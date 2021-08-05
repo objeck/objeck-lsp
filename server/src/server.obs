@@ -219,7 +219,7 @@ bundle LSP {
 			leaving {
 				parser->Release();
 			};
-			
+
 			parser->Parse();
 			return parser->GetDiagnoses(@uri);
 		}
@@ -238,26 +238,12 @@ bundle LSP {
 		}
 
 		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-#~			
-			index := GetDocumentIndex(line_pos, char_pos);
-			search := FindReference(index - 1);
-			
-			if(@is_debug) {
-				"### Get Reference: line_pos={$line_pos}, char_pos={$char_pos}, index={$index}, search='{$search}' ###"->PrintLine();
-			};
-
 			parser := Parser->New(@text);
 			leaving {
 				parser->Release();
 			};
 
-			if(<>parser->Parse()) {
-				return Nil;
-			};
-
-			return parser->GetReferences(search, line_pos, char_pos, @uri);
-~#
-			return Nil;			
+			return parser->FindReferences(line_pos, char_pos, @uri);
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
