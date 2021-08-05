@@ -49,7 +49,7 @@ function : native : newMutateRate() ~ Float {
 				if(rand <= rate) {		
 					rand *= 1000.0;
 					index : Int := rand->As(Int) % possibilities->Size();
-					retVal->Append(possibilities[index]);
+					retVal->Appen(possibilities[index]);
 				}
 				else {		
 					retVal->Append(parent->Get(i));

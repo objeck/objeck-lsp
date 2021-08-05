@@ -12,13 +12,12 @@ bundle LSP {
 
 		New(text : String) {
 			if(text <> Nil) {
-				@analysis := Analyzer->CheckText(text,"collect.obl");
+				@analysis := Analyzer->ParseText(text);
 			};
 
 			@is_debug := true;
 		}
 
-#~
 		function : Main(args : String[]) ~ Nil {
 			parser : Parser;
 			leaving {
@@ -31,7 +30,7 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				parser->Parse();
-				root := parser->GetDiagnoses("file:////abc");
+				root := parser->GetDiagnoses("file:////abc", "gen_collect.obl");
 				if(root <> Nil) {
 					root->ToString()->PrintLine();
 				};
@@ -40,22 +39,21 @@ bundle LSP {
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-~#
-		method : public : GetDiagnoses(uri : String) ~ JsonElement {
+
+		method : public : GetDiagnoses(uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
-			errors := @analysis->GetDiagnostics();
-
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
-			if(errors <> Nil) {
-				results := errors->GetResults();
+
+			results := @analysis->GetDiagnostics(sys_path);
+			if(results <> Nil) {
 				each(i : results) {
 					result := results[i];
 
 					diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
 
-					diagnostic->Insert("severity", result->GetKind()->As(Int));
+					diagnostic->Insert("severity", result->GetKind()->As(Int) - 100);
 					diagnostic->Insert("message", JsonElement->Encode(result->GetName()));
 					diagnostic->Insert("source", "objk-linter");
 
@@ -117,7 +115,7 @@ bundle LSP {
 			end_index := symbol->GetEndPosition();
 			
 			obj := builder->PushObject();
-			obj->Insert("kind", symbol->GetKind());
+			obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
 			obj->Insert("name", symbol->GetName());
 
 				builder->PushObject("location");
@@ -156,8 +154,8 @@ bundle LSP {
 			};
 		}
 
-		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-			symbol := @analysis->FindReferences(line_pos, char_pos);
+		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			symbol := @analysis->FindReferences(line_pos, char_pos, sys_path);
 			if(symbol <> Nil) {
 
 			};
@@ -185,84 +183,6 @@ bundle LSP {
 	# Entity
 	#
 	class Entity {
-		@name : String;
-		@kind : Entity->Kind;
-		@parent : Entity;
-		@children : Vector<Entity>;
-
-		consts Kind {
-			# REFS
-			REF := 0,
-			PACKAGE_REF:= 4,
-			CLASS_REF := 5,
-			METHOD_REF := 6,
-			CONSTRUCTOR_REF := 9,
-			ENUM_REF := 10,
-			FUNCTION_REF := 12,
-			VARIABLE_REF := 13,
-			# SYMS
-			SYM := 100,
-			PACKAGE_SYM := 104,
-			CLASS_SYM := 105,
-			FUNCTION_SYM := 112,
-			METHOD_SYM := 106,
-			CONSTRUCTOR_SYM := 109
-		}
-
-		New(name : String, kind : Entity->Kind, parent : Entity := Nil) {
-			@name := name;
-			@kind := kind;
-			@parent := parent;
-			@children := Vector->New()<Entity>;
-		}
-
-		method : public : GetName() ~ String {
-			return @name;
-		}
-
-		method : public : GetKind() ~ Entity->Kind {
-			return @kind;
-		}
-
-		method : public : GetParent() ~ Entity {
-			return @parent;
-		}
-
-		method : public : GetChildren() ~ Vector<Entity> {
-			return @children;
-		}
-
-		method : public : AddChild(child : Entity) ~ Nil {
-			@children->AddBack(child);
-		}
-
-		method : public : ToString() ~ String {
-			return ToString(0);
-		}
-
-		method : public : ToString(depth : Int) ~ String {
-			start_line := start_pos := -1;
-			end_line := end_pos := -1;
-			kind := @kind->As(Int);
-
-			buffer := "";
-			each(i : depth) {
-				buffer += '\t';
-			};
-
-			buffer += "[name={$@name}, kind={$kind}, start_line={$start_line}, start_pos={$start_pos}; end_line={$end_line}, end_pos={$end_pos}]";
-			
-			if(@children <> Nil) {
-				each(i : @children) {
-					child := @children->Get(i);
-					buffer += '\n';
-					buffer += child->ToString(depth + 1);
-				};
-			};
-
-			return buffer;
-		}
-
 		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
 			
 			array := JsonElement->New(JsonElement->JsonType->ARRAY);
@@ -347,23 +267,5 @@ bundle LSP {
 			array->Add(builder->Pop());
 			
 		}
-
-		method : public : ToVector() ~ Vector<Entity> {
-			vector := Vector->New()<Entity>;
-			vector->AddBack(@self);
-			ToVector(vector);
-			return vector;
-		}
-
-		method : ToVector(vector : Vector<Entity>) ~ Nil {
-			if(@children <> Nil) {
-				each(i : @children) {
-					child := @children->Get(i);
-					vector->AddBack(child);
-					child->ToVector(vector);
-				};
-			};
-		}
-	}
 ~#
 }
