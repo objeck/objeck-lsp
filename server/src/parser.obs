@@ -7,12 +7,12 @@ bundle LSP {
 	# Parser
 	#
 	class Parser {
-		@analysis : AnalysisTree;
+		@analysis : AnalysisResult;
 		@is_debug : Bool;
 
 		New(text : String) {
 			if(text <> Nil) {
-				@analysis := Analyzer->ParseString(text,"collect.obl");
+				@analysis := Analyzer->CheckText(text,"collect.obl");
 			};
 
 			@is_debug := true;
@@ -30,11 +30,10 @@ bundle LSP {
 			
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
-				if(parser->Parse()) {
-					root := parser->GetSymbols();
-					if(root <> Nil) {
-						root->ToString()->PrintLine();
-					};
+				parser->Parse();
+				root := parser->GetDiagnoses("file:////abc");
+				if(root <> Nil) {
+					root->ToString()->PrintLine();
 				};
 			};
 
@@ -42,79 +41,21 @@ bundle LSP {
 			timer->GetElapsedTime()->PrintLine();
 		}
 
-
-		method : public : GetSymbols() ~ JsonElement {
+		method : public : GetDiagnoses(uri : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			symbol := @analysis->GetSymbols();
-			if(symbol <> Nil) {
-				array := JsonElement->New(JsonElement->JsonType->ARRAY);
-
-				children := symbol->GetSymbols();
-				if(children <> Nil) {
-					each(i : children) {
-						GetSymbols(children[i], array);
-					};
-				};
-
-				return array;
-			};
-
-			return Nil;
-		}
-
-		method : GetSymbols(symbol : Symbol, array : JsonElement) ~ Nil {
-			builder := JsonBuilder->New();
-			
-			start_line := symbol->GetStartLine();
-			start_index := symbol->GetStartPosition();	
-
-			end_line := symbol->GetEndLine();			
-			end_index := symbol->GetEndPosition();
-			
-			obj := builder->PushObject();
-			obj->Insert("kind", symbol->GetKind());
-			obj->Insert("name", symbol->GetName());
-
-				builder->PushObject("location");
-
-					builder->PushObject("range");
-						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
-						builder->Pop();
-
-						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-						builder->Pop();
-					builder->Pop();
-
-					builder->PushObject("selectionRange");
-						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
-						builder->Pop();
-
-						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-						builder->Pop();
-					builder->Pop();
-
-			array->Add(builder->PopAll());
-			
-			children := symbol->GetSymbols();
-			if(children <> Nil) {
-				each(i : children) {
-					GetSymbols(children[i], array);
+			result := @analysis->GetDiagnostics();
+			if(result <> Nil) {
+				result->GetName()->PrintLine();
+				diagnostics := result->GetResults();
+				each(i : diagnostics) {
+					diagnostic := diagnostics[i];
+					msg := diagnostic->GetName();
+					"|{$msg}|"->PrintLine();
 				};
 			};
-		}
-
-		method : public : GetDiagnoses(uri : String) ~ JsonElement {
 #~			
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
 
@@ -156,6 +97,77 @@ bundle LSP {
 			return request;
 ~#		
 			return Nil;	
+		}
+
+		method : public : GetResults() ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			symbol := @analysis->GetSymbols();
+			if(symbol <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				children := symbol->GetResults();
+				if(children <> Nil) {
+					each(i : children) {
+						GetResults(children[i], array);
+					};
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : GetResults(symbol : Result, array : JsonElement) ~ Nil {
+			builder := JsonBuilder->New();
+			
+			start_line := symbol->GetStartLine();
+			start_index := symbol->GetStartPosition();	
+
+			end_line := symbol->GetEndLine();			
+			end_index := symbol->GetEndPosition();
+			
+			obj := builder->PushObject();
+			obj->Insert("kind", symbol->GetKind());
+			obj->Insert("name", symbol->GetName());
+
+				builder->PushObject("location");
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+					builder->PushObject("selectionRange");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+			array->Add(builder->PopAll());
+			
+			children := symbol->GetResults();
+			if(children <> Nil) {
+				each(i : children) {
+					GetResults(children[i], array);
+				};
+			};
 		}
 
 		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
