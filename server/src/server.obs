@@ -194,7 +194,7 @@ bundle LSP {
 					};
 				};
 
-				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnoses());
+				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnosis());
 			};
 		}
 	}
@@ -214,14 +214,14 @@ bundle LSP {
 		}
 
 		# TODO: hacked...
-		method : public : GetDiagnoses() ~ JsonElement {
+		method : public : GetDiagnosis() ~ JsonElement {
 			parser := Parser->New(@text);
 			leaving {
 				parser->Release();
 			};
 
 			parser->Parse();
-			return parser->GetDiagnoses(@uri, "gen_collect.obl");
+			return parser->GetDiagnosis(@uri, "gen_collect.obl");
 		}
 
 		method : public : GetSymbols() ~ JsonElement {

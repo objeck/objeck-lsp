@@ -30,7 +30,7 @@ bundle LSP {
 			if(args->Size() = 1) {
 				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
 				parser->Parse();
-				root := parser->GetDiagnoses("file:////abc", "gen_collect.obl");
+				root := parser->GetDiagnosis("file:////abc", "gen_collect.obl");
 				if(root <> Nil) {
 					root->ToString()->PrintLine();
 				};
@@ -40,7 +40,7 @@ bundle LSP {
 			timer->GetElapsedTime()->PrintLine();
 		}
 
-		method : public : GetDiagnoses(uri : String, sys_path : String) ~ JsonElement {
+		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
