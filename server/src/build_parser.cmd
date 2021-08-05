@@ -1,1 +1,1 @@
-obc -src scanner.obs,parser.obs -lib net,json,regex -dest objk_parser
+obc -src *.obs -lib net,json,diags,regex -dest objk_parser

@@ -18,7 +18,7 @@ bundle LSP {
 			@is_debug := true;
 		}
 
-
+#~
 		function : Main(args : String[]) ~ Nil {
 			parser : Parser;
 			leaving {
@@ -40,50 +40,38 @@ bundle LSP {
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
-
+~#
 		method : public : GetDiagnoses(uri : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
+			errors := @analysis->GetDiagnostics();
 
-			result := @analysis->GetDiagnostics();
-			if(result <> Nil) {
-				result->GetName()->PrintLine();
-				diagnostics := result->GetResults();
-				each(i : diagnostics) {
-					diagnostic := diagnostics[i];
-					msg := diagnostic->GetName();
-					"|{$msg}|"->PrintLine();
-				};
-			};
-#~			
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
+			if(errors <> Nil) {
+				results := errors->GetResults();
+				each(i : results) {
+					result := results[i];
 
-			if(@diagnose_start <> Nil) {
-				start_line := @diagnose_start->GetLine();
-				start_index := @diagnose_start->GetPos();
-				
-				end_line := @diagnose_end->GetLine();
-				end_index := @diagnose_end->GetPos();
-
-				each(i : 1) {
 					diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
 
-					diagnostic->Insert("severity", 1);
-					diagnostic->Insert("message", "Unexpected token");
+					diagnostic->Insert("severity", result->GetKind()->As(Int));
+					diagnostic->Insert("message", JsonElement->Encode(result->GetName()));
 					diagnostic->Insert("source", "objk-linter");
 
 					range := JsonElement->New(JsonElement->JsonType->OBJECT);
 					# start
 					start := JsonElement->New(JsonElement->JsonType->OBJECT);
-					start->Insert("line", start_line);
-					start->Insert("character", start_index);
+					start->Insert("line", result->GetStartLine() - 1);
+					start->Insert("character", result->GetStartPosition() - 1);
 					range->Insert("start", start);
+					
 					# end
 					end := JsonElement->New(JsonElement->JsonType->OBJECT);
-					end->Insert("line", start_line);
-					end->Insert("character", end_index);
+					end->Insert("line", result->GetStartLine() - 1);
+					end->Insert("character", result->GetStartPosition() + 5);
 					range->Insert("end", end);
+
 					diagnostic->Insert("range", range);
 					
 					diagnostics->Add(diagnostic);
@@ -95,11 +83,9 @@ bundle LSP {
 			request->Insert("diagnostics", diagnostics);
 			
 			return request;
-~#		
-			return Nil;	
 		}
 
-		method : public : GetResults() ~ JsonElement {
+		method : public : GetSymbols() ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
@@ -111,7 +97,7 @@ bundle LSP {
 				children := symbol->GetResults();
 				if(children <> Nil) {
 					each(i : children) {
-						GetResults(children[i], array);
+						GetSymbols(children[i], array);
 					};
 				};
 
@@ -121,7 +107,7 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : GetResults(symbol : Result, array : JsonElement) ~ Nil {
+		method : GetSymbols(symbol : Result, array : JsonElement) ~ Nil {
 			builder := JsonBuilder->New();
 			
 			start_line := symbol->GetStartLine();
@@ -165,7 +151,7 @@ bundle LSP {
 			children := symbol->GetResults();
 			if(children <> Nil) {
 				each(i : children) {
-					GetResults(children[i], array);
+					GetSymbols(children[i], array);
 				};
 			};
 		}
