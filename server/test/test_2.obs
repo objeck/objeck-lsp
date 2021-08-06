@@ -49,7 +49,7 @@ function : native : newMutateRate() ~ Float {
 				if(rand <= rate) {		
 					rand *= 1000.0;
 					index : Int := rand->As(Int) % possibilities->Size();
-					retVal->Appen(possibilities[index]);
+					retVal->Append(possibilities[index]);
 				}
 				else {		
 					retVal->Append(parent->Get(i));
@@ -73,7 +73,7 @@ function : native : newMutateRate() ~ Float {
 			iter += 1;
 			
 			if(iter % 100 = 0){
-				Console->Print(iter)->Print(": ")->PrintLine(parent);
+				Standard->Print(iter)->Print(": ")->PrintLine(parent);
 			};
 			
 			bestSpawn : String;

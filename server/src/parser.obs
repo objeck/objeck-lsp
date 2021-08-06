@@ -18,6 +18,7 @@ bundle LSP {
 			@is_debug := true;
 		}
 
+#~
 		function : Main(args : String[]) ~ Nil {
 			parser : Parser;
 			leaving {
@@ -39,6 +40,7 @@ bundle LSP {
 			timer->End();
 			timer->GetElapsedTime()->PrintLine();
 		}
+~#
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
@@ -155,9 +157,12 @@ bundle LSP {
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
-			symbol := @analysis->FindReferences(line_pos, char_pos, sys_path);
-			if(symbol <> Nil) {
-
+			references := @analysis->FindReferences(line_pos, char_pos, sys_path);
+			if(references <> Nil) {
+				each(i : references) {
+					reference := references[i];
+					"--- Found: {$reference} ---"->PrintLine();
+				};
 			};
 
 			return Nil;
