@@ -159,10 +159,36 @@ bundle LSP {
 		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			references := @analysis->FindReferences(line_pos, char_pos, sys_path);
 			if(references <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
 				each(i : references) {
 					reference := references[i];
-					"--- Found: {$reference} ---"->PrintLine();
+					
+					builder := JsonBuilder->New();
+
+					start_line := end_line := reference->GetStartLine();
+					start_index := reference->GetStartPosition();
+					end_index := reference->GetEndPosition();
+					
+					builder->PushObject();
+					builder->Insert("uri", uri);
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+					array->Add(builder->Pop());
 				};
+				
+				return array;
 			};
 
 			return Nil;
