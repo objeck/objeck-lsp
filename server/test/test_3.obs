@@ -1,0 +1,8 @@
+class Test {
+	function : Main(args : String[]) ~ Nil {
+		abc := 10;
+		abc += 100;
+		efg *= abc;
+		efg->PrintLine();
+	}
+}
