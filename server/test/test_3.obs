@@ -1,4 +1,6 @@
 class Test {
+	fie : static : Int;
+
 	enum Foo {
 		BAR
 	}
@@ -6,7 +8,7 @@ class Test {
 	function : Main(args : String[]) ~ Nil {
 		abc := args->Size();
 		abc += 100;
-		efg *= abc - args->Size();
+		efg *= fie / (abc - args->Size());
 		efg->PrintLine();
 	}
 }
