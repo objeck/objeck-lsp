@@ -91,6 +91,30 @@ bundle LSP {
 			};
 
 			reference := @analysis->FindDeclaration(line_pos, char_pos, sys_path);
+			if(reference <> Nil) {
+				builder := JsonBuilder->New();
+
+					start_line := end_line := reference->GetStartLine();
+					start_index := reference->GetStartPosition();
+					end_index := reference->GetEndPosition();
+					
+					builder->PushObject();
+					builder->Insert("uri", uri);
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+				return builder->Pop();
+			};
 
 			return Nil;
 		}

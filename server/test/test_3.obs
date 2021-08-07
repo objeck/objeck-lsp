@@ -6,7 +6,7 @@ class Test {
 	function : Main(args : String[]) ~ Nil {
 		abc := args->Size();
 		abc += 100;
-		efg *= abc;
+		efg *= abc - args->Size();
 		efg->PrintLine();
 	}
 }
