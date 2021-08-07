@@ -1,4 +1,8 @@
 class Test {
+	enum Foo {
+		BAR
+	}
+
 	function : Main(args : String[]) ~ Nil {
 		abc := args->Size();
 		abc += 100;
