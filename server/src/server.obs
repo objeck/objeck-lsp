@@ -53,7 +53,16 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos:= params->FindElements("position/character")->GetValue();
 
-			response := GetDocument(uri)->GetReferences(line_pos->ToInt(), char_pos->ToInt());
+			response := GetDocument(uri)->FindReferences(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
+		}
+
+		method : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos:= params->FindElements("position/character")->GetValue();
+
+			response := GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -75,7 +84,8 @@ bundle LSP {
 	        capabilities->Insert("textDocumentSync", 2);
 	        capabilities->Insert("documentSymbolProvider", true);
 	        capabilities->Insert("referencesProvider", true);
-	        
+	        capabilities->Insert("declarationProvider", true);
+
 	        # write response
 	        WriteRpcResponse(id, response);
 		}
@@ -237,13 +247,22 @@ bundle LSP {
 			return parser->GetSymbols();
 		}
 
-		method : public : GetReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
+		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
 			parser := Parser->New(@text);
 			leaving {
 				parser->Release();
 			};
 
 			return parser->FindReferences(line_pos, char_pos, @uri, "gen_collect.obl");
+		}
+
+		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
+			parser := Parser->New(@text);
+			leaving {
+				parser->Release();
+			};
+
+			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {

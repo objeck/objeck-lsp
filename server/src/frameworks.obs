@@ -70,6 +70,7 @@ bundle LSP {
 		method : virtual : CallbackResolve(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
 
 		method : AddDocument(uri : String, document : Document) ~ Nil {
 			@documents->Insert(uri, document);
@@ -134,6 +135,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/references")) {
 					CallbackReferences(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/declaration")) {
+					CallbackDeclaration(id, request->GetParams());
 				}
 				else if(method_id->Equals("shutdown")) {
 					CallbackShutdown(id, request->GetParams());

@@ -84,6 +84,58 @@ bundle LSP {
 			
 			return request;
 		}
+		
+		method : public : FindDeclaration(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			reference := @analysis->FindDeclaration(line_pos, char_pos, sys_path);
+
+			return Nil;
+		}
+
+		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			references := @analysis->FindReferences(line_pos, char_pos, sys_path);
+			if(references <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : references) {
+					reference := references[i];
+					
+					builder := JsonBuilder->New();
+
+					start_line := end_line := reference->GetStartLine();
+					start_index := reference->GetStartPosition();
+					end_index := reference->GetEndPosition();
+					
+					builder->PushObject();
+					builder->Insert("uri", uri);
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+					array->Add(builder->Pop());
+				};
+				
+				return array;
+			};
+
+			return Nil;
+		}
 
 		method : public : GetSymbols() ~ JsonElement {
 			if(@analysis = Nil) {
@@ -156,44 +208,6 @@ bundle LSP {
 			};
 		}
 
-		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
-			references := @analysis->FindReferences(line_pos, char_pos, sys_path);
-			if(references <> Nil) {
-				array := JsonElement->New(JsonElement->JsonType->ARRAY);
-
-				each(i : references) {
-					reference := references[i];
-					
-					builder := JsonBuilder->New();
-
-					start_line := end_line := reference->GetStartLine();
-					start_index := reference->GetStartPosition();
-					end_index := reference->GetEndPosition();
-					
-					builder->PushObject();
-					builder->Insert("uri", uri);
-
-					builder->PushObject("range");
-						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
-						builder->Pop();
-
-						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-						builder->Pop();
-					builder->Pop();
-
-					array->Add(builder->Pop());
-				};
-				
-				return array;
-			};
-
-			return Nil;
-		}
-
 		method : public : Parse() ~ Bool {
 			if(@analysis = Nil) {
 				return false;
@@ -208,95 +222,4 @@ bundle LSP {
 			};
 		}
 	}
-
-#~
-	#
-	# Entity
-	#
-	class Entity {
-		method : public : GetReferences(find : String, line_pos : Int, char_pos : Int, uri : String) ~ JsonElement {
-			
-			array := JsonElement->New(JsonElement->JsonType->ARRAY);
-			entities := ToVector();
-
-			"=== Search: find={$find}, line_pos={$line_pos}, char_pos={$char_pos} ==="->PrintLine();
-
-			found := false;
-			entity : Entity;
-			for(i := 0; <>found & i < entities->Size(); i += 1;) {
-				entity := entities->Get(i);
-				if(entity->GetKind() = Entity->Kind->FUNCTION_SYM) {
-					start := entity->GetStart();
-					start_line := start->GetLine();
-					start_pos := start->GetPos();
-
-					end := entity->GetEnd();
-					end_line := end->GetLine();
-					end_pos := end->GetPos();
-
-					if(start_line <= line_pos & end_line >= line_pos) {
-						found := true;
-					};
-				};
-			};
-
-			if(entity <> Nil) {
-				parent := entity->GetParent();
-				if(parent <> Nil) {
-					children := parent->GetChildren();
-					each(i : children) {
-						child := children->Get(i);
-						if(child->GetName()->Equals(find)) {
-							AddReference(child, uri, array);
-						};
-					};
-				};
-			};
-
-			if(found) {
-				children := entity->GetChildren();
-				if(children <> Nil) {
-					each(i : children) {
-						child := children->Get(i);
-						if(child->GetName()->Equals(find)) {
-							AddReference(child, uri, array);
-						};
-					};
-				};
-			};
-
-			return array;
-			
-			return Nil;
-		}
-
-		method : AddReference(entity : Entity, uri : String, array : JsonElement) ~ Nil {
-			
-			builder := JsonBuilder->New();
-
-			start_line := end_line := entity->GetStart()->GetLine();
-			start_index := entity->GetStart()->GetPos();
-			end_index := start_index + entity->GetName()->Size();
-
-			"== {$start_line} =="->PrintLine();
-			
-			builder->PushObject();
-			builder->Insert("uri", uri);
-
-			builder->PushObject("range");
-				obj := builder->PushObject("start");
-				obj->Insert("line", start_line);
-				obj->Insert("character", start_index);
-				builder->Pop();
-
-				obj := builder->PushObject("end");
-				obj->Insert("line", end_line);
-				obj->Insert("character", end_index);
-				builder->Pop();
-			builder->Pop();
-
-			array->Add(builder->Pop());
-			
-		}
-~#
 }
