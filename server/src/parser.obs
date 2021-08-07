@@ -69,7 +69,7 @@ bundle LSP {
 					# end
 					end := JsonElement->New(JsonElement->JsonType->OBJECT);
 					end->Insert("line", result->GetStartLine() - 1);
-					end->Insert("character", result->GetStartPosition() + 5);
+					end->Insert("character", result->GetStartPosition() + 2);
 					range->Insert("end", end);
 
 					diagnostic->Insert("range", range);
