@@ -9,18 +9,22 @@ bundle LSP {
 		@is_debug : Bool;
 
 		function : Main(args : String[]) ~ Nil {
+			LintService->Init();
+
 			if(args->Size() = 1) {
-				LintService->Init();
-				LintServer->New(args[0]->ToInt())->Listen();
+				LintServer->New(args[0]->ToInt(), false)->Listen();
+			}
+			else if(args->Size() = 2 & args[1]->Equals("debug")) {
+				LintServer->New(args[0]->ToInt(), true)->Listen();
 			}
 			else {
 				"--- TODO: read config file ---"->ErrorLine();
 			};
 		}
 
-		New(port : Int) {
+		New(port : Int, is_debug : Bool) {
 			@port := port;
-			@is_debug := true;
+			@is_debug := is_debug;
 		}
 
 		method : public : Listen() ~ Nil {
@@ -163,7 +167,7 @@ bundle LSP {
 					"NotifyDidOpen => text='{$text}"->PrintLine();
 				};
 
-				document := Document->New(uri, text);
+				document := Document->New(uri, text, IsDebug());
 				AddDocument(uri, document);
 			}
 			else {
@@ -217,15 +221,15 @@ bundle LSP {
 		@text : String;
 		@is_debug : Bool;
 
-		New(uri : String, text : String) {
+		New(uri : String, text : String, is_debug : Bool) {
 			@uri := uri;
 			@text := GetText(text);
-			@is_debug := true;
+			@is_debug := is_debug;
 		}
 
 		# TODO: hacked...
 		method : public : GetDiagnosis() ~ JsonElement {
-			parser := Parser->New(@text);
+			parser := Parser->New(@text, @is_debug);
 			leaving {
 				parser->Release();
 			};
@@ -235,7 +239,7 @@ bundle LSP {
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
-			parser := Parser->New(@text);
+			parser := Parser->New(@text, @is_debug);
 			leaving {
 				parser->Release();
 			};
@@ -248,7 +252,7 @@ bundle LSP {
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@text);
+			parser := Parser->New(@text, @is_debug);
 			leaving {
 				parser->Release();
 			};
@@ -257,7 +261,7 @@ bundle LSP {
 		}
 
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@text);
+			parser := Parser->New(@text, @is_debug);
 			leaving {
 				parser->Release();
 			};
