@@ -10,12 +10,13 @@ bundle LSP {
 		@analysis : AnalysisResult;
 		@is_debug : Bool;
 
-		New(text : String) {
+		New(text : String, is_debug : Bool) {
+			@is_debug := is_debug;
+
 			if(text <> Nil) {
 				@analysis := Analyzer->ParseText(text);
 			};
 
-			@is_debug := true;
 		}
 
 #~

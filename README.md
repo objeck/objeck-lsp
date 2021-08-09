@@ -3,12 +3,24 @@ LSP support for Objeck will be incorporated into [v6.0](https://github.com/objec
 
 There is lot of work ahead but progress is study.
 
-##### Outstanding
-1. Return error message if unable to parse code
-2. Find method/function declarations
-
 ##### Functional
-1. Code symbols
-2. Find variable references
-3. Find variable declarations
-4. Keyword text completion
+1. Platform support
+    1. Windows (AMD64 and IA32)
+    2. Linux (AMD64, IA32 and ARMv7)
+    3. macOS (AMD64)
+3. Code symbols
+4. Finding variable references
+5. Finding variable declarations
+6. Keyword completion
+
+##### Outstanding
+1. Platform support
+    1. macOS (ARM64)
+2. Return JSON error codes if unable to parse source
+3. Find method/function declarations
+4. Bundle documentation
+5. Testing
+
+##### Future
+1. Hover inline documentation support
+2. Method/function completion

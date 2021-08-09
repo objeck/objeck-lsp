@@ -32,7 +32,7 @@ bundle LSP {
 			@is_debug := is_debug;
 			@documents := Map->New()<String, Document>;
 		}
-		
+
 		method : public : Run(param : Base) ~ Nil {
 			while(<>@quit) {
 				request := ReadRpcRequest();
