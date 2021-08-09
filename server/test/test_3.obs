@@ -5,10 +5,29 @@ class Test {
 		BAR
 	}
 
+	New() {
+
+	}
+
 	function : Main(args : String[]) ~ Nil {
 		abc := args->Size();
 		abc += 100;
 		efg *= fie / (abc - args->Size());
 		efg->PrintLine();
+
+		Foo();
+
+		o : Test := Test->New();
+		t := o->Bar();
+		t += 18;
+		t->PrintLine();
+	}
+
+	function : Bar() ~ Int {
+		return 99;
+	}
+
+	function : Foo() ~ Int {
+		return 13 + 85;
 	}
 }

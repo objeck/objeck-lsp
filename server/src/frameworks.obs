@@ -29,7 +29,7 @@ bundle LSP {
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent();
 			@socket := socket;
-			@is_debug := is_debug;
+			@is_debug := true;
 			@documents := Map->New()<String, Document>;
 		}
 
@@ -60,6 +60,7 @@ bundle LSP {
 		method : virtual : NotifyDidChange(params : JsonElement) ~ Nil;
 		method : virtual : NotifyDidChangeWatchedFiles(params : JsonElement) ~ Nil;
 		method : virtual : NotifyDidSave(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidClose(params : JsonElement) ~ Nil;
 
 		#
 		# Callbacks
@@ -74,6 +75,12 @@ bundle LSP {
 
 		method : AddDocument(uri : String, document : Document) ~ Nil {
 			@documents->Insert(uri, document);
+		}
+
+		method : RemoveDocument(uri : String, document : Document) ~ Nil {
+			if(@documents->Remove(uri)) {
+				document->Release();
+			};
 		}
 
 		method : GetDocument(uri : String) ~ Document {
@@ -108,6 +115,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/didSave")) {
 					NotifyDidSave(request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/didClose")) {
+					NotifyDidClose(request->GetParams());
 				}
 				else {
 					if(@is_debug) {
@@ -278,6 +288,200 @@ bundle LSP {
 
 		method : public : GetParams() ~ JsonElement {
 			return @params;
+		}
+	}
+
+	#
+	# In-memory document
+	#
+	class : private : Document {
+		@uri : String;
+		@text : String;
+		@is_debug : Bool;
+
+		New(uri : String, text : String, is_debug : Bool) {
+			@uri := uri;
+			@text := GetText(text);
+			@is_debug := is_debug;
+		}
+
+		method : public : GetDiagnosis() ~ JsonElement {
+			parser := Parser->New(@text, @is_debug);
+			leaving {
+				parser->Release();
+			};
+
+			parser->Parse();
+			return parser->GetDiagnosis(@uri, "gen_collect.obl");
+		}
+
+		method : public : GetSymbols() ~ JsonElement {
+			parser := Parser->New(@text, @is_debug);
+			leaving {
+				parser->Release();
+			};
+
+			if(<>parser->Parse()) {
+				return Nil;
+			};
+
+			return parser->GetSymbols();
+		}
+
+		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
+			parser := Parser->New(@text, @is_debug);
+			leaving {
+				parser->Release();
+			};
+
+			return parser->FindReferences(line_pos, char_pos, @uri, "gen_collect.obl");
+		}
+
+		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
+			parser := Parser->New(@text, @is_debug);
+			leaving {
+				parser->Release();
+			};
+
+			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
+		}
+
+		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
+			start := GetDocumentIndex(start_line, start_char);
+			if(@is_debug) {
+				"### Update: foo={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+			};
+			
+			if(start > -1) {
+				if(range_length > 0) {
+					@text->Delete(start, range_length);
+				};
+				@text->Insert(start, GetText(text));
+			};
+		}
+
+		method : public : Save() ~ Nil {
+			if(@is_debug) {
+				"NotifyDidSave"->PrintLine();
+			};
+		}
+
+		method : public : Release() ~ Nil {
+			@text := Nil;
+		}
+
+		method : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
+			cur_line := 0;
+			cur_char := 0;
+
+			for(pos := 0; pos < index; pos += 1;) {
+				char := @text->Get(pos);
+				next_char := '\0';				
+				if(pos + 1 < @text->Size()) {
+					next_char := @text->Get(pos + 1);
+				};
+
+				if(char = '\\') {
+					if(next_char = 'n') {
+							cur_line += 1;
+							cur_char := 0;
+					};
+					
+					pos += 1;
+					cur_char += 1;
+				}
+				else {
+					cur_char += 1;
+				};
+			};
+
+			line_pos->Set(cur_line);
+			char_pos->Set(cur_char - 1);
+		}
+
+		method : GetDocumentIndex(line_pos : Int, char_pos : Int) ~ Int {
+			cur_line := 0;
+			cur_char := 0;
+
+			each(pos : @text) {
+				char := @text->Get(pos);
+				next_char := '\0';				
+				if(pos + 1 < @text->Size()) {
+					next_char := @text->Get(pos + 1);
+				};
+
+				if(char = '\n') {
+					cur_line += 1;					
+				};
+				cur_char += 1;
+
+				if(cur_line = line_pos) {
+					index := cur_char + char_pos;
+					if(cur_line = 0) {
+						index -= 1;
+					};
+					
+					return index;
+				};
+			};
+
+			return -1;
+		}
+
+		method : GetText(text : String) ~ String {
+			out := "";
+
+			each(i : text) {
+				cur_char := text->Get(i);
+				next_char := '\0';
+				if(i + 1 < text->Size()) {
+					next_char := text->Get(i + 1);
+				};
+
+				if(cur_char = '\\') {
+					select(next_char) {
+						label 't' {
+							out += '\t';
+							i += 1;
+						}
+
+						label 'r' {
+							out += '\r';
+							i += 1;
+						}
+
+						label 'n' {
+							out += '\n';
+							i += 1;
+						}
+
+						label '\\' {
+							out += '\\';
+							i += 1;
+						}
+
+						label '"' {
+							out += '"';
+							i += 1;
+						}
+
+						other {
+							out += cur_char;
+						}
+					};
+				}
+				else {
+					out += cur_char;
+				};
+			};
+
+			return out;
+		}
+
+		method : DumpDocument() ~ Nil {
+			if(@is_debug) {
+				"TEXT='{$@text}'"->PrintLine();
+			};
 		}
 	}
 }
