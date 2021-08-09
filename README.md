@@ -8,21 +8,33 @@ There is lot of work ahead but progress is study.
     1. Windows (AMD64 and IA32)
     2. Linux (AMD64, IA32 and ARMv7)
     3. macOS (AMD64)
-3. Multi-document support
-4. Code symbols
-5. Finding variable references
-6. Finding variable declarations
-7. Find source method/function declarations
-8. Keyword completion
+2. Multi-document support
+3. Code symbols
+    1. Classes
+    2. Enums
+    3. Methods    
+4. Finding references
+    1. Variables
+5. Finding declarations
+    1. Variables
+    1. Methods and functions
+6. Keyword completion
 
 ##### Outstanding
 1. Platform support
     1. macOS (ARM64)
-2. Return JSON error codes if unable to parse source
-3. Bundle documentation
-4. Testing
+2. Finding declarations
+    1. Classes and Enums
+3. Error handling
+    1. Unable to parse code
+4. Linting (without DFA)
+    1. Unused variables
+    2. Dead code
+4. Bundle documentation
+5. More efficient symbol structure
+5. Testing
 
 ##### Future
-1. Hover inline documentation support
+1. Hover documentation support
 2. Method/function completion
 3. Find library method/function declarations
