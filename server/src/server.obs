@@ -64,12 +64,21 @@ bundle LSP {
 		method : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
-			char_pos:= params->FindElements("position/character")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
 
 			response := GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
+		method : SignatureHelp(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+			trigger := params->FindElements("context/triggerCharacter")->GetValue();
+			
+			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt(), trigger);
+			WriteRpcResponse(id, response);
+		}
 
 		method : CallbackInitialize(id : Int, params : JsonElement) ~ Nil {
 			workspace := params->FindElements("capabilities/workspace");
@@ -80,6 +89,12 @@ bundle LSP {
 			capabilities := response->AddChild("capabilities");
 	        completionProvider := capabilities->AddChild("completionProvider");
 	        completionProvider->Insert("resolveProvider", true);
+
+			signatureHelpProvider := capabilities->AddChild("signatureHelpProvider");
+			triggerCharacters := JsonElement->New(JsonElement->JsonType->ARRAY);
+	        triggerCharacters->Add("(");
+	        triggerCharacters->Add(",");
+			signatureHelpProvider->Insert("triggerCharacters", triggerCharacters);
 
 	        workspace := capabilities->AddChild("workspace");
 	        workspaceFolders := workspace->AddChild("workspaceFolders");

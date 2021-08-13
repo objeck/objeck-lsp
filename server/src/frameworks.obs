@@ -20,6 +20,27 @@ bundle LSP {
 			@keywords->AddBack("function");
 			@keywords->AddBack("Int");
 			@keywords->AddBack("Float");
+			@keywords->AddBack("Char");
+			@keywords->AddBack("Byte");
+			@keywords->AddBack("String");
+			@keywords->AddBack("Nil");
+			@keywords->AddBack("As");
+			@keywords->AddBack("use");
+			@keywords->AddBack("leaving");
+			@keywords->AddBack("if");
+			@keywords->AddBack("else");
+			@keywords->AddBack("do");
+			@keywords->AddBack("while");
+			@keywords->AddBack("select");
+			@keywords->AddBack("break");
+			@keywords->AddBack("continue");
+			@keywords->AddBack("other");
+			@keywords->AddBack("for");
+			@keywords->AddBack("each");
+			@keywords->AddBack("reverse");
+			@keywords->AddBack("label");
+			@keywords->AddBack("return");
+			@keywords->AddBack("critical");
 		}
 
 		function : GetKeywords() ~ Vector<String> {
@@ -72,6 +93,7 @@ bundle LSP {
 		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : SignatureHelp(id : Int, params : JsonElement) ~ Nil;
 
 		method : AddDocument(uri : String, document : Document) ~ Nil {
 			@documents->Insert(uri, document);
@@ -148,6 +170,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/declaration")) {
 					CallbackDeclaration(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/signatureHelp")) {
+					SignatureHelp(id, request->GetParams());
 				}
 				else if(method_id->Equals("shutdown")) {
 					CallbackShutdown(id, request->GetParams());
@@ -346,10 +371,16 @@ bundle LSP {
 			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String) ~ JsonElement {
+			"### SignatureHelp: line_pos='{$line_pos}', char_pos='{$char_pos}', trigger='{$trigger}' ###"->PrintLine();
+			
+			return Nil;
+		}
+
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {
-				"### Update: foo={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+				"### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
 			};
 			
 			if(start > -1) {
