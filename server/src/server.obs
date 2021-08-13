@@ -1,9 +1,11 @@
 use Collection.Generic;
 use System.IO.Net;
 use Data.JSON;
-use Query.RegEx;
 
 bundle LSP {
+	#~
+	LSP TCP server
+	~#
 	class LintServer {
 		@port : Int;
 		@is_debug : Bool;
@@ -42,7 +44,7 @@ bundle LSP {
 	}
 
 	#~
-	Handles requests
+	Handles TCP client requests
 	~#
 	class LintService from LspWorker {
 		New(socket : TCPSocket, is_debug : Bool) {

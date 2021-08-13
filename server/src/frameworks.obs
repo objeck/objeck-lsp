@@ -3,6 +3,9 @@ use System.IO.Net;
 use Data.JSON;
 
 bundle LSP {
+	#~
+	Abstract socket server worker
+	~#
 	class LspWorker from System.Concurrency.Thread {		
 		@address : String;
 		@port : Int;
@@ -289,7 +292,7 @@ bundle LSP {
 	}
 
 	#~
-	Json-RPC request
+	Handles JSON-RPC requests
 	~#
 	class : private : RpcRequest {
 		@id : Int;
@@ -316,9 +319,9 @@ bundle LSP {
 		}
 	}
 
-	#
-	# In-memory document
-	#
+	#~
+	In-memory text document
+	~#
 	class : private : Document {
 		@uri : String;
 		@text : String;

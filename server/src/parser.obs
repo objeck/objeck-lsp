@@ -3,9 +3,9 @@ use System.Diagnostics;
 use Data.JSON;
 
 bundle LSP {
-	#
-	# Parser
-	#
+	#~
+	Wrapper for native parser and contractual analyzer
+	~#
 	class Parser {
 		@analysis : AnalysisResult;
 		@is_debug : Bool;

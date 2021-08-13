@@ -1,1 +1,0 @@
-obc -src *.obs -lib net,json,diags,regex -dest objk_parser
