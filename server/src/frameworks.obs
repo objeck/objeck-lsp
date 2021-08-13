@@ -50,7 +50,7 @@ bundle LSP {
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent();
 			@socket := socket;
-			@is_debug := true;
+			@is_debug := is_debug;
 			@documents := Map->New()<String, Document>;
 		}
 
@@ -372,7 +372,9 @@ bundle LSP {
 		}
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String) ~ JsonElement {
-			"### SignatureHelp: line_pos='{$line_pos}', char_pos='{$char_pos}', trigger='{$trigger}' ###"->PrintLine();
+			if(@is_debug) {
+				"### SignatureHelp: line_pos='{$line_pos}', char_pos='{$char_pos}', trigger='{$trigger}' ###"->PrintLine();
+			};
 			
 			return Nil;
 		}

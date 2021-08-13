@@ -133,7 +133,7 @@ bundle LSP {
 				item := JsonElement->New(JsonElement->JsonType->OBJECT);
 				keyword := keywords->Get(i);
 				item->Insert("label", keyword);
-				item->Insert("kind", 7);
+				item->Insert("kind", 14);
 				item->Insert("data", i);
 				item->Insert("detail", "{$keyword} details");
 	      		item->Insert("documentation", "{$keyword} documentation");      		
