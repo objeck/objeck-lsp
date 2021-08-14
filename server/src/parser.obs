@@ -7,7 +7,7 @@ bundle LSP {
 	Wrapper for native parser and contractual analyzer
 	~#
 	class Parser {
-		@analysis : AnalysisResult;
+		@analysis : Analysis;
 		@is_debug : Bool;
 
 		New(text : String, is_debug : Bool) {
@@ -18,30 +18,6 @@ bundle LSP {
 			};
 
 		}
-
-#~
-		function : Main(args : String[]) ~ Nil {
-			parser : Parser;
-			leaving {
-				parser->Release();
-			};
-
-			timer := System.Time.Timer->New();
-			timer->Start();			
-			
-			if(args->Size() = 1) {
-				parser := Parser->New(System.IO.File.FileReader->ReadFile(args[0]));
-				parser->Parse();
-				root := parser->GetDiagnosis("file:////abc", "gen_collect.obl");
-				if(root <> Nil) {
-					root->ToString()->PrintLine();
-				};
-			};
-
-			timer->End();
-			timer->GetElapsedTime()->PrintLine();
-		}
-~#
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
@@ -159,6 +135,19 @@ bundle LSP {
 				return array;
 			};
 
+			return Nil;
+		}
+
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, sys_path);
+			if(signature <> Nil) {
+
+			};
+			
 			return Nil;
 		}
 

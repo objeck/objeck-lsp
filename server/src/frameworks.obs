@@ -375,11 +375,12 @@ bundle LSP {
 		}
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String) ~ JsonElement {
-			if(@is_debug) {
-				"### SignatureHelp: line_pos='{$line_pos}', char_pos='{$char_pos}', trigger='{$trigger}' ###"->PrintLine();
+			parser := Parser->New(@text, @is_debug);
+			leaving {
+				parser->Release();
 			};
 			
-			return Nil;
+			return parser->SignatureHelp(line_pos, char_pos, trigger, @uri, "gen_collect.obl");
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
