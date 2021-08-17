@@ -17,6 +17,8 @@ class Test {
 
 		Foo();
 
+		bar := "Bar";
+
 		o : Test := Test->New();
 		t := o->Bar();
 		t += 18;
