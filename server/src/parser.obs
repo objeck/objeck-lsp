@@ -143,9 +143,23 @@ bundle LSP {
 				return Nil;
 			};
 
-			signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, sys_path);
-			if(signature <> Nil) {
+			root_signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, sys_path);
+			if(root_signature <> Nil) {
+				root_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 
+				signatures_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				children := root_signature->GetResults();
+				each(i : children) {
+					signature := children[i];
+					
+					signature_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					signature_json->Insert("label", signature->GetName());
+					signatures_json->Add(signature_json);
+				};
+
+				root_json->Insert("signatures", signatures_json);
+				return root_json;
 			};
 			
 			return Nil;
