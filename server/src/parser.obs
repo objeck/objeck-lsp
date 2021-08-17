@@ -138,12 +138,12 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String, uri : String, sys_path : String) ~ JsonElement {
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, sys_path);
+			signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, sys_path);
 			if(signature <> Nil) {
 
 			};
@@ -151,13 +151,14 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : GetSymbols() ~ JsonElement {
+		method : public : GetSymbols(is_parsed : BoolHolder, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			symbol := @analysis->GetSymbols();
+			symbol := @analysis->GetSymbols(sys_path);
 			if(symbol <> Nil) {
+				is_parsed->Set(symbol->GetCode() = 1 ? true : false);			
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 				children := symbol->GetResults();

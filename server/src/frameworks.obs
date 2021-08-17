@@ -325,6 +325,7 @@ bundle LSP {
 	class : private : Document {
 		@uri : String;
 		@text : String;
+		@alt_text : String;
 		@is_debug : Bool;
 
 		New(uri : String, text : String, is_debug : Bool) {
@@ -353,7 +354,14 @@ bundle LSP {
 				return Nil;
 			};
 
-			return parser->GetSymbols();
+			is_parsed := BoolHolder->New();
+			result := parser->GetSymbols(is_parsed, "gen_collect.obl");
+
+			if(is_parsed->Get()) {
+				@alt_text := @text->Clone()->As(String);
+			};
+
+			return result;
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
@@ -375,12 +383,59 @@ bundle LSP {
 		}
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String) ~ JsonElement {
-			parser := Parser->New(@text, @is_debug);
+			parser := Parser->New(@alt_text, @is_debug);
 			leaving {
 				parser->Release();
 			};
+
+			index := GetDocumentIndex(line_pos, char_pos);
+			if(index > -1) {
+				start_pos := index;
+				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+					index -= 1;
+				};
+				end_pos := index;
+
+				mthd_str := "";
+				length := start_pos - end_pos - 2;
+				if(length > 0) {
+					mthd_str := @text->SubString(end_pos + 1, length);
+				};
+				
+				while(@text->Get(index) = ' ' | 
+						(@text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
+						(@text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
+						(@text->Get(index) = 't' & @text->Get(index - 1) = '\\')) {
+					index -= 1;
+					if(@text->Get(index - 1) = '\\') {
+						index -= 1;
+					};
+				};
+
+				var_str := "";
+				has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
+				if(has_var) {
+					index -= 2;
+					
+					start_pos := index;
+					while(@text->Get(index)->IsChar() | @text->Get(index) = '_') {
+						index -= 1;
+					};
+					end_pos := index;
+
+					length := start_pos - end_pos;
+					if(length > 0) {
+						var_str := @text->SubString(end_pos + 1, length);
+					};
+				};
+
+"\n\n --- has_var={$has_var}, start_pos={$start_pos}, end_pos={$end_pos}, var_str='{$var_str}' ---"->PrintLine();
+"\n\n --- start_pos={$start_pos}, end_pos={$end_pos}, mthd_str='{$mthd_str}' ---\n\n"->PrintLine();
+				
+				return parser->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, @uri, "gen_collect.obl");
+			};
 			
-			return parser->SignatureHelp(line_pos, char_pos, trigger, @uri, "gen_collect.obl");
+			return Nil;
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
