@@ -138,7 +138,7 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};

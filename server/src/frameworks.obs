@@ -382,7 +382,7 @@ bundle LSP {
 			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
-		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : String) ~ JsonElement {
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : Int) ~ JsonElement {
 			parser := Parser->New(@alt_text, @is_debug);
 			leaving {
 				parser->Release();

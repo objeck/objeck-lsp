@@ -76,9 +76,9 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
-			trigger := params->FindElements("context/triggerCharacter")->GetValue();
+			trigger := params->FindElements("context/triggerKind")->GetValue();
 			
-			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt(), trigger);
+			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt(), trigger->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
