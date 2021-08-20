@@ -401,7 +401,7 @@ bundle LSP {
 				if(length > 0) {
 					mthd_str := @text->SubString(end_pos + 1, length);
 				};
-				
+
 				while(@text->Get(index) = ' ' | 
 						(@text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
 						(@text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
@@ -416,7 +416,6 @@ bundle LSP {
 				has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
 				if(has_var) {
 					index -= 2;
-					
 					start_pos := index;
 					while(@text->Get(index)->IsChar() | @text->Get(index) = '_') {
 						index -= 1;

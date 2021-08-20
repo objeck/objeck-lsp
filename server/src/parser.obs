@@ -151,9 +151,22 @@ bundle LSP {
 
 				children := root_signature->GetResults();
 				each(i : children) {
+					signature := children[i];
 					signature_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					signature_json->Insert("label", children[i]->GetName());
+					signature_json->Insert("label", signature->GetName());
 					signatures_json->Add(signature_json);
+
+					params := signature->GetResults();
+					if(params <> Nil) {
+						signatures_params := JsonElement->New(JsonElement->JsonType->ARRAY);
+						each(j : params) {
+							param := params[j];
+							signature_param := JsonElement->New(JsonElement->JsonType->OBJECT);
+							signature_param->Insert("label", param->GetName());
+							signatures_params->Add(signature_param);
+						};
+						signature_json->Insert("parameters", signatures_params);
+					};
 				};
 
 				root_json->Insert("signatures", signatures_json);
