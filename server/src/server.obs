@@ -76,9 +76,8 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
-			trigger := params->FindElements("context/triggerKind")->GetValue();
 			
-			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt(), trigger->ToInt());
+			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -120,14 +119,9 @@ bundle LSP {
 		}	
 
 		method : CallbackCompletion(id : Int, params : JsonElement) ~ Nil {
-			uri := params->FindElements("textDocument/uri");
-			line_pos := params->FindElements("position/line");
-			char_id := params->FindElements("position/character");
-			kind := params->FindElements("context/triggerKind");
-
-			if(IsDebug()) {
-				"CallbackCompletion => file='{$uri}', line={$line_pos}, char={$char_id}, kind={$kind}"->PrintLine();
-			};
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
 
 			keywords := GetKeywords();
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);		

@@ -138,12 +138,12 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			root_signature := @analysis->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, sys_path);
+			root_signature := @analysis->SignatureHelp(line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_signature <> Nil) {
 				root_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 

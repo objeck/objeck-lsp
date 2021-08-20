@@ -382,7 +382,44 @@ bundle LSP {
 			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
-		method : public : SignatureHelp(line_pos : Int, char_pos : Int, trigger : Int) ~ JsonElement {
+		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
+			parser := Parser->New(@alt_text, @is_debug);
+			leaving {
+				parser->Release();
+			};
+			
+			index := GetDocumentIndex(line_pos, char_pos);
+			if(index > -1) {
+				var_str := "";	mthd_str := "";
+				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
+
+				};
+"\n\n--- {$var_str}, {$mthd_str} ---\n\n"->PrintLine();
+			};
+			
+#~
+			var_str := "";	mthd_str := "";
+				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
+
+			keywords := GetKeywords();
+			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
+			each(i : keywords) {
+				item := JsonElement->New(JsonElement->JsonType->OBJECT);
+				keyword := keywords->Get(i);
+				item->Insert("label", keyword);
+				item->Insert("kind", 14);
+				item->Insert("data", i);
+				item->Insert("detail", "{$keyword} details");
+	      		item->Insert("documentation", "{$keyword} documentation");      		
+				response->Add(item);
+			};
+~#			
+
+			return Nil;
+		}
+
+
+		method : public : SignatureHelp(line_pos : Int, char_pos : Int) ~ JsonElement {
 			parser := Parser->New(@alt_text, @is_debug);
 			leaving {
 				parser->Release();
@@ -390,48 +427,53 @@ bundle LSP {
 
 			index := GetDocumentIndex(line_pos, char_pos);
 			if(index > -1) {
+				var_str := "";	mthd_str := "";
+				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
+					return parser->SignatureHelp(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+				};
+			};
+			
+			return Nil;
+		}
+
+		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String) ~ Bool {
+			start_pos := index;
+			while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+				index -= 1;
+			};
+			end_pos := index;
+
+			length := start_pos - end_pos - 2;
+			if(length > 0) {
+				mthd_str += @text->SubString(end_pos + 1, length);
+			};
+
+			while(@text->Get(index) = ' ' | 
+					(@text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
+					(@text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
+					(@text->Get(index) = 't' & @text->Get(index - 1) = '\\')) {
+				index -= 1;
+				if(@text->Get(index - 1) = '\\') {
+					index -= 1;
+				};
+			};
+
+			has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
+			if(has_var) {
+				index -= 2;
 				start_pos := index;
-				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+				while(@text->Get(index)->IsChar() | @text->Get(index) = '_') {
 					index -= 1;
 				};
 				end_pos := index;
 
-				mthd_str := "";
-				length := start_pos - end_pos - 2;
+				length := start_pos - end_pos;
 				if(length > 0) {
-					mthd_str := @text->SubString(end_pos + 1, length);
+					var_str += @text->SubString(end_pos + 1, length);
 				};
-
-				while(@text->Get(index) = ' ' | 
-						(@text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
-						(@text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
-						(@text->Get(index) = 't' & @text->Get(index - 1) = '\\')) {
-					index -= 1;
-					if(@text->Get(index - 1) = '\\') {
-						index -= 1;
-					};
-				};
-
-				var_str := "";
-				has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
-				if(has_var) {
-					index -= 2;
-					start_pos := index;
-					while(@text->Get(index)->IsChar() | @text->Get(index) = '_') {
-						index -= 1;
-					};
-					end_pos := index;
-
-					length := start_pos - end_pos;
-					if(length > 0) {
-						var_str := @text->SubString(end_pos + 1, length);
-					};
-				};
-				
-				return parser->SignatureHelp(line_pos, char_pos, trigger, var_str, mthd_str, @uri, "gen_collect.obl");
 			};
-			
-			return Nil;
+
+			return <>(var_str->IsEmpty() & mthd_str->IsEmpty());
 		}
 
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
