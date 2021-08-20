@@ -79,6 +79,30 @@ bundle LSP {
 			
 			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
+		}	
+
+		method : CallbackCompletion(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
+
+			keywords := GetKeywords();
+			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
+			each(i : keywords) {
+				item := JsonElement->New(JsonElement->JsonType->OBJECT);
+				keyword := keywords->Get(i);
+				item->Insert("label", keyword);
+				item->Insert("kind", 14);
+				item->Insert("data", i);
+				item->Insert("detail", "{$keyword} details");
+	      		item->Insert("documentation", "{$keyword} documentation");      		
+				response->Add(item);
+			};
+
+	        # write response
+	        WriteRpcResponse(id, response);
 		}
 
 		method : CallbackInitialize(id : Int, params : JsonElement) ~ Nil {
@@ -116,28 +140,6 @@ bundle LSP {
 			};
 
 			@quit := true;
-		}	
-
-		method : CallbackCompletion(id : Int, params : JsonElement) ~ Nil {
-			uri := params->FindElements("textDocument/uri")->GetValue();
-			line_pos := params->FindElements("position/line")->GetValue();
-			char_pos := params->FindElements("position/character")->GetValue();
-
-			keywords := GetKeywords();
-			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
-			each(i : keywords) {
-				item := JsonElement->New(JsonElement->JsonType->OBJECT);
-				keyword := keywords->Get(i);
-				item->Insert("label", keyword);
-				item->Insert("kind", 14);
-				item->Insert("data", i);
-				item->Insert("detail", "{$keyword} details");
-	      		item->Insert("documentation", "{$keyword} documentation");      		
-				response->Add(item);
-			};
-
-	        # write response
-	        WriteRpcResponse(id, response);
 		}
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {

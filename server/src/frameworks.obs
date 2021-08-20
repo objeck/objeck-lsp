@@ -390,16 +390,25 @@ bundle LSP {
 			
 			index := GetDocumentIndex(line_pos, char_pos);
 			if(index > -1) {
-				var_str := "";	mthd_str := "";
-				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
-
+				start_pos := index - 1;
+x := @text->Get(start_pos);		
+"\n\n--- x='{$x}' ---\n\n"->PrintLine();
+#~
+				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+					index -= 1;
 				};
-"\n\n--- {$var_str}, {$mthd_str} ---\n\n"->PrintLine();
+				end_pos := index;
+
+				length := start_pos - end_pos;
+				if(length > 0) {
+					mthd_str := @text->SubString(end_pos, length);
+				};
+~#				
 			};
-			
+
 #~
 			var_str := "";	mthd_str := "";
-				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
+			if(GetVariableMethodStrings(index, var_str, mthd_str)) {
 
 			keywords := GetKeywords();
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
