@@ -15,11 +15,16 @@ class Test {
 		efg *= fie / (abc - args->Size());
 		efg->PrintLine();
 
-		Foo();
 
-		bar := "Bar";
+		
+		bar := "Hello World";
+		bar->Split("abc");
+		meme := bar->Clone();
 
 		o : Test := Test->New();
+		
+		o->Foo();
+		
 		t := o->Bar();
 		t += 18;
 		t->PrintLine();
