@@ -138,6 +138,30 @@ bundle LSP {
 			return Nil;
 		}
 
+		method : public : Completion(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			root_completion := @analysis->Completion(line_pos, char_pos, var_str, mthd_str, sys_path);
+			if(root_completion <> Nil) {
+#~
+				each(i : keywords) {
+					item := JsonElement->New(JsonElement->JsonType->OBJECT);
+					keyword := keywords->Get(i);
+					item->Insert("label", keyword);
+					item->Insert("kind", 14);
+					item->Insert("data", i);
+					item->Insert("detail", "{$keyword} details");
+		      		item->Insert("documentation", "{$keyword} documentation");      		
+					response->Add(item);
+				};
+~#				
+			};
+
+			return Nil;
+		}
+
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;

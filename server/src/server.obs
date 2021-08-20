@@ -86,8 +86,10 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
-
+			response := GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
+			
+#~
 			keywords := GetKeywords();
 			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
 			each(i : keywords) {
@@ -103,6 +105,7 @@ GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
 
 	        # write response
 	        WriteRpcResponse(id, response);
+~#	        
 		}
 
 		method : CallbackInitialize(id : Int, params : JsonElement) ~ Nil {

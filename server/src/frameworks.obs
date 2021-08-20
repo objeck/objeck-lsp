@@ -390,39 +390,12 @@ bundle LSP {
 			
 			index := GetDocumentIndex(line_pos, char_pos);
 			if(index > -1) {
-				start_pos := index - 1;
-x := @text->Get(start_pos);		
-"\n\n--- x='{$x}' ---\n\n"->PrintLine();
-#~
-				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
-					index -= 1;
+				var_str := ""; mthd_str := "";
+				if(GetVariableMethodStrings(index - 1, var_str, mthd_str, false)) {
+					keywords := parser->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+					return JsonElement->New(JsonElement->JsonType->ARRAY);
 				};
-				end_pos := index;
-
-				length := start_pos - end_pos;
-				if(length > 0) {
-					mthd_str := @text->SubString(end_pos, length);
-				};
-~#				
 			};
-
-#~
-			var_str := "";	mthd_str := "";
-			if(GetVariableMethodStrings(index, var_str, mthd_str)) {
-
-			keywords := GetKeywords();
-			response := JsonElement->New(JsonElement->JsonType->ARRAY);		
-			each(i : keywords) {
-				item := JsonElement->New(JsonElement->JsonType->OBJECT);
-				keyword := keywords->Get(i);
-				item->Insert("label", keyword);
-				item->Insert("kind", 14);
-				item->Insert("data", i);
-				item->Insert("detail", "{$keyword} details");
-	      		item->Insert("documentation", "{$keyword} documentation");      		
-				response->Add(item);
-			};
-~#			
 
 			return Nil;
 		}
@@ -445,14 +418,18 @@ x := @text->Get(start_pos);
 			return Nil;
 		}
 
-		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String) ~ Bool {
+		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String, offset : Bool := true) ~ Bool {
 			start_pos := index;
-			while(@text->Get(index)->IsChar() | @text->Get(index) = '_' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+			while(@text->Get(index)->IsChar() | @text->Get(index) = '_'  | @text->Get(index) = '@' | @text->Get(index) = '(' | @text->Get(index) = ')') {
 				index -= 1;
 			};
 			end_pos := index;
 
-			length := start_pos - end_pos - 2;
+			length := start_pos - end_pos;
+			if(offset) {
+				length -= 2;
+			};
+
 			if(length > 0) {
 				mthd_str += @text->SubString(end_pos + 1, length);
 			};
@@ -471,7 +448,7 @@ x := @text->Get(start_pos);
 			if(has_var) {
 				index -= 2;
 				start_pos := index;
-				while(@text->Get(index)->IsChar() | @text->Get(index) = '_') {
+				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
 					index -= 1;
 				};
 				end_pos := index;
@@ -480,6 +457,10 @@ x := @text->Get(start_pos);
 				if(length > 0) {
 					var_str += @text->SubString(end_pos + 1, length);
 				};
+			};
+
+			if(@is_debug) {
+				"\n\n--- var_str='{$var_str}', mthd_str='{$mthd_str}' ---\n\n"->PrintLine();
 			};
 
 			return <>(var_str->IsEmpty() & mthd_str->IsEmpty());
