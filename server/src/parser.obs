@@ -145,18 +145,27 @@ bundle LSP {
 
 			root_completion := @analysis->Completion(line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_completion <> Nil) {
-#~
-				each(i : keywords) {
+				response := JsonElement->New(JsonElement->JsonType->ARRAY);	
+
+				completions := root_completion->GetResults();
+				each(i : completions) {
+					completion := completions[i];
+
+					code := completion->GetCode();
+					keyword := completion->GetName();
+
 					item := JsonElement->New(JsonElement->JsonType->OBJECT);
-					keyword := keywords->Get(i);
 					item->Insert("label", keyword);
-					item->Insert("kind", 14);
+					item->Insert("kind", code);
 					item->Insert("data", i);
 					item->Insert("detail", "{$keyword} details");
-		      		item->Insert("documentation", "{$keyword} documentation");      		
+		      		item->Insert("documentation", "{$keyword} documentation");
 					response->Add(item);
 				};
-~#				
+
+"\n\n---0: {$response} ---\n\n"->PrintLine();
+
+				return response;
 			};
 
 			return Nil;

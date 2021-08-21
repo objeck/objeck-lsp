@@ -21,7 +21,7 @@ class Test {
 		bar->Split("abc");
 		meme := bar->Clone();
 
-		bar->SubStr
+		
 
 		o : Test := Test->New();
 		

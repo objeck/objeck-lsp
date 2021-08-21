@@ -392,8 +392,7 @@ bundle LSP {
 			if(index > -1) {
 				var_str := ""; mthd_str := "";
 				if(GetVariableMethodStrings(index - 1, var_str, mthd_str, false)) {
-					keywords := parser->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
-					return JsonElement->New(JsonElement->JsonType->ARRAY);
+					return parser->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
 				};
 			};
 
