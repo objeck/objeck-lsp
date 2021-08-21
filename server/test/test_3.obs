@@ -21,8 +21,9 @@ class Test {
 		bar->Split("abc");
 		meme := bar->Clone();
 
+		x := meme->HashID();
+		yz := x * bar->SubString(1,2)->Size();
 		
-
 		o : Test := Test->New();
 		
 		o->Foo();
