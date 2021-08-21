@@ -162,9 +162,7 @@ bundle LSP {
 		      		item->Insert("documentation", "{$keyword} documentation");
 					response->Add(item);
 				};
-
-"\n\n---0: {$response} ---\n\n"->PrintLine();
-
+				
 				return response;
 			};
 
