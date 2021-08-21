@@ -7,7 +7,7 @@ There is lot of work ahead but progress is study.
 1. Platform support
     1. Windows (AMD64 and IA32)
     2. Linux (AMD64, IA32 and ARMv7)
-    3. macOS (AMD64)
+    3. macOS (AMD64 and ARM64)
 2. Multi-document support
 3. Code symbols
     1. Classes
@@ -17,22 +17,20 @@ There is lot of work ahead but progress is study.
     1. Variables
 5. Finding declarations
     1. Variables
-    1. Methods and functions
+    2. Methods and functions
 6. Keyword completion
+    1. Variables
+    2. Methods and functions
+7. Bundle documentation
 
 ##### Outstanding
-1. Platform support
-    1. macOS (ARM64)
-2. Finding declarations
+1. Finding declarations
     1. Classes and Enums
-3. Error handling
-    1. Unable to parse code
-4. Linting (without DFA)
+2. Linting (without DFA)
     1. Unused variables
     2. Dead code
-4. Bundle documentation
-5. More efficient symbol structure
-5. Testing
+3. More efficient symbol structure
+4. Testing
 
 ##### Future
 1. Hover documentation support
