@@ -120,9 +120,10 @@ bundle LSP {
 			signatureHelpProvider->Insert("triggerCharacters", triggerCharacters);
 
 	        workspace := capabilities->AddChild("workspace");
-	        workspaceFolders := workspace->AddChild("workspaceFolders");
-	        workspaceFolders->Insert("supported", true);
-
+	        workspace->Insert("workspaceFolders", true);
+	        workspace->Insert("configuration", true);
+	        
+	        capabilities->Insert("workspace", workspace);
 	        capabilities->Insert("textDocumentSync", 2);
 	        capabilities->Insert("documentSymbolProvider", true);
 	        capabilities->Insert("referencesProvider", true);
