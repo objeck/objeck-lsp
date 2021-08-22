@@ -1,7 +1,7 @@
 ### Language Server
 LSP support for Objeck will be incorporated into [v6.0](https://github.com/objeck/objeck-lang/tree/profiling-tools). Diagnostic functionality (i.e. compiling code, finding symbols, etc.) will be built a libraries that ship with the tool chain. The LSP backend is standalone and written in Objeck. The backend handles client requests, formats responses and maintains the state of the in-memory document.
 
-There is lot of work ahead but progress is study.
+The server is functional but there is still work to do.
 
 ##### Functional
 1. Platform support
@@ -26,13 +26,12 @@ There is lot of work ahead but progress is study.
 ##### Outstanding
 1. Finding declarations
     1. Classes and Enums
+2. Auto include libraries based upon 'use' statements
 2. Linting (without DFA)
     1. Unused variables
     2. Dead code
-3. More efficient symbol structure
-4. Testing
+3. More efficient symbol structures
 
 ##### Future
-1. Hover documentation support
-2. Method/function completion
-3. Find library method/function declarations
+1. Renaming of variables, methods and functions
+2. Hover support

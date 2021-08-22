@@ -19,8 +19,8 @@ class Test {
 		bar->Split("abc");
 		meme := bar->Clone();
 
-		z := bar->SubString(2, 3);
-		zz := z->Size();
+		bar->Set('4', 1);
+		bar->PrintLine();
 
 		x := meme->HashID();
 		yz := x * bar->SubString(1,2)->Size();
