@@ -92,8 +92,21 @@ bundle LSP {
 
 		method : CallbackInitialize(id : Int, params : JsonElement) ~ Nil {
 			workspace := params->FindElements("capabilities/workspace");
-			configuration := params->FindElements("capabilities/workspace/configuration");
-
+			if(workspace <> Nil) {
+				configuration := params->FindElements("capabilities/workspace/configuration");
+				if(configuration <> Nil & configuration->GetValue()->Equals("true")) {
+					workspace_folders := params->FindElements("workspaceFolders");
+					each(i : workspace_folders) {
+						workspace_folder := workspace_folders->Get(i);
+						workspace_uri := workspace_folder->Get("uri")->GetValue();
+						workspace_name := workspace_folder->Get("name")->GetValue();
+						if(@is_debug) {
+							"\n\n --- workspace_uri='{$workspace_uri}', name='{$workspace_name}'' --- \n\n"->PrintLine();
+						};
+					};
+				};
+			};
+			
 			# build response
 			response := JsonElement->New(JsonElement->JsonType->OBJECT);
 			capabilities := response->AddChild("capabilities");

@@ -14,12 +14,13 @@ class Test {
 		abc += 100;
 		efg *= fie / (abc - args->Size());
 		efg->PrintLine();
-
-
 		
 		bar := "Hello World";
 		bar->Split("abc");
 		meme := bar->Clone();
+
+		z := bar->SubString(2, 3);
+		zz := z->Size();
 
 		x := meme->HashID();
 		yz := x * bar->SubString(1,2)->Size();
