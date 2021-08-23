@@ -102,7 +102,7 @@ bundle LSP {
 						folder_uri := workspace_folder->Get("uri")->GetValue();
 						folder_name := workspace_folder->Get("name")->GetValue();
 						if(@is_debug) {
-							"--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---"->PrintLine();
+							"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
 						};
 					};
 				};
