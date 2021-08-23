@@ -105,6 +105,9 @@ bundle LSP {
 
 		method : RemoveDocument(uri : String, document : Document) ~ Nil {
 			if(@documents->Remove(uri)) {
+				if(@is_debug) {
+					"\n\n--- Closed file='{$uri}' ---\n"->PrintLine();
+				};
 				document->Release();
 			};
 		}
@@ -523,9 +526,11 @@ bundle LSP {
 		}
 
 		method : GetDocumentIndex(line_pos : Int, char_pos : Int) ~ Int {
-			cur_line := 0;
-			cur_char := 0;
+			if(line_pos = 0 & char_pos = 0) {
+				return 0;
+			};
 
+			cur_line := 0; cur_char := 0;
 			each(pos : @text) {
 				char := @text->Get(pos);
 				next_char := '\0';				

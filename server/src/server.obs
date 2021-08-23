@@ -172,9 +172,9 @@ bundle LSP {
 			text := params->FindElements("textDocument/text")->GetValue();
 
 			if(IsDebug()) {
-				"NotifyDidOpen => text='{$text}"->PrintLine();
+				"NotifyDidOpen => text=\"{$text}\""->PrintLine();
 			};
-
+			
 			AddDocument(uri, Document->New(uri, text, IsDebug()));
 		}
 
