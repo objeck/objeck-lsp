@@ -1,5 +1,5 @@
 # Objeck LSP
-LSP support for Objeck will be incorporated into [v6.0](https://github.com/objeck/objeck-lang/tree/profiling-tools). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) will be built in libraries that ship with the tool chain. The LSP sever is standalone, written in Objeck and exposes a TCP socket interface. The backend handles client requests, formats responses and maintains the state of the in-memory document.
+LSP support for [Objeck]((https://github.com/objeck/objeck-lang) will be incorporated into v6.0. Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) will be built in libraries that ship with the tool chain. The LSP sever is standalone, written in Objeck and exposes a TCP socket interface. The backend handles client requests, formats responses and maintains the state of the in-memory document.
 
 ![alt text](images/design.svg "Objeck LSP")
 
