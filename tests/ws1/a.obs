@@ -1,0 +1,8 @@
+class Foo {
+	New() {
+	}
+
+	public : method : SayHi() ~ Nil {
+		"Hello!"->PrintLine();
+	}
+}
