@@ -1,5 +1,5 @@
 class Test {
-	New() {
+	function : Main(a : String[]) ~ Nil {
 		f := Foo->New();
 		f->SayHi();
 	}

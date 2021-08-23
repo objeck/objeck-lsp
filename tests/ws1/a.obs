@@ -2,7 +2,7 @@ class Foo {
 	New() {
 	}
 
-	public : method : SayHi() ~ Nil {
-		"Hello!"->PrintLine();
+	method : public : SayHi() ~ Nil {
+		"Hello..."->PrintLine();
 	}
 }
