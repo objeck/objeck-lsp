@@ -47,15 +47,16 @@ The server is functional but there is still work to do.
 7. Bundle documentation
 
 ### Outstanding
-1. Finding declarations
-    1. Classes and Enums
+1. Validate all finds in workspace
 2. Auto include libraries based upon 'use' statements
-2. Linting (without DFA)
+3. Finding declarations
+    1. Classes and Enums
+4. Linting
     1. Unused variables
     2. Dead code
-3. More efficient symbol structures
-4. Testing with Emacs and Sublime
+5. Testing with Emacs and Sublime
 
 ### Future
 1. Renaming of variables, methods and functions
 2. Hover support
+3. Use of more efficient JSON data structures 
