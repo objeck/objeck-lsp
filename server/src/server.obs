@@ -98,10 +98,11 @@ bundle LSP {
 					workspace_folders := params->FindElements("workspaceFolders");
 					each(i : workspace_folders) {
 						workspace_folder := workspace_folders->Get(i);
-						workspace_uri := workspace_folder->Get("uri")->GetValue();
-						workspace_name := workspace_folder->Get("name")->GetValue();
+						# TODO: track workspace
+						folder_uri := workspace_folder->Get("uri")->GetValue();
+						folder_name := workspace_folder->Get("name")->GetValue();
 						if(@is_debug) {
-							"\n\n --- workspace_uri='{$workspace_uri}', name='{$workspace_name}'' --- \n\n"->PrintLine();
+							"--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---"->PrintLine();
 						};
 					};
 				};
@@ -120,8 +121,9 @@ bundle LSP {
 			signatureHelpProvider->Insert("triggerCharacters", triggerCharacters);
 
 	        workspace := capabilities->AddChild("workspace");
-	        workspace->Insert("workspaceFolders", true);
-	        workspace->Insert("configuration", true);
+	        workspace_folders := workspace->AddChild("workspaceFolders");
+	        workspace_folders->Insert("supported", true);
+	        workspace_folders->Insert("changeNotifications", true);
 	        
 	        capabilities->Insert("workspace", workspace);
 	        capabilities->Insert("textDocumentSync", 2);
@@ -190,6 +192,31 @@ bundle LSP {
 				RemoveDocument(uri, document);
 			};
 		}
+
+		method : NotifyDidChangeWorkspace(params : JsonElement) ~ Nil {
+			added := params->FindElements("event/added");
+			each(i : added) {
+				folder := added->Get(i);
+				
+				folder_uri := folder->Get("uri")->GetValue();
+				folder_name := folder->Get("name")->GetValue();
+				if(@is_debug) {
+					"--- Added workspace: '{$folder_uri}', '{$folder_name}' ---"->PrintLine();
+				};
+			};
+
+			removed := params->FindElements("event/removed");
+			each(i : removed) {
+				folder := removed->Get(i);
+				
+				folder_uri := folder->Get("uri")->GetValue();
+				folder_name := folder->Get("name")->GetValue();
+				if(@is_debug) {
+					"--- Removed workspace: '{$folder_uri}', '{$folder_name}' ---"->PrintLine();
+				};
+			};
+		}
+
 
 		method : NotifyDidChange(params : JsonElement) ~ Nil {
 			if(IsDebug()) {

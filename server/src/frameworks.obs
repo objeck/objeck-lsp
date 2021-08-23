@@ -85,6 +85,7 @@ bundle LSP {
 		method : virtual : NotifyDidChangeWatchedFiles(params : JsonElement) ~ Nil;
 		method : virtual : NotifyDidSave(params : JsonElement) ~ Nil;
 		method : virtual : NotifyDidClose(params : JsonElement) ~ Nil;
+		method : virtual : NotifyDidChangeWorkspace(params : JsonElement) ~ Nil;
 
 		#
 		# Callbacks
@@ -143,6 +144,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/didClose")) {
 					NotifyDidClose(request->GetParams());
+				}
+				else if(method_id->Equals("workspace/didChangeWorkspaceFolders")) {
+					NotifyDidChangeWorkspace(request->GetParams());
 				}
 				else {
 					if(@is_debug) {
