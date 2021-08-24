@@ -14,40 +14,9 @@ bundle LSP {
 		@is_debug : Bool;
 		@documents : Map<String, Document>;
 		@socket : TCPSocket;
-		@keywords : static : Vector<String>;
 		@id : Int;
 
 		function : Init() ~ Nil {
-			@keywords := Vector->New()<String>;
-			@keywords->AddBack("method");
-			@keywords->AddBack("function");
-			@keywords->AddBack("Int");
-			@keywords->AddBack("Float");
-			@keywords->AddBack("Char");
-			@keywords->AddBack("Byte");
-			@keywords->AddBack("String");
-			@keywords->AddBack("Nil");
-			@keywords->AddBack("As");
-			@keywords->AddBack("use");
-			@keywords->AddBack("leaving");
-			@keywords->AddBack("if");
-			@keywords->AddBack("else");
-			@keywords->AddBack("do");
-			@keywords->AddBack("while");
-			@keywords->AddBack("select");
-			@keywords->AddBack("break");
-			@keywords->AddBack("continue");
-			@keywords->AddBack("other");
-			@keywords->AddBack("for");
-			@keywords->AddBack("each");
-			@keywords->AddBack("reverse");
-			@keywords->AddBack("label");
-			@keywords->AddBack("return");
-			@keywords->AddBack("critical");
-		}
-
-		function : GetKeywords() ~ Vector<String> {
-			return @keywords;
 		}
 
 		New(socket : TCPSocket, is_debug : Bool) {
@@ -188,7 +157,7 @@ bundle LSP {
 					CallbackShutdown(id, request->GetParams());
 				}
 				else {
-					if(@is_debug) {
+					if(@is_debug & <>method_id->Equals("<none>")) {
 						"*** Unknown method='{$method_id}' ***"->PrintLine();
 					};
 				};
@@ -241,8 +210,20 @@ bundle LSP {
 					};
 
 					ver := node->Get("jsonrpc");
-					mthd := node->Get("method")->GetValue();
+					
+					mthd : String;
+					mthd_elem := node->Get("method");
+					if(mthd_elem <> Nil) {
+						mthd := mthd_elem->GetValue();
+					}
+					else {
+						mthd := "<none>";
+					};
+
 					params := node->Get("params");
+					if(params = Nil) {
+						params := node->Get("result");
+					};
 
 					if(ver <> Nil & ver->GetValue()->Equals("2.0") & mthd <> Nil) {
 						return RpcRequest->New(id, mthd, params);
@@ -253,12 +234,20 @@ bundle LSP {
 			return Nil;
 		}
 
-		# --- response ---
-		method : WriteRpcResponse(id : Int, result : JsonElement) ~ Nil {
-			WriteString(MakeRpcResponse(id, result)->ToString());
+		# --- capability ---
+		method : WriteRpcCapability(id : Int, params : JsonElement) ~ Nil {
+			node := JsonElement->New(JsonElement->JsonType->OBJECT);
+			
+			node->Insert("jsonrpc", "2.0");
+			node->Insert("method", "client/registerCapability");
+			node->Insert("params", params);
+			node->Insert("id", id);
+
+			WriteString(node->ToString());
 		}
 
-		method : MakeRpcResponse(id : Int, result : JsonElement) ~ JsonElement {
+		# --- response ---
+		method : WriteRpcResponse(id : Int, result : JsonElement) ~ Nil {
 			node := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
@@ -273,15 +262,11 @@ bundle LSP {
 				node->Insert("id", id);
 			};
 
-			return node;
+			WriteString(node->ToString());
 		}
 
 		# --- request ---
 		method : WriteRpcRequest(kind : String, result : JsonElement) ~ Nil {
-			WriteString(MakeRpcRequest(kind, result)->ToString());
-		}
-
-		method : MakeRpcRequest(kind : String, result : JsonElement) ~ JsonElement {
 			node := JsonElement->New(JsonElement->JsonType->OBJECT);
 
 			node->Insert("jsonrpc", "2.0");
@@ -294,7 +279,7 @@ bundle LSP {
 				node->Insert("params", result);
 			};
 
-			return node;
+			WriteString(node->ToString());
 		}
 	}
 

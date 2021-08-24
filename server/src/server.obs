@@ -133,6 +133,36 @@ bundle LSP {
 
 	        # write response
 	        WriteRpcResponse(id, response);
+
+
+
+
+
+
+#			Message: {"jsonrpc":"2.0","method":"client/registerCapability","params":{"registrations":[{"id":"as3mxml-language-server-0.8628580101532646","method":"workspace/didChangeWatchedFiles","registerOptions":{"watchers":[{"globPattern":"**/*"}]}}]},"id":"1"}	        
+
+
+			watcher := JsonElement->New(JsonElement->JsonType->OBJECT);
+			watcher->Insert("globPattern", "**/*.json");
+
+			watchers_array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			watchers_array->Add(watcher);
+
+			watchers_obj := JsonElement->New(JsonElement->JsonType->OBJECT);
+			watchers_obj->Insert("watchers", watchers_array);
+
+			registrar := JsonElement->New(JsonElement->JsonType->OBJECT);
+			registrar->Insert("id", "d929fc04-b4ac-4907-a3b3-0508710f3c42");
+			registrar->Insert("method", "workspace/didChangeWatchedFiles");
+			registrar->Insert("registerOptions", watchers_obj);
+
+			registrars_array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			registrars_array->Add(registrar);
+
+			registrars_obj := JsonElement->New(JsonElement->JsonType->OBJECT);
+			registrars_obj->Insert("registrations", registrars_array);
+
+			WriteRpcCapability(101, registrars_obj);
 		}
 
 		method : CallbackShutdown(id : Int, params : JsonElement) ~ Nil {
