@@ -6,13 +6,13 @@ bundle LSP {
 	#~
 	Abstract socket server worker
 	~#
-	class LspWorker from System.Concurrency.Thread {		
+	class LspWorker from System.Concurrency.Thread {
 		@address : String;
 		@port : Int;
 		@quit : Bool;
 		@is_initialized : Bool;
 		@is_debug : Bool;
-		@documents : Map<String, Document>;
+		@workspace : LspWorkspace;
 		@socket : TCPSocket;
 		@id : Int;
 
@@ -23,7 +23,7 @@ bundle LSP {
 			Parent();
 			@socket := socket;
 			@is_debug := is_debug;
-			@documents := Map->New()<String, Document>;
+			@workspace := LspWorkspace->New();
 		}
 
 		method : public : Run(param : Base) ~ Nil {
@@ -67,23 +67,6 @@ bundle LSP {
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : SignatureHelp(id : Int, params : JsonElement) ~ Nil;
-
-		method : AddDocument(uri : String, document : Document) ~ Nil {
-			@documents->Insert(uri, document);
-		}
-
-		method : RemoveDocument(uri : String, document : Document) ~ Nil {
-			if(@documents->Remove(uri)) {
-				if(@is_debug) {
-					"\n\n--- Closed file='{$uri}' ---\n"->PrintLine();
-				};
-				document->Release();
-			};
-		}
-
-		method : GetDocument(uri : String) ~ Document {
-			return @documents->Find(uri);
-		}
 
 		# --- process requests ---
 		method : ProcessResponse(request : RpcRequest) ~ Nil {
@@ -280,6 +263,38 @@ bundle LSP {
 			};
 
 			WriteString(node->ToString());
+		}
+	}
+
+	#~
+	Abstract socket server worker
+	~#
+	class LspWorkspace {
+		@name : String;
+		@root : String;
+		@documents : Map<String, Document>;
+
+		New() {
+			@documents := Map->New()<String, Document>;
+		}
+
+		method : public : SetRoot(name : String, root : String) ~ Nil {
+			@name := name;
+			@root := root;
+		}
+
+		method : public : GetDocument(uri : String) ~ Document {
+			return @documents->Find(uri);
+		}
+
+		method : public : AddDocument(uri : String, document : Document) ~ Nil {
+			@documents->Insert(uri, document);
+		}
+
+		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
+			if(@documents->Remove(uri)) {
+				document->Release();
+			};
 		}
 	}
 

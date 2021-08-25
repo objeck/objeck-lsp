@@ -59,7 +59,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos:= params->FindElements("position/character")->GetValue();
 
-			response := GetDocument(uri)->FindReferences(line_pos->ToInt(), char_pos->ToInt());
+			response:= @workspace->GetDocument(uri)->FindReferences(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -68,7 +68,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-			response := GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
+			response:= @workspace->GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -77,7 +77,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 			
-			response := GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
+			response:= @workspace->GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}	
 
@@ -86,7 +86,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 			
-			response := GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
+			response:= @workspace->GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -98,12 +98,15 @@ bundle LSP {
 					workspace_folders := params->FindElements("workspaceFolders");
 					each(i : workspace_folders) {
 						workspace_folder := workspace_folders->Get(i);
+						
 						# TODO: track workspace
-						folder_uri := workspace_folder->Get("uri")->GetValue();
 						folder_name := workspace_folder->Get("name")->GetValue();
+						folder_uri := workspace_folder->Get("uri")->GetValue();
+						
 						if(@is_debug) {
 							"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
 						};
+						@workspace->SetRoot(folder_name, folder_uri);
 					};
 				};
 			};
@@ -131,17 +134,13 @@ bundle LSP {
 	        capabilities->Insert("referencesProvider", true);
 	        capabilities->Insert("declarationProvider", true);
 
-	        # write response
 	        WriteRpcResponse(id, response);
 
+	        # register watchers
+	        RegisterWatchers();
+		}
 
-
-
-
-
-#			Message: {"jsonrpc":"2.0","method":"client/registerCapability","params":{"registrations":[{"id":"as3mxml-language-server-0.8628580101532646","method":"workspace/didChangeWatchedFiles","registerOptions":{"watchers":[{"globPattern":"**/*"}]}}]},"id":"1"}	        
-
-
+		method : RegisterWatchers() ~ Nil {
 			watcher := JsonElement->New(JsonElement->JsonType->OBJECT);
 			watcher->Insert("globPattern", "**/*.json");
 
@@ -175,7 +174,7 @@ bundle LSP {
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			response := GetDocument(uri)->GetSymbols();
+			response:= @workspace->GetDocument(uri)->GetSymbols();
 			WriteRpcResponse(id, response);
 		}
 
@@ -205,11 +204,11 @@ bundle LSP {
 				"NotifyDidOpen => text=\"{$text}\""->PrintLine();
 			};
 			
-			AddDocument(uri, Document->New(uri, text, IsDebug()));
+			@workspace->AddDocument(uri, Document->New(uri, text, IsDebug()));
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {
-			document := GetDocument(params->FindElements("textDocument/uri")->GetValue());
+			document:= @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());
 			if(document <> Nil) {
 				document->Save();
 			};
@@ -217,9 +216,9 @@ bundle LSP {
 		
 		method : NotifyDidClose(params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			document := GetDocument(params->FindElements("textDocument/uri")->GetValue());
+			document:= @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());
 			if(document <> Nil) {
-				RemoveDocument(uri, document);
+				@workspace->RemoveDocument(uri, document);
 			};
 		}
 
@@ -254,7 +253,7 @@ bundle LSP {
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			document := GetDocument(uri);
+			document:= @workspace->GetDocument(uri);
 			changes := params->FindElements("contentChanges");
 			if(document <> Nil & changes <> Nil) {
 				each(i : changes) {
