@@ -267,66 +267,6 @@ bundle LSP {
 	}
 
 	#~
-	Abstract socket server worker
-	~#
-	class LspWorkspace {
-		@name : String;
-		@root : String;
-		@documents : Map<String, Document>;
-
-		New() {
-			@documents := Map->New()<String, Document>;
-		}
-
-		method : public : SetRoot(name : String, root : String) ~ Nil {
-			@name := name;
-			@root := root;
-		}
-
-		method : public : GetDocument(uri : String) ~ Document {
-			return @documents->Find(uri);
-		}
-
-		method : public : AddDocument(uri : String, document : Document) ~ Nil {
-			@documents->Insert(uri, document);
-		}
-
-		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
-			if(@documents->Remove(uri)) {
-				document->Release();
-			};
-		}
-	}
-
-	#~
-	Handles JSON-RPC requests
-	~#
-	class : private : RpcRequest {
-		@id : Int;
-		@mthd : String;
-		@params : JsonElement;
-
-		New(id : Int, mthd : String, params : JsonElement) {
-			@id := id;
-			@mthd := mthd;
-			@params := params;
-			@is_debug := true;
-		}
-
-		method : public : GetId() ~ Int {
-			return @id;
-		}
-
-		method : public : GetMethod() ~ String {
-			return @mthd;
-		}
-
-		method : public : GetParams() ~ JsonElement {
-			return @params;
-		}
-	}
-
-	#~
 	In-memory text document
 	~#
 	class : private : Document {
@@ -609,6 +549,66 @@ bundle LSP {
 		method : DumpDocument() ~ Nil {
 			if(@is_debug) {
 				"TEXT='{$@text}'"->PrintLine();
+			};
+		}
+	}
+
+	#~
+	Handles JSON-RPC requests
+	~#
+	class : private : RpcRequest {
+		@id : Int;
+		@mthd : String;
+		@params : JsonElement;
+
+		New(id : Int, mthd : String, params : JsonElement) {
+			@id := id;
+			@mthd := mthd;
+			@params := params;
+			@is_debug := true;
+		}
+
+		method : public : GetId() ~ Int {
+			return @id;
+		}
+
+		method : public : GetMethod() ~ String {
+			return @mthd;
+		}
+
+		method : public : GetParams() ~ JsonElement {
+			return @params;
+		}
+	}
+
+	#~
+	Workspaace
+	~#
+	class LspWorkspace {
+		@name : String;
+		@root : String;
+		@documents : Map<String, Document>;
+
+		New() {
+			@documents := Map->New()<String, Document>;
+		}
+
+		method : public : SetRoot(name : String, root : String) ~ Nil {
+			@name := name;
+			@root := root;
+		}
+
+		method : public : GetDocument(uri : String) ~ Document {
+			return @documents->Find(uri);
+		}
+
+		method : public : AddDocument(uri : String, document : Document) ~ Nil {
+			@documents->Insert(uri, document);
+		}
+
+		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
+			if(@documents->Remove(uri)) {
+				document->Release();
 			};
 		}
 	}
