@@ -587,6 +587,8 @@ bundle LSP {
 	class : private : LspWorkspace {
 		@name : String;
 		@root : String;
+		@files_str : String;
+		@libs_str : String;
 		@documents : Map<String, Document>;
 
 		New() {
@@ -596,6 +598,11 @@ bundle LSP {
 		method : public : SetRoot(name : String, root : String) ~ Nil {
 			@name := name;
 			@root := root;
+		}
+
+		method : public : SetFilesLibs(files_str : String, libs_str : String) ~ Nil {
+			@files_str := files_str;
+			@libs_str := libs_str;
 		}
 
 		method : public : GetDocument(uri : String) ~ Document {

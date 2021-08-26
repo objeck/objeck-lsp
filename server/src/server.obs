@@ -102,12 +102,12 @@ bundle LSP {
 						# TODO: track workspace
 						folder_name := workspace_folder->Get("name")->GetValue();
 						folder_uri := workspace_folder->Get("uri")->GetValue();
-						@workspace->SetRoot(folder_name, folder_uri);
 
 						if(@is_debug) {
 							"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
 						};
 
+						@workspace->SetRoot(folder_name, folder_uri);
 						ProcessConfiguration(folder_uri);
 					};
 				};
@@ -156,15 +156,33 @@ bundle LSP {
 				if(json->Parse()) {
 					root := json->GetRoot();
 					
+					files_str := "";
 					files_json := root->Get("files");
 					each(i : files_json) {
-						files_json->Get(i)->GetValue()->PrintLine();
+						files_str += files_json->Get(i)->GetValue();
+						files_str += ',';
 					};
 
+					if(<>files_str->IsEmpty()) {
+						files_str->Pop();
+					};
+
+					libs_str := "";
 					libs_json := root->Get("libs");
 					each(i : libs_json) {
-						libs_json->Get(i)->GetValue()->PrintLine();
+						libs_str += libs_json->Get(i)->GetValue();
+						libs_str += ',';
 					};
+
+					if(<>libs_str->IsEmpty()) {
+						libs_str->Pop();
+					};
+
+					if(@is_debug) {
+						"\n--- Files and libraries:  files_str='{$files_str}', libs_str='{$libs_str}' ---\n"->PrintLine();
+					};
+
+					@workspace->SetFilesLibs(files_str, libs_str);
 				};
 			};
 		}
