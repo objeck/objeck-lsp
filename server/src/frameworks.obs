@@ -282,27 +282,27 @@ bundle LSP {
 		}
 
 		method : public : GetDiagnosis() ~ JsonElement {
-			parser := Parser->New(@text, @is_debug);
+			proxy := AstProxy->New(@text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 
-			parser->Parse();
-			return parser->GetDiagnosis(@uri, "gen_collect.obl");
+			proxy->Process();
+			return proxy->GetDiagnosis(@uri, "gen_collect.obl");
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
-			parser := Parser->New(@text, @is_debug);
+			proxy := AstProxy->New(@text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 
-			if(<>parser->Parse()) {
+			if(<>proxy->Process()) {
 				return Nil;
 			};
 
 			is_parsed := BoolHolder->New();
-			result := parser->GetSymbols(is_parsed, "gen_collect.obl");
+			result := proxy->GetSymbols(is_parsed, "gen_collect.obl");
 
 			if(is_parsed->Get()) {
 				@alt_text := @text->Clone()->As(String);
@@ -312,34 +312,34 @@ bundle LSP {
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@text, @is_debug);
+			proxy := AstProxy->New(@text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 
-			return parser->FindReferences(line_pos, char_pos, @uri, "gen_collect.obl");
+			return proxy->FindReferences(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@text, @is_debug);
+			proxy := AstProxy->New(@text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 
-			return parser->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
+			return proxy->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@alt_text, @is_debug);
+			proxy := AstProxy->New(@alt_text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 			
 			index := GetDocumentIndex(line_pos, char_pos);
 			if(index > -1) {
 				var_str := ""; mthd_str := "";
 				if(GetVariableMethodStrings(index - 1, var_str, mthd_str, false)) {
-					return parser->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+					return proxy->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
 				};
 			};
 
@@ -348,16 +348,16 @@ bundle LSP {
 
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int) ~ JsonElement {
-			parser := Parser->New(@alt_text, @is_debug);
+			proxy := AstProxy->New(@alt_text, @is_debug);
 			leaving {
-				parser->Release();
+				proxy->Release();
 			};
 
 			index := GetDocumentIndex(line_pos, char_pos);
 			if(index > -1) {
 				var_str := "";	mthd_str := "";
 				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
-					return parser->SignatureHelp(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+					return proxy->SignatureHelp(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
 				};
 			};
 			
@@ -584,7 +584,7 @@ bundle LSP {
 	#~
 	Workspaace
 	~#
-	class LspWorkspace {
+	class : private : LspWorkspace {
 		@name : String;
 		@root : String;
 		@documents : Map<String, Document>;

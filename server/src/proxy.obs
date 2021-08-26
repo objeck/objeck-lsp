@@ -6,7 +6,7 @@ bundle LSP {
 	#~
 	Wrapper for native parser and contractual analyzer
 	~#
-	class Parser {
+	class AstProxy {
 		@analysis : Analysis;
 		@is_debug : Bool;
 
@@ -279,7 +279,7 @@ bundle LSP {
 			};
 		}
 
-		method : public : Parse() ~ Bool {
+		method : public : Process() ~ Bool {
 			if(@analysis = Nil) {
 				return false;
 			};
