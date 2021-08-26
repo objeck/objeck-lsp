@@ -156,15 +156,10 @@ bundle LSP {
 				if(json->Parse()) {
 					root := json->GetRoot();
 					
-					files_str := "";
 					files_json := root->Get("files");
+					file_strs := String->New[files_json->Size()];
 					each(i : files_json) {
-						files_str += files_json->Get(i)->GetValue();
-						files_str += ',';
-					};
-
-					if(<>files_str->IsEmpty()) {
-						files_str->Pop();
+						file_strs[i] := files_json->Get(i)->GetValue();
 					};
 
 					libs_str := "";
@@ -179,10 +174,10 @@ bundle LSP {
 					};
 
 					if(@is_debug) {
-						"\n--- Files and libraries:  files_str='{$files_str}', libs_str='{$libs_str}' ---\n"->PrintLine();
+						"\n--- Files and libraries:  decoded_folder_uri='{$decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
 					};
 
-					@workspace->SetFilesLibs(files_str, libs_str);
+					@workspace->SetFilesLibs(decoded_folder_uri, file_strs, libs_str);
 				};
 			};
 		}

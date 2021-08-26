@@ -587,8 +587,13 @@ bundle LSP {
 	class : private : LspWorkspace {
 		@name : String;
 		@root : String;
-		@files_str : String;
+
+		@local_path : String;
+		@file_strs : String[];
+		
 		@libs_str : String;
+		@files_str : String;
+		
 		@documents : Map<String, Document>;
 
 		New() {
@@ -600,9 +605,21 @@ bundle LSP {
 			@root := root;
 		}
 
-		method : public : SetFilesLibs(files_str : String, libs_str : String) ~ Nil {
-			@files_str := files_str;
+		method : public : SetFilesLibs(local_path : String, file_strs : String[], libs_str : String) ~ Nil {
+			@local_path := local_path;
+			@file_strs := file_strs;
 			@libs_str := libs_str;
+			
+			@files_str := "";
+			each(i : file_strs) {
+				@files_str += @local_path;
+				@files_str += '/';
+				@files_str += file_strs[i];
+
+				if(i + 1 < file_strs->Size()) {
+					@files_str += ',';
+				};
+			};
 		}
 
 		method : public : GetDocument(uri : String) ~ Document {

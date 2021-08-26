@@ -16,7 +16,6 @@ bundle LSP {
 			if(text <> Nil) {
 				@analysis := Analyzer->ParseText(text);
 			};
-
 		}
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
