@@ -102,11 +102,13 @@ bundle LSP {
 						# TODO: track workspace
 						folder_name := workspace_folder->Get("name")->GetValue();
 						folder_uri := workspace_folder->Get("uri")->GetValue();
-						
+						@workspace->SetRoot(folder_name, folder_uri);
+
 						if(@is_debug) {
 							"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
 						};
-						@workspace->SetRoot(folder_name, folder_uri);
+
+						ProcessConfiguration(folder_uri);
 					};
 				};
 			};
@@ -138,6 +140,33 @@ bundle LSP {
 
 	        # register watchers
 	        RegisterWatchers();
+		}
+
+		method : ProcessConfiguration(folder_uri : String) ~ Nil {
+			decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
+			if(decoded_folder_uri->StartsWith("file:///")) {
+				offset := "file:///"->Size();
+				decoded_folder_uri->Delete(0, offset);
+			};
+			decoded_folder_uri += "/build.json";
+
+			text := System.IO.File.FileReader->ReadFile(decoded_folder_uri);
+			if(text <> Nil) {
+				json :=JsonParser->New(text);
+				if(json->Parse()) {
+					root := json->GetRoot();
+					
+					files_json := root->Get("files");
+					each(i : files_json) {
+						files_json->Get(i)->GetValue()->PrintLine();
+					};
+
+					libs_json := root->Get("libs");
+					each(i : libs_json) {
+						libs_json->Get(i)->GetValue()->PrintLine();
+					};
+				};
+			};
 		}
 
 		method : RegisterWatchers() ~ Nil {
