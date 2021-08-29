@@ -246,7 +246,7 @@ bundle LSP {
 				"NotifyDidOpen => text=\"{$text}\""->PrintLine();
 			};
 			
-			@workspace->AddDocument(uri, Document->New(uri, text, IsDebug()));
+			@workspace->AddDocument(uri, Document->New(uri, text, @workspace, IsDebug()));
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {

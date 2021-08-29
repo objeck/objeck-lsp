@@ -278,7 +278,7 @@ bundle LSP {
 			};
 		}
 
-		method : public : Process() ~ Bool {
+		method : public : Build() ~ Bool {
 			if(@analysis = Nil) {
 				return false;
 			};

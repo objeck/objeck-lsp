@@ -270,24 +270,31 @@ bundle LSP {
 	In-memory text document
 	~#
 	class : private : Document {
+		@workspace : LspWorkspace;
 		@uri : String;
 		@text : String;
 		@alt_text : String;
 		@is_debug : Bool;
 
-		New(uri : String, text : String, is_debug : Bool) {
+		New(uri : String, text : String, workspace : LspWorkspace, is_debug : Bool) {
+			@workspace := workspace;
 			@uri := uri;
 			@text := GetText(text);
 			@is_debug := is_debug;
 		}
 
+		# TODO
+		method : GatherBuffers() ~ String[] {
+			return Nil;
+		}
+		
 		method : public : GetDiagnosis() ~ JsonElement {
 			proxy := AstProxy->New(@text, @is_debug);
 			leaving {
 				proxy->Release();
 			};
 
-			proxy->Process();
+			proxy->Build();
 			return proxy->GetDiagnosis(@uri, "gen_collect.obl");
 		}
 
@@ -297,7 +304,7 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			if(<>proxy->Process()) {
+			if(<>proxy->Build()) {
 				return Nil;
 			};
 
@@ -609,7 +616,7 @@ bundle LSP {
 			@local_path := local_path;
 			@file_strs := file_strs;
 			@libs_str := libs_str;
-			
+
 			@files_str := "";
 			each(i : file_strs) {
 				@files_str += @local_path;
