@@ -148,9 +148,10 @@ bundle LSP {
 				offset := "file:///"->Size();
 				decoded_folder_uri->Delete(0, offset);
 			};
-			decoded_folder_uri += "/build.json";
+			build_json_file := String->New(decoded_folder_uri);
+			build_json_file += "/build.json";
 
-			text := System.IO.File.FileReader->ReadFile(decoded_folder_uri);
+			text := System.IO.File.FileReader->ReadFile(build_json_file);
 			if(text <> Nil) {
 				json :=JsonParser->New(text);
 				if(json->Parse()) {

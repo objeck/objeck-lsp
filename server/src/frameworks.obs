@@ -305,7 +305,14 @@ bundle LSP {
 					file_str += '/';
 					file_str += @file_strs[i];
 
-					texts[i] := System.IO.File.FileReader->ReadFile(file_str);				
+					text := System.IO.File.FileReader->ReadFile(file_str);
+
+#					if(@is_debug) {
+						"\n\n Tyring: {$file_str} \n\n"->PrintLine();
+						"\n\n ### {$text} ### \n\n"->PrintLine();
+#					};
+
+					texts[i] := text;				
 				};
 
 				return texts;
