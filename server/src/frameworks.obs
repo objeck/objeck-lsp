@@ -267,6 +267,66 @@ bundle LSP {
 	}
 
 	#~
+	Workspaace
+	~#
+	class : private : LspWorkspace {
+		@name : String;
+		@root : String;
+
+		@local_path : String;
+		@file_strs : String[];
+		
+		@libs_str : String;
+		@files_str : String;
+		
+		@documents : Map<String, Document>;
+
+		New() {
+			@documents := Map->New()<String, Document>;
+		}
+
+		method : public : SetRoot(name : String, root : String) ~ Nil {
+			@name := name;
+			@root := root;
+		}
+
+		method : public : SetFilesLibs(local_path : String, file_strs : String[], libs_str : String) ~ Nil {
+			@local_path := local_path;
+			@file_strs := file_strs;
+			@libs_str := libs_str;
+
+			@files_str := "";
+			each(i : file_strs) {
+				@files_str += @local_path;
+				@files_str += '/';
+				@files_str += file_strs[i];
+
+				if(i + 1 < file_strs->Size()) {
+					@files_str += ',';
+				};
+			};
+		}
+
+		method : public : GetTexts() ~ String[] {
+			return Nil;
+		}
+
+		method : public : GetDocument(uri : String) ~ Document {
+			return @documents->Find(uri);
+		}
+
+		method : public : AddDocument(uri : String, document : Document) ~ Nil {
+			@documents->Insert(uri, document);
+		}
+
+		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
+			if(@documents->Remove(uri)) {
+				document->Release();
+			};
+		}
+	}
+
+	#~
 	In-memory text document
 	~#
 	class : private : Document {
@@ -289,7 +349,7 @@ bundle LSP {
 		}
 		
 		method : public : GetDiagnosis() ~ JsonElement {
-			proxy := AstProxy->New(@text, @is_debug);
+			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -299,7 +359,7 @@ bundle LSP {
 		}
 
 		method : public : GetSymbols() ~ JsonElement {
-			proxy := AstProxy->New(@text, @is_debug);
+			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -319,7 +379,7 @@ bundle LSP {
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@text, @is_debug);
+			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -328,7 +388,7 @@ bundle LSP {
 		}
 
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@text, @is_debug);
+			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -337,7 +397,7 @@ bundle LSP {
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@alt_text, @is_debug);
+			proxy := AstProxy->New(@workspace, true, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -355,7 +415,7 @@ bundle LSP {
 
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@alt_text, @is_debug);
+			proxy := AstProxy->New(@workspace, true, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -585,62 +645,6 @@ bundle LSP {
 
 		method : public : GetParams() ~ JsonElement {
 			return @params;
-		}
-	}
-
-	#~
-	Workspaace
-	~#
-	class : private : LspWorkspace {
-		@name : String;
-		@root : String;
-
-		@local_path : String;
-		@file_strs : String[];
-		
-		@libs_str : String;
-		@files_str : String;
-		
-		@documents : Map<String, Document>;
-
-		New() {
-			@documents := Map->New()<String, Document>;
-		}
-
-		method : public : SetRoot(name : String, root : String) ~ Nil {
-			@name := name;
-			@root := root;
-		}
-
-		method : public : SetFilesLibs(local_path : String, file_strs : String[], libs_str : String) ~ Nil {
-			@local_path := local_path;
-			@file_strs := file_strs;
-			@libs_str := libs_str;
-
-			@files_str := "";
-			each(i : file_strs) {
-				@files_str += @local_path;
-				@files_str += '/';
-				@files_str += file_strs[i];
-
-				if(i + 1 < file_strs->Size()) {
-					@files_str += ',';
-				};
-			};
-		}
-
-		method : public : GetDocument(uri : String) ~ Document {
-			return @documents->Find(uri);
-		}
-
-		method : public : AddDocument(uri : String, document : Document) ~ Nil {
-			@documents->Insert(uri, document);
-		}
-
-		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
-			if(@documents->Remove(uri)) {
-				document->Release();
-			};
 		}
 	}
 }

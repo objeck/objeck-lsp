@@ -10,11 +10,11 @@ bundle LSP {
 		@analysis : Analysis;
 		@is_debug : Bool;
 
-		New(text : String, is_debug : Bool) {
+		New(workspace : LspWorkspace, use_alt : Bool, is_debug : Bool) {
 			@is_debug := is_debug;
 
-			if(text <> Nil) {
-				@analysis := Analyzer->ParseText(text);
+			if(workspace <> Nil) {
+				@analysis := Analyzer->ParseText(workspace->GetTexts());
 			};
 		}
 
