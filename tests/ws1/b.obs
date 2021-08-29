@@ -1,7 +1,8 @@
 class Test {
+	
 	function : Main(a : String[]) ~ Nil {
 		f := Foo->New();
 		f->SayHi();
-		a := 3 + 3;
+		a[0] := (3 + 3)->ToString();
 	}
 }

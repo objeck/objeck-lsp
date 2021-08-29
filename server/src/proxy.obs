@@ -29,28 +29,30 @@ bundle LSP {
 				each(i : results) {
 					result := results[i];
 
-					diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
+					if(result->GetDescription()->Equals(uri)) {
+						diagnostic := JsonElement->New(JsonElement->JsonType->OBJECT);
 
-					diagnostic->Insert("severity", result->GetKind()->As(Int) - 100);
-					diagnostic->Insert("message", JsonElement->Encode(result->GetName()));
-					diagnostic->Insert("source", "objk-linter");
+						diagnostic->Insert("severity", result->GetKind()->As(Int) - 100);
+						diagnostic->Insert("message", JsonElement->Encode(result->GetName()));
+						diagnostic->Insert("source", "objk-linter");
 
-					range := JsonElement->New(JsonElement->JsonType->OBJECT);
-					# start
-					start := JsonElement->New(JsonElement->JsonType->OBJECT);
-					start->Insert("line", result->GetStartLine() - 1);
-					start->Insert("character", result->GetStartPosition() - 1);
-					range->Insert("start", start);
-					
-					# end
-					end := JsonElement->New(JsonElement->JsonType->OBJECT);
-					end->Insert("line", result->GetStartLine() - 1);
-					end->Insert("character", result->GetStartPosition() + 2);
-					range->Insert("end", end);
+						range := JsonElement->New(JsonElement->JsonType->OBJECT);
+						# start
+						start := JsonElement->New(JsonElement->JsonType->OBJECT);
+						start->Insert("line", result->GetStartLine() - 1);
+						start->Insert("character", result->GetStartPosition() - 1);
+						range->Insert("start", start);
+						
+						# end
+						end := JsonElement->New(JsonElement->JsonType->OBJECT);
+						end->Insert("line", result->GetStartLine() - 1);
+						end->Insert("character", result->GetStartPosition() + 2);
+						range->Insert("end", end);
 
-					diagnostic->Insert("range", range);
-					
-					diagnostics->Add(diagnostic);
+						diagnostic->Insert("range", range);
+						
+						diagnostics->Add(diagnostic);
+					};
 				};
 			};
 			
@@ -232,16 +234,13 @@ bundle LSP {
 		method : GetSymbols(symbol : Result, uri : String, array : JsonElement) ~ Nil {
 			builder := JsonBuilder->New();
 			
-			start_line := symbol->GetStartLine() - 1;
+			start_line := symbol->GetStartLine();
 			start_index := symbol->GetStartPosition();	
 
-			end_line := symbol->GetEndLine() - 2;			
+			end_line := symbol->GetEndLine();			
 			end_index := symbol->GetEndPosition();
 
 			desc := symbol->GetDescription();
-
-uri->PrintLine();
-# desc->PrintLine();
 
 			if(desc = Nil | desc->Equals(uri)) {			
 				obj := builder->PushObject();

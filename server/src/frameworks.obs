@@ -275,8 +275,7 @@ bundle LSP {
 		@root : String;
 		@local_path : String;
 		@file_strs : String[];		
-		@libs_str : String;
-		
+		@libs_str : String;		
 		@documents : Map<String, Document>;
 
 		New(is_debug : Bool) {
@@ -311,10 +310,19 @@ bundle LSP {
 					file_uri += '/';
 					file_uri += @file_strs[i];
 
-					text := System.IO.File.FileReader->ReadFile(local_file_path);
-
-					if(@is_debug) {
-						"\n\n### file_uri='{$file_uri}', local_path={$local_file_path} ###\n\n"->PrintLine();
+					text : String;
+					document := @documents->Find(file_uri);
+					if(document <> Nil) {
+						if(@is_debug) {
+							"### Cached: file_uri='{$file_uri}' ###"->PrintLine();
+						};
+						text := document->GetText();
+					}
+					else {
+						if(@is_debug) {
+							"### From disk: local_file_path='{$local_file_path}' ###"->PrintLine();
+						};
+						text := System.IO.File.FileReader->ReadFile(local_file_path);
 					};
 
 					texts[i,0] := file_uri;
@@ -359,11 +367,6 @@ bundle LSP {
 			@is_debug := is_debug;
 		}
 
-		# TODO
-		method : GatherBuffers() ~ String[] {
-			return Nil;
-		}
-		
 		method : public : GetDiagnosis() ~ JsonElement {
 			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
@@ -517,6 +520,14 @@ bundle LSP {
 
 		method : public : Release() ~ Nil {
 			@text := Nil;
+		}
+
+		method : public : GetText() ~ String {
+			return @text;
+		}
+
+		method : public : GetAltText() ~ String {
+			return @alt_text;
 		}
 
 		method : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
