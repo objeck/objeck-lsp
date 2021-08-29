@@ -270,6 +270,7 @@ bundle LSP {
 	Workspaace
 	~#
 	class : private : LspWorkspace {
+		@is_debug : Bool;
 		@name : String;
 		@root : String;
 		@local_path : String;
@@ -278,7 +279,8 @@ bundle LSP {
 		
 		@documents : Map<String, Document>;
 
-		New() {
+		New(is_debug : Bool) {
+			@is_debug := is_debug;
 			@documents := Map->New()<String, Document>;
 		}
 
@@ -294,25 +296,29 @@ bundle LSP {
 		}
 
 		# TODO
-		method : public : GetTexts() ~ String[] {
+		method : public : GetTexts() ~ String[,] {
 			file_count := @file_strs->Size();
 
 			if(file_count > 0) {
-				texts := String->New[file_count];
+				texts := String->New[file_count, 2];
 
 				each(i : @file_strs) {
-					file_str := String->New(@local_path);
-					file_str += '/';
-					file_str += @file_strs[i];
+					local_file_path := String->New(@local_path);
+					local_file_path += '/';
+					local_file_path += @file_strs[i];
 
-					text := System.IO.File.FileReader->ReadFile(file_str);
+					file_uri := String->New(@root);
+					file_uri += '/';
+					file_uri += @file_strs[i];
 
-#					if(@is_debug) {
-						"\n\n Tyring: {$file_str} \n\n"->PrintLine();
-						"\n\n ### {$text} ### \n\n"->PrintLine();
-#					};
+					text := System.IO.File.FileReader->ReadFile(local_file_path);
 
-					texts[i] := text;				
+					if(@is_debug) {
+						"\n\n### file_uri='{$file_uri}', local_path={$local_file_path} ###\n\n"->PrintLine();
+					};
+
+					texts[i,0] := file_uri;
+					texts[i,1] := text;
 				};
 
 				return texts;
@@ -368,7 +374,7 @@ bundle LSP {
 			return proxy->GetDiagnosis(@uri, "gen_collect.obl");
 		}
 
-		method : public : GetSymbols() ~ JsonElement {
+		method : public : GetSymbols(uri : String) ~ JsonElement {
 			proxy := AstProxy->New(@workspace, false, @is_debug);
 			leaving {
 				proxy->Release();
@@ -379,7 +385,7 @@ bundle LSP {
 			};
 
 			is_parsed := BoolHolder->New();
-			result := proxy->GetSymbols(is_parsed, "gen_collect.obl");
+			result := proxy->GetSymbols(is_parsed, uri, "gen_collect.obl");
 
 			if(is_parsed->Get()) {
 				@alt_text := @text->Clone()->As(String);

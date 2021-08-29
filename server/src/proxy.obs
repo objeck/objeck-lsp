@@ -206,12 +206,12 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : GetSymbols(is_parsed : BoolHolder, sys_path : String) ~ JsonElement {
+		method : public : GetSymbols(is_parsed : BoolHolder, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			symbol := @analysis->GetSymbols(sys_path);
+			symbol := @analysis->GetSymbols(uri, sys_path);
 			if(symbol <> Nil) {
 				is_parsed->Set(symbol->GetCode() = 1 ? true : false);			
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);
