@@ -2,5 +2,6 @@ class Test {
 	function : Main(a : String[]) ~ Nil {
 		f := Foo->New();
 		f->SayHi();
+		a := 3 + 3;
 	}
 }

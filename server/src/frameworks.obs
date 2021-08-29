@@ -23,7 +23,7 @@ bundle LSP {
 			Parent();
 			@socket := socket;
 			@is_debug := is_debug;
-			@workspace := LspWorkspace->New();
+			@workspace := LspWorkspace->New(@is_debug);
 		}
 
 		method : public : Run(param : Base) ~ Nil {

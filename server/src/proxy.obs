@@ -219,7 +219,7 @@ bundle LSP {
 				children := symbol->GetResults();
 				if(children <> Nil) {
 					each(i : children) {
-						GetSymbols(children[i], array);
+						GetSymbols(children[i], uri, array);
 					};
 				};
 
@@ -229,7 +229,7 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : GetSymbols(symbol : Result, array : JsonElement) ~ Nil {
+		method : GetSymbols(symbol : Result, uri : String, array : JsonElement) ~ Nil {
 			builder := JsonBuilder->New();
 			
 			start_line := symbol->GetStartLine();
@@ -237,43 +237,50 @@ bundle LSP {
 
 			end_line := symbol->GetEndLine();			
 			end_index := symbol->GetEndPosition();
-			
-			obj := builder->PushObject();
-			obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
-			obj->Insert("name", symbol->GetName());
 
-				builder->PushObject("location");
+			desc := symbol->GetDescription();
 
-					builder->PushObject("range");
-						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
+uri->PrintLine();
+# desc->PrintLine();
+
+			if(desc = Nil | desc->Equals(uri)) {			
+				obj := builder->PushObject();
+				obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
+				obj->Insert("name", symbol->GetName());
+
+					builder->PushObject("location");
+
+						builder->PushObject("range");
+							obj := builder->PushObject("start");
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
+							builder->Pop();
+
+							obj := builder->PushObject("end");
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
+							builder->Pop();
 						builder->Pop();
 
-						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-						builder->Pop();
-					builder->Pop();
+						builder->PushObject("selectionRange");
+							obj := builder->PushObject("start");
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
+							builder->Pop();
 
-					builder->PushObject("selectionRange");
-						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
+							obj := builder->PushObject("end");
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
+							builder->Pop();
 						builder->Pop();
 
-						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-						builder->Pop();
-					builder->Pop();
+				array->Add(builder->PopAll());
 
-			array->Add(builder->PopAll());
-			
-			children := symbol->GetResults();
-			if(children <> Nil) {
-				each(i : children) {
-					GetSymbols(children[i], array);
+				children := symbol->GetResults();
+				if(children <> Nil) {
+					each(i : children) {
+						GetSymbols(children[i], uri, array);
+					};
 				};
 			};
 		}
