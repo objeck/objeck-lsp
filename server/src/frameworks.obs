@@ -272,12 +272,9 @@ bundle LSP {
 	class : private : LspWorkspace {
 		@name : String;
 		@root : String;
-
 		@local_path : String;
-		@file_strs : String[];
-		
+		@file_strs : String[];		
 		@libs_str : String;
-		@files_str : String;
 		
 		@documents : Map<String, Document>;
 
@@ -294,20 +291,26 @@ bundle LSP {
 			@local_path := local_path;
 			@file_strs := file_strs;
 			@libs_str := libs_str;
-
-			@files_str := "";
-			each(i : file_strs) {
-				@files_str += @local_path;
-				@files_str += '/';
-				@files_str += file_strs[i];
-
-				if(i + 1 < file_strs->Size()) {
-					@files_str += ',';
-				};
-			};
 		}
 
+		# TODO
 		method : public : GetTexts() ~ String[] {
+			file_count := @file_strs->Size();
+
+			if(file_count > 0) {
+				texts := String->New[file_count];
+
+				each(i : @file_strs) {
+					file_str := String->New(@local_path);
+					file_str += '/';
+					file_str += @file_strs[i];
+
+					texts[i] := System.IO.File.FileReader->ReadFile(file_str);				
+				};
+
+				return texts;
+			};
+
 			return Nil;
 		}
 
