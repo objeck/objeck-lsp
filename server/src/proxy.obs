@@ -232,10 +232,10 @@ bundle LSP {
 		method : GetSymbols(symbol : Result, uri : String, array : JsonElement) ~ Nil {
 			builder := JsonBuilder->New();
 			
-			start_line := symbol->GetStartLine();
+			start_line := symbol->GetStartLine() - 1;
 			start_index := symbol->GetStartPosition();	
 
-			end_line := symbol->GetEndLine();			
+			end_line := symbol->GetEndLine() - 2;			
 			end_index := symbol->GetEndPosition();
 
 			desc := symbol->GetDescription();
