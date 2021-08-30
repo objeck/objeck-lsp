@@ -14,7 +14,7 @@ bundle LSP {
 			@is_debug := is_debug;
 
 			if(workspace <> Nil) {
-				@analysis := Analyzer->ParseText(workspace->GetTexts());
+				@analysis := Analyzer->ParseText(workspace->GetTexts(use_alt));
 			};
 		}
 
@@ -213,7 +213,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			symbol := @analysis->GetSymbols(uri, sys_path);
+			symbol := @analysis->GetSymbols(sys_path);
 			if(symbol <> Nil) {
 				is_parsed->Set(symbol->GetCode() = 1 ? true : false);			
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);

@@ -294,8 +294,7 @@ bundle LSP {
 			@libs_str := libs_str;
 		}
 
-		# TODO
-		method : public : GetTexts() ~ String[,] {
+		method : public : GetTexts(use_alt : Bool) ~ String[,] {
 			file_count := @file_strs->Size();
 
 			if(file_count > 0) {
@@ -316,7 +315,13 @@ bundle LSP {
 						if(@is_debug) {
 							"### Cached: file_uri='{$file_uri}' ###"->PrintLine();
 						};
-						text := document->GetText();
+
+						if(use_alt) {
+							text := document->GetAltText();
+						}
+						else {
+							text := document->GetText();
+						};
 					}
 					else {
 						if(@is_debug) {
@@ -333,6 +338,10 @@ bundle LSP {
 			};
 
 			return Nil;
+		}
+
+		method : public : GetLibs() ~ String {
+			return @libs_str;
 		}
 
 		method : public : GetDocument(uri : String) ~ Document {
@@ -374,7 +383,7 @@ bundle LSP {
 			};
 
 			proxy->Build();
-			return proxy->GetDiagnosis(@uri, "gen_collect.obl");
+			return proxy->GetDiagnosis(@uri, @workspace->GetLibs());
 		}
 
 		method : public : GetSymbols(uri : String) ~ JsonElement {
@@ -388,7 +397,7 @@ bundle LSP {
 			};
 
 			is_parsed := BoolHolder->New();
-			result := proxy->GetSymbols(is_parsed, uri, "gen_collect.obl");
+			result := proxy->GetSymbols(is_parsed, uri, @workspace->GetLibs());
 
 			if(is_parsed->Get()) {
 				@alt_text := @text->Clone()->As(String);
@@ -403,7 +412,7 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			return proxy->FindReferences(line_pos, char_pos, @uri, "gen_collect.obl");
+			return proxy->FindReferences(line_pos, char_pos, @uri, @workspace->GetLibs());
 		}
 
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
@@ -412,7 +421,7 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			return proxy->FindDeclaration(line_pos, char_pos, @uri, "gen_collect.obl");
+			return proxy->FindDeclaration(line_pos, char_pos, @uri, @workspace->GetLibs());
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
@@ -425,7 +434,7 @@ bundle LSP {
 			if(index > -1) {
 				var_str := ""; mthd_str := "";
 				if(GetVariableMethodStrings(index - 1, var_str, mthd_str, false)) {
-					return proxy->Completion(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+					return proxy->Completion(line_pos, char_pos, var_str, mthd_str, @uri, @workspace->GetLibs());
 				};
 			};
 
@@ -443,7 +452,7 @@ bundle LSP {
 			if(index > -1) {
 				var_str := "";	mthd_str := "";
 				if(GetVariableMethodStrings(index, var_str, mthd_str)) {
-					return proxy->SignatureHelp(line_pos, char_pos, var_str, mthd_str, @uri, "gen_collect.obl");
+					return proxy->SignatureHelp(line_pos, char_pos, var_str, mthd_str, @uri, @workspace->GetLibs());
 				};
 			};
 			
@@ -489,10 +498,6 @@ bundle LSP {
 				if(length > 0) {
 					var_str += @text->SubString(end_pos + 1, length);
 				};
-			};
-
-			if(@is_debug) {
-				"\n\n--- var_str='{$var_str}', mthd_str='{$mthd_str}' ---\n\n"->PrintLine();
 			};
 
 			return <>(var_str->IsEmpty() & mthd_str->IsEmpty());

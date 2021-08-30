@@ -175,7 +175,7 @@ bundle LSP {
 					};
 
 					if(@is_debug) {
-						"\n--- Files and libraries:  decoded_folder_uri='{$decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
+						"--- Files and libraries:  decoded_folder_uri='{$decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
 					};
 
 					@workspace->SetFilesLibs(decoded_folder_uri, file_strs, libs_str);
