@@ -344,17 +344,19 @@ bundle LSP {
 			}
 			else {
 				@libs_str := "gen_collect.obl";
-				
-				keys := @documents->GetKeys()<String>;
-				@texts := String->New[keys->Size(), 2];
-				each(i : keys) {
-					file_uri := keys->Get(i);
-					document := @documents->Find(file_uri);
+
+				key_values := @documents->GetKeyValues()<Pair<String, Document>>;
+				@texts := String->New[key_values->Size(), 2];
+				each(i : key_values) {
+					key_value := key_values->Get(i);
+					
+					file_uri := key_value->GetFirst();
+					document := key_value->GetSecond();
 
 					@texts[i,0] := file_uri;
 					@texts[i,1] := document->GetText();
 				};
-
+				
 				return @texts;
 			};
 
