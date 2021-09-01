@@ -99,16 +99,20 @@ bundle LSP {
 					each(i : workspace_folders) {
 						workspace_folder := workspace_folders->Get(i);
 						
-						# TODO: track workspace
-						folder_name := workspace_folder->Get("name")->GetValue();
-						folder_uri := workspace_folder->Get("uri")->GetValue();
+						folder_name_obj := workspace_folder->Get("name");
+						folder_uri_obj := workspace_folder->Get("uri");
+						if(folder_name_obj <> Nil & folder_uri_obj <> Nil) {
+							folder_name := folder_uri_obj->GetValue();
+							folder_uri := folder_uri_obj->GetValue();
 
-						if(@is_debug) {
-							"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
+							if(@is_debug) {
+								"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
+							};
+							ProcessConfiguration(folder_name, folder_uri);
+						}
+						else {
+
 						};
-
-						@workspace->SetRoot(folder_name, folder_uri);
-						ProcessConfiguration(folder_uri);
 					};
 				};
 			};
@@ -142,7 +146,9 @@ bundle LSP {
 	        RegisterWatchers();
 		}
 
-		method : ProcessConfiguration(folder_uri : String) ~ Nil {
+		method : ProcessConfiguration(folder_name : String, folder_uri : String) ~ Nil {
+			@workspace->SetRoot(folder_name, folder_uri);
+
 			decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
 			if(decoded_folder_uri->StartsWith("file:///")) {
 				offset := "file:///"->Size();
