@@ -7,7 +7,8 @@
 		"gen_collect.obl",
 		"regex.obl",
 		"net.obl",
-		"misc.obl"
+		"misc.obl",
+		"odbc.obl"
 	],
 	"flags": ""
 }
