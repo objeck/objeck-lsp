@@ -6,7 +6,8 @@ class Test {
 	}
 
 	New() {
-
+		a := 10;
+		
 	}
 
 	function : Main(args : String[]) ~ Nil {
@@ -14,6 +15,8 @@ class Test {
 		abc += 100;
 		efg *= fie / (abc - args->Size());
 		efg->PrintLine();
+
+		efg->Size()->PrintLine();
 		
 		bar := "Hello World";
 		bar->Split("abc");

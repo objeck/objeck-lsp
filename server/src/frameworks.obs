@@ -296,7 +296,7 @@ bundle LSP {
 		}
 
 		method : public : GetTexts(use_alt : Bool) ~ String[,] {
-			if(@texts <> Nil) {
+			if(@texts = Nil) {
 				if(@file_strs <> Nil) {
 					file_count := @file_strs->Size();
 					if(file_count > 0) {
@@ -355,7 +355,7 @@ bundle LSP {
 					};
 				};
 			};
-			
+
 			return @texts;
 		}
 
