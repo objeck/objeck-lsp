@@ -12,8 +12,10 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * File Changed `textDocument/didChange`
 * File Save `textDocument/didSave`
 * File Close `textDocument/didClose`
-* Watched File Changed `workspace/didChangeWatchedFiles`
-* Workspace Changed `workspace/didChangeWorkspaceFolders`
+* Workspaces
+ * JSON configured workspaces to support multi-file projects
+ * Watched File Changed `workspace/didChangeWatchedFiles`
+ * Workspace Changed `workspace/didChangeWorkspaceFolders`
 
 #### Callbacks
 * Initialize `initialize`
