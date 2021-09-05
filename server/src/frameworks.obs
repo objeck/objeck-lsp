@@ -313,22 +313,25 @@ bundle LSP {
 						text : String;
 						document := @documents->Find(file_uri);
 						if(document <> Nil) {
-							if(@is_debug) {
-								"### Cached: file_uri='{$file_uri}' ###"->PrintLine();
-							};
-
 							if(use_alt) {
 								text := document->GetAltText();
 							}
 							else {
 								text := document->GetText();
 							};
+
+							if(@is_debug) {
+								size := text->Size();
+								"### Cached: file_uri='{$file_uri}', size={$size} ###"->PrintLine();
+							};
 						}
 						else {
-							if(@is_debug) {
-								"### From disk: local_file_path='{$local_file_path}' ###"->PrintLine();
-							};
 							text := System.IO.File.FileReader->ReadFile(local_file_path);
+
+							if(@is_debug) {
+								size := text->Size();
+								"### From disk: local_file_path='{$local_file_path}', size={$size} ###"->PrintLine();
+							};
 						};
 
 						@texts[i,0] := file_uri;
