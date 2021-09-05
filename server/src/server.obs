@@ -47,6 +47,9 @@ bundle LSP {
 	Handles TCP client requests
 	~#
 	class LintService from LspWorker {
+		@decoded_folder_uri : String;
+		@build_json_file : String;
+
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent(socket, is_debug);
 		}
@@ -149,42 +152,48 @@ bundle LSP {
 		method : ProcessConfiguration(folder_name : String, folder_uri : String) ~ Nil {
 			@workspace->SetRoot(folder_name, folder_uri);
 
-			decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
-			if(decoded_folder_uri->StartsWith("file:///")) {
+			@decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
+			if(@decoded_folder_uri->StartsWith("file:///")) {
 				offset := "file:///"->Size();
-				decoded_folder_uri->Delete(0, offset);
+				@decoded_folder_uri->Delete(0, offset);
 			};
-			build_json_file := String->New(decoded_folder_uri);
-			build_json_file += "/build.json";
+			@build_json_file := String->New(@decoded_folder_uri);
+			@build_json_file += "/build.json";
 
-			text := System.IO.File.FileReader->ReadFile(build_json_file);
+			LoadConfigurationFile();
+		}
+
+		method : LoadConfigurationFile() ~ Nil {
+			text := System.IO.File.FileReader->ReadFile(@build_json_file);
 			if(text <> Nil) {
 				json :=JsonParser->New(text);
 				if(json->Parse()) {
 					root := json->GetRoot();
 					
 					files_json := root->Get("files");
-					file_strs := String->New[files_json->Size()];
-					each(i : files_json) {
-						file_strs[i] := files_json->Get(i)->GetValue();
-					};
-
-					libs_str := "";
 					libs_json := root->Get("libs");
-					each(i : libs_json) {
-						libs_str += libs_json->Get(i)->GetValue();
-						libs_str += ',';
-					};
+					if(files_json <> Nil & libs_json <> Nil) {
+						file_strs := String->New[files_json->Size()];
+						each(i : files_json) {
+							file_strs[i] := files_json->Get(i)->GetValue();
+						};
 
-					if(<>libs_str->IsEmpty()) {
-						libs_str->Pop();
-					};
+						libs_str := "";
+						each(i : libs_json) {
+							libs_str += libs_json->Get(i)->GetValue();
+							libs_str += ',';
+						};
 
-					if(@is_debug) {
-						"--- Files and libraries:  decoded_folder_uri='{$decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
-					};
+						if(<>libs_str->IsEmpty()) {
+							libs_str->Pop();
+						};
 
-					@workspace->SetFilesLibs(decoded_folder_uri, file_strs, libs_str);
+						if(@is_debug) {
+							"--- Files and libraries:  @decoded_folder_uri='{$@decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
+						};
+
+						@workspace->SetFilesLibs(@decoded_folder_uri, file_strs, libs_str);
+					};
 				};
 			};
 		}
@@ -240,9 +249,30 @@ bundle LSP {
 		}
 
 		method : NotifyCancel(params : JsonElement) ~ Nil {
+			id := params->Get("id")->GetValue();
+
+			if(IsDebug()) {
+				"NotifyCancel: id={$id}"->PrintLine();
+			};
 		}
 
 		method : NotifyDidChangeWatchedFiles(params : JsonElement) ~ Nil {
+			changes := params->Get("changes");
+			each(i : changes) {
+				change := changes->Get(i);
+
+				uri := change->Get("uri")->GetValue();
+				type := change->Get("type")->GetValue()->ToInt();
+
+				if(IsDebug()) {
+					"NotifyDidChangeWatchedFiles: uri='{$uri}', uri={$type}"->PrintLine();
+				};
+
+				# configuration file added or changed
+				if(type = 1 | type = 2) {
+					LoadConfigurationFile();
+				};
+			};
 		}
 
 		method : NotifyDidOpen(params : JsonElement) ~ Nil {

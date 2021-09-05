@@ -1,7 +1,7 @@
 {
 	"files": [
 		"a.obs",
-		"z.obs"
+		"b.obs"
 	],
 	"libs": [
 		"gen_collect.obl",

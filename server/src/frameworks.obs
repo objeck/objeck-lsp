@@ -14,7 +14,7 @@ bundle LSP {
 		@is_debug : Bool;
 		@workspace : LspWorkspace;
 		@socket : TCPSocket;
-		@id : Int;
+		@cancel_id : Int;
 
 		function : Init() ~ Nil {
 		}
@@ -23,6 +23,7 @@ bundle LSP {
 			Parent();
 			@socket := socket;
 			@is_debug := is_debug;
+			@cancel_id := -1;
 			@workspace := LspWorkspace->New(@is_debug);
 		}
 
@@ -231,21 +232,26 @@ bundle LSP {
 
 		# --- response ---
 		method : WriteRpcResponse(id : Int, result : JsonElement) ~ Nil {
-			node := JsonElement->New(JsonElement->JsonType->OBJECT);
-
-			node->Insert("jsonrpc", "2.0");
-			if(result = Nil) {
-				node->Insert("result", JsonElement->New(JsonElement->JsonType->NULL));
+			if(id = @cancel_id) {
+				@cancel_id := -1;
 			}
 			else {
-				node->Insert("result", result);
-			};
+				node := JsonElement->New(JsonElement->JsonType->OBJECT);
 
-			if(id > -1) {
-				node->Insert("id", id);
-			};
+				node->Insert("jsonrpc", "2.0");
+				if(result = Nil) {
+					node->Insert("result", JsonElement->New(JsonElement->JsonType->NULL));
+				}
+				else {
+					node->Insert("result", result);
+				};
 
-			WriteString(node->ToString());
+				if(id > -1) {
+					node->Insert("id", id);
+				};
+
+				WriteString(node->ToString());
+			};
 		}
 
 		# --- request ---
