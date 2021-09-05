@@ -35,7 +35,7 @@ The server is functional but there is still work to do.
     1. Windows (AMD64 and IA32)
     2. Linux (AMD64, IA32 and ARMv7)
     3. macOS (AMD64 and ARM64)
-2. Multi-document support
+2. Multi-document support (via configuration)
 3. Code symbols
     1. Classes
     2. Enums
