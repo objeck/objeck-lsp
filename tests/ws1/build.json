@@ -1,12 +1,12 @@
 {
 	"files": [
 		"a.obs",
-		"b.obs"
+		"z.obs"
 	],
 	"libs": [
 		"gen_collect.obl",
 		"regex.obl",
-		"net.obl",
+		"netz.obl",
 		"misc.obl",
 		"odbc.obl"
 	],
