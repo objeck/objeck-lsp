@@ -301,7 +301,8 @@ bundle LSP {
 			@libs_str := libs_str;
 		}
 
-		method : public : GetTexts(use_alt : Bool) ~ String[,] {
+		method : public : GetTexts(uri : String, use_alt : Bool) ~ String[,] {
+			# workspace
 			if(@file_strs <> Nil) {
 				file_count := @file_strs->Size();
 				if(file_count > 0) {
@@ -352,19 +353,35 @@ bundle LSP {
 					return @texts;
 				};
 			}
+			# non-workspace
 			else {
 				@libs_str := "gen_collect.obl";
 
 				key_values := @documents->GetKeyValues()<Pair<String, Document>>;
-				@texts := String->New[key_values->Size(), 2];
+				@texts := String->New[1, 2];
 				each(i : key_values) {
 					key_value := key_values->Get(i);
 					
 					file_uri := key_value->GetFirst();
-					document := key_value->GetSecond();
+					if(file_uri->Equals(uri)) {
+						document := key_value->GetSecond();
 
-					@texts[i,0] := file_uri;
-					@texts[i,1] := document->GetText();
+						text : String;
+						if(use_alt) {
+							text := document->GetAltText();
+						}
+						else {
+							text := document->GetText();
+						};
+
+						if(@is_debug & text <> Nil) {
+							size := text->Size();
+							"### Cached: file_uri='{$file_uri}', size={$size} ###"->PrintLine();
+						};
+
+						@texts[0,0] := file_uri;
+						@texts[0,1] := text;
+					};
 				};
 			};
 			
@@ -409,7 +426,7 @@ bundle LSP {
 		}
 
 		method : public : GetDiagnosis() ~ JsonElement {
-			proxy := AstProxy->New(@workspace, false, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -419,7 +436,7 @@ bundle LSP {
 		}
 
 		method : public : GetSymbols(uri : String) ~ JsonElement {
-			proxy := AstProxy->New(@workspace, false, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -439,7 +456,7 @@ bundle LSP {
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@workspace, false, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -448,7 +465,7 @@ bundle LSP {
 		}
 
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@workspace, false, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -457,7 +474,7 @@ bundle LSP {
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@workspace, true, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, true, @is_debug);
 			leaving {
 				proxy->Release();
 			};
@@ -475,7 +492,7 @@ bundle LSP {
 
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int) ~ JsonElement {
-			proxy := AstProxy->New(@workspace, true, @is_debug);
+			proxy := AstProxy->New(@workspace, @uri, true, @is_debug);
 			leaving {
 				proxy->Release();
 			};
