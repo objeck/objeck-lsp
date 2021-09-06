@@ -32,7 +32,7 @@ The server is functional but there is still work to do.
 
 ### Functional
 1. Tested editors
-    2. Visual Studio Code
+    1. Visual Studio Code
     2. Sublime
 1. Platform support
     1. Windows (AMD64 and IA32)
