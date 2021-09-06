@@ -31,6 +31,9 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 The server is functional but there is still work to do.
 
 ### Functional
+1. Tested editors
+    2. Visual Studio Code
+    2. Sublime
 1. Platform support
     1. Windows (AMD64 and IA32)
     2. Linux (AMD64, IA32 and ARMv7)
@@ -58,7 +61,7 @@ The server is functional but there is still work to do.
 4. Linting
     1. Unused variables
     2. Dead code
-5. Testing with Emacs and Sublime
+5. Testing with Emacs
 
 ### Future
 1. Renaming of variables, methods and functions

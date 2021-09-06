@@ -11,7 +11,7 @@ copy %OBJECK_ROOT%\core\lib\diags.obl %OBJECK_ROOT%\core\release\deploy64\lib\di
 
 echo ---
 
-obc -src *.obs -lib diags,net,json,regex -dest objk_lang_server.obe -debug
+obc -src *.obs -lib diags,net,json,regex -dest objk_lang_server.obe
 
 if [%1] NEQ [brun] goto end
 echo ---
