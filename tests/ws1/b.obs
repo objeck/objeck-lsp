@@ -1,8 +1,11 @@
-class Test {
-	
-	function : Main(a : String[]) ~ Nil {
-		f := Foo->New();
-		f->SayHi();
-		a[0] := (3 + 3)->ToString();
+class ValueHolder {
+	@value : Int;
+
+	New(value : Int) {
+		@value := value;
+	}
+
+	method : public : GetValue() ~ Int {
+		return @value;
 	}
 }

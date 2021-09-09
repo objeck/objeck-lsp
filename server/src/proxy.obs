@@ -62,6 +62,19 @@ bundle LSP {
 			
 			return request;
 		}
+
+		method : public : FindDefinition(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			Definition := @analysis->FindDefinition(line_pos, char_pos, sys_path);
+			if(Definition <> Nil) {
+
+			};
+
+			return Nil;
+		}
 		
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {

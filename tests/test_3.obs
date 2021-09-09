@@ -1,47 +1,8 @@
 class Test {
-	fie : static : Int;
-
-	enum Foo {
-		BAR
-	}
-
-	New() {
-		a := 10;
-		
-	}
-
 	function : Main(args : String[]) ~ Nil {
-		abc := args->Size();
-		abc += 100;
-		efg *= fie / (abc - args->Size());
-		efg->PrintLine();
-
-		efg->Size()->PrintLine();
-		
-		bar := "Hello World";
-		bar->Split("abc");
-		meme := bar->Clone();
-
-		bar->Set('4', 1);
-		bar->PrintLine();
-
-		x := meme->HashID();
-		yz := x * bar->SubString(1,2)->Size();
-		
-		o : Test := Test->New();
-		
-		o->Foo();
-		
-		t := o->Bar();
-		t += 18;
-		t->PrintLine();
-	}
-
-	function : Bar() ~ Int {
-		return 99;
-	}
-
-	function : Foo() ~ Int {
-		return 13 + 85;
+		"Hello World"->Size()->PrintLine();
+		a := 12;
+		c += a;
+		c->PrintLi();
 	}
 }
