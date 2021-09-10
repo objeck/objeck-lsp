@@ -2,5 +2,11 @@ class Test {
 	function : Main(args : String[]) ~ Nil {
 		vh : ValueHolder := ValueHolder->New(13);
 		vh->GetValue()->PrintLine();
+
+		DoIt(7);
+	}
+	
+	function : DoIt(i : Int) ~ Int {
+		return i * 13;
 	}
 }
