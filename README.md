@@ -38,30 +38,34 @@ The server is functional but there is still work to do.
     1. Windows (AMD64 and IA32)
     2. Linux (AMD64, IA32 and ARMv7)
     3. macOS (AMD64 and ARM64)
-2. Multi-document support (via configuration)
-3. Code symbols
+2. Multi-document support
+    1. Project workspaces
+4. Code symbols
     1. Classes
     2. Enums
     3. Methods    
-4. Finding references
+5. Finding references
     1. Variables
-5. Finding declarations
-    1. Variables
-    2. Methods and functions
-6. Keyword completion
+6. Finding declarations
     1. Variables
     2. Methods and functions
-7. Bundle documentation
+7. Finding definitions
+    1. Variables (done)
+    2. Classes and method (done)
+8. Keyword completion
+    1. Variables
+    2. Methods and functions
+9. Bundle documentation
 
 ### Outstanding
-1. Validate all finds in workspace
-2. Auto include libraries based upon 'use' statements
-3. Finding declarations
-    1. Classes and Enums
-4. Linting
+1. Auto include libraries based upon 'use' statements
+2. Finding definitions
+    1. Class member variables
+    2. Enums
+3. Linting
     1. Unused variables
     2. Dead code
-5. Testing with Emacs
+4. Testing with Emacs
 
 ### Future
 1. Renaming of variables, methods and functions
