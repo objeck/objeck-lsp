@@ -67,11 +67,9 @@ bundle LSP {
 			if(@analysis = Nil) {
 				return Nil;
 			};
-
+			
 			definition := @analysis->FindDefinition(line_pos, char_pos, sys_path);
 			if(definition <> Nil) {
-				"### {$definition} ###"->PrintLine();
-
 				builder := JsonBuilder->New();
 
 					start_line := end_line := definition->GetStartLine();
@@ -81,7 +79,7 @@ bundle LSP {
 					
 					builder->PushObject();
 					builder->Insert("uri", found_uri);
-					
+
 					builder->PushObject("range");
 						obj := builder->PushObject("start");
 						obj->Insert("line", start_line);
