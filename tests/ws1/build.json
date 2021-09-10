@@ -6,7 +6,7 @@
 	"libs": [
 		"gen_collect.obl",
 		"regex.obl",
-		"netz.obl",
+		"net.obl",
 		"misc.obl",
 		"odbc.obl"
 	],
