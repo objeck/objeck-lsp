@@ -24,6 +24,7 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Code Symbol `textDocument/documentSymbol`
 * Method/Function Signature Help `textDocument/signatureHelp`
 * Goto Code References `textDocument/references`
+* Goto Code Definitions `textDocument/definition`
 * Goto Code Declaration `textDocument/declaration`
 * Editor Shutdown `shutdown`
 
