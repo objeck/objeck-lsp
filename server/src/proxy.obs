@@ -63,11 +63,11 @@ bundle LSP {
 			return request;
 		}
 
-		method : public : FindDefinition(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+		method : public : FindDefinition(line_pos : Int, char_pos : Int, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
-			
+
 			definition := @analysis->FindDefinition(line_pos, char_pos, sys_path);
 			if(definition <> Nil) {
 				builder := JsonBuilder->New();
@@ -75,10 +75,10 @@ bundle LSP {
 					start_line := end_line := definition->GetStartLine();
 					start_index := definition->GetStartPosition();
 					end_index := definition->GetEndPosition();
-					found_uri := definition->GetDescription();
+					uri := definition->GetDescription();
 					
 					builder->PushObject();
-					builder->Insert("uri", found_uri);
+					builder->Insert("uri", uri);
 
 					builder->PushObject("range");
 						obj := builder->PushObject("start");

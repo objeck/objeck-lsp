@@ -483,7 +483,7 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			return proxy->FindDefinition(line_pos, char_pos, @uri, @workspace->GetLibs());
+			return proxy->FindDefinition(line_pos, char_pos, @workspace->GetLibs());
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int) ~ JsonElement {
