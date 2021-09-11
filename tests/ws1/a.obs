@@ -1,9 +1,19 @@
 class Test {
+	@abc : Int;
+
 	function : Main(args : String[]) ~ Nil {
 		vh : ValueHolder := ValueHolder->New(13);
 		vh->GetValue()->PrintLine();
 
 		DoIt(7);
+	}
+
+	method : Foo() ~ Int {
+		return 7 + @abc;
+	}
+
+	method : Bar() ~ Int {
+		return @abc * @abc;
 	}
 	
 	function : DoIt(i : Int) ~ Int {
