@@ -149,9 +149,10 @@ bundle LSP {
 					start_line := end_line := reference->GetStartLine();
 					start_index := reference->GetStartPosition();
 					end_index := reference->GetEndPosition();
+					found_uri := reference->GetDescription();
 					
 					builder->PushObject();
-					builder->Insert("uri", uri);
+					builder->Insert("uri", found_uri);
 
 					builder->PushObject("range");
 						obj := builder->PushObject("start");
