@@ -1,3 +1,9 @@
+class FooBar {
+	New() {
+		
+	}
+}
+
 class ValueHolder {
 	@value : Int;
 

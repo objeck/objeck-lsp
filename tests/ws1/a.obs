@@ -19,8 +19,8 @@ class Test {
 		return 7 + @abc->GetValue();
 	}
 
-	method : Bar() ~ Int {
-		return @abc + @abc;
+	method : Bar() ~ Bool {
+		return @abc = @abc;
 	}
 	
 	function : DoIt(i : Int) ~ Int {
