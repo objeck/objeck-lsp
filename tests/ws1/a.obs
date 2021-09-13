@@ -20,6 +20,8 @@ class Test {
 	}
 
 	method : Bar() ~ Bool {
+		gag := 13;
+		gag := gag - gag - gag;
 		return @abc = @abc;
 	}
 	
