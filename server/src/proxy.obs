@@ -24,7 +24,7 @@ bundle LSP {
 			};
 			diagnostics := JsonElement->New(JsonElement->JsonType->ARRAY);
 
-			results := @analysis->GetDiagnostics(sys_path);
+			results := @analysis->GetDiagnostics(uri, sys_path);
 			if(results <> Nil) {
 				each(i : results) {
 					result := results[i];
@@ -63,12 +63,12 @@ bundle LSP {
 			return request;
 		}
 
-		method : public : FindDefinition(line_pos : Int, char_pos : Int, sys_path : String) ~ JsonElement {
+		method : public : FindDefinition(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			definition := @analysis->FindDefinition(line_pos, char_pos, sys_path);
+			definition := @analysis->FindDefinition(uri, line_pos, char_pos, sys_path);
 			if(definition <> Nil) {
 				builder := JsonBuilder->New();
 
@@ -103,7 +103,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			reference := @analysis->FindDeclaration(line_pos, char_pos, sys_path);
+			reference := @analysis->FindDeclaration(uri, line_pos, char_pos, sys_path);
 			if(reference <> Nil) {
 				builder := JsonBuilder->New();
 
@@ -137,7 +137,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			references := @analysis->FindReferences(line_pos, char_pos, sys_path);
+			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
 			if(references <> Nil) {
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);
 
@@ -180,7 +180,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			root_completion := @analysis->Completion(line_pos, char_pos, var_str, mthd_str, sys_path);
+			root_completion := @analysis->Completion(uri, line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_completion <> Nil) {
 				response := JsonElement->New(JsonElement->JsonType->ARRAY);	
 
@@ -211,7 +211,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			root_signature := @analysis->SignatureHelp(line_pos, char_pos, var_str, mthd_str, sys_path);
+			root_signature := @analysis->SignatureHelp(uri, line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_signature <> Nil) {
 				root_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 
@@ -249,7 +249,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			symbol := @analysis->GetSymbols(sys_path);
+			symbol := @analysis->GetSymbols(uri, sys_path);
 			if(symbol <> Nil) {
 				is_parsed->Set(symbol->GetCode() = 1 ? true : false);			
 				array := JsonElement->New(JsonElement->JsonType->ARRAY);
