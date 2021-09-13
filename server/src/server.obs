@@ -18,9 +18,6 @@ bundle LSP {
 			}
 			else if(args->Size() = 2 & args[1]->Equals("debug")) {
 				LintServer->New(args[0]->ToInt(), true)->Listen();
-			}
-			else {
-				"--- TODO: read config file ---"->ErrorLine();
 			};
 		}
 
