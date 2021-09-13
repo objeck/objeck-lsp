@@ -1,8 +1,29 @@
-class Foo {
+class Test {
+	@abc : ValueHolder;
+
 	New() {
+		@abc := ValueHolder->New(7);
 	}
 
-	method : public : SayHi() ~ Nil {
-		"Hello"->PrintLine();
+	function : Main(args : String[]) ~ Nil {
+		vh : ValueHolder := ValueHolder->New(13);
+		vh->GetValue()->PrintLine();
+		
+		DoIt(7);
+
+		t := Test->New();
+		t->Bar()->PrintLine();
+	}
+
+	method : Foo() ~ Int {
+		return 7 + @abc->GetValue();
+	}
+
+	method : Bar() ~ Bool {
+		return @abc = @abc;
+	}
+	
+	function : DoIt(i : Int) ~ Int {
+		return i * 13;
 	}
 }

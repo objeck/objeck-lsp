@@ -10,11 +10,11 @@ bundle LSP {
 		@analysis : Analysis;
 		@is_debug : Bool;
 
-		New(workspace : LspWorkspace, use_alt : Bool, is_debug : Bool) {
+		New(workspace : LspWorkspace, uri : String, use_alt : Bool, is_debug : Bool) {
 			@is_debug := is_debug;
 
 			if(workspace <> Nil) {
-				@analysis := Analyzer->ParseText(workspace->GetTexts(use_alt));
+				@analysis := Analyzer->ParseText(workspace->GetTexts(uri, use_alt));
 			};
 		}
 
@@ -61,6 +61,41 @@ bundle LSP {
 			request->Insert("diagnostics", diagnostics);
 			
 			return request;
+		}
+
+		method : public : FindDefinition(line_pos : Int, char_pos : Int, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			definition := @analysis->FindDefinition(line_pos, char_pos, sys_path);
+			if(definition <> Nil) {
+				builder := JsonBuilder->New();
+
+					start_line := end_line := definition->GetStartLine();
+					start_index := definition->GetStartPosition();
+					end_index := definition->GetEndPosition();
+					uri := definition->GetDescription();
+					
+					builder->PushObject();
+					builder->Insert("uri", uri);
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+				return builder->Pop();
+			};
+
+			return Nil;
 		}
 		
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
@@ -114,9 +149,10 @@ bundle LSP {
 					start_line := end_line := reference->GetStartLine();
 					start_index := reference->GetStartPosition();
 					end_index := reference->GetEndPosition();
+					found_uri := reference->GetDescription();
 					
 					builder->PushObject();
-					builder->Insert("uri", uri);
+					builder->Insert("uri", found_uri);
 
 					builder->PushObject("range");
 						obj := builder->PushObject("start");

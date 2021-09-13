@@ -72,6 +72,20 @@ bundle LSP {
 			WriteRpcResponse(id, response);
 		}
 
+
+		method : CallbackDefinition(id : Int, params : JsonElement) ~ Nil {
+			if(IsDebug()) {
+				"=> CallbackDefinition"->PrintLine();
+			};
+
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+			
+			response:= @workspace->GetDocument(uri)->FindDefinition(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
+		}
+
 		method : SignatureHelp(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
@@ -139,6 +153,7 @@ bundle LSP {
 	        capabilities->Insert("documentSymbolProvider", true);
 	        capabilities->Insert("referencesProvider", true);
 	        capabilities->Insert("declarationProvider", true);
+	        capabilities->Insert("definitionProvider", true);
 
 	        WriteRpcResponse(id, response);
 
