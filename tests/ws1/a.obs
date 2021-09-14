@@ -13,6 +13,9 @@ class Test {
 
 		t := Test->New();
 		t->Bar()->PrintLine();
+
+		f := Fie->ONE;
+		xx := f + f;
 	}
 
 	method : Foo() ~ Int {
