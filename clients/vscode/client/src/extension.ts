@@ -23,7 +23,7 @@ export function activate(context: ExtensionContext) {
 		port: 6013,
 		host: "localhost"
     };
-
+ 
 	let serverOptions = () => {
         // Connect to language server via socket
         let socket = net.connect(connectionInfo);

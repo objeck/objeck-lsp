@@ -24,7 +24,7 @@ class Test {
 
 	method : Bar() ~ Bool {
 		gag := 13;
-		gag := gag - gag - gag;
+		gag := gag - @abc->GetValue() - gag;
 		return @abc = @abc;
 	}
 	
