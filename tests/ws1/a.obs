@@ -7,7 +7,7 @@ class Test {
 
 	function : Main(args : String[]) ~ Nil {
 		vh : ValueHolder := ValueHolder->New(13);
-		vh->GetValue()->PrintLine();
+		vh->GetValue(5)->PrintLine();
 		
 		DoIt(7);
 
@@ -19,12 +19,12 @@ class Test {
 	}
 
 	method : Foo() ~ Int {
-		return 7 + @abc->GetValue();
+		return 7 + @abc->GetValue(12);
 	}
 
 	method : Bar() ~ Bool {
 		gag := 13;
-		gag := gag - @abc->GetValue() - gag;
+		gag := gag - @abc->GetValue(13)          -gag;
 		return @abc = @abc;
 	}
 	
