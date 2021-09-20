@@ -6,24 +6,25 @@ Sublime TCP client shim.
 * Install syntax [highlighting](https://github.com/objeck/objeck-lang/tree/master/docs/syntax/sublime)
 * Install the Sublime [LSP support](https://lsp.sublimetext.io/language_servers/)
 * Open Preferences > Package Settings > LSP > Settings and add the "objeck" client configuration to the "clients":
-````
-"clients": {
+```
+{
+	"clients": {
 		"objeck": {
 			"enabled": false,
 			"command": [
-				"d:/code/objeck-lang/core/release/deploy64/bin/obr.exe",
-				"d:/code/objeck-lang-server/server/src/objk_lang_server.obe",
+				"<objeck_path>/bin/obr.exe",
+				"<objeck_server_path>/objk_lang_server.obe",
 				"6013",
 				"debug"
 			],
 			"env": {
-				"OBJECK_LIB_PATH": "d:/code/objeck-lang/core/release/deploy64/lib"
+				"OBJECK_LIB_PATH": "<objeck_path>/lib"
 			},
 			"selector": "source.objeck-obs",
 			"tcp_port": 6013
 		}
 	}
-
+}
 ```
 
 ## Running client

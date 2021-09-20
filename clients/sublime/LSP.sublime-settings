@@ -4,13 +4,13 @@
 		"objeck": {
 			"enabled": false,
 			"command": [
-				"d:/code/objeck-lang/core/release/deploy64/bin/obr.exe",
-				"d:/code/objeck-lang-server/server/src/objk_lang_server.obe",
+				"<objeck_path>/bin/obr.exe",
+				"<objeck_server_path>/objk_lang_server.obe",
 				"6013",
 				"debug"
 			],
 			"env": {
-				"OBJECK_LIB_PATH": "d:/code/objeck-lang/core/release/deploy64/lib"
+				"OBJECK_LIB_PATH": "<objeck_path>/lib"
 			},
 			"selector": "source.objeck-obs",
 			"tcp_port": 6013
