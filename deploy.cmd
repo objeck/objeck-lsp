@@ -6,7 +6,7 @@ call vsce package
 move /y *.vsix ..\..\objeck-lsp
 cd ..\..\server\src
 call build_server.cmd
-move /y objk_lang_server.obe ..\..\objeck-lsp
+move /y objeck_lsp.obe ..\..\objeck-lsp
 cd ..\..
 
 REM finished

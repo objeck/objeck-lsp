@@ -1,0 +1,8 @@
+1. download and install Objeck >= 6.0.0
+2. download and install VSC
+3. download the objeck-lsp extension and unzip
+4. copy all files in <objeck_install_dir>/doc/syntax/vscode to <user_home>/.vscode/extensions/objeck-syntax
+5. launch vscode
+6. click on the extension button (bottom left hand side); drag and drop objeck-lsp-xxx.vsix under "installed"
+7. cd to the objeck-lsp directory and run "obr objeck_lsp.obe 6013 debug" (remove "debug" once working)
+8 open a *.obs file
