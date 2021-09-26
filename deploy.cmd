@@ -3,10 +3,10 @@ mkdir objeck-lsp
 
 cd clients\vscode
 call vsce package
-copy /y *.vsix ..\..\objeck-lsp
+move /y *.vsix ..\..\objeck-lsp
 cd ..\..\server\src
 call build_server.cmd
-copy /y objk_lang_server.obe ..\..\objeck-lsp
+move /y objk_lang_server.obe ..\..\objeck-lsp
 cd ..\..
 
 REM finished
