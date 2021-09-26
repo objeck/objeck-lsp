@@ -5,4 +5,4 @@
 5. launch vscode
 6. click on the extension button (bottom left hand side); drag and drop objeck-lsp-xxx.vsix under "installed"
 7. cd to the objeck-lsp directory and run "obr objeck_lsp.obe 6013 debug" (remove "debug" once working)
-8 open a *.obs file
+8. open a *.obs file
