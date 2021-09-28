@@ -132,6 +132,36 @@ bundle LSP {
 			return Nil;
 		}
 
+		
+
+		method : public : CodeRename(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
+			if(references <> Nil) {
+
+				each(i : references) {
+					reference := references[i];
+					
+					builder := JsonBuilder->New();
+
+					kind := reference->GetKind();
+					start_line := end_line := reference->GetStartLine();
+					start_index := reference->GetStartPosition();
+					end_index := reference->GetEndPosition();
+					found_uri := reference->GetDescription();
+
+				};
+
+								
+#				return array;
+			};
+
+			return Nil;
+		}
+
 		method : public : FindReferences(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
