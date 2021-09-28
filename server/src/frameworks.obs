@@ -64,6 +64,7 @@ bundle LSP {
 		method : virtual : CallbackShutdown(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackCompletion(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackResolve(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackRename(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
@@ -125,6 +126,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("completionItem/resolve")) {
 					CallbackResolve(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/rename")) {
+					CallbackRename(id, request->GetParams());
 				}
 				else if(method_id->Equals("textDocument/documentSymbol")) {
 					CallbackDocumentSymbol(id, request->GetParams());

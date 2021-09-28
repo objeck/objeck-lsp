@@ -166,6 +166,7 @@ bundle LSP {
 	        capabilities->Insert("referencesProvider", true);
 	        capabilities->Insert("declarationProvider", true);
 	        capabilities->Insert("definitionProvider", true);
+	        capabilities->Insert("renameProvider", true);
 
 	        WriteRpcResponse(id, response);
 
@@ -263,6 +264,21 @@ bundle LSP {
 		method : CallbackResolve(id : Int, params : JsonElement) ~ Nil {
 			# write response
 	        WriteRpcResponse(id, params);
+		}
+
+		method : CallbackRename(id : Int, params : JsonElement) ~ Nil {
+			# READ='{"jsonrpc":"2.0","id":2,"method":"textDocument/rename","params":{"textDocument":{"uri":"file:///d%3A/Code/objeck-lang-server/tests/w4/prgm.obs"},"position":{"line":11,"character":16},"newName":"abc"}}'
+
+			new_name := params->FindElements("newName")->GetValue();
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			if(IsDebug()) {
+				System.IO.File.Logger->Instance()->Info("=> CallbackRename: new_name={$new_name}, uri={$uri}, line_pos={$line_pos}, char_pos={$char_pos}");
+			};
+
+			WriteRpcResponse(id, Nil);
 		}
 
 		#
