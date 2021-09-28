@@ -78,7 +78,7 @@ bundle LSP {
 			# notification
 			if(id->IsNeg()) {
 				if(@is_debug) {
-					"NOTIFICATION='{$method_id}'\n"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("NOTIFICATION='{$method_id}'\n");
 				};
 
 				if(method_id->Equals("initialized")) {
@@ -107,14 +107,14 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug) {
-						"*** Unknown notification='{$method_id}' ***"->PrintLine();
+						System.IO.File.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
 					};
 				};
 			}
 			# callback
 			else {
 				if(@is_debug) {
-					"METHOD='{$method_id}', id={$id}"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("METHOD='{$method_id}', id={$id}");
 				};
 
 				if(method_id->Equals("initialize")) {
@@ -146,7 +146,7 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug & <>method_id->Equals("<none>")) {
-						"*** Unknown method='{$method_id}' ***"->PrintLine();
+						System.IO.File.Logger->Instance()->Error("*** Unknown method='{$method_id}' ***");
 					};
 				};
 			};
@@ -167,7 +167,7 @@ bundle LSP {
 
 				text := String->New(buffer->ToUnicode());
 				if(@is_debug) {
-					"====\nREAD='{$text}'"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("====\nREAD='{$text}'");
 				};
 
 				return text;
@@ -178,7 +178,7 @@ bundle LSP {
 
 		method : WriteString(text : String) ~ Nil {
 			if(@is_debug) {
-				"WRITE='{$text}'"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("WRITE='{$text}'");
 			};		
 			length := text->Size();
 			@socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
@@ -333,7 +333,7 @@ bundle LSP {
 
 							if(@is_debug & text <> Nil) {
 								size := text->Size();
-								"### Cached: file_uri='{$file_uri}', size={$size} ###"->PrintLine();
+								System.IO.File.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
 							};
 						}
 						else {
@@ -341,12 +341,12 @@ bundle LSP {
 
 							if(@is_debug & text <> Nil) {
 								size := text->Size();
-								"### From disk: local_file_path='{$local_file_path}', size={$size} ###"->PrintLine();
+								System.IO.File.Logger->Instance()->Info("### From disk: local_file_path='{$local_file_path}', size={$size} ###");
 							};
 						};
 
 						if(text = Nil) {
-							"Unable to open file: {$local_file_path}"->ErrorLine();
+							System.IO.File.Logger->Instance()->Error("Unable to open file: {$local_file_path}");
 						}
 						else {
 							@texts[i,0] := file_uri;
@@ -380,7 +380,7 @@ bundle LSP {
 
 						if(@is_debug & text <> Nil) {
 							size := text->Size();
-							"### Cached: file_uri='{$file_uri}', size={$size} ###"->PrintLine();
+							System.IO.File.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
 						};
 
 						@texts[0,0] := file_uri;
@@ -568,7 +568,7 @@ bundle LSP {
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {
-				"### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###");
 			};
 			
 			if(start > -1) {
@@ -581,7 +581,7 @@ bundle LSP {
 
 		method : public : Save() ~ Nil {
 			if(@is_debug) {
-				"NotifyDidSave"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("NotifyDidSave");
 			};
 		}
 
@@ -709,7 +709,7 @@ bundle LSP {
 
 		method : DumpDocument() ~ Nil {
 			if(@is_debug) {
-				"TEXT='{$@text}'"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("TEXT='{$@text}'");
 			};
 		}
 	}

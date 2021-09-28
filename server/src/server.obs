@@ -49,6 +49,18 @@ bundle LSP {
 
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent(socket, is_debug);
+
+			if(@is_debug) {
+				dir := System.IO.File.Logger->Instance()->GetDirectory();
+				info := System.IO.File.Logger->Instance()->GetInfoFile();
+				error := System.IO.File.Logger->Instance()->GetErrorFile();
+
+				"----"->PrintLine();
+				"Logging diretory='{$dir}'"->PrintLine();
+				"\tInfo file='{$info}'"->PrintLine();
+				"\tError file='{$error}'"->PrintLine();
+				"----"->PrintLine();
+			};
 		}
 
 		#
@@ -75,7 +87,7 @@ bundle LSP {
 
 		method : CallbackDefinition(id : Int, params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				"=> CallbackDefinition"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("=> CallbackDefinition");
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();
@@ -120,7 +132,7 @@ bundle LSP {
 							folder_uri := folder_uri_obj->GetValue();
 
 							if(@is_debug) {
-								"\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n"->PrintLine();
+								System.IO.File.Logger->Instance()->Info("\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n");
 							};
 							ProcessConfiguration(folder_name, folder_uri);
 						}
@@ -201,7 +213,7 @@ bundle LSP {
 						};
 
 						if(@is_debug) {
-							"--- Files and libraries:  @decoded_folder_uri='{$@decoded_folder_uri}', libs_str='{$libs_str}' ---\n"->PrintLine();
+							System.IO.File.Logger->Instance()->Info("--- Files and libraries:  @decoded_folder_uri='{$@decoded_folder_uri}', libs_str='{$libs_str}' ---\n");
 						};
 
 						@workspace->SetFilesLibs(@decoded_folder_uri, file_strs, libs_str);
@@ -236,7 +248,7 @@ bundle LSP {
 
 		method : CallbackShutdown(id : Int, params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				"=> CallbackShutdown"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("=> CallbackShutdown");
 			};
 
 			@quit := true;
@@ -264,7 +276,7 @@ bundle LSP {
 			id := params->Get("id")->GetValue();
 
 			if(IsDebug()) {
-				"NotifyCancel: id={$id}"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("NotifyCancel: id={$id}");
 			};
 		}
 
@@ -277,7 +289,7 @@ bundle LSP {
 				type := change->Get("type")->GetValue()->ToInt();
 
 				if(IsDebug()) {
-					"NotifyDidChangeWatchedFiles: uri='{$uri}', uri={$type}"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("NotifyDidChangeWatchedFiles: uri='{$uri}', uri={$type}");
 				};
 
 				# configuration file added or changed
@@ -292,7 +304,7 @@ bundle LSP {
 			text := params->FindElements("textDocument/text")->GetValue();
 
 			if(IsDebug()) {
-				"NotifyDidOpen: uri='{$uri}', text=\"{$text}\""->PrintLine();
+				System.IO.File.Logger->Instance()->Info("NotifyDidOpen: uri='{$uri}', text=\"{$text}\"");
 			};
 			
 			@workspace->AddDocument(uri, Document->New(uri, text, @workspace, IsDebug()));
@@ -321,7 +333,7 @@ bundle LSP {
 				folder_uri := folder->Get("uri")->GetValue();
 				folder_name := folder->Get("name")->GetValue();
 				if(@is_debug) {
-					"--- Added workspace: '{$folder_uri}', '{$folder_name}' ---"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("--- Added workspace: '{$folder_uri}', '{$folder_name}' ---");
 				};
 			};
 
@@ -332,7 +344,7 @@ bundle LSP {
 				folder_uri := folder->Get("uri")->GetValue();
 				folder_name := folder->Get("name")->GetValue();
 				if(@is_debug) {
-					"--- Removed workspace: '{$folder_uri}', '{$folder_name}' ---"->PrintLine();
+					System.IO.File.Logger->Instance()->Info("--- Removed workspace: '{$folder_uri}', '{$folder_name}' ---");
 				};
 			};
 		}
@@ -340,7 +352,7 @@ bundle LSP {
 
 		method : NotifyDidChange(params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				"NotifyDidChange"->PrintLine();
+				System.IO.File.Logger->Instance()->Info("NotifyDidChange");
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();
