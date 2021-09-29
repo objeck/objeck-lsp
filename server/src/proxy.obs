@@ -141,21 +141,33 @@ bundle LSP {
 
 			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
 			if(references <> Nil) {
+				file_reference_map := Map->New()<String, Vector<Result>>;
 
 				each(i : references) {
 					reference := references[i];
 					
-					builder := JsonBuilder->New();
-
 					kind := reference->GetKind();
 					start_line := end_line := reference->GetStartLine();
 					start_index := reference->GetStartPosition();
 					end_index := reference->GetEndPosition();
 					found_uri := reference->GetDescription();
 
+					if(file_reference_map->Has(found_uri)) {
+						results := file_reference_map->Find(found_uri);
+						results->AddBack(reference);
+					}
+					else {
+						results := Vector->New()<Result>;						
+						results->AddBack(reference);
+						file_reference_map->Insert(found_uri, results);
+					};
 				};
 
-								
+				file_references := file_reference_map->GetValues()<Vector<Result>>;
+				each(i : file_references) {
+					file_reference := file_references->Get(i);
+				};
+				
 #				return array;
 			};
 
