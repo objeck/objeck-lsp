@@ -134,41 +134,65 @@ bundle LSP {
 
 		
 
-		method : public : CodeRename(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+		method : public : CodeRename(new_name : String, line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
 			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
 			if(references <> Nil) {
-				file_reference_map := Map->New()<String, Vector<Result>>;
+				file_reference_map := MultiMap->New()<String, Result>;
 
 				each(i : references) {
 					reference := references[i];
-					
-					kind := reference->GetKind();
-					start_line := end_line := reference->GetStartLine();
-					start_index := reference->GetStartPosition();
-					end_index := reference->GetEndPosition();
 					found_uri := reference->GetDescription();
-
-					if(file_reference_map->Has(found_uri)) {
-						results := file_reference_map->Find(found_uri);
-						results->AddBack(reference);
-					}
-					else {
-						results := Vector->New()<Result>;						
-						results->AddBack(reference);
-						file_reference_map->Insert(found_uri, results);
-					};
+					file_reference_map->Insert(found_uri, reference);
 				};
 
-				file_references := file_reference_map->GetValues()<Vector<Result>>;
-				each(i : file_references) {
-					file_reference := file_references->Get(i);
-				};
 				
-#				return array;
+
+				found_uris := file_reference_map->GetKeys()<String>;
+				each(i : found_uris) {
+					found_uri := found_uris->Get(i);
+
+					"found_uri='{$found_uri}'"->PrintLine();
+
+					builder := JsonBuilder->New();
+					builder->PushArray();
+
+					file_references := file_reference_map->Find(found_uri)<Result>;
+					each(j : file_references) {
+						file_reference := file_references->Get(i);
+
+						start_line := end_line := file_reference->GetStartLine();
+						start_index := file_reference->GetStartPosition();
+						end_index := file_reference->GetEndPosition();
+
+						"\tfile_reference='{$file_reference}'"->PrintLine();
+						
+						# --------
+						
+							builder->PushObject();
+							builder->Insert("newText", new_name);
+
+							builder->PushObject("range");
+								obj := builder->PushObject("start");
+								obj->Insert("line", start_line);
+								obj->Insert("character", start_index);
+								builder->Pop();
+
+								obj := builder->PushObject("end");
+								obj->Insert("line", end_line);
+								obj->Insert("character", end_index);
+								builder->Pop();
+							builder->Pop();
+
+						builder->Add(builder->Pop());
+					};
+
+					builder->Pop()->ToString()->PrintLine();
+				};
+
 			};
 
 			return Nil;

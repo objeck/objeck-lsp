@@ -472,13 +472,13 @@ bundle LSP {
 			return proxy->FindReferences(line_pos, char_pos, @uri, @workspace->GetLibs());
 		}
 
-		method : public : CodeRename(line_pos : Int, char_pos : Int) ~ JsonElement {
+		method : public : CodeRename(new_name : String, line_pos : Int, char_pos : Int) ~ JsonElement {
 			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
 
-			return proxy->CodeRename(line_pos, char_pos, @uri, @workspace->GetLibs());
+			return proxy->CodeRename(new_name, line_pos, char_pos, @uri, @workspace->GetLibs());
 		}
 		
 		method : public : FindDeclaration(line_pos : Int, char_pos : Int) ~ JsonElement {

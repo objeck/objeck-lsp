@@ -85,7 +85,7 @@ bundle LSP {
 				System.IO.File.Logger->Instance()->Info("=> CallbackRename: new_name={$new_name}, uri={$uri}, line_pos={$line_pos}, char_pos={$char_pos}");
 			};
 
-			response := @workspace->GetDocument(uri)->CodeRename(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->CodeRename(new_name, line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
