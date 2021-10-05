@@ -148,8 +148,8 @@ bundle LSP {
 					found_uri := reference->GetDescription();
 					file_reference_map->Insert(found_uri, reference);
 				};
-
 				
+				doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 				found_uris := file_reference_map->GetKeys()<String>;
 				each(i : found_uris) {
@@ -157,12 +157,16 @@ bundle LSP {
 
 					"found_uri='{$found_uri}'"->PrintLine();
 
-					builder := JsonBuilder->New();
-					builder->PushArray();
+					text_doc_json := edits_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					text_doc_json->Insert("uri", found_uri);
+					text_doc_json->Insert("version", Nil);
+
+					edits_builder := JsonBuilder->New();
+					edits_builder->PushArray();
 
 					file_references := file_reference_map->Find(found_uri)<Result>;
 					each(j : file_references) {
-						file_reference := file_references->Get(i);
+						file_reference := file_references->Get(j);
 
 						start_line := end_line := file_reference->GetStartLine();
 						start_index := file_reference->GetStartPosition();
@@ -172,27 +176,35 @@ bundle LSP {
 						
 						# --------
 						
-							builder->PushObject();
-							builder->Insert("newText", new_name);
+						edits_builder->PushObject();
+						edits_builder->Insert("newText", new_name);
 
-							builder->PushObject("range");
-								obj := builder->PushObject("start");
-								obj->Insert("line", start_line);
-								obj->Insert("character", start_index);
-								builder->Pop();
+						edits_builder->PushObject("range");
+						obj := edits_builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						edits_builder->Pop();
 
-								obj := builder->PushObject("end");
-								obj->Insert("line", end_line);
-								obj->Insert("character", end_index);
-								builder->Pop();
-							builder->Pop();
+						obj := edits_builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						edits_builder->Pop();
+						edits_builder->Pop();
 
-						builder->Add(builder->Pop());
+						edits_builder->Add(edits_builder->Pop());
 					};
 
-					builder->Pop()->ToString()->PrintLine();
-				};
+					doc_change_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					doc_change_json->Insert("edits", edits_builder->Pop());
+					doc_change_json->Insert("textDocument", text_doc_json);
 
+					doc_changes_array_json->Add(doc_change_json);
+				};
+				
+				doc_changes_obj := JsonElement->New(JsonElement->JsonType->OBJECT);
+				doc_changes_obj->Insert("documentChanges", doc_changes_array_json);
+
+doc_changes_obj->ToString()->PrintLine();
 			};
 
 			return Nil;

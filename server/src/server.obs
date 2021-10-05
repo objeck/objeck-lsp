@@ -149,9 +149,6 @@ bundle LSP {
 								System.IO.File.Logger->Instance()->Info("\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n");
 							};
 							ProcessConfiguration(folder_name, folder_uri);
-						}
-						else {
-
 						};
 					};
 				};
