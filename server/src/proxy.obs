@@ -200,11 +200,13 @@ bundle LSP {
 
 					doc_changes_array_json->Add(doc_change_json);
 				};
-				
+
 				doc_changes_obj := JsonElement->New(JsonElement->JsonType->OBJECT);
 				doc_changes_obj->Insert("documentChanges", doc_changes_array_json);
 
-doc_changes_obj->ToString()->PrintLine();
+# doc_changes_obj->ToString()->PrintLine();
+
+				return doc_changes_obj;
 			};
 
 			return Nil;
