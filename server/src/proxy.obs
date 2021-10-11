@@ -157,10 +157,6 @@ bundle LSP {
 
 					"found_uri='{$found_uri}'"->PrintLine();
 
-					text_doc_json := edits_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					text_doc_json->Insert("uri", found_uri);
-					text_doc_json->Insert("version", Nil);
-
 					edits_builder := JsonBuilder->New();
 					edits_builder->PushArray();
 
@@ -194,19 +190,18 @@ bundle LSP {
 						edits_builder->Add(edits_builder->Pop());
 					};
 
-					doc_change_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					doc_change_json->Insert("edits", edits_builder->Pop());
-					doc_change_json->Insert("textDocument", text_doc_json);
+					edits_json := edits_builder->Pop();
 
-					doc_changes_array_json->Add(doc_change_json);
+					foo := JsonElement->New(JsonElement->JsonType->OBJECT);
+					foo->Insert("uri", found_uri);
+
+					doc_changes_array_json->Add(foo);
+					doc_changes_array_json->Add(edits_json);
 				};
 
-				doc_changes_obj := JsonElement->New(JsonElement->JsonType->OBJECT);
-				doc_changes_obj->Insert("documentChanges", doc_changes_array_json);
+doc_changes_array_json->ToString()->PrintLine();
 
-# doc_changes_obj->ToString()->PrintLine();
-
-				return doc_changes_obj;
+				return doc_changes_array_json;
 			};
 
 			return Nil;
