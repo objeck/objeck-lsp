@@ -155,8 +155,6 @@ bundle LSP {
 				each(i : found_uris) {
 					found_uri := found_uris->Get(i);
 
-					"found_uri='{$found_uri}'"->PrintLine();
-
 					edits_builder := JsonBuilder->New();
 					edits_builder->PushArray();
 
@@ -167,10 +165,6 @@ bundle LSP {
 						start_line := end_line := file_reference->GetStartLine();
 						start_index := file_reference->GetStartPosition();
 						end_index := file_reference->GetEndPosition();
-
-						"\tfile_reference='{$file_reference}'"->PrintLine();
-						
-						# --------
 						
 						edits_builder->PushObject();
 						edits_builder->Insert("newText", new_name);
@@ -205,9 +199,7 @@ bundle LSP {
 
 				apply_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 				apply_changes_json->Insert("documentChanges", doc_changes_array_json);
-
-apply_changes_json->ToString()->PrintLine();
-
+				
 				return apply_changes_json;
 			};
 
