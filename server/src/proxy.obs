@@ -184,31 +184,31 @@ bundle LSP {
 						obj := edits_builder->PushObject("end");
 						obj->Insert("line", end_line);
 						obj->Insert("character", end_index);
-						edits_builder->Pop();
-						edits_builder->Pop();
 
+						edits_builder->Pop();
+						edits_builder->Pop();
 						edits_builder->Pop();
 					};
 
 					edits_json := edits_builder->Pop();
 
-					abc := JsonElement->New(JsonElement->JsonType->OBJECT);
-					abc->Insert("uri", found_uri);
-					abc->Insert("version", Nil);
+					text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					text_doc_json->Insert("uri", found_uri);
+					text_doc_json->Insert("version", Nil);
 
-					foo := JsonElement->New(JsonElement->JsonType->OBJECT);
-					foo->Insert("textDocument", abc);
-					foo->Insert("edits", edits_json);
+					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					doc_changes_json->Insert("textDocument", text_doc_json);
+					doc_changes_json->Insert("edits", edits_json);
 
-					doc_changes_array_json->Add(foo);
+					doc_changes_array_json->Add(doc_changes_json);
 				};
 
-				bar := JsonElement->New(JsonElement->JsonType->OBJECT);
-				bar->Insert("documentChanges", doc_changes_array_json);
+				apply_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				apply_changes_json->Insert("documentChanges", doc_changes_array_json);
 
-bar->ToString()->PrintLine();
+apply_changes_json->ToString()->PrintLine();
 
-				return bar;
+				return apply_changes_json;
 			};
 
 			return Nil;
