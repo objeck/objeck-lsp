@@ -192,16 +192,23 @@ bundle LSP {
 
 					edits_json := edits_builder->Pop();
 
+					abc := JsonElement->New(JsonElement->JsonType->OBJECT);
+					abc->Insert("uri", found_uri);
+					abc->Insert("version", i + 1);
+
 					foo := JsonElement->New(JsonElement->JsonType->OBJECT);
-					foo->Insert("uri", found_uri);
+					foo->Insert("textDocument", abc);
+					foo->Insert("edits", edits_json);
 
 					doc_changes_array_json->Add(foo);
-					doc_changes_array_json->Add(edits_json);
 				};
 
-doc_changes_array_json->ToString()->PrintLine();
+				bar := JsonElement->New(JsonElement->JsonType->OBJECT);
+				bar->Insert("documentChanges", doc_changes_array_json);
 
-				return doc_changes_array_json;
+bar->ToString()->PrintLine();
+
+				return bar;
 			};
 
 			return Nil;
