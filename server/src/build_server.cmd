@@ -7,6 +7,7 @@ SET PATH=%PATH%;%OBJECK_ROOT%\core\release\deploy64\bin
 SET OBJECK_LIB_PATH=%OBJECK_ROOT%\core\release\deploy64\lib
 
 del /q *.obe
+del /q %TEMP%\objk-*
 
 obc -src %OBJECK_ROOT%\core\compiler\lib_src\diags.obs -lib gen_collect -tar lib -dest %OBJECK_ROOT%\core\lib\diags.obl
 copy %OBJECK_ROOT%\core\lib\diags.obl %OBJECK_ROOT%\core\release\deploy64\lib\diags.obl
