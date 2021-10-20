@@ -26,6 +26,7 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Goto Code References `textDocument/references`
 * Goto Code Definitions `textDocument/definition`
 * Goto Code Declaration `textDocument/declaration`
+* Variable rename `textDocument/rename`
 * Editor Shutdown `shutdown`
 
 ## Project Status
