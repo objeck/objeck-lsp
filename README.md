@@ -70,6 +70,5 @@ The server is functional but there is still work to do.
 4. Testing with Emacs
 
 ### Future
-1. Renaming of variables, methods and functions
+1. Renaming methods and functions
 2. Hover support
-3. Use of more efficient JSON data structures 
