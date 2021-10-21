@@ -1,8 +1,3 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
 import * as path from 'path';
 import * as net from 'net';
 
@@ -25,7 +20,6 @@ export function activate(context: ExtensionContext) {
     };
  
 	let serverOptions = () => {
-        // Connect to language server via socket
         let socket = net.connect(connectionInfo);
         let result: StreamInfo = {
             writer: socket,
@@ -34,24 +28,16 @@ export function activate(context: ExtensionContext) {
         return Promise.resolve(result);
     };
 
-	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
-		// Register the server for plain text documents
 		documentSelector: [{ scheme: 'file', pattern: "**/*.{obs}"}],
 		synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.clientrc')
         }
 	};
 
-	// Create the language client and start the client.
-	client = new LanguageClient(
-		'languageServerExample',
-		'Language Server Example',
-		serverOptions,
-		clientOptions
-	);
+	client = new LanguageClient('objeck_lsp', 'Objeck Language Server',
+		                        serverOptions, clientOptions);
 
-	// Start the client. This will also launch the server
 	client.start();
 }
 
