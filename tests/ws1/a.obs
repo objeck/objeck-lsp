@@ -18,12 +18,12 @@ class Test {
 		xx := f + f;
 	}
 
-	method : Foo() ~ Int {
-		return 7 + @abc->GetValue(12);
+	method : Foo(a : Int) ~ Int {
+		return 14 + @abc->GetValue(12) * 7;
 	}
 
 	method : Bar() ~ Bool {
-		gag := 13;
+		gag := 6;
 		gag := gag - @abc->GetValue(13)          -gag;
 		return @abc = @abc;
 	}

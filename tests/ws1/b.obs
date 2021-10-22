@@ -6,7 +6,8 @@ class FooBar {
 
 enum Fie {
 	ONE,
-	TWO
+	TWO,
+	THREE
 }
 
 class ValueHolder {

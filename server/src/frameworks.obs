@@ -315,7 +315,7 @@ bundle LSP {
 				file_count := @file_strs->Size();
 				if(file_count > 0) {
 					@texts := String->New[file_count, 2];
-
+					
 					each(i : file_count) {
 						local_file_path := String->New(@local_path);
 						local_file_path += '/';
@@ -342,7 +342,6 @@ bundle LSP {
 						}
 						else {
 							text := System.IO.File.FileReader->ReadFile(local_file_path);
-
 							if(@is_debug & text <> Nil) {
 								size := text->Size();
 								System.IO.File.Logger->Instance()->Info("### From disk: local_file_path='{$local_file_path}', size={$size} ###");
@@ -405,11 +404,19 @@ bundle LSP {
 		}
 
 		method : public : AddDocument(uri : String, document : Document) ~ Nil {
+			if(@is_debug) {
+				System.IO.File.Logger->Instance()->Info("=> Add: {$uri}");
+			};
+
 			@documents->Remove(uri);
 			@documents->Insert(uri, document);
 		}
 
 		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
+			if(@is_debug) {
+				System.IO.File.Logger->Instance()->Info("=> Remove: {$uri}");
+			};
+
 			if(@documents->Remove(uri)) {
 				document->Release();
 			};
@@ -599,7 +606,7 @@ bundle LSP {
 		}
 
 		method : public : Release() ~ Nil {
-			@text := Nil;
+#			@text := Nil;
 		}
 
 		method : public : GetText() ~ String {
@@ -670,7 +677,7 @@ bundle LSP {
 			return -1;
 		}
 
-		method : GetText(text : String) ~ String {
+		function : GetText(text : String) ~ String {
 			out := "";
 
 			each(i : text) {
