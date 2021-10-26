@@ -25,7 +25,13 @@ class CodeFormatter {
 						each(j : ident) {
 							"\t"->Print();
 						};
-						"}\n"->Print();
+
+						if(tokens->Get(i + 1)->GetType() <> Token->Type->SEMI) {
+							"}\n"->Print();
+						}
+						else {
+							"}"->Print();
+						};
 					}
 
 					label Token->Type->USE_ID:
