@@ -1,4 +1,12 @@
+v1.0.2
+===
 
+What's new
+* Fixed bug with find definition for standalone function/method calls
+* Improved stability
+
+Install
+===
 Basic LSP support for Objeck in VSCode and Sublime.
 
 Visual Studio Code
