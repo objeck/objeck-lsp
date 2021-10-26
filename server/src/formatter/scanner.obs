@@ -81,6 +81,7 @@ class Scanner {
 	
 	method : public : native : Scan() ~ Bool {
 		reserved := Map->New()<String, IntHolder>;
+		reserved->Insert("use", IntHolder->New(Token->Type->USE_ID));
 		reserved->Insert("while", IntHolder->New(Token->Type->WHILE_ID));
 		reserved->Insert("do", IntHolder->New(Token->Type->DO_ID));
 		reserved->Insert("for", IntHolder->New(Token->Type->FOR_ID));
@@ -114,7 +115,7 @@ class Scanner {
 					# variable
 					if(@line->Get(@index)->IsChar() | @line->Get(@index) = '_') {
 						string := "";
-						while(@line->Get(@index)->IsChar() | @line->Get(@index)->IsDigit() | @line->Get(@index) = '_') {
+						while(@line->Get(@index)->IsChar() | @line->Get(@index)->IsDigit() | @line->Get(@index) = '_' | @line->Get(@index) = '.') {
 							string->Append(@line->Get(@index));
 							@index += 1;
 						};
@@ -344,6 +345,7 @@ class Token {
 	@value : Int;
 
 	enum Type := -64 {
+		USE_ID,
 		WHILE_ID,
 		DO_ID,
 		FOR_ID,

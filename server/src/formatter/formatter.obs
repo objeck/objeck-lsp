@@ -28,6 +28,7 @@ class CodeFormatter {
 						"}\n"->Print();
 					}
 
+					label Token->Type->USE_ID:
 					label Token->Type->CLASS_ID: {
 						value := token->ToString();
 						"{$value} "->Print();
