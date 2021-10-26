@@ -202,7 +202,13 @@ class Scanner {
 							}
 
 							label ':': {
-								@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, ":"));
+								if(@index + 1 < @line->Size() & @line->Get(@index + 1) = '=') {
+									@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, ":="));
+									@index += 1;
+								}
+								else {
+									@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, ":"));
+								};
 							}
 							
 							label '(': {
@@ -284,7 +290,7 @@ class Scanner {
 									@index += 1;
 								}
 								else {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, "gtr"));
+									@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, ">"));
 								};
 							}
 							
@@ -294,7 +300,7 @@ class Scanner {
 									@index += 1;
 								}
 								else {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, ":="));
+									@tokens->AddBack(Token->New(@line_num, Token->Type->EQL, "="));
 								};
 							}
 							

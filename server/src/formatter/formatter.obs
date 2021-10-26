@@ -34,6 +34,11 @@ class CodeFormatter {
 						};
 					}
 
+					label Token->Type->ASGN: {
+						value := token->ToString();
+						" {$value} "->Print();
+					}
+
 					label Token->Type->USE_ID:
 					label Token->Type->CLASS_ID: {
 						value := token->ToString();
