@@ -71,4 +71,5 @@ The server is functional but there is still work to do.
 
 ### Future
 1. Renaming methods and functions
-2. Hover support
+2. Code formatting 
+3. Document hover support
