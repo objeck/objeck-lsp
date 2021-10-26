@@ -1,3 +1,5 @@
 del *.obe
 obc -src formatter.obs,scanner.obs -lib gen_collect -dest code_formatter.obe
-obr code_formatter.obe D:\Code\objeck-lang\programs\deploy\hello_0.obs
+if "%~1" == "" goto end
+obr code_formatter.obe %1
+:end
