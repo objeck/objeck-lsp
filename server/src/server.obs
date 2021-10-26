@@ -27,7 +27,10 @@ bundle LSP {
 		}
 
 		method : public : Listen() ~ Nil {
-			server := TCPSocketServer->New(6013);
+			port := 6013;
+			"Objeck LSP Server on localhost:{$port}"->PrintLine();
+
+			server := TCPSocketServer->New(port);
 			leaving {
 				server->Close();
 			};
