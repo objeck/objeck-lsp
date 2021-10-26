@@ -1,0 +1,70 @@
+use Collection.Generic;
+
+class CodeFormatter {
+	function : Main(args : String[]) ~ Nil {
+		scanner := Scanner->New(args[0]);
+		if(scanner->Scan()) {
+			"---"->PrintLine();
+			ident := 0;
+			tokens := scanner->GetTokens()<Token>;
+			each(i : tokens) {
+				token := tokens->Get(i);
+				select(token->GetType()) {
+					label Token->Type->OCBRACE: {
+						" {\n"->Print();
+
+						ident += 1;
+# "### 0: {$ident} ###"->PrintLine();						
+						each(j : ident) {
+							"\t"->Print();
+						};
+					}
+
+					label Token->Type->CCBRACE: {
+						ident -= 1;
+						each(j : ident) {
+							"\t"->Print();
+						};
+						"}\n"->Print();
+					}
+
+					label Token->Type->CLASS_ID: {
+						value := token->ToString();
+						"{$value} "->Print();
+					}
+
+					label Token->Type->COMMA: {
+						value := token->ToString();
+						if(tokens->Get(i + 1)->GetType() <> Token->Type->CPREN) {
+							"{$value} "->Print();
+						}
+						else {
+							value->Print();
+						};
+					}
+					
+					label Token->Type->TILDE:
+					label Token->Type->COLON: {
+						value := token->ToString();
+						" {$value} "->Print();
+					}
+
+					label Token->Type->SEMI: {
+						token->ToString()->Print();
+						"\n"->Print();
+
+						if(tokens->Get(i + 1)->GetType() <> Token->Type->CCBRACE) {
+							each(j : ident) {
+								"\t"->Print();
+							};
+						};
+					}
+
+					other {
+						token->ToString()->Print();
+					}
+				};
+			};
+		};
+	}
+}
