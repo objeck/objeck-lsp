@@ -599,14 +599,8 @@ bundle LSP {
 			};
 		}
 
-		method : public : Save() ~ Nil {
-			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("NotifyDidSave");
-			};
-		}
-
 		method : public : Release() ~ Nil {
-#			@text := Nil;
+			@text := @alt_text := Nil;
 		}
 
 		method : public : GetText() ~ String {

@@ -7,6 +7,7 @@ class CodeFormatter {
 			"---"->PrintLine();
 			ident := 0;
 			tokens := scanner->GetTokens()<Token>;
+			
 			each(i : tokens) {
 				token := tokens->Get(i);
 				select(token->GetType()) {

@@ -138,7 +138,7 @@ bundle LSP {
 			if(@analysis = Nil) {
 				return Nil;
 			};
-
+			
 			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
 			if(references <> Nil) {
 				file_reference_map := MultiMap->New()<String, Result>;
