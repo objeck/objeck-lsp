@@ -62,8 +62,7 @@ The server is functional but there is still work to do.
 ### Outstanding
 1. Auto include libraries based upon 'use' statements
 2. Finding definitions
-    1. Class member variables
-    2. Enums
+    1. Enums
 3. Linting
     1. Unused variables
     2. Dead code
