@@ -9,7 +9,8 @@ import {
 	ServerOptions,
 	TransportKind,
 	StreamInfo
-} from 'vscode-languageclient/node';
+} 
+from 'vscode-languageclient/node';
 
 let client: LanguageClient;
 
@@ -35,15 +36,14 @@ export function activate(context: ExtensionContext) {
         }
 	};
 
-	client = new LanguageClient('objeck_lsp', 'Objeck Language Server',
-		                        serverOptions, clientOptions);
-
+	client = new LanguageClient('objeck_lsp', 'Objeck Language Server', serverOptions, clientOptions);
 	client.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
+	if(!client) {
 		return undefined;
 	}
+
 	return client.stop();
 }

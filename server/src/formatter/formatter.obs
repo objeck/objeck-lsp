@@ -5,25 +5,25 @@ class CodeFormatter {
 		scanner := Scanner->New(args[0]);
 		if(scanner->Scan()) {
 			"---"->PrintLine();
-			ident := 0;
-			tokens := scanner->GetTokens()<Token>;
+			abc := 0;
+			tokens := scanner->Xyz  ()<Token>;
 			
 			each(i : tokens) {
 				token := tokens->Get(i);
 				select(token->GetType()) {
 					label Token->Type->OCBRACE: {
 						" {\n"->Print();
-
-						ident += 1;
+						
+						abc += 1;
 # "### 0: {$ident} ###"->PrintLine();						
-						each(j : ident) {
+						each(j : abc) {
 							"\t"->Print();
 						};
 					}
 
 					label Token->Type->CCBRACE: {
-						ident -= 1;
-						each(j : ident) {
+						abc -= 1;
+						each(j : abc) {
 							"\t"->Print();
 						};
 
@@ -67,7 +67,7 @@ class CodeFormatter {
 						"\n"->Print();
 
 						if(tokens->Get(i + 1)->GetType() <> Token->Type->CCBRACE) {
-							each(j : ident) {
+							each(j : abc) {
 								"\t"->Print();
 							};
 						};
