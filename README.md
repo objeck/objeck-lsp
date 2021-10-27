@@ -70,6 +70,5 @@ The server is functional but there is still work to do.
 4. Testing with Emacs
 
 ### Future
-1. Renaming methods and functions
-2. Code formatting 
-3. Document hover support
+1. Code formatting 
+2. Document hover support
