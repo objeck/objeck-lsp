@@ -160,32 +160,32 @@ bundle LSP {
 			# build response
 			response := JsonElement->New(JsonElement->JsonType->OBJECT);
 			capabilities := response->AddChild("capabilities");
-	        completionProvider := capabilities->AddChild("completionProvider");
-	        completionProvider->Insert("resolveProvider", true);
+			completionProvider := capabilities->AddChild("completionProvider");
+			completionProvider->Insert("resolveProvider", true);
 
 			signatureHelpProvider := capabilities->AddChild("signatureHelpProvider");
 			triggerCharacters := JsonElement->New(JsonElement->JsonType->ARRAY);
-	        triggerCharacters->Add("(");
-	        triggerCharacters->Add(",");
+			triggerCharacters->Add("(");
+			triggerCharacters->Add(",");
 			signatureHelpProvider->Insert("triggerCharacters", triggerCharacters);
 
-	        workspace := capabilities->AddChild("workspace");
-	        workspace_folders := workspace->AddChild("workspaceFolders");
-	        workspace_folders->Insert("supported", true);
-	        workspace_folders->Insert("changeNotifications", true);
-	        
-	        capabilities->Insert("workspace", workspace);
-	        capabilities->Insert("textDocumentSync", 2);
-	        capabilities->Insert("documentSymbolProvider", true);
-	        capabilities->Insert("referencesProvider", true);
-	        capabilities->Insert("declarationProvider", true);
-	        capabilities->Insert("definitionProvider", true);
-	        capabilities->Insert("renameProvider", true);
+			workspace := capabilities->AddChild("workspace");
+			workspace_folders := workspace->AddChild("workspaceFolders");
+			workspace_folders->Insert("supported", true);
+			workspace_folders->Insert("changeNotifications", true);
 
-	        WriteRpcResponse(id, response);
+			capabilities->Insert("workspace", workspace);
+			capabilities->Insert("textDocumentSync", 2);
+			capabilities->Insert("documentSymbolProvider", true);
+			capabilities->Insert("referencesProvider", true);
+			capabilities->Insert("declarationProvider", true);
+			capabilities->Insert("definitionProvider", true);
+			capabilities->Insert("renameProvider", true);
 
-	        # register watchers
-	        RegisterWatchers();
+			WriteRpcResponse(id, response);
+
+			# register watchers
+			RegisterWatchers();
 		}
 
 		method : ProcessConfiguration(folder_name : String, folder_uri : String) ~ Nil {
