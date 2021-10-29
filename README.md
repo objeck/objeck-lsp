@@ -29,25 +29,20 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Variable rename `textDocument/rename`
 * Editor Shutdown `shutdown`
 
-_Error checking_
-
-![alt text](images/checking.png "Error checking")
-
-
-_Code completion_
-
-![alt text](images/completion.png "Code completion")
-
-_Variable/method renaming_
-
-![alt text](images/rename.png "Variable/method renaming")
-
-
 <figure>
-<img src="images/checking.png" alt="Trulli" style="width:100%">
+<img src="images/checking.png" alt="Error checking" style="width:75%">
 <figcaption align = "center">Fig.1 - Error checking</figcaption>
 </figure>
 
+<figure>
+<img src="images/completion.png" alt="Code completion" style="width:75%">
+<figcaption align = "center">Fig.2 - Code completion</figcaption>
+</figure>
+
+<figure>
+<img src="images/rename.png" alt="Variable and method renaming" style="width:75%">
+<figcaption align = "center">Fig.3 - Variable and method renaming</figcaption>
+</figure>
 
 ## Project Status
 The server is functional but there is still work to do.
