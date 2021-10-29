@@ -31,6 +31,13 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 
 ![alt text](images/checking.png "Error checking")
 
+<figure>
+  <img
+  src="images/checking.png"
+  alt="Error checking in VS Code">
+  <figcaption>Error checking/figcaption>
+</figure>
+
 ![alt text](images/completion.png "Code completion")
 
 ![alt text](images/rename.png "Variable/method renaming")
