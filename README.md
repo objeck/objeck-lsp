@@ -29,11 +29,13 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Variable rename `textDocument/rename`
 * Editor Shutdown `shutdown`
 
-![alt text](images/checking.png "Error checking")
 <figcaption>Error checking</figcaption>
+![alt text](images/checking.png "Error checking")
 
+<figcaption>Code completion</figcaption>
 ![alt text](images/completion.png "Code completion")
 
+<figcaption>Variable/method renaming</figcaption>
 ![alt text](images/rename.png "Variable/method renaming")
 
 
