@@ -30,8 +30,8 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Editor Shutdown `shutdown`
 
 <figure>
-<img src="images/checking.png" alt="Error checking" style="width:75%">
 <figcaption align = "center">Fig.1 - Error checking</figcaption>
+<img src="images/checking.png" alt="Error checking" style="width:75%">
 </figure>
 
 <figure>
