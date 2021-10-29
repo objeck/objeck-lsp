@@ -30,13 +30,7 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 * Editor Shutdown `shutdown`
 
 ![alt text](images/checking.png "Error checking")
-
-<figure>
-  <img
-  src="images/checking.png"
-  alt="Error checking in VS Code">
-  <figcaption>Error checking</figcaption>
-</figure>
+<figcaption>Error checking</figcaption>
 
 ![alt text](images/completion.png "Code completion")
 
