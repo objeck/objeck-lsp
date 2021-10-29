@@ -35,13 +35,13 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 </figure>
 
 <figure>
-<img src="images/completion.png" alt="Code completion" style="width:75%">
 <figcaption align = "center">Fig.2 - Code completion</figcaption>
+<img src="images/completion.png" alt="Code completion" style="width:75%">
 </figure>
 
 <figure>
-<img src="images/rename.png" alt="Variable and method renaming" style="width:75%">
 <figcaption align = "center">Fig.3 - Variable and method renaming</figcaption>
+<img src="images/rename.png" alt="Variable and method renaming" style="width:75%">
 </figure>
 
 ## Project Status
