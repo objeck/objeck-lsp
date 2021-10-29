@@ -5,8 +5,8 @@ class CodeFormatter {
 		scanner := Scanner->New(args[0]);
 		if(scanner->Scan()) {
 			"---"->PrintLine();
-			abc := 0;
-			tokens := scanner->Xyz  ()<Token>;
+			ident := 0;
+			tokens := scanner->GetTokens()<Token>;
 			
 			each(i : tokens) {
 				token := tokens->Get(i);
@@ -14,16 +14,16 @@ class CodeFormatter {
 					label Token->Type->OCBRACE: {
 						" {\n"->Print();
 						
-						abc += 1;
-# "### 0: {$ident} ###"->PrintLine();						
-						each(j : abc) {
+						ident += 1;
+
+						each(j : ident) {
 							"\t"->Print();
 						};
 					}
 
 					label Token->Type->CCBRACE: {
-						abc -= 1;
-						each(j : abc) {
+						ident -= 1;
+						each(j : ident) {
 							"\t"->Print();
 						};
 
@@ -67,7 +67,7 @@ class CodeFormatter {
 						"\n"->Print();
 
 						if(tokens->Get(i + 1)->GetType() <> Token->Type->CCBRACE) {
-							each(j : abc) {
+							each(j : ident) {
 								"\t"->Print();
 							};
 						};

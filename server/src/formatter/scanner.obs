@@ -15,7 +15,7 @@ class Scanner {
 		@strings := Vector->New()<String>;;
 	}
 	
-	method : public : Xyz             () ~ Vector<Token> {
+	method : public : GetTokens             () ~ Vector<Token> {
 		return @tokens;
 	}
 	
