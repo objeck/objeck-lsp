@@ -31,17 +31,17 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 
 <figure>
 <figcaption>Fig.1 - Error checking</figcaption>
-<img src="images/checking.png" alt="Error checking" style="width:50%"/>
+<img src="images/checking.png" alt="Error checking" style="width:60%"/>
 </figure>
 
 <figure>
 <figcaption>Fig.2 - Code completion</figcaption>
-<img src="images/completion.png" alt="Code completion" style="width:50%"/>
+<img src="images/completion.png" alt="Code completion" style="width:60%"/>
 </figure>
 
 <figure>
 <figcaption>Fig.3 - Variable and method renaming</figcaption>
-<img src="images/rename.png" alt="Variable and method renaming" style="width:50%"/>
+<img src="images/rename.png" alt="Variable and method renaming" style="width:60%"/>
 </figure>
 
 ## Project Status
