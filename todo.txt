@@ -1,4 +1,0 @@
-TODO
-* Method call statement for "find all" (lambda_17.obs)
-* Fix (closure_19.obs)
-* Fix 'each', fix 'for', fix 'if'
