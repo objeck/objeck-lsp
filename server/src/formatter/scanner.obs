@@ -5,6 +5,7 @@ class Scanner {
 	@file : String;
 	@tokens : Vector<Token>;
 	@strings : Vector<String>;
+	@reserved : Map<String, IntHolder>;
 	@line : String;
 	@line_num : Int;
 	@index : Int;
@@ -12,10 +13,25 @@ class Scanner {
 	New(file : String) {
 		@file := file;
 		@tokens := Vector->New()<Token>;
-		@strings := Vector->New()<String>;;
+		@strings := Vector->New()<String>;
+
+		@reserved := Map->New()<String, IntHolder>;
+		@reserved->Insert("use", IntHolder->New(Token->Type->USE_ID));
+		@reserved->Insert("while", IntHolder->New(Token->Type->WHILE_ID));
+		@reserved->Insert("do", IntHolder->New(Token->Type->DO_ID));
+		@reserved->Insert("for", IntHolder->New(Token->Type->FOR_ID));
+		@reserved->Insert("each", IntHolder->New(Token->Type->EACH_ID));
+		@reserved->Insert("select", IntHolder->New(Token->Type->SELECT_ID));
+		@reserved->Insert("label", IntHolder->New(Token->Type->IF_ID));
+		@reserved->Insert("if", IntHolder->New(Token->Type->IF_ID));
+		@reserved->Insert("else", IntHolder->New(Token->Type->ELSE_ID));
+		@reserved->Insert("class", IntHolder->New(Token->Type->CLASS_ID));
+		@reserved->Insert("function", IntHolder->New(Token->Type->FUNCTION_ID));
+		@reserved->Insert("Nil", IntHolder->New(Token->Type->NIL_ID));
+		@reserved->Insert("String", IntHolder->New(Token->Type->STRING_ID));
 	}
 	
-	method : public : GetTokens             () ~ Vector<Token> {
+	method : public : GetTokens() ~ Vector<Token> {
 		return @tokens;
 	}
 	
@@ -29,12 +45,93 @@ class Scanner {
 		@index := 0;
 	}
 	
-	method : Whitespace() ~ Nil {
+	method : ScanWhitespace() ~ Nil {
 		while(@index < @line->Size() & (@line->Get(@index) = ' ' | @line->Get(@index) = '\t')) {
 			@index += 1;
 		};
 	}
+
+	method : ScanKeywordVariable() ~ Nil {
+		string := "";
+
+		while(@line->Get(@index)->IsChar() | @line->Get(@index)->IsDigit() | @line->Get(@index) = '_' | @line->Get(@index) = '.') {
+			string->Append(@line->Get(@index));
+			@index += 1;
+		};
 	
+		token := @reserved->Find(string)->As(IntHolder);
+		if(token <> Nil) {
+			type := token->Get()->As(Token->Type);
+			@tokens->AddBack(Token->New(@line_num, type, string));
+		}
+		else {
+			@tokens->AddBack(Token->New(@line_num, Token->Type->VAR, string));
+		};
+	}
+
+	method : ScanNumber() ~ Nil {
+		ScanNumber := "";
+
+		while(@line->Get(@index)->IsDigit()) {
+			ScanNumber->Append(@line->Get(@index));
+			@index += 1;
+		};						
+		@tokens->AddBack(Token->New(@line_num, Token->Type->NUM, "num", ScanNumber->ToInt()));
+	}
+
+	method : ScanCharacter() ~ Nil {
+		@index += 1;
+		if(@line->Get(@index) = '\\') {
+			@index += 1;
+			select(@line->Get(@index)) {
+				label 'r': {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\r'));
+					@index += 1;
+				}
+				
+				label 'n': {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\n'));
+					@index += 1;
+				}
+				
+				label 't': {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\t'));
+					@index += 1;
+				}
+				
+				label '\\': {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\\'));
+					@index += 1;
+				}
+			};
+		}
+		else {
+			@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", @line->Get(@index)));
+			@index += 1;
+		};
+		
+		if(@line->Get(@index) <> '\'') {
+			System.IO.Standard->Print("{$@line_num}: *** Invalid token: char='")->Print(@line->Get(@index))->PrintLine("' ***");
+			System.Runtime->Exit(1);
+		};
+		@index += 1;
+	}
+
+	method : ScanString(string_count : Int) ~ Nil {
+		@index += 1;
+		string := "";
+
+		while(@line->Get(@index) <> '"' & @line->Get(@index) <> '\0') {
+			string->Append(@line->Get(@index));
+			@index += 1;
+		};
+		@strings->AddBack(string);
+		
+		@tokens->AddBack(Token->New(@line_num, Token->Type->STR_REF, "string", string_count));						
+		string_count += 1;
+		@index += 1;
+	}
+
 	method : Comments(reader : FileReader) ~ Bool {
 		if(@index + 1 < @line->Size()) {
 			if(@line->Get(@index) = '#') {
@@ -55,11 +152,11 @@ class Scanner {
 							NextLine(reader);
 						};						
 					};
-					Whitespace();
+					ScanWhitespace();
 					
 					if(@index = @line->Size() & <>reader->IsEOF()) {
 						NextLine(reader);
-						Whitespace();
+						ScanWhitespace();
 					};
 					Comments(reader);
 					
@@ -80,21 +177,6 @@ class Scanner {
 	}
 	
 	method : public : native : Scan() ~ Bool {
-		reserved := Map->New()<String, IntHolder>;
-		reserved->Insert("use", IntHolder->New(Token->Type->USE_ID));
-		reserved->Insert("while", IntHolder->New(Token->Type->WHILE_ID));
-		reserved->Insert("do", IntHolder->New(Token->Type->DO_ID));
-		reserved->Insert("for", IntHolder->New(Token->Type->FOR_ID));
-		reserved->Insert("each", IntHolder->New(Token->Type->EACH_ID));
-		reserved->Insert("select", IntHolder->New(Token->Type->SELECT_ID));
-		reserved->Insert("label", IntHolder->New(Token->Type->IF_ID));
-		reserved->Insert("if", IntHolder->New(Token->Type->IF_ID));
-		reserved->Insert("else", IntHolder->New(Token->Type->ELSE_ID));
-		reserved->Insert("class", IntHolder->New(Token->Type->CLASS_ID));
-		reserved->Insert("function", IntHolder->New(Token->Type->FUNCTION_ID));
-		reserved->Insert("Nil", IntHolder->New(Token->Type->NIL_ID));
-		reserved->Insert("String", IntHolder->New(Token->Type->STRING_ID));
-		
 		reader := FileReader->New(@file);
 		leaving {
 			reader->Close();
@@ -107,88 +189,26 @@ class Scanner {
 			NextLine(reader);
 			
 			while(@index < @line->Size()) { 
-				# skip whitespace
-				Whitespace();
+				# skip ScanWhitespace
+				ScanWhitespace();
 				
 				# parse the @line
 				if(@index < @line->Size() & <>Comments(reader)) {
-					# variable
+					# keyword or variable
 					if(@line->Get(@index)->IsChar() | @line->Get(@index) = '_') {
-						string := "";
-						while(@line->Get(@index)->IsChar() | @line->Get(@index)->IsDigit() | @line->Get(@index) = '_' | @line->Get(@index) = '.') {
-							string->Append(@line->Get(@index));
-							@index += 1;
-						};
-					
-						token := reserved->Find(string)->As(IntHolder);
-						if(token <> Nil) {
-							type := token->Get()->As(Token->Type);
-							@tokens->AddBack(Token->New(@line_num, type, string));
-						}
-						else {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->VAR, string));
-						};
+						ScanKeywordVariable();
 					}
-					# number
+					# ScanNumber
 					else if(@line->Get(@index)->IsDigit()) {
-						number := "";
-						while(@line->Get(@index)->IsDigit()) {
-							number->Append(@line->Get(@index));
-							@index += 1;
-						};						
-						@tokens->AddBack(Token->New(@line_num, Token->Type->NUM, "num", number->ToInt()));
+						ScanNumber();
 					}
 					# char
 					else if(@line->Get(@index) = '\'') {
-						@index += 1;
-						if(@line->Get(@index) = '\\') {
-							@index += 1;
-							select(@line->Get(@index)) {
-								label 'r': {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\r'));
-									@index += 1;
-								}
-								
-								label 'n': {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\n'));
-									@index += 1;
-								}
-								
-								label 't': {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\t'));
-									@index += 1;
-								}
-								
-								label '\\': {
-									@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", '\\'));
-									@index += 1;
-								}
-							};
-						}
-						else {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR, "char", @line->Get(@index)));
-							@index += 1;
-						};
-						
-						if(@line->Get(@index) <> '\'') {
-							System.IO.Standard->Print("{$@line_num}: *** Invalid token: char='")->Print(@line->Get(@index))->PrintLine("' ***");
-							System.Runtime->Exit(1);
-						};
-						@index += 1;
+						ScanCharacter();						
 					}
 					# string
 					else if(@line->Get(@index) = '"') {
-						@index += 1;
-						string := "";
-						while(@line->Get(@index) <> '"' & @line->Get(@index) <> '\0') {
-							string->Append(@line->Get(@index));
-							@index += 1;
-						};
-						@strings->AddBack(string);
-						
-						@tokens->AddBack(Token->New(@line_num, Token->Type->STR_REF, "string", string_count));						
-						string_count += 1;
-						@index += 1;
+						ScanString(string_count);
 					}
 					# other
 					else {

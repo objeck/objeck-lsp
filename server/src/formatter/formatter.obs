@@ -74,7 +74,9 @@ class CodeFormatter {
 					}
 
 					other {
-						token->ToString()->Print();
+						if(token->GetType() <> Token->Type->EOS) {
+							token->ToString()->Print();
+						};
 					}
 				};
 			};
