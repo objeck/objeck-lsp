@@ -70,13 +70,13 @@ class Scanner {
 	}
 
 	method : ScanNumber() ~ Nil {
-		ScanNumber := "";
+		number := "";
 
 		while(@line->Get(@index)->IsDigit()) {
-			ScanNumber->Append(@line->Get(@index));
+			number->Append(@line->Get(@index));
 			@index += 1;
 		};						
-		@tokens->AddBack(Token->New(@line_num, Token->Type->NUM, "num", ScanNumber->ToInt()));
+		@tokens->AddBack(Token->New(@line_num, Token->Type->NUM, "num", number->ToInt()));
 	}
 
 	method : ScanCharacter() ~ Nil {
@@ -198,11 +198,11 @@ class Scanner {
 					if(@line->Get(@index)->IsChar() | @line->Get(@index) = '_') {
 						ScanKeywordVariable();
 					}
-					# ScanNumber
+					# number
 					else if(@line->Get(@index)->IsDigit()) {
 						ScanNumber();
 					}
-					# char
+					# character
 					else if(@line->Get(@index) = '\'') {
 						ScanCharacter();						
 					}

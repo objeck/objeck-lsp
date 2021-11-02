@@ -4,7 +4,7 @@ use Data.JSON;
 
 bundle LSP {
 	#~
-	Wrapper for native parser and contractual analyzer
+	Wrapper for native parser and contextual analyzer
 	~#
 	class AstProxy {
 		@analysis : Analysis;

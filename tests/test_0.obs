@@ -1,16 +1,14 @@
 use Query.RegEx;
 use System.IO.File;
 
-class Test {
+class Foo          {
 	function : Main(args : String[]) ~ Nil {
-		text := FileReader->ReadFile("c:/users/objec/desktop/foo.obs");
-		
-		regex := RegEx->New("function(\\s*):(\\s*)(\\w+)");
+		text := FileReader->ReadFile("c:/users/objec/desktop/foo.obs"); 	regex := RegEx->New("function(\\s*):(\\s*)(\\w+)");
 		results := regex->Find(text)<Result>;
-		each(i : results) {
-			results->Get(i)->GetStart()->PrintLine();
+	  each(i : results) {
+		results->Get(i)->GetStart()->PrintLine();
 			results->Get(i)->GetLength()->PrintLine();
 			"---"->PrintLine();
-		};
+};
 	}
 }
