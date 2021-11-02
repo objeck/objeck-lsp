@@ -370,7 +370,7 @@ class Token {
 	@name : String;
 	@value : Int;
 
-	enum Type := -64 {
+	enum Type := -128 {
 		USE_ID,
 		WHILE_ID,
 		DO_ID,
