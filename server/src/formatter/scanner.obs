@@ -83,10 +83,18 @@ class Scanner {
 				
 			}
 			else {
+				select(@cur_char) {
+					label '=' {
 
+					}
+
+					other {
+
+					}
+				};
 			};
 		};
-
+		
 		return false;
 	}
 }
