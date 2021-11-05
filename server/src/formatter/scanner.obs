@@ -9,6 +9,10 @@ class Scanner {
 	@line_num : Int;
 	@line_pos : Int;
 	@tokens : Vector<Token>;
+
+	function : Main(args : String[]) ~ Nil {
+		
+	}
 	
 	New(input : String) {
 		@buffer := input->ToCharArray();

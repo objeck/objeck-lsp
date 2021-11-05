@@ -1,6 +1,7 @@
 use Collection.Generic;
 
 class CodeFormatter {
+#~	
 	function : Main(args : String[]) ~ Nil {
 		scanner := Scanner->New(args[0]);
 		if(scanner->Scan()) {
@@ -82,4 +83,5 @@ class CodeFormatter {
 			};
 		};
 	}
+~#	
 }
