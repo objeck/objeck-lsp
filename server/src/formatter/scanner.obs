@@ -111,39 +111,48 @@ class Scanner {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OCBRACE, "ocbrace"));
 "symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
-						
 					}
 
 					label '}' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->CCBRACE, "ccbrace"));
 "symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
-						
 					}
 
 					label '(' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OPREN, "opern"));
 "symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
-						
+					}
+
+					label '[' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OBRACE, "obrace"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+					}
+
+					label ']' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CBRACE, "cbrace"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
 					}
 
 					label ')' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
 "symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
-						
 					}
 
 					label ':' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
 "symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
-						
 					}
 
-					label '-' {
-
+					label '~' {
+@tokens->AddBack(Token->New(@line_num, Token->Type->TILDE, "tilde"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
 					}
 
 					other {
