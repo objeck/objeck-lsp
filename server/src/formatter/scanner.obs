@@ -67,19 +67,24 @@ class Scanner {
 		while(@cur_char <> '\0') {
 			Whitespace();
 			
+			# comment
 			if(@cur_char = '#') {
 
 			}
+			# string literal
 			else if(@cur_char = '"') {
 
 			}
+			# char const
 			else if(@cur_char = '\'') {
 				
 			}
-			else if(@cur_char->IsChar()) {
+			# keyword or variable
+			else if(@cur_char = '@' | @cur_char->IsChar()) {
 				
 			}
-			else if(@cur_char->IsDigit()) {
+			# number or digit
+			else if(@cur_char = '.' | @cur_char->IsDigit()) {
 				
 			}
 			else {
@@ -94,7 +99,7 @@ class Scanner {
 				};
 			};
 		};
-		
+
 		return false;
 	}
 }
