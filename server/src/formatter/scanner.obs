@@ -67,6 +67,24 @@ class Scanner {
 		while(@cur_char <> '\0') {
 			Whitespace();
 			
+			if(@cur_char = '#') {
+
+			}
+			else if(@cur_char = '"') {
+
+			}
+			else if(@cur_char = '\'') {
+				
+			}
+			else if(@cur_char->IsChar()) {
+				
+			}
+			else if(@cur_char->IsDigit()) {
+				
+			}
+			else {
+
+			};
 		};
 
 		return false;
