@@ -11,7 +11,10 @@ class Scanner {
 	@tokens : Vector<Token>;
 
 	function : Main(args : String[]) ~ Nil {
-		
+		if(args->Size() = 1) {			
+			scanner := Scanner->New(FileReader->ReadFile(args[0]));
+			scanner->Scan();
+		};
 	}
 	
 	New(input : String) {
@@ -22,11 +25,11 @@ class Scanner {
 
 	method : NextChar() ~ Nil {
 		if(@buffer_index < @buffer->Size()) {
-			@cur_char := @buffer[@buffer_index];
+			@cur_char := @buffer[@buffer_index++];
 			@line_pos += 1;
-			
-			if(@buffer_index + 1 < @buffer->Size()) {
-				@next_char := @buffer[@buffer_index + 1];
+
+			if(@buffer_index < @buffer->Size()) {
+				@next_char := @buffer[@buffer_index];
 			}
 			else {
 				next_char := '\0';
@@ -39,25 +42,29 @@ class Scanner {
 
 	method : Whitespace() ~ Nil {
 		if(@cur_char = ' ' | @cur_char = '\t') {
-			@buffer_index += 1;
-		}
+			NextChar();
+		};
+
 		# windows eol
-		else if(@cur_char = '\r' & @cur_char = '\n') {
+		if(@cur_char = '\r' & @cur_char = '\n') {
+"<vspace>"->PrintLine();
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@buffer_index += 1;
 			@line_pos := 1;
+			NextChar();
 		}
 		# unix eol
 		else if(@cur_char = '\n') {
+"<vspace>"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@buffer_index += 1;
 			@line_pos := 1;
+			NextChar();
 		}
 		# mac eol
 		else if(@cur_char = '\r') {
+"<vspace>"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@buffer_index += 1;
 			@line_pos := 1;
+			NextChar();
 		};
 	}
 
@@ -85,7 +92,14 @@ class Scanner {
 			}
 			# keyword or variable
 			else if(@cur_char = '@' | @cur_char->IsChar()) {
-				
+				start := @buffer_index - 1;
+				while(@cur_char = '@' | @cur_char->IsChar()) {
+					NextChar();
+				};
+				end := @buffer_index;
+
+				token := String->New(@buffer, start, end - start - 1);
+"word='{$token}'"->PrintLine();
 			}
 			# number or digit
 			else if(@cur_char = '.' | @cur_char->IsDigit()) {
@@ -93,8 +107,39 @@ class Scanner {
 			}
 			else {
 				select(@cur_char) {
-					label '+' {
+					label '{' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OCBRACE, "ocbrace"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+						
+					}
 
+					label '}' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CCBRACE, "ccbrace"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+						
+					}
+
+					label '(' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OPREN, "opern"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+						
+					}
+
+					label ')' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+						
+					}
+
+					label ':' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+						
 					}
 
 					label '-' {
