@@ -89,7 +89,11 @@ class Scanner {
 			}
 			else {
 				select(@cur_char) {
-					label '=' {
+					label '+' {
+
+					}
+
+					label '-' {
 
 					}
 
