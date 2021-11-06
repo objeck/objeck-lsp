@@ -162,6 +162,9 @@ bundle LSP {
 			capabilities := response->AddChild("capabilities");
 			completionProvider := capabilities->AddChild("completionProvider");
 			completionProvider->Insert("resolveProvider", true);
+			triggerCharacters := JsonElement->New(JsonElement->JsonType->ARRAY);
+			triggerCharacters->Add("@");
+			completionProvider->Insert("triggerCharacters", triggerCharacters);
 
 			signatureHelpProvider := capabilities->AddChild("signatureHelpProvider");
 			triggerCharacters := JsonElement->New(JsonElement->JsonType->ARRAY);

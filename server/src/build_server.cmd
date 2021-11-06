@@ -1,4 +1,5 @@
 @echo off
+SETLOCAL
 
 SET PORT=6013
 SET OBJECK_ROOT=..\..\..\objeck-lang

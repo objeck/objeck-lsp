@@ -12,8 +12,11 @@ class Scanner {
 
 	function : Main(args : String[]) ~ Nil {
 		if(args->Size() = 1) {			
-			scanner := Scanner->New(FileReader->ReadFile(args[0]));
-			scanner->Scan();
+			input := FileReader->ReadFile(args[0]);
+			if(input <> Nil) {
+				scanner := Scanner->New(input);
+				scanner->Scan();
+			};
 		};
 	}
 	
@@ -32,7 +35,7 @@ class Scanner {
 				@next_char := @buffer[@buffer_index];
 			}
 			else {
-				next_char := '\0';
+				@next_char := '\0';
 			};
 		}
 		else {
@@ -97,13 +100,33 @@ class Scanner {
 					NextChar();
 				};
 				end := @buffer_index;
-
 				token := String->New(@buffer, start, end - start - 1);
+
 "word='{$token}'"->PrintLine();
 			}
 			# number or digit
 			else if(@cur_char = '.' | @cur_char->IsDigit()) {
-				
+				found_dot := 0;
+				start := @buffer_index - 1;
+				while(@cur_char = '.' | @cur_char->IsDigit()) {
+					if(@cur_char = '.') {
+						found_dot += 1;
+					};
+
+					NextChar();
+				};
+				end := @buffer_index;
+				token := String->New(@buffer, start, end - start - 1);
+
+				if(found_dot > 1) {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
+				}
+				else if(found_dot = 1) {
+"float='{$token}'"->PrintLine();
+				}
+				else {
+"int='{$token}'"->PrintLine();
+				};
 			}
 			else {
 				select(@cur_char) {
@@ -144,14 +167,46 @@ class Scanner {
 					}
 
 					label ':' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
-"symbol='{$@cur_char}'"->PrintLine();						
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));
+"symbol=':='"->PrintLine();						
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
+"symbol='{$@cur_char}'"->PrintLine();
+						};
 						NextChar();
 					}
 
 					label '~' {
-@tokens->AddBack(Token->New(@line_num, Token->Type->TILDE, "tilde"));
+						@tokens->AddBack(Token->New(@line_num, Token->Type->TILDE, "tilde"));
 "symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+					}
+
+					label ';' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->SEMI, "semi"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+					}
+
+					label '+' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
+"symbol='{$@cur_char}'"->PrintLine();						
+						NextChar();
+					}
+
+					label '-' {
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ASSESSOR, "assessor"));
+"symbol='->'"->PrintLine();						
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB, "sub"));
+"symbol='{$@cur_char}'"->PrintLine();
+						};
 						NextChar();
 					}
 
