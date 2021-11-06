@@ -49,22 +49,23 @@ class Scanner {
 		};
 
 		# windows eol
-		if(@cur_char = '\r' & @cur_char = '\n') {
-"<vspace>"->PrintLine();
+		if(@cur_char = '\r' & @next_char = '\n') {
+"<vspace> (win)"->PrintLine();
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
+			NextChar();
 			NextChar();
 		}
 		# unix eol
 		else if(@cur_char = '\n') {
-"<vspace>"->PrintLine();			
+"<vspace> (unix)"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
 			NextChar();
 		}
 		# mac eol
 		else if(@cur_char = '\r') {
-"<vspace>"->PrintLine();			
+"<vspace> (mac)"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
 			NextChar();
