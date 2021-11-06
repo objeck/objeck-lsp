@@ -14,8 +14,7 @@ class Scanner {
 		if(args->Size() = 1) {			
 			input := FileReader->ReadFile(args[0]);
 			if(input <> Nil) {
-				scanner := Scanner->New(input);
-				scanner->Scan();
+				scanner := Scanner->New(input)->Scan();
 			};
 		};
 	}
@@ -101,9 +100,10 @@ class Scanner {
 					NextChar();
 				};
 				end := @buffer_index;
-				token := String->New(@buffer, start, end - start - 1);
-
-"word='{$token}'"->PrintLine();
+				word := String->New(@buffer, start, end - start - 1);
+				
+				@tokens->AddBack(Token->New(@line_num, Token->Type->STR, word));
+"word='{$word}'"->PrintLine();
 			}
 			# number or digit
 			else if(@cur_char = '.' | @cur_char->IsDigit()) {
@@ -117,16 +117,20 @@ class Scanner {
 					NextChar();
 				};
 				end := @buffer_index;
-				token := String->New(@buffer, start, end - start - 1);
+				num_str := String->New(@buffer, start, end - start - 1);
 
 				if(found_dot > 1) {
 					@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
 				}
-				else if(found_dot = 1) {
-"float='{$token}'"->PrintLine();
+				else if(found_dot = 1) {					
+					value := num_str->ToFloat();
+					@tokens->AddBack(Token->New(@line_num, Token->Type->FLOAT_NUM, "float_value", value));
+"float='{$value}'"->PrintLine();					
 				}
 				else {
-"int='{$token}'"->PrintLine();
+					value := num_str->ToInt();
+					@tokens->AddBack(Token->New(@line_num, Token->Type->INT_NUM, "int_value", value));
+"int='{$value}'"->PrintLine();					
 				};
 			}
 			else {
@@ -212,7 +216,7 @@ class Scanner {
 					}
 
 					other {
-
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
 					}
 				};
 			};
@@ -226,7 +230,8 @@ class Token {
 	@line_num : Int;
 	@type : Token->Type;
 	@name : String;
-	@value : Int;
+	@int_value : Int;
+	@float_value : Float;
 
 	enum Type := -128 {
 		USE_ID,
@@ -242,9 +247,10 @@ class Token {
 		ELSE_ID,
 		IF_ID,
 		ASGN,
-		NUM,
+		INT_NUM,
+		FLOAT_NUM,
 		CHAR,
-		STR_REF,
+		STR,
 		VAR,
 		OPREN,
 		CPREN,
@@ -282,10 +288,17 @@ class Token {
 		@name := name;
 	}
 	
-	New(@line_num : Int, type : Token->Type, name : String, value : Int) {
+	New(@line_num : Int, type : Token->Type, name : String, int_value : Int) {
 		@line_num := @line_num;
 		@type := type;
-		@value := value;
+		@int_value := int_value;
+		@name := name;
+	}
+
+	New(@line_num : Int, type : Token->Type, name : String, float_value : Float) {
+		@line_num := @line_num;
+		@type := type;
+		@float_value := float_value;
 		@name := name;
 	}
 	
@@ -301,15 +314,22 @@ class Token {
 		return @name;
 	}
 	
-	method : public : GetValue() ~ Int {
-		return @value;
+	method : public : GetInt() ~ Int {
+		return @int_value;
+	}
+
+	method : public : GetFloat() ~ Int {
+		return @float_value;
 	}
 
 	method : public : ToString() ~ String {
 		select(@type) {
-			label Token->Type->STR_REF:
-			label Token->Type->NUM: {
-				return @value->ToString();
+			label Token->Type->INT_NUM: {
+				return @int_value->ToString();
+			}
+
+			label Token->Type->FLOAT_NUM: {
+				return @float_value->ToString();
 			}
 			
 			other: {
