@@ -67,6 +67,7 @@ class CodeFormatter {
 
 							label Token->Type->OBRACE {
 								'['->Print();
+								flag := true;
 							}
 
 							label Token->Type->CBRACE {
@@ -94,6 +95,7 @@ class CodeFormatter {
 
 							label Token->Type->OPREN {
 								'('->Print();
+								flag := true;
 							}
 
 							label Token->Type->CPREN {
@@ -111,8 +113,7 @@ class CodeFormatter {
 						}
 						else if(i + 1 < tokens->Size()) {
 							next_token_type := tokens->Get(i + 1)->GetType();
-							if( # next_token_type <> Token->Type->IDENT & 
-									next_token_type <> Token->Type->ASSESSOR & 
+							if(next_token_type <> Token->Type->ASSESSOR & 
 									next_token_type <> Token->Type->OPREN & 
 									next_token_type <> Token->Type->CPREN & 
 									next_token_type <> Token->Type->OBRACE &
