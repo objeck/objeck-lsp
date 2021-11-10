@@ -1,4 +1,3 @@
-use System.IO.File;
 use Collection.Generic;
 
 class Scanner {
@@ -8,21 +7,20 @@ class Scanner {
 	@next_char : Char;
 	@line_num : Int;
 	@line_pos : Int;
+	@keywords : Hash<String, Token>;
 	@tokens : Vector<Token>;
-
-	function : Main(args : String[]) ~ Nil {
-		if(args->Size() = 1) {			
-			input := FileReader->ReadFile(args[0]);
-			if(input <> Nil) {
-				scanner := Scanner->New(input)->Scan();
-			};
-		};
-	}
 	
 	New(input : String) {
 		@buffer := input->ToCharArray();
 		@line_num := @line_pos := 1;
 		@tokens := Vector->New()<Token>;
+
+		@keywords := Hash->New()<String, Token>;
+		@keywords->Insert("class", Token->New(@line_num, Token->Type->CLASS_ID, "class_id"));
+		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
+		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
+		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
+		@keywords->Insert("whiile", Token->New(@line_num, Token->Type->WHILE_ID, "while_id"));
 	}
 
 	method : NextChar() ~ Nil {
@@ -49,7 +47,6 @@ class Scanner {
 
 		# windows eol
 		if(@cur_char = '\r' & @next_char = '\n') {
-"<vspace> (win)"->PrintLine();
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
 			NextChar();
@@ -57,14 +54,12 @@ class Scanner {
 		}
 		# unix eol
 		else if(@cur_char = '\n') {
-"<vspace> (unix)"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
 			NextChar();
 		}
 		# mac eol
 		else if(@cur_char = '\r') {
-"<vspace> (mac)"->PrintLine();			
 			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
 			@line_pos := 1;
 			NextChar();
@@ -72,7 +67,7 @@ class Scanner {
 	}
 
 	method : public : GetTokens() ~ Vector<Token> {
-		return Nil;
+		return @tokens;
 	}
 
 	method : public : Scan() ~ Bool {
@@ -102,8 +97,13 @@ class Scanner {
 				end := @buffer_index;
 				word := String->New(@buffer, start, end - start - 1);
 				
-				@tokens->AddBack(Token->New(@line_num, Token->Type->STR, word));
-"word='{$word}'"->PrintLine();
+				keyword := @keywords->Find(word);
+				if(keyword = Nil) {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->IDENT, word));
+				}
+				else {
+					@tokens->AddBack(keyword);
+				};
 			}
 			# number or digit
 			else if(@cur_char = '.' | @cur_char->IsDigit()) {
@@ -125,92 +125,77 @@ class Scanner {
 				else if(found_dot = 1) {					
 					value := num_str->ToFloat();
 					@tokens->AddBack(Token->New(@line_num, Token->Type->FLOAT_NUM, "float_value", value));
-"float='{$value}'"->PrintLine();					
 				}
 				else {
 					value := num_str->ToInt();
 					@tokens->AddBack(Token->New(@line_num, Token->Type->INT_NUM, "int_value", value));
-"int='{$value}'"->PrintLine();					
 				};
 			}
 			else {
 				select(@cur_char) {
 					label '{' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OCBRACE, "ocbrace"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label '}' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->CCBRACE, "ccbrace"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label '(' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OPREN, "opern"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label '[' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OBRACE, "obrace"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label ']' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->CBRACE, "cbrace"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label ')' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label ':' {
 						if(@next_char = '=') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));
-"symbol=':='"->PrintLine();						
 							NextChar();
 						}
 						else {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
-"symbol='{$@cur_char}'"->PrintLine();
 						};
 						NextChar();
 					}
 
 					label '~' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->TILDE, "tilde"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label ';' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->SEMI, "semi"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label '+' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
-"symbol='{$@cur_char}'"->PrintLine();						
 						NextChar();
 					}
 
 					label '-' {
 						if(@next_char = '>') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ASSESSOR, "assessor"));
-"symbol='->'"->PrintLine();						
 							NextChar();
 						}
 						else {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB, "sub"));
-"symbol='{$@cur_char}'"->PrintLine();
 						};
 						NextChar();
 					}
@@ -222,7 +207,7 @@ class Scanner {
 			};
 		};
 
-		return false;
+		return true;
 	}
 }
 
@@ -278,6 +263,7 @@ class Token {
 		NEQL,
 		NOT,
 		VSPACE,
+		IDENT,
 		EOS,
 		OTHER
 	}

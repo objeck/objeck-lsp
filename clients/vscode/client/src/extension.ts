@@ -26,6 +26,7 @@ export function activate(context: ExtensionContext) {
             writer: socket,
             reader: socket
         };
+		
         return Promise.resolve(result);
     };
 
