@@ -163,6 +163,26 @@ class Scanner {
 						NextChar();
 					}
 
+					label '<' {
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
+							NextChar();
+						}
+						else if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS, "less"));
+						};
+						NextChar();
+					}
+
+					label '>' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, "gtr"));
+						NextChar();
+					}
+
 					label ':' {
 						if(@next_char = '=') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));

@@ -14,22 +14,35 @@ class CodeFormatter {
 					each(i : tokens) {
 						token := tokens->Get(i);
 						
+						next_token : Token;
+						if(i + 1 < tokens->Size()) {
+							next_token := tokens->Get(i + 1);
+						};
+						
 						select(token->GetType()) {
 							label Token->Type->CLASS_ID {
 								"class"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->FUNCTION_ID {
 								"function"->Print();
+								PrintSpace(token, next_token);
+							}
+
+							label Token->Type->IF_ID {
+								"if"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->ASGN {
 								":="->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->ASSESSOR {
 								"->"->Print();
-								flag := true;
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->SEMI {
@@ -39,39 +52,60 @@ class CodeFormatter {
 								};
 							}
 
-							label Token->Type->IDENT {
-								token->GetValue()->Print();
+							label Token->Type->LESS {
+								"<"->Print();
+								PrintSpace(token, next_token);
+							}
 
-								
+							label Token->Type->GTR {
+								">"->Print();
+								PrintSpace(token, next_token);
+							}
+
+							label Token->Type->NEQL {
+								"<>"->Print();
+								PrintSpace(token, next_token);
+							}
+
+							label Token->Type->IDENT {
+								value := token->GetValue();
+								"{$value}"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->COLON {
 								":"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->ADD {
 								"+"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->TILDE {
 								"~"->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->INT_NUM {
 								token->GetInt()->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->FLOAT_NUM {
 								token->GetFloat()->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->OBRACE {
 								'['->Print();
-								flag := true;
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->CBRACE {
 								']'->Print();
+								PrintSpace(token, next_token);
 							}
 
 							label Token->Type->OCBRACE {
@@ -95,7 +129,6 @@ class CodeFormatter {
 
 							label Token->Type->OPREN {
 								'('->Print();
-								flag := true;
 							}
 
 							label Token->Type->CPREN {
@@ -106,25 +139,27 @@ class CodeFormatter {
 
 							}
 						};
-
-
-						if(flag) {
-							flag := false;
-						}
-						else if(i + 1 < tokens->Size()) {
-							next_token_type := tokens->Get(i + 1)->GetType();
-							if(next_token_type <> Token->Type->ASSESSOR & 
-									next_token_type <> Token->Type->OPREN & 
-									next_token_type <> Token->Type->CPREN & 
-									next_token_type <> Token->Type->OBRACE &
-									next_token_type <> Token->Type->CBRACE &
-									next_token_type <> Token->Type->SEMI) {
-								' '->Print();
-							};
-						};
 					};
+
+					'\n'->Print();
 				};
 			};
+		};
+	}
+
+	function : PrintSpace(token : Token, next_token : Token) ~ Nil {
+		if(next_token <> Nil & 
+				next_token->GetType() <> Token->Type->SEMI &
+				next_token->GetType() <> Token->Type->OBRACE & 
+				next_token->GetType() <> Token->Type->OCBRACE & 
+				next_token->GetType() <> Token->Type->OPREN & 
+				next_token->GetType() <> Token->Type->CBRACE & 
+				next_token->GetType() <> Token->Type->CCBRACE & 
+				next_token->GetType() <> Token->Type->CPREN) {
+			' '->Print();
+		}
+		else {
+#			"*"->Print();
 		};
 	}
 }

@@ -3,5 +3,9 @@ class Hello {
 		a := 7;
 		twenty := a + 13 + 7;
 		twenty->PrintLine();
+
+		if(twenty <> 19) {
+			3->PrintLine();
+		};
 	}
 }
