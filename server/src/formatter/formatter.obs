@@ -8,10 +8,85 @@ class CodeFormatter {
 			if(input <> Nil) {
 				scanner := Scanner->New(input);
 				if(scanner->Scan()) {
+					hspace := 0;
 					tokens := scanner->GetTokens();
 					each(i : tokens) {
 						token := tokens->Get(i);
-						"token={$token}"->PrintLine();
+						
+						select(token->GetType()) {
+							label Token->Type->CLASS_ID {
+								"class "->Print();
+							}
+
+							label Token->Type->FUNCTION_ID {
+								"function "->Print();
+							}
+
+							label Token->Type->ASGN {
+								":= "->Print();
+							}
+
+							label Token->Type->ASSESSOR {
+								"->"->Print();
+							}
+
+							label Token->Type->SEMI {
+								';'->PrintLine();
+								each(j : hspace) {
+									'\t'->Print();
+								};
+							}
+
+							label Token->Type->IDENT {
+								token->GetValue()->Print();
+
+								if(i + 1 < tokens->Size()) {
+									next_token := tokens->Get(i + 1);
+									if(next_token->GetType() <> Token->Type->ASSESSOR & next_token->GetType() <> Token->Type->OPREN) {
+										' '->Print();
+									};
+								};
+							}
+
+							label Token->Type->COLON {
+								": "->Print();
+							}
+
+							label Token->Type->TILDE {
+								" ~ "->Print();
+							}
+
+							label Token->Type->OCBRACE {
+								'{'->PrintLine();
+								hspace += 1;
+
+								each(j : hspace) {
+									'\t'->Print();
+								};
+							}
+
+							label Token->Type->CCBRACE {
+								hspace -= 1;
+
+								'\n'->Print();
+								each(j : hspace) {
+									'\t'->Print();
+								};
+								'}'->Print();
+							}
+
+							label Token->Type->OPREN {
+								'('->Print();
+							}
+
+							label Token->Type->CPREN {
+								')'->Print();
+							}
+
+							other {
+
+							}
+						};
 					};
 				};
 			};

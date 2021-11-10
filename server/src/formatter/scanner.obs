@@ -9,7 +9,7 @@ class Scanner {
 	@line_pos : Int;
 	@keywords : Hash<String, Token>;
 	@tokens : Vector<Token>;
-	
+
 	New(input : String) {
 		@buffer := input->ToCharArray();
 		@line_num := @line_pos := 1;
@@ -214,7 +214,7 @@ class Scanner {
 class Token {
 	@line_num : Int;
 	@type : Token->Type;
-	@name : String;
+	@str_value : String;
 	@int_value : Int;
 	@float_value : Float;
 
@@ -271,21 +271,21 @@ class Token {
 	New(line_num : Int, type : Token->Type, name : String) {
 		@line_num := line_num;
 		@type := type;
-		@name := name;
+		@str_value := name;
 	}
 	
 	New(@line_num : Int, type : Token->Type, name : String, int_value : Int) {
 		@line_num := @line_num;
 		@type := type;
 		@int_value := int_value;
-		@name := name;
+		@str_value := name;
 	}
 
 	New(@line_num : Int, type : Token->Type, name : String, float_value : Float) {
 		@line_num := @line_num;
 		@type := type;
 		@float_value := float_value;
-		@name := name;
+		@str_value := name;
 	}
 	
 	method : public : GetLine() ~ Int {
@@ -296,8 +296,8 @@ class Token {
 		return @type;
 	}
 	
-	method : public : GetName() ~ String {
-		return @name;
+	method : public : GetValue() ~ String {
+		return @str_value;
 	}
 	
 	method : public : GetInt() ~ Int {
@@ -319,7 +319,7 @@ class Token {
 			}
 			
 			other: {
-				return @name;
+				return @str_value;
 			}
 		};
 
