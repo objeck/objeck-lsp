@@ -9,11 +9,11 @@ class Hello {
 				label 1: {
 
 				}
-				
+
 				other {
 
 				}
-			}
+			};
 			3->PrintLine();
 		};
 	}
