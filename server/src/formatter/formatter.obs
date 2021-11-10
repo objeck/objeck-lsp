@@ -41,8 +41,8 @@ class CodeFormatter {
 								token->GetValue()->Print();
 
 								if(i + 1 < tokens->Size()) {
-									next_token := tokens->Get(i + 1);
-									if(next_token->GetType() <> Token->Type->ASSESSOR & next_token->GetType() <> Token->Type->OPREN) {
+									next_token_type := tokens->Get(i + 1)->GetType();
+									if(next_token_type <> Token->Type->ASSESSOR & next_token_type <> Token->Type->OPREN & next_token_type <> Token->Type->CPREN & next_token_type <> Token->Type->OBRACE) {
 										' '->Print();
 									};
 								};
@@ -52,8 +52,28 @@ class CodeFormatter {
 								": "->Print();
 							}
 
+							label Token->Type->ADD {
+								"+ "->Print();
+							}
+
 							label Token->Type->TILDE {
 								" ~ "->Print();
+							}
+
+							label Token->Type->INT_NUM {
+								token->GetInt()->Print();
+							}
+
+							label Token->Type->FLOAT_NUM {
+								token->GetFloat()->Print();
+							}
+
+							label Token->Type->OBRACE {
+								'['->Print();
+							}
+
+							label Token->Type->CBRACE {
+								']'->Print();
 							}
 
 							label Token->Type->OCBRACE {
