@@ -10,6 +10,7 @@ class CodeFormatter {
 				if(scanner->Scan()) {
 					hspace := 0;
 					tokens := scanner->GetTokens();
+					flag := false;
 					each(i : tokens) {
 						token := tokens->Get(i);
 						
@@ -23,11 +24,12 @@ class CodeFormatter {
 							}
 
 							label Token->Type->ASGN {
-								":= "->Print();
+								":="->Print();
 							}
 
 							label Token->Type->ASSESSOR {
 								"->"->Print();
+								flag := true;
 							}
 
 							label Token->Type->SEMI {
@@ -40,24 +42,19 @@ class CodeFormatter {
 							label Token->Type->IDENT {
 								token->GetValue()->Print();
 
-								if(i + 1 < tokens->Size()) {
-									next_token_type := tokens->Get(i + 1)->GetType();
-									if(next_token_type <> Token->Type->ASSESSOR & next_token_type <> Token->Type->OPREN & next_token_type <> Token->Type->CPREN & next_token_type <> Token->Type->OBRACE) {
-										' '->Print();
-									};
-								};
+								
 							}
 
 							label Token->Type->COLON {
-								": "->Print();
+								":"->Print();
 							}
 
 							label Token->Type->ADD {
-								"+ "->Print();
+								"+"->Print();
 							}
 
 							label Token->Type->TILDE {
-								" ~ "->Print();
+								"~"->Print();
 							}
 
 							label Token->Type->INT_NUM {
@@ -106,6 +103,23 @@ class CodeFormatter {
 							other {
 
 							}
+						};
+
+
+						if(flag) {
+							flag := false;
+						}
+						else if(i + 1 < tokens->Size()) {
+							next_token_type := tokens->Get(i + 1)->GetType();
+							if( # next_token_type <> Token->Type->IDENT & 
+									next_token_type <> Token->Type->ASSESSOR & 
+									next_token_type <> Token->Type->OPREN & 
+									next_token_type <> Token->Type->CPREN & 
+									next_token_type <> Token->Type->OBRACE &
+									next_token_type <> Token->Type->CBRACE &
+									next_token_type <> Token->Type->SEMI) {
+								' '->Print();
+							};
 						};
 					};
 				};

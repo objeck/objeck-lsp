@@ -1,7 +1,7 @@
 class Hello {
 	function : Main(args : String[]) ~ Nil {
 		a := 7;
-		twenty := a + 13;
+		twenty := a + 13 + 7;
 		twenty->PrintLine();
 	}
 }
