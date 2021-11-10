@@ -46,7 +46,10 @@ class CodeFormatter {
 							}
 
 							label Token->Type->SEMI {
-								';'->PrintLine();
+								next_token_id := next_token->GetType()->As(Int);
+
+								"; ({$i},{$next_token_id})"->PrintLine();
+
 								each(j : hspace) {
 									'\t'->Print();
 								};
