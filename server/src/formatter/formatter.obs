@@ -149,6 +149,7 @@ class CodeFormatter {
 
 	function : PrintSpace(token : Token, next_token : Token) ~ Nil {
 		if(next_token <> Nil & 
+				next_token->GetType() <> Token->Type->ASSESSOR &
 				next_token->GetType() <> Token->Type->SEMI &
 				next_token->GetType() <> Token->Type->OBRACE & 
 				next_token->GetType() <> Token->Type->OCBRACE & 
