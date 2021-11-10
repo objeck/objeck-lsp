@@ -155,7 +155,6 @@ class CodeFormatter {
 
 				next_token->GetType() <> Token->Type->SEMI &
 				next_token->GetType() <> Token->Type->OBRACE & 
-#				next_token->GetType() <> Token->Type->OCBRACE & 
 				next_token->GetType() <> Token->Type->OPREN & 
 				next_token->GetType() <> Token->Type->CBRACE & 
 				next_token->GetType() <> Token->Type->CCBRACE & 
