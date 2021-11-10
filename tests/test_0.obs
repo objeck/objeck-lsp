@@ -5,6 +5,15 @@ class Hello {
 		twenty->PrintLine();
 
 		if(twenty <> 19) {
+			select(3) {
+				label 1: {
+
+				}
+				
+				other {
+
+				}
+			}
 			3->PrintLine();
 		};
 	}
