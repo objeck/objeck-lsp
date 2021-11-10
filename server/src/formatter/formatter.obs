@@ -16,11 +16,11 @@ class CodeFormatter {
 						
 						select(token->GetType()) {
 							label Token->Type->CLASS_ID {
-								"class "->Print();
+								"class"->Print();
 							}
 
 							label Token->Type->FUNCTION_ID {
-								"function "->Print();
+								"function"->Print();
 							}
 
 							label Token->Type->ASGN {
