@@ -122,7 +122,16 @@ bundle LSP {
 			
 			response:= @workspace->GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
-		}	
+		}
+
+		method : CallbackHover(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			response:= @workspace->GetDocument(uri)->Hover(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
+		}
 
 		method : CallbackCompletion(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
@@ -184,6 +193,7 @@ bundle LSP {
 			capabilities->Insert("declarationProvider", true);
 			capabilities->Insert("definitionProvider", true);
 			capabilities->Insert("renameProvider", true);
+			capabilities->Insert("hoverProvider", true);
 
 			WriteRpcResponse(id, response);
 

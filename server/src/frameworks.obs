@@ -63,6 +63,7 @@ bundle LSP {
 		method : virtual : CallbackInitialize(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackShutdown(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackCompletion(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackHover(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackResolve(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackRename(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
@@ -123,6 +124,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/completion")) {
 					CallbackCompletion(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/hover")) {
+					CallbackHover(id, request->GetParams());
 				}
 				else if(method_id->Equals("completionItem/resolve")) {
 					CallbackResolve(id, request->GetParams());
@@ -523,6 +527,22 @@ bundle LSP {
 			return Nil;
 		}
 
+		method : public : Hover(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, true, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+			
+			index := GetDocumentIndex(line_pos, char_pos);
+			if(index > -1) {
+				var_str := ""; mthd_str := "";
+				if(GetVariableMethodStrings(index - 1, var_str, mthd_str, false)) {
+					return proxy->Hover(line_pos, char_pos, var_str, mthd_str, @uri, @workspace->GetLibs());
+				};
+			};
+
+			return Nil;
+		}
 
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int) ~ JsonElement {
 			proxy := AstProxy->New(@workspace, @uri, true, @is_debug);
