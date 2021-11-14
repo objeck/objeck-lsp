@@ -287,6 +287,34 @@ bundle LSP {
 
 			root_signature := @analysis->Hover(uri, line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_signature <> Nil) {
+				# class
+				if(root_signature->GetDescription() = Nil) {
+					select(root_signature->GetKind()) {
+						label -3996 {
+							foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							foo_json->Insert("contents", "HiYa!");
+							return foo_json;
+						}
+
+						other {
+
+						}
+					};
+				}
+				# method
+				else {
+					select(root_signature->GetKind()) {
+						label -3996 {
+							foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							foo_json->Insert("contents", "HiYa!");
+							return foo_json;
+						}
+
+						other {
+
+						}
+					};
+				};
 			};
 
 			return Nil;
