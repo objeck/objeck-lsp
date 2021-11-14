@@ -1,0 +1,30 @@
+{}
+	"classes": {
+		"io.Foo": {
+			"descriptions": ["abcdef"],
+			"methods": {
+				"New" : {
+					"descriptions": ["abcdef"]
+				},
+				"PrintLine" : {
+					"descriptions": ["abcdef"]
+				}
+			}
+		},
+		"io.Bar": {
+			"methods": {
+				"New" : {
+					"descriptions": ["abcdef"]
+				},
+				"PrintLine" : {
+					"descriptions": ["abcdef"]
+				}
+			}
+		}
+	},
+	"enum": {
+		"io.Fie": {
+			"descriptions": ["abcdef"]
+		}
+	}
+}
