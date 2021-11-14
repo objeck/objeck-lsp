@@ -1,4 +1,4 @@
-{}
+{
 	"classes": {
 		"io.Foo": {
 			"descriptions": ["abcdef"],
@@ -22,7 +22,7 @@
 			}
 		}
 	},
-	"enum": {
+	"enums": {
 		"io.Fie": {
 			"descriptions": ["abcdef"]
 		}
