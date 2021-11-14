@@ -1,7 +1,7 @@
 {
 	"classes": {
 		"io.Foo": {
-			"descriptions": ["abcdef"],
+			"description": ["abcdef"],
 			"methods": {
 				"New" : {
 					"descriptions": ["abcdef"]
@@ -12,6 +12,7 @@
 			}
 		},
 		"io.Bar": {
+			"description": ["abcdef"],
 			"methods": {
 				"New" : {
 					"descriptions": ["abcdef"]
@@ -24,7 +25,7 @@
 	},
 	"enums": {
 		"io.Fie": {
-			"descriptions": ["abcdef"]
+			"description": ["abcdef"],
 		}
 	}
 }
