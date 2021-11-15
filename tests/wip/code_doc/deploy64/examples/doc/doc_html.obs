@@ -5,6 +5,7 @@ Copyright (c) 2014, 2019 Randy Hollines
 
 use System.IO.File;
 use Collection.Generic;
+use Data.JSON;
 
 class JsonMaker {
 	@parser : SnippetParser;
@@ -24,7 +25,19 @@ class JsonMaker {
 	DOC ME
 	~#
 	function : Main(args : String[]) ~ Nil {
-		if(args->Size() > 2) {
+		if(args->Size() = 1) {
+			parser := JsonParser->New(FileReader->ReadFile(args[0]));
+			if(parser->Parse()) {
+#				result := parser->GetRoot()->FindElements("System.Int/description");
+				results := parser->GetRoot()->FindElements("System.Int/functions/PrintLine/descriptions");
+				if(results <> Nil) {
+					each(i : results) {
+						results->Get(i)->GetValue()->PrintLine();
+					};
+				};
+			};
+		}
+		else if(args->Size() > 2) {
 			JsonMaker->New(args)->Make()->PrintLine();
 		};
 	}
