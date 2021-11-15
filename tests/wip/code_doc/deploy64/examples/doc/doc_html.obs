@@ -28,7 +28,7 @@ class JsonMaker {
 		if(args->Size() = 1) {
 			parser := JsonParser->New(FileReader->ReadFile(args[0]));
 			if(parser->Parse()) {
-#				result := parser->GetRoot()->FindElements("System.Int/description");
+#				result := parser->GetRoot()->FindElements("System.Int/descriptions");
 				results := parser->GetRoot()->FindElements("System.Int/functions/PrintLine/descriptions");
 				if(results <> Nil) {
 					each(i : results) {
