@@ -290,28 +290,117 @@ bundle LSP {
 				# class
 				if(root_signature->GetDescription() = Nil) {
 					select(root_signature->GetKind()) {
-						label -3996 {
-							content := GetDocumentation("System.Int", root_signature->GetDescription());
+						label -3999 {
+							content := GetDocumentation("System.Byte", Nil);
 							if(content <> Nil) {
-								foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								foo_json->Insert("contents", content);
-								return foo_json;
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3998 {
+							content := GetDocumentation("System.Bool", Nil);
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3997 {
+							content := GetDocumentation("System.Byte", Nil);
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3996 {
+							content := GetDocumentation("System.Char", Nil);
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3995 {
+							content := GetDocumentation("System.Int", Nil);
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
 							};
 						}
 
 						other {
-
+							content := GetDocumentation(root_signature->GetName(), Nil);
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
 						}
 					};
 				}
 				# method
 				else {
-					root_signature->GetDescription()->PrintLine();
-					content := GetDocumentation("System.Int", root_signature->GetDescription());
-					if(content <> Nil) {
-						foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						foo_json->Insert("contents", content);
-						return foo_json;
+					select(root_signature->GetKind()) {
+						label -3999 {
+							content := GetDocumentation("System.Byte", root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3998 {
+							content := GetDocumentation("System.Bool", root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3997 {
+							content := GetDocumentation("System.Byte", root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3996 {
+							content := GetDocumentation("System.Char", root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						label -3995 {
+							content := GetDocumentation("System.Int", root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
+
+						other {
+							content := GetDocumentation(root_signature->GetName(), root_signature->GetDescription());
+							if(content <> Nil) {
+								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								content_json->Insert("contents", content);
+								return content_json;
+							};
+						}
 					};
 				};
 			};
