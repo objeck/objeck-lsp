@@ -287,131 +287,82 @@ bundle LSP {
 
 			root_signature := @analysis->Hover(uri, line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_signature <> Nil) {
-				# class
-				if(root_signature->GetDescription() = Nil) {
-					if(@is_debug) {
-						foo := root_signature->GetKind()->As(Int);
-						"### {$foo} ###"->PrintLine();
+				content : String;
+
+				# class variable
+				name := root_signature->GetName();
+				desc := root_signature->GetDescription();
+
+				if(name <> Nil) {
+					if(desc = Nil) {
+						if(@is_debug) {
+							"### var: {$name} ###"->PrintLine();
+						};
+
+						select(root_signature->GetKind()) {
+							label -3999 {
+								content := GetDocumentation("System.Bool", Nil);
+							}
+
+							label -3998 {
+								content := GetDocumentation("System.Byte", Nil);
+							}
+
+							label -3997 {
+								content := GetDocumentation("System.Char", Nil);
+							}
+
+							label -3996 {
+								content := GetDocumentation("System.Int", Nil);
+							}
+
+							label -3995 {
+								content := GetDocumentation("System.Float", Nil);
+							}
+
+							other {
+								content := GetDocumentation(name, Nil);
+							}
+						};
+					}
+					# method call
+					else {
+						if(@is_debug) {
+							"### mthd: {$name},{$desc} ###"->PrintLine();
+						};
+
+						select(root_signature->GetKind()) {
+							label -3999 {
+								content := GetDocumentation("System.Bool", root_signature->GetDescription());
+							}
+
+							label -3998 {
+								content := GetDocumentation("System.Byte", root_signature->GetDescription());
+							}
+
+							label -3997 {
+								content := GetDocumentation("System.Char", root_signature->GetDescription());
+							}
+
+							label -3996 {
+								content := GetDocumentation("System.Int", root_signature->GetDescription());
+							}
+
+							label -3995 {
+								content := GetDocumentation("System.Float",root_signature->GetDescription());
+							}
+
+							other {
+								content := GetDocumentation(name, desc);
+							}
+						};
 					};
 
-					select(root_signature->GetKind()) {
-						label -3999 {
-							content := GetDocumentation("System.Bool", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
 
-						label -3998 {
-							content := GetDocumentation("System.Byte", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3997 {
-							content := GetDocumentation("System.Char", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3996 {
-							content := GetDocumentation("System.Int", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3995 {
-							content := GetDocumentation("System.Float", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						other {
-							content := GetDocumentation(root_signature->GetName(), Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-					};
-				}
-				# method
-				else {
-					if(@is_debug) {
-						foo := root_signature->GetName();
-						bar := root_signature->GetDescription();
-						"### {$foo},{$bar} ###"->PrintLine();
-					};
-
-					select(root_signature->GetKind()) {
-						label -3999 {
-							content := GetDocumentation("System.Bool", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3998 {
-							content := GetDocumentation("System.Byte", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3997 {
-							content := GetDocumentation("System.Char", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3996 {
-							content := GetDocumentation("System.Int", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-
-						label -3995 {
-							content := GetDocumentation("System.Float", Nil);
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
-						
-						other {
-							content := GetDocumentation(root_signature->GetName(), root_signature->GetDescription());
-							if(content <> Nil) {
-								content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-								content_json->Insert("contents", content);
-								return content_json;
-							};
-						}
+					if(content <> Nil) {
+						content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						content_json->Insert("contents", content);
+						return content_json;
 					};
 				};
 			};
@@ -421,10 +372,9 @@ bundle LSP {
 
 		method : public : GetDocumentation(klass_name : String, method_name : String) ~ String {
 			parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
-			if(parser->Parse()) {
+			if(parser->Parse() & klass_name <> Nil) {
 				key := String->New(klass_name);
 				if(method_name = Nil) {
-					key := String->New(klass_name);
 					key += "/description";
 				}
 				else {
