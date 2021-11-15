@@ -291,9 +291,12 @@ bundle LSP {
 				if(root_signature->GetDescription() = Nil) {
 					select(root_signature->GetKind()) {
 						label -3996 {
-							foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-							foo_json->Insert("contents", "HiYa!");
-							return foo_json;
+							content := GetDocumentation("System.Int", root_signature->GetDescription());
+							if(content <> Nil) {
+								foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+								foo_json->Insert("contents", content);
+								return foo_json;
+							};
 						}
 
 						other {
@@ -303,16 +306,40 @@ bundle LSP {
 				}
 				# method
 				else {
-					select(root_signature->GetKind()) {
-						label -3996 {
-							foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-							foo_json->Insert("contents", "HiYa!");
-							return foo_json;
-						}
+					root_signature->GetDescription()->PrintLine();
+					content := GetDocumentation("System.Int", root_signature->GetDescription());
+					if(content <> Nil) {
+						foo_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						foo_json->Insert("contents", content);
+						return foo_json;
+					};
+				};
+			};
 
-						other {
+			return Nil;
+		}
 
-						}
+		method : public : GetDocumentation(klass_name : String, method_name : String) ~ String {
+			parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
+			if(parser->Parse()) {
+				key := String->New(klass_name);
+				if(method_name = Nil) {
+					key := String->New(klass_name);
+					key += "/description";
+				}
+				else {
+					key += "/functions/";
+					key += String->New(method_name);
+					key += "/descriptions";
+				};
+
+				result := parser->GetRoot()->FindElements(key);
+				if(result <> Nil) {
+					if(result->GetType() = JsonElement->JsonType->ARRAY) {
+						return result->Get(0)->GetValue();
+					}
+					else {
+						return result->GetValue();
 					};
 				};
 			};
