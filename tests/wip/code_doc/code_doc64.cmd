@@ -3,7 +3,7 @@ set ZIP_BIN="\Program Files\7-Zip"
 rmdir /s /q ..\html 
 mkdir ..\html
 obc -src deploy64\examples\doc\doc_html.obs,deploy64\examples\doc\doc_parser.obs -lib gen_collect.obl -dest deploy64\code_doc.obe
-obr deploy64\code_doc.obe deploy64\examples\doc\templates 6.0.6 "C:\Users\objec\Documents\Code\objeck-lang\core\compiler\lib_src\lang.obs"
+obr deploy64\code_doc.obe deploy64\examples\doc\templates 6.0.6 "C:\Users\objec\Documents\Code\objeck-lang\core\compiler\lib_src\lang.obs" "C:\Users\objec\Documents\Code\objeck-lang\core\compiler\lib_src\gen_collect.obs"
 mkdir deploy64\doc\api
 copy deploy64\deploy64\programs\doc\templates\index.html deploy64\doc\api
 xcopy /e ..\html\* deploy64\doc\api

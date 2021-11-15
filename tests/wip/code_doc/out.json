@@ -1,5 +1,599 @@
 {
-"System.Base": {
+"Collection.Generic.BackwardIterator": {
+		"description": "Backward iterator",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced Backward"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer Backward"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position"]
+			}
+		}
+	},
+	"Collection.Generic.CompareBackwardIterator": {
+		"description": "Backward iterator of comparables",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced Backward"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer Backward"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position"]
+			}
+		}
+	},
+	"Collection.Generic.CompareForwardIterator": {
+		"description": "Forward iterator of comparables",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position"]
+			}
+		}
+	},
+	"Collection.Generic.CompareList": {
+		"description": "List of comparable generics",
+		"functions": {
+			"AddBack": {
+				"descriptions": ["Adds a value to the end"]
+			},
+			"AddFront": {
+				"descriptions": ["Adds a value to the front"]
+			},
+			"Back": {
+				"descriptions": ["Returns the last element in the list"]
+			},
+			"BackwardIterator": {
+				"descriptions": ["Instance of a backward iterator"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the list"]
+			},
+			"Filter": {
+				"descriptions": ["Uses the given function to filter out values"]
+			},
+			"Find": {
+				"descriptions": ["Finds a value in the list and sets the pointer"]
+			},
+			"Forward": {
+				"descriptions": ["Moves the pointer to the end of the list"]
+			},
+			"ForwardIterator": {
+				"descriptions": ["Instance of a forward iterator"]
+			},
+			"Front": {
+				"descriptions": ["Returns the first element in the list"]
+			},
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"Has": {
+				"descriptions": ["Searches for a value"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the list based upon the pointer location"]
+			},
+			"IsBack": {
+				"descriptions": ["Checks to see if the pointer is at the end of the list"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the list is empty"]
+			},
+			"IsFront": {
+				"descriptions": ["Checks to see if the pointer is at the front of the list"]
+			},
+			"Map": {
+				"descriptions": ["Maps the given function to each value in the list"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer"]
+			},
+			"Previous": {
+				"descriptions": ["Retreats the pointer"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position", "Removes the element at the pointer position"]
+			},
+			"RemoveBack": {
+				"descriptions": ["Removes the last value from the list"]
+			},
+			"RemoveFront": {
+				"descriptions": ["Removes the first value from the list"]
+			},
+			"Rest": {
+				"descriptions": ["List of all but first element"]
+			},
+			"Rewind": {
+				"descriptions": ["Moves the pointer to the start of the list"]
+			},
+			"Size": {
+				"descriptions": ["Size of list"]
+			}
+		}
+	},
+	"Collection.Generic.CompareVector": {
+		"description": "Growable array of comparable generics",
+		"functions": {
+			"AddBack": {
+				"descriptions": ["Adds a vector of values to the end of the vector", "Adds a value to the end"]
+			},
+			"BinarySearch": {
+				"descriptions": ["Performs a binary search O(log n)"]
+			},
+			"Compress": {
+				"descriptions": ["Compresses the Vector freeing unused memory"]
+			},
+			"Each": {
+				"descriptions": ["Function called for each element"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the vector"]
+			},
+			"Filter": {
+				"descriptions": ["Uses the given function to filter out values"]
+			},
+			"Find": {
+				"descriptions": ["Finds a given value in the vector via linear search"]
+			},
+			"Get": {
+				"descriptions": ["Gets an indexed value"]
+			},
+			"Has": {
+				"descriptions": ["Check of the given value is in the vector"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the vector is empty"]
+			},
+			"Limit": {
+				"descriptions": ["Returns a limited list"]
+			},
+			"Map": {
+				"descriptions": ["Maps the given function to each value in the vector"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes an indexed value"]
+			},
+			"RemoveBack": {
+				"descriptions": ["Removes the last value"]
+			},
+			"Set": {
+				"descriptions": ["Sets an indexed value"]
+			},
+			"Size": {
+				"descriptions": ["Size of vector"]
+			},
+			"Sort": {
+				"descriptions": ["Sorts the values in the vector"]
+			},
+			"ToArray": {
+				"descriptions": ["Converts the vector into an object array"]
+			}
+		}
+	},
+	"Collection.Generic.ForwardIterator": {
+		"description": "Forward iterator",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position"]
+			}
+		}
+	},
+	"Collection.Generic.Hash": {
+		"description": "Hash table of generics",
+		"functions": {
+			"Capacity": {
+				"descriptions": ["Gets the hash table capacity"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the map"]
+			},
+			"Find": {
+				"descriptions": ["Searches for a value in a hash"]
+			},
+			"GetKeyValues": {
+				"descriptions": ["Gets a collection of key/value pairs"]
+			},
+			"GetKeys": {
+				"descriptions": ["Get a collection of keys"]
+			},
+			"GetValues": {
+				"descriptions": ["Gets a collection of values"]
+			},
+			"Has": {
+				"descriptions": ["Checks for a value in a hash"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the hash"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Default constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a value from the hash"]
+			},
+			"Resize": {
+				"descriptions": ["Resizes the hash table"]
+			},
+			"Size": {
+				"descriptions": ["Size of map"]
+			}
+		}
+	},
+	"Collection.Generic.List": {
+		"description": "List of generics",
+		"functions": {
+			"AddBack": {
+				"descriptions": ["Adds a value to the end"]
+			},
+			"AddFront": {
+				"descriptions": ["Adds a value to the front"]
+			},
+			"Back": {
+				"descriptions": ["Returns the last element in the list"]
+			},
+			"BackwardIterator": {
+				"descriptions": ["Instance of a backward iterator"]
+			},
+			"Each": {
+				"descriptions": ["Function called for each element"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the list"]
+			},
+			"Filter": {
+				"descriptions": ["Uses the given function to filter out values"]
+			},
+			"Forward": {
+				"descriptions": ["Moves the pointer to the end of the list"]
+			},
+			"ForwardIterator": {
+				"descriptions": ["Instance of a forward iterator"]
+			},
+			"Front": {
+				"descriptions": ["Returns the first element in the list"]
+			},
+			"Get": {
+				"descriptions": ["Gets the value that's currently pointed to"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the list based upon the pointer location"]
+			},
+			"IsBack": {
+				"descriptions": ["Checks to see if the pointer is at the end of the list"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the list is empty"]
+			},
+			"IsFront": {
+				"descriptions": ["Checks to see if the pointer is at the front of the list"]
+			},
+			"Limit": {
+				"descriptions": ["Returns a limited list"]
+			},
+			"Map": {
+				"descriptions": ["Maps the given function to each value in the list"]
+			},
+			"More": {
+				"descriptions": ["Checks to see the pointer can be advanced"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Next": {
+				"descriptions": ["Advances the pointer"]
+			},
+			"Previous": {
+				"descriptions": ["Retreats the pointer"]
+			},
+			"Remove": {
+				"descriptions": ["Removes the element at the pointer position"]
+			},
+			"RemoveBack": {
+				"descriptions": ["Removes the last value from the list"]
+			},
+			"RemoveFront": {
+				"descriptions": ["Removes the first value from the list"]
+			},
+			"Rest": {
+				"descriptions": ["List of all but first element"]
+			},
+			"Rewind": {
+				"descriptions": ["Moves the pointer to the start of the list"]
+			},
+			"Size": {
+				"descriptions": ["Size of list"]
+			}
+		}
+	},
+	"Collection.Generic.Map": {
+		"description": "Balanced tree of generics",
+		"functions": {
+			"Each": {
+				"descriptions": ["Function called for each element"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the map"]
+			},
+			"Filter": {
+				"descriptions": ["Uses the given function to filter out values"]
+			},
+			"Find": {
+				"descriptions": ["Searches for a value in a map"]
+			},
+			"GetKeyValues": {
+				"descriptions": ["Get a collection of keys"]
+			},
+			"GetKeys": {
+				"descriptions": ["Get a collection of keys"]
+			},
+			"GetValues": {
+				"descriptions": ["Gets a collection of values"]
+			},
+			"Has": {
+				"descriptions": ["Checks for a value in a map"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the map"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the queue is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a value from the map"]
+			},
+			"Size": {
+				"descriptions": ["Size of queue"]
+			},
+			"Zip": {
+				"descriptions": ["Creates a map from a vector of keys and values"]
+			}
+		}
+	},
+	"Collection.Generic.MultiMap": {
+		"description": "Binary tree that holds multiple values with the same key",
+		"functions": {
+			"Each": {
+				"descriptions": ["Function called for each element"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the set"]
+			},
+			"Filter": {
+				"descriptions": ["Uses the given function to filter out values"]
+			},
+			"Find": {
+				"descriptions": ["Checks for a value in a map"]
+			},
+			"GetKeys": {
+				"descriptions": ["Get a collection of keys"]
+			},
+			"GetValues": {
+				"descriptions": ["Gets a collection of values"]
+			},
+			"Has": {
+				"descriptions": ["Checks for a value in a map"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the map"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the queue is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a set of values from the map"]
+			},
+			"Size": {
+				"descriptions": ["Size of unique keys"]
+			},
+			"TotalSize": {
+				"descriptions": ["Size of values"]
+			},
+			"Zip": {
+				"descriptions": ["Creates a map from a vector of keys and values"]
+			}
+		}
+	},
+	"Collection.Generic.Pair": {
+		"description": "Generic pair",
+		"functions": {
+			"Compare": {
+				"descriptions": ["Compares two objects based upon first value"]
+			},
+			"GetFirst": {
+				"descriptions": ["Gets the first value"]
+			},
+			"GetSecond": {
+				"descriptions": ["Gets the second value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns the class default hash ID"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"SetFirst": {
+				"descriptions": ["Sets the first value"]
+			},
+			"SetSecond": {
+				"descriptions": ["Sets the second value"]
+			}
+		}
+	},
+	"Collection.Generic.Queue": {
+		"description": "Queue of generics",
+		"functions": {
+			"Add": {
+				"descriptions": ["Adds a value to the back of the queue"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the queue"]
+			},
+			"Head": {
+				"descriptions": ["Get the value from the head of the queue"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the queue is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a value from the front of the queue"]
+			},
+			"Size": {
+				"descriptions": ["Size of queue"]
+			}
+		}
+	},
+	"Collection.Generic.Set": {
+		"description": "Set of objects",
+		"functions": {
+			"Empty": {
+				"descriptions": ["Clears the set"]
+			},
+			"GetKeys": {
+				"descriptions": ["Get a collection of keys"]
+			},
+			"Has": {
+				"descriptions": ["Checks for key in set"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a key into the set"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the map is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a key from the set"]
+			},
+			"Size": {
+				"descriptions": ["Size of map"]
+			}
+		}
+	},
+	"Collection.Generic.Stack": {
+		"description": "Growable stack of generics",
+		"functions": {
+			"Empty": {
+				"descriptions": ["Clears the vector"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the vector is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Pop": {
+				"descriptions": ["Pushes a value from the stack"]
+			},
+			"Push": {
+				"descriptions": ["Pushes a value onto the stack"]
+			},
+			"Size": {
+				"descriptions": ["Size of stack"]
+			},
+			"Top": {
+				"descriptions": ["Check the top of the stack"]
+			}
+		}
+	},
+	"Collection.Generic.Vector": {
+		"description": "Growable array of generics",
+		"functions": {
+			"AddBack": {
+				"descriptions": ["Adds a vector of values to the end of the vector", "Adds a value to the end"]
+			},
+			"Compress": {
+				"descriptions": ["Compresses the Vector freeing unused memory"]
+			},
+			"Each": {
+				"descriptions": ["Function called for each element"]
+			},
+			"Empty": {
+				"descriptions": ["Clears the vector"]
+			},
+			"Get": {
+				"descriptions": ["Gets an indexed value"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the vector is empty"]
+			},
+			"Limit": {
+				"descriptions": ["Returns a limited list"]
+			},
+			"Map": {
+				"descriptions": ["Maps the given function to each value in the vector"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor"]
+			},
+			"Remove": {
+				"descriptions": ["Removes an indexed value"]
+			},
+			"RemoveBack": {
+				"descriptions": ["Removes the last value"]
+			},
+			"Set": {
+				"descriptions": ["Sets an indexed value"]
+			},
+			"Size": {
+				"descriptions": ["Size of vector"]
+			},
+			"Swap": {
+				"descriptions": ["Swap two values in the vector"]
+			},
+			"ToArray": {
+				"descriptions": ["Converts the vector into an object array"]
+			}
+		}
+	},
+	"System.Base": {
 		"description": "Base class for all objects",
 		"functions": {
 			"GetClass": {
