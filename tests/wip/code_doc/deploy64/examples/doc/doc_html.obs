@@ -82,7 +82,7 @@ class JsonMaker {
 		};
 		buffer += "}";
 		
-		buffer->PrintLine();
+		FileWriter->WriteFile("out.json", buffer);
 
 		return true;
 	}
