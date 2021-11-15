@@ -30,6 +30,7 @@ bundle LSP {
 			port := 6013;
 			"Objeck LSP Server on localhost:{$port}"->PrintLine();
 
+			AstProxy->Init();
 			server := TCPSocketServer->New(port);
 			leaving {
 				server->Close();

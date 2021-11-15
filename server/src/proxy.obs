@@ -8,6 +8,7 @@ bundle LSP {
 	~#
 	class AstProxy {
 		@analysis : Analysis;
+		@doc_cache : static : Hash<String, String>;
 		@is_debug : Bool;
 
 		New(workspace : LspWorkspace, uri : String, use_alt : Bool, is_debug : Bool) {
@@ -16,6 +17,10 @@ bundle LSP {
 			if(workspace <> Nil) {
 				@analysis := Analyzer->ParseText(workspace->GetTexts(uri, use_alt));
 			};
+		}
+
+		function : Init() ~ Nil {
+			@doc_cache := Hash->New()<String, String>;
 		}
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
@@ -295,10 +300,6 @@ bundle LSP {
 
 				if(name <> Nil) {
 					if(desc = Nil) {
-						if(@is_debug) {
-							"### var: {$name} ###"->PrintLine();
-						};
-
 						select(root_signature->GetKind()) {
 							label -3999 {
 								content := GetDocumentation("System.Bool", Nil);
@@ -327,10 +328,6 @@ bundle LSP {
 					}
 					# method call
 					else {
-						if(@is_debug) {
-							"### mthd: {$name},{$desc} ###"->PrintLine();
-						};
-
 						select(root_signature->GetKind()) {
 							label -3999 {
 								content := GetDocumentation("System.Bool", root_signature->GetDescription());
@@ -371,30 +368,41 @@ bundle LSP {
 		}
 
 		method : public : GetDocumentation(klass_name : String, method_name : String) ~ String {
-			parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
-			if(parser->Parse() & klass_name <> Nil) {
-				key := String->New(klass_name);
-				if(method_name = Nil) {
-					key += "/description";
-				}
-				else {
-					key += "/functions/";
-					key += String->New(method_name);
-					key += "/descriptions";
-				};
+			key := String->New(klass_name);
+			if(method_name = Nil) {
+				key += "/description";
+			}
+			else {
+				key += "/functions/";
+				key += String->New(method_name);
+				key += "/descriptions";
+			};
 
-				result := parser->GetRoot()->FindElements(key);
-				if(result <> Nil) {
-					if(result->GetType() = JsonElement->JsonType->ARRAY) {
-						return result->Get(0)->GetValue();
-					}
-					else {
-						return result->GetValue();
+			# TODO: LRU queue
+			value := @doc_cache->Find(key);
+			if(value = Nil) {
+"******* LOADING: key='{$key}'***********"->PrintLine();				
+				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
+				if(parser->Parse() & klass_name <> Nil) {
+					result := parser->GetRoot()->FindElements(key);
+					if(result <> Nil) {
+						if(result->GetType() = JsonElement->JsonType->ARRAY) {
+							value := result->Get(0)->GetValue();
+							@doc_cache->Insert(key, value);
+						}
+						else {
+							value := result->GetValue();
+							@doc_cache->Insert(key, value);
+						};
+
+"******* INSERT: key='{$key}, value='{$value}'***********"->PrintLine();				
+
+						return value;
 					};
 				};
 			};
 
-			return Nil;
+			return value;
 		}
 		
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
