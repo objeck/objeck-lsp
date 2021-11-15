@@ -1,0 +1,1430 @@
+{
+"System.Base": {
+		"description": "Base class for all objects",
+		"functions": {
+			"GetClass": {
+				"descriptions": ["Returns the class associated with this instance"]
+			},
+			"GetClassID": {
+				"descriptions": ["Returns the unique class ID"]
+			},
+			"GetInstanceID": {
+				"descriptions": ["Returns the unique instance ID"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			}
+		}
+	},
+	"System.BaseArrayHolder": {
+		"description": "Holds an base array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Get values"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set values"]
+			}
+		}
+	},
+	"System.BasicCompare": {
+		"description": "Provides rudimentary compare functionality",
+		"functions": {
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"HashID": {
+				"descriptions": ["Returns the class default hash ID"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			}
+		}
+	},
+	"System.Bool": {
+		"description": "Boolean class",
+		"functions": {
+			"Error": {
+				"descriptions": ["Prints an error boolean value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Prints an error boolean value with a newline"]
+			},
+			"Print": {
+				"descriptions": ["Prints a boolean value"]
+			},
+			"PrintLine": {
+				"descriptions": ["Prints a boolean value with a newline"]
+			},
+			"ToString": {
+				"descriptions": ["Formats the boolean value into a string"]
+			}
+		}
+	},
+	"System.BoolHolder": {
+		"description": "Holds a boolean value",
+		"functions": {
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Get": {
+				"descriptions": ["Get boolean value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a boolean"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set boolean value"]
+			}
+		}
+	},
+	"System.Byte": {
+		"description": "The byte class represents a 1-byte value.",
+		"functions": {
+			"Abs": {
+				"descriptions": ["Returns the absolute value"]
+			},
+			"CRC32": {
+				"descriptions": ["Calculates the signed CRC32 value for the stream"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two values"]
+			},
+			"Compress": {
+				"descriptions": ["Compresses a byte stream using zlib"]
+			},
+			"Error": {
+				"descriptions": ["Prints error value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Prints error value with newline"]
+			},
+			"IsNeg": {
+				"descriptions": ["Checks is a number is negative"]
+			},
+			"Max": {
+				"descriptions": ["Returns the largest byte value"]
+			},
+			"Min": {
+				"descriptions": ["Returns the smallest byte value"]
+			},
+			"NotNeg": {
+				"descriptions": ["Checks is a number is not negative"]
+			},
+			"Print": {
+				"descriptions": ["Prints value"]
+			},
+			"PrintLine": {
+				"descriptions": ["Prints value with newline"]
+			},
+			"ToBinaryString": {
+				"descriptions": ["Returns a binary string representation of the value"]
+			},
+			"ToChar": {
+				"descriptions": ["Returns the Character value"]
+			},
+			"ToFloat": {
+				"descriptions": ["Returns the Float value"]
+			},
+			"ToHexString": {
+				"descriptions": ["Returns a hexadecimal string representation of the value"]
+			},
+			"ToInt": {
+				"descriptions": ["Returns the Int value"]
+			},
+			"ToString": {
+				"descriptions": ["Returns a string representation of the value"]
+			},
+			"Uncompress": {
+				"descriptions": ["Uncompresses a byte stream using zlib"]
+			}
+		}
+	},
+	"System.ByteArrayHolder": {
+		"description": "Holds a byte array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Get values"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets values"]
+			}
+		}
+	},
+	"System.ByteHolder": {
+		"description": "Holds an byte value",
+		"functions": {
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Get": {
+				"descriptions": ["Get byte value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a byte"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set byte value"]
+			}
+		}
+	},
+	"System.Char": {
+		"description": "Character class represents a Unicode character value.",
+		"functions": {
+			"Compare": {
+				"descriptions": ["Compares two values"]
+			},
+			"Error": {
+				"descriptions": ["Prints error value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Prints error value with newline"]
+			},
+			"IsChar": {
+				"descriptions": ["Checks of the character is a alpha digit"]
+			},
+			"IsDigit": {
+				"descriptions": ["Checks of the character is a numeric digit"]
+			},
+			"IsLower": {
+				"descriptions": ["Checks if the character is lower-case"]
+			},
+			"IsUpper": {
+				"descriptions": ["Checks if the character is upper-case"]
+			},
+			"Max": {
+				"descriptions": ["Returns the largest byte value"]
+			},
+			"Min": {
+				"descriptions": ["Returns the smallest byte value"]
+			},
+			"Print": {
+				"descriptions": ["Prints value"]
+			},
+			"Sort": {
+				"descriptions": ["Prints value with newline"]
+			},
+			"ToByte": {
+				"descriptions": ["Returns the Character value"]
+			},
+			"ToFloat": {
+				"descriptions": ["Returns the Float value"]
+			},
+			"ToInt": {
+				"descriptions": ["Returns the Int value"]
+			},
+			"ToLower": {
+				"descriptions": ["Converts character to lower-case"]
+			},
+			"ToString": {
+				"descriptions": ["Returns a string representation of the value"]
+			},
+			"ToUpper": {
+				"descriptions": ["Converts character to upper-case"]
+			}
+		}
+	},
+	"System.CharArrayHolder": {
+		"description": "Holds a character array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Get value"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set value"]
+			}
+		}
+	},
+	"System.CharHolder": {
+		"description": "Holds an character value",
+		"functions": {
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Get": {
+				"descriptions": ["Get character value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a character"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set character value"]
+			}
+		}
+	},
+	"System.Clone": {
+		"description": "Used to clone objects",
+		"functions": {
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			}
+		}
+	},
+	"System.Compare": {
+		"description": "Used to compare two abstract values",
+		"functions": {
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a hash ID for the given class"]
+			}
+		}
+	},
+	"System.Float": {
+		"description": "Float class represents a double-precision floating-point value",
+		"functions": {
+			"Abs": {
+				"descriptions": ["Returns the absolute value"]
+			},
+			"ArcCos": {
+				"descriptions": ["Calculates the cosine value"]
+			},
+			"ArcSin": {
+				"descriptions": ["Calculates the arc-sine value"]
+			},
+			"ArcTan": {
+				"descriptions": ["Calculates the arc-tangent value"]
+			},
+			"ArcTan2": {
+				"descriptions": ["Calculates arc tangent of y/x"]
+			},
+			"Ceiling": {
+				"descriptions": ["Calculates the ceiling value"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two value"]
+			},
+			"Cos": {
+				"descriptions": ["Calculates the cosine value"]
+			},
+			"E": {
+				"descriptions": ["Value of E"]
+			},
+			"Error": {
+				"descriptions": ["Prints error value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Prints error value with newline"]
+			},
+			"Floor": {
+				"descriptions": ["Calculates the floor value"]
+			},
+			"IsNeg": {
+				"descriptions": ["Checks is a number is negative"]
+			},
+			"Log": {
+				"descriptions": ["Calculates the log value"]
+			},
+			"Max": {
+				"descriptions": ["Returns the largest float value"]
+			},
+			"Min": {
+				"descriptions": ["Returns the smallest float value"]
+			},
+			"NotNeg": {
+				"descriptions": ["Checks is a number is not negative"]
+			},
+			"Pi": {
+				"descriptions": ["Value of Pi"]
+			},
+			"Power": {
+				"descriptions": ["Calculates the power value"]
+			},
+			"Print": {
+				"descriptions": ["Prints value"]
+			},
+			"PrintLine": {
+				"descriptions": ["Prints value with newline"]
+			},
+			"Random": {
+				"descriptions": ["Returns a pseudo random value between 0.0 and 1.0"]
+			},
+			"Sin": {
+				"descriptions": ["Calculates the sine value"]
+			},
+			"SquareRoot": {
+				"descriptions": ["Calculates the natural log value"]
+			},
+			"Tan": {
+				"descriptions": ["Calculates the tangent value"]
+			},
+			"ToByte": {
+				"descriptions": ["Returns the Character value"]
+			},
+			"ToChar": {
+				"descriptions": ["Returns the Int value"]
+			},
+			"ToDegrees": {
+				"descriptions": ["Converts the value into degrees"]
+			},
+			"ToInt": {
+				"descriptions": ["Returns the Int value"]
+			},
+			"ToRadians": {
+				"descriptions": ["Converts the value into radians"]
+			},
+			"ToString": {
+				"descriptions": ["Returns a string representation of the value"]
+			}
+		}
+	},
+	"System.FloatArrayHolder": {
+		"description": "Holds a float array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets values"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets values"]
+			}
+		}
+	},
+	"System.FloatHolder": {
+		"description": "Holds a float",
+		"functions": {
+			"Add": {
+				"descriptions": ["Adds to value"]
+			},
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Div": {
+				"descriptions": ["Divide by value"]
+			},
+			"Get": {
+				"descriptions": ["Get value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a float"]
+			},
+			"Mul": {
+				"descriptions": ["Multiply to value"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set value"]
+			},
+			"Sub": {
+				"descriptions": ["Subtract from value"]
+			}
+		}
+	},
+	"System.Func2Holder": {
+		"description": "Holds a function of in type X and out type R",
+		"functions": {
+			"Apply": {
+				"descriptions": ["Apply function"]
+			},
+			"Get": {
+				"descriptions": ["Gets function"]
+			},
+			"New": {
+				"descriptions": ["Constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets function"]
+			}
+		}
+	},
+	"System.Func3Holder": {
+		"description": "Holds a function of in types X, Y and out type R",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets function"]
+			},
+			"New": {
+				"descriptions": ["Constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets function"]
+			}
+		}
+	},
+	"System.Func4Holder": {
+		"description": "Holds a function of in types X, Y, Z and out type R",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets function"]
+			},
+			"New": {
+				"descriptions": ["Constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets function"]
+			}
+		}
+	},
+	"System.FuncHolder": {
+		"description": "Holds a function of in/out type R",
+		"functions": {
+			"Get": {
+				"descriptions": ["Gets function"]
+			},
+			"New": {
+				"descriptions": ["Constructor"]
+			},
+			"Set": {
+				"descriptions": ["Sets function"]
+			}
+		}
+	},
+	"System.Int": {
+		"description": "Integer class represents an operating system long value",
+		"functions": {
+			"Abs": {
+				"descriptions": ["Returns the absolute value"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two values"]
+			},
+			"Error": {
+				"descriptions": ["Prints error value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Prints error value with newline"]
+			},
+			"Factorial": {
+				"descriptions": ["Calculates the factorial of existing value"]
+			},
+			"IsNeg": {
+				"descriptions": ["Checks is a number is negative"]
+			},
+			"Max": {
+				"descriptions": ["Returns the largest integer value"]
+			},
+			"MaxSize": {
+				"descriptions": ["Returns the maximum size of an integer"]
+			},
+			"Min": {
+				"descriptions": ["Returns the smallest integer value"]
+			},
+			"MinSize": {
+				"descriptions": ["Returns the minimum size of an integer"]
+			},
+			"NotNeg": {
+				"descriptions": ["Checks is a number is not negative"]
+			},
+			"Print": {
+				"descriptions": ["Prints value"]
+			},
+			"PrintLine": {
+				"descriptions": ["Prints value with newline"]
+			},
+			"Random": {
+				"descriptions": ["Returns a random number within the given range", "Returns a random number between 0 and max value"]
+			},
+			"ToBinaryString": {
+				"descriptions": ["Returns the binary string value"]
+			},
+			"ToByte": {
+				"descriptions": ["Returns the Byte value"]
+			},
+			"ToChar": {
+				"descriptions": ["Returns the Character value"]
+			},
+			"ToCommaString": {
+				"descriptions": ["Returns a comma formatted string value"]
+			},
+			"ToFloat": {
+				"descriptions": ["Returns the Float value"]
+			},
+			"ToHexString": {
+				"descriptions": ["Returns the hex string value"]
+			},
+			"ToString": {
+				"descriptions": ["Returns the string value", "Returns a string representation of the value"]
+			}
+		}
+	},
+	"System.IntArrayHolder": {
+		"description": "Holds an integer array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Get values"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set values"]
+			}
+		}
+	},
+	"System.IntHolder": {
+		"description": "Holds an integer value",
+		"functions": {
+			"Add": {
+				"descriptions": ["Adds to value"]
+			},
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Dec": {
+				"descriptions": ["Decrements value by 1"]
+			},
+			"Div": {
+				"descriptions": ["Divide by value"]
+			},
+			"Get": {
+				"descriptions": ["Get integer value"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a integer"]
+			},
+			"Inc": {
+				"descriptions": ["Increments value by 1"]
+			},
+			"Mul": {
+				"descriptions": ["Multiply to value"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set integer value"]
+			},
+			"Sub": {
+				"descriptions": ["Subtract from value"]
+			}
+		}
+	},
+	"System.Runtime": {
+		"description": "Provides access to runtime system",
+		"functions": {
+			"Assert": {
+				"descriptions": ["Asserts runtime value to be true. If false, program exits with stack trace."]
+			},
+			"Command": {
+				"descriptions": ["Executes a system command"]
+			},
+			"CommandOutput": {
+				"descriptions": ["Executes a system command"]
+			},
+			"Copy": {
+				"descriptions": ["Copies data between two byte arrays", "Copies data between two character arrays", "Copies data between two integer arrays", "Copies data between two Base arrays", "Copies data between two Compare arrays", "Copies data between two float arrays"]
+			},
+			"Exit": {
+				"descriptions": ["Causes the executing program to halt"]
+			},
+			"GetInstallDir": {
+				"descriptions": ["Returns the installation directory"]
+			},
+			"GetPlatform": {
+				"descriptions": ["Returns an OS platform string"]
+			},
+			"GetProperty": {
+				"descriptions": ["Fetches a runtime property. System properties include: 'user_dir', temp_dir and 'install_dir'."]
+			},
+			"GetTempDir": {
+				"descriptions": ["Returns the system's temporary directory"]
+			},
+			"GetTime": {
+				"descriptions": ["Returns the current time"]
+			},
+			"GetUserDir": {
+				"descriptions": ["Returns the current user's working directory"]
+			},
+			"GetVersion": {
+				"descriptions": ["Returns the package version string"]
+			},
+			"SetPrecision": {
+				"descriptions": ["Set floating point display precision. Valid values are a number, 'fixed' or 'scientific'."]
+			},
+			"SetProperty": {
+				"descriptions": ["Sets a runtime property"]
+			}
+		}
+	},
+	"System.String": {
+		"description": "Resizeable Unicode string class that supports typical string operations.",
+		"functions": {
+			"Append": {
+				"descriptions": ["Appends a boolean value", "Appends a integer value", "Appends a float value", "Appends a string", "Appends a character array", "Appends a portion of character array", "Appends a character array", "Appends a portion of byte array", "Appends a character", "Appends a byte"]
+			},
+			"Capacity": {
+				"descriptions": ["Gets the current string capacity."]
+			},
+			"Clear": {
+				"descriptions": ["Clears string"]
+			},
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two objects"]
+			},
+			"Compress": {
+				"descriptions": ["Compresses a string removing unused space."]
+			},
+			"Count": {
+				"descriptions": ["Count the occurrences of the character"]
+			},
+			"Delete": {
+				"descriptions": ["Deletes the character at the given index", "Deletes the characters at the given range"]
+			},
+			"EndsWith": {
+				"descriptions": ["Checks if the string ends with the given character", "Checks if the string ends with the given character"]
+			},
+			"Equals": {
+				"descriptions": ["Compares two strings"]
+			},
+			"Error": {
+				"descriptions": ["Print an error string"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Print an error string with a newline"]
+			},
+			"Find": {
+				"descriptions": ["Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a string", "Searches for the first occurrence of a string"]
+			},
+			"FindAll": {
+				"descriptions": ["Searches for all occurrences of a string"]
+			},
+			"FindLast": {
+				"descriptions": ["Searches for the last occurrence of a character", "Searches for the last occurrence of a character"]
+			},
+			"Get": {
+				"descriptions": ["Returns character at the given index"]
+			},
+			"Has": {
+				"descriptions": ["Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a character"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a unique hash ID for a given string sequence"]
+			},
+			"Insert": {
+				"descriptions": ["Insert inserts a character", "Insert inserts a string"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Returns rather the string is empty"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor"]
+			},
+			"Pop": {
+				"descriptions": ["Pops the last character from the string reducing the size by 1"]
+			},
+			"Print": {
+				"descriptions": ["Print a string"]
+			},
+			"PrintLine": {
+				"descriptions": ["Print a string with a newline"]
+			},
+			"Replace": {
+				"descriptions": ["Replaces the first occurrence the search string"]
+			},
+			"ReplaceAll": {
+				"descriptions": ["Replaces all occurrences the search string", "Replaces all occurrences the search string"]
+			},
+			"Reverse": {
+				"descriptions": ["Reverses a string"]
+			},
+			"Set": {
+				"descriptions": ["Sets character at the given index"]
+			},
+			"Size": {
+				"descriptions": ["Return the size of the string"]
+			},
+			"Split": {
+				"descriptions": ["Splits a string based upon delimiter"]
+			},
+			"StartsWith": {
+				"descriptions": ["Checks if the string starts with the given character", "Checks if the string starts with the given string"]
+			},
+			"SubString": {
+				"descriptions": ["Creates a sub-string", "Creates a sub-string"]
+			},
+			"ToByteArray": {
+				"descriptions": ["Returns a byte array representation of the String"]
+			},
+			"ToCharArray": {
+				"descriptions": ["Returns a character array representation of the String"]
+			},
+			"ToFloat": {
+				"descriptions": ["Parses the string into a float"]
+			},
+			"ToInt": {
+				"descriptions": ["Parses the string into an integer", "Parses the string into an integer"]
+			},
+			"ToLower": {
+				"descriptions": ["Transforms a to lower case"]
+			},
+			"ToUpper": {
+				"descriptions": ["Transforms a to upper case"]
+			},
+			"Trim": {
+				"descriptions": ["Removes all leading and ending white space"]
+			}
+		}
+	},
+	"System.StringArrayHolder": {
+		"description": "Holds an base array",
+		"functions": {
+			"Get": {
+				"descriptions": ["Get values"]
+			},
+			"New": {
+				"descriptions": ["Copy constructor"]
+			},
+			"Set": {
+				"descriptions": ["Set values"]
+			}
+		}
+	},
+	"System.API.DllProxy": {
+		"description": "Class allow programmers to load native shared libraries that can be called by Objeck classes. Programmers can call native C functions within these libraries.",
+		"functions": {
+			"CallFunction": {
+				"descriptions": ["Calls a native C function."]
+			},
+			"IsLoaded": {
+				"descriptions": ["Returns rather the shared library has been successfully loaded"]
+			},
+			"New": {
+				"descriptions": ["Path to the shared library. The path should not include the extension name (i.e. .dll, .so, etc.) for platform portability"]
+			},
+			"Unload": {
+				"descriptions": ["Unloads the shared library"]
+			}
+		}
+	},
+	"System.Concurrency.Thread": {
+		"description": "Abstracts native system thread execution",
+		"functions": {
+			"Execute": {
+				"descriptions": ["Called to execute a new thread"]
+			},
+			"GetExecuteID": {
+				"descriptions": ["Returns a unique execution ID"]
+			},
+			"GetName": {
+				"descriptions": ["Returns the thread's name"]
+			},
+			"Join": {
+				"descriptions": ["Joins the executing thread with the caller"]
+			},
+			"New": {
+				"descriptions": ["Name of the thread"]
+			},
+			"Run": {
+				"descriptions": ["Prototype for the thread to be executed"]
+			},
+			"Sleep": {
+				"descriptions": ["Sleeps the executing thread"]
+			}
+		}
+	},
+	"System.Concurrency.ThreadMutex": {
+		"description": "Thread mutex used to protect critical sections",
+		"functions": {
+			"GetName": {
+				"descriptions": ["Name of the mutex"]
+			},
+			"New": {
+				"descriptions": ["Name of the mutex"]
+			}
+		}
+	},
+	"System.IO.Deserializer": {
+		"description": "Used to deserialize objects",
+		"functions": {
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"ReadBool": {
+				"descriptions": ["Reads a value"]
+			},
+			"ReadBoolArray": {
+				"descriptions": ["Reads an array of values"]
+			},
+			"ReadByteArray": {
+				"descriptions": ["Reads an array of values"]
+			},
+			"ReadChar": {
+				"descriptions": ["Reads a value"]
+			},
+			"ReadCharArray": {
+				"descriptions": ["Reads an array of values"]
+			},
+			"ReadFloat": {
+				"descriptions": ["Reads a value"]
+			},
+			"ReadFloatArray": {
+				"descriptions": ["Reads an array of values"]
+			},
+			"ReadInt": {
+				"descriptions": ["Reads a value"]
+			},
+			"ReadIntArray": {
+				"descriptions": ["Reads an array of values"]
+			},
+			"ReadObject": {
+				"descriptions": ["Reads an object"]
+			},
+			"ReadObjectArray": {
+				"descriptions": ["Reads an object array"]
+			}
+		}
+	},
+	"System.IO.InputStream": {
+		"description": "An abstract input stream",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes the stream"]
+			},
+			"ReadBuffer": {
+				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+			},
+			"ReadByte": {
+				"descriptions": ["Reads a byte"]
+			},
+			"ReadLine": {
+				"descriptions": ["Reads a string until a newline or character return is detected"]
+			}
+		}
+	},
+	"System.IO.OutputStream": {
+		"description": "An abstract output stream",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes the stream"]
+			},
+			"WriteBuffer": {
+				"descriptions": ["Writes bytes from a buffer", "Writes characters from a buffer"]
+			},
+			"WriteByte": {
+				"descriptions": ["Writes a byte"]
+			},
+			"WriteString": {
+				"descriptions": ["Writes a character string"]
+			}
+		}
+	},
+	"System.IO.Serializer": {
+		"description": "Used to serialize objects",
+		"functions": {
+			"Serialize": {
+				"descriptions": ["Create a byte stream of the objects that have been serialized"]
+			},
+			"Write": {
+				"descriptions": ["Serializes a value", "Serializes a value", "Serializes a value", "Serializes a value", "Serializes a base object", "Serializes a base object", "Serializes base objects", "Serializes a value", "Serializes an array of values", "Serializes an array of values", "Serializes an array of values"]
+			}
+		}
+	},
+	"System.IO.Standard": {
+		"description": "Provides standard I/O operations",
+		"functions": {
+			"Error": {
+				"descriptions": ["Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value"]
+			},
+			"ErrorLine": {
+				"descriptions": ["Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error character return"]
+			},
+			"Print": {
+				"descriptions": ["Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value"]
+			},
+			"PrintLine": {
+				"descriptions": ["Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Prints a character return"]
+			},
+			"ReadBuffer": {
+				"descriptions": ["Reads bytes from STDIN", "Read characters from STDIN"]
+			},
+			"ReadLine": {
+				"descriptions": ["Reads a string from STDIN"]
+			},
+			"WriteBuffer": {
+				"descriptions": ["Write a byte buffer to STDOUT", "Write a character buffer to STDOUT"]
+			},
+			"WriteErrorBuffer": {
+				"descriptions": ["Write a byte buffer to STDERR", "Write a character buffer to STDERR"]
+			}
+		}
+	},
+	"System.IO.File.Directory": {
+		"description": "Provide file directory operations",
+		"functions": {
+			"Create": {
+				"descriptions": ["Creates a directory"]
+			},
+			"CreatePath": {
+				"descriptions": ["Creates a directory path"]
+			},
+			"Exists": {
+				"descriptions": ["Checks to see if the given directory exists"]
+			},
+			"List": {
+				"descriptions": ["List of directory content"]
+			}
+		}
+	},
+	"System.IO.File.File": {
+		"description": "Provides file operations",
+		"functions": {
+			"AccessedTime": {
+				"descriptions": ["Returns the time in which the file was accessed", "Returns the time in which the file was accessed", "Returns the time in which the file was accessed", "Returns the time in which the file was accessed"]
+			},
+			"CreateTime": {
+				"descriptions": ["Returns the time in which the file was created", "Returns the time in which the file was created", "Returns the time in which the file was created", "Returns the time in which the file was created"]
+			},
+			"Delete": {
+				"descriptions": ["Deletes a file", "Deletes a file"]
+			},
+			"Exists": {
+				"descriptions": ["Check to see if a file exists", "Check to see if a file exists"]
+			},
+			"GetFullName": {
+				"descriptions": ["Gets the full path name for file", "Gets the full path name for file"]
+			},
+			"GetName": {
+				"descriptions": ["Gets the file name"]
+			},
+			"GetTempName": {
+				"descriptions": ["Gets a temporary file name"]
+			},
+			"Group": {
+				"descriptions": ["Gets the file group name", "Gets the file group name"]
+			},
+			"IsEOF": {
+				"descriptions": ["Check if seek pointer is at the end-of-file"]
+			},
+			"IsOpen": {
+				"descriptions": ["Checks of the file is open"]
+			},
+			"IsReadOnly": {
+				"descriptions": ["Check to see if a file can be read", "Check to see if a file can be read"]
+			},
+			"IsReadWrite": {
+				"descriptions": ["Check to see if a file can be read-only", "Check to see if a file can be read-only"]
+			},
+			"IsWriteOnly": {
+				"descriptions": ["Check to see if a file can be written", "Check to see if a file can be written"]
+			},
+			"ModifiedTime": {
+				"descriptions": ["Returns the time in which the file was modified", "Returns the time in which the file was modified"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"Owner": {
+				"descriptions": ["Gets the file owner name", "Gets the file owner name"]
+			},
+			"Rename": {
+				"descriptions": ["Renames a file"]
+			},
+			"Rewind": {
+				"descriptions": ["Rewinds the seek pointer"]
+			},
+			"Seek": {
+				"descriptions": ["Seeks to a point in the file"]
+			},
+			"Size": {
+				"descriptions": ["Returns the size of the file", "Returns the size of the file"]
+			}
+		}
+	},
+	"System.IO.File.FileReader": {
+		"description": "Supports file read operations",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes the file"]
+			},
+			"New": {
+				"descriptions": ["Default constructor."]
+			},
+			"ReadBinaryFile": {
+				"descriptions": ["Reads a file's contents into byte array"]
+			},
+			"ReadBuffer": {
+				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+			},
+			"ReadByte": {
+				"descriptions": ["Reads a byte"]
+			},
+			"ReadFile": {
+				"descriptions": ["Reads a file's contents into a string"]
+			},
+			"ReadLine": {
+				"descriptions": ["Reads a string until a newline or character return is detected"]
+			}
+		}
+	},
+	"System.IO.File.FileWriter": {
+		"description": "Supports file write operations",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes a file"]
+			},
+			"Flush": {
+				"descriptions": ["Flushes the file buffer"]
+			},
+			"New": {
+				"descriptions": ["Opens a new file.", "Opens a new file or appends to an existing one."]
+			},
+			"Temp": {
+				"descriptions": ["Creates a temporary file"]
+			},
+			"WriteBuffer": {
+				"descriptions": ["Writes bytes from a buffer", "Writes characters from a buffer", "Writes bytes from a buffer", "Writes characters from a buffer"]
+			},
+			"WriteByte": {
+				"descriptions": ["Writes a byte"]
+			},
+			"WriteFile": {
+				"descriptions": ["Write a file's contents into a string"]
+			},
+			"WriteString": {
+				"descriptions": ["Writes a character string"]
+			}
+		}
+	},
+	"System.IO.File.Logger": {
+		"description": "Logs messages to temporary files",
+		"functions": {
+			"ClearError": {
+				"descriptions": ["Clears the error log file"]
+			},
+			"ClearInfo": {
+				"descriptions": ["Clears the info log file"]
+			},
+			"ClearWarn": {
+				"descriptions": ["Clears the warning log file"]
+			},
+			"Error": {
+				"descriptions": ["Logs an error message"]
+			},
+			"GetDirectory": {
+				"descriptions": ["Gets the logging directory"]
+			},
+			"GetErrorFile": {
+				"descriptions": ["Gets path to error file"]
+			},
+			"GetInfoFile": {
+				"descriptions": ["Gets path to information file"]
+			},
+			"GetWarnFile": {
+				"descriptions": ["Gets path to warning file"]
+			},
+			"Info": {
+				"descriptions": ["Logs an informational message"]
+			},
+			"Instance": {
+				"descriptions": ["Gets an instance of the logger"]
+			},
+			"Warn": {
+				"descriptions": ["Logs a warning message"]
+			}
+		}
+	},
+	"System.IO.Net.TCPSecureSocket": {
+		"description": "Secure SSL TCP/IP socket",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes the socket"]
+			},
+			"Flush": {
+				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer."]
+			},
+			"GetAddress": {
+				"descriptions": ["Returns the connected network address"]
+			},
+			"GetCert": {
+				"descriptions": ["Gets the X.509 certificate's subject name"]
+			},
+			"GetPort": {
+				"descriptions": ["Returns the connected network port"]
+			},
+			"IsOpen": {
+				"descriptions": ["Returns rather the socket is open"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"ReadBuffer": {
+				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+			},
+			"ReadByte": {
+				"descriptions": ["Reads a byte"]
+			},
+			"ReadLine": {
+				"descriptions": ["Reads a string until a newline or character return is detected"]
+			},
+			"WriteBuffer": {
+				"descriptions": ["Writes bytes from a byte buffer", "Writes characters from a character buffer"]
+			},
+			"WriteByte": {
+				"descriptions": ["Writes a byte"]
+			},
+			"WriteString": {
+				"descriptions": ["Writes a character string"]
+			}
+		}
+	},
+	"System.IO.Net.TCPSocket": {
+		"description": "TCP/IP socket",
+		"functions": {
+			"Close": {
+				"descriptions": ["Closes the socket"]
+			},
+			"Flush": {
+				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer."]
+			},
+			"GetAddress": {
+				"descriptions": ["Returns the connected network address"]
+			},
+			"GetPort": {
+				"descriptions": ["Returns the connected network port"]
+			},
+			"HostName": {
+				"descriptions": ["Reads the host name"]
+			},
+			"IsOpen": {
+				"descriptions": ["Returns rather the socket is open"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			},
+			"ReadBuffer": {
+				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+			},
+			"ReadByte": {
+				"descriptions": ["Reads a byte"]
+			},
+			"ReadLine": {
+				"descriptions": ["Reads a string until a newline or character return is detected"]
+			},
+			"Resolve": {
+				"descriptions": ["List of resolved IP addresses"]
+			},
+			"WriteBuffer": {
+				"descriptions": ["Writes bytes from a byte buffer", "Writes characters from a character buffer"]
+			},
+			"WriteByte": {
+				"descriptions": ["Writes a byte"]
+			},
+			"WriteString": {
+				"descriptions": ["Writes a character string"]
+			}
+		}
+	},
+	"System.IO.Net.TCPSocketServer": {
+		"description": "TCP/IP Server socket",
+		"functions": {
+			"Accept": {
+				"descriptions": ["Accepts a client connection"]
+			},
+			"Close": {
+				"descriptions": ["Closes the server socket"]
+			},
+			"Listen": {
+				"descriptions": ["Listens for incoming client connections"]
+			},
+			"New": {
+				"descriptions": ["Default constructor"]
+			}
+		}
+	},
+	"System.Introspection.Class": {
+		"description": "Represents a runtime class",
+		"functions": {
+			"GetMethodNumber": {
+				"descriptions": ["Returns the number of methods associated with the class"]
+			},
+			"GetMethods": {
+				"descriptions": ["Returns an array of associated methods"]
+			},
+			"GetName": {
+				"descriptions": ["Returns the type name of the class"]
+			},
+			"Instance": {
+				"descriptions": ["Creates an instance of the given class. The class must have a zero-parameter constructor to support this operation."]
+			},
+			"IsLoaded": {
+				"descriptions": ["Checks rather the class has been loaded"]
+			}
+		}
+	},
+	"System.Introspection.DataType": {
+		"description": "Represents a runtime data type",
+		"functions": {
+			"GetClassName": {
+				"descriptions": ["Returns array the class type name"]
+			},
+			"GetDimension": {
+				"descriptions": ["Returns array dimension size of the data type. Will return 0 if type is a scalar"]
+			},
+			"GetType": {
+				"descriptions": ["Returns the data type's type"]
+			}
+		}
+	},
+	"System.Introspection.Method": {
+		"description": "Represents a runtime method or function",
+		"functions": {
+			"GetClass": {
+				"descriptions": ["Returns the class associated with this method"]
+			},
+			"GetName": {
+				"descriptions": ["Returns the name of the method"]
+			},
+			"GetParameters": {
+				"descriptions": ["Returns an array of method parameters"]
+			},
+			"GetReturn": {
+				"descriptions": ["Returns the method's return type"]
+			}
+		}
+	},
+	"System.Matrix.Matrix2D": {
+		"description": "Encapsulates 2D matrix operations",
+		"functions": {
+			"Add": {
+				"descriptions": ["Adds a constant to a matrix", "Adds a constant to a matrix", "Adds two matrices"]
+			},
+			"Concatenate": {
+				"descriptions": ["Concatenates two matrix"]
+			},
+			"Divide": {
+				"descriptions": ["Divides a constant by a matrix", "Divides a constant by a matrix", "Divides two matrices"]
+			},
+			"Dot": {
+				"descriptions": ["Calculates the dot product."]
+			},
+			"DotSigmoid": {
+				"descriptions": ["Calculates the Dot Product applying while applying the Sigmoid function to all elements"]
+			},
+			"Multiple": {
+				"descriptions": ["Multiplies a constant by a matrix", "Multiplies a constant by a matrix", "Multiplies two matrices using the Hadamard rule"]
+			},
+			"Random": {
+				"descriptions": ["Generates a random 2D array of values from 0.0 to 1.0"]
+			},
+			"RandomNormal": {
+				"descriptions": ["Generates a random normal distribution of values", "Generates a random normal value"]
+			},
+			"Sigmoid": {
+				"descriptions": ["Sigmoid 'S' function", "Applies the Sigmoid function to all elements"]
+			},
+			"Split": {
+				"descriptions": ["Splits a matrix"]
+			},
+			"Subtract": {
+				"descriptions": ["Subtracts a constant from a matrix", "Adds a constant to a matrix", "Subtracts two matrices"]
+			},
+			"Transpose": {
+				"descriptions": ["Transpose a matrix swapping rows and columns."]
+			}
+		}
+	},
+	"System.Time.Date": {
+		"description": "Provides date and time functionality",
+		"functions": {
+			"AddDays": {
+				"descriptions": ["Add days to the date"]
+			},
+			"AddHours": {
+				"descriptions": ["Add hours to the date"]
+			},
+			"AddMinutes": {
+				"descriptions": ["Add minutes to the date"]
+			},
+			"AddSeconds": {
+				"descriptions": ["Add seconds to the date"]
+			},
+			"Clone": {
+				"descriptions": ["Clones the object instance"]
+			},
+			"Compare": {
+				"descriptions": ["Compares two dates"]
+			},
+			"GetDay": {
+				"descriptions": ["Returns the day"]
+			},
+			"GetDayName": {
+				"descriptions": ["Returns name of the day"]
+			},
+			"GetHours": {
+				"descriptions": ["Returns the hours"]
+			},
+			"GetMinutes": {
+				"descriptions": ["Returns the minutes"]
+			},
+			"GetMonth": {
+				"descriptions": ["Returns the month"]
+			},
+			"GetMonthName": {
+				"descriptions": ["Returns name of the month"]
+			},
+			"GetSeconds": {
+				"descriptions": ["Returns the seconds"]
+			},
+			"GetYear": {
+				"descriptions": ["Returns the year"]
+			},
+			"HashID": {
+				"descriptions": ["Returns a hash ID for the given class"]
+			},
+			"New": {
+				"descriptions": ["Default constructor", "Constructor", "Constructor, sets time to midnight of the given day", "Constructor"]
+			},
+			"ToShortString": {
+				"descriptions": ["Creates a shortened string representation of the date"]
+			},
+			"ToString": {
+				"descriptions": ["Creates a string representation of the date"]
+			}
+		}
+	},
+	"System.Time.Timer": {
+		"description": "Provides elapsed time",
+		"functions": {
+			"End": {
+				"descriptions": ["Ends the timer"]
+			},
+			"GetElapsedTime": {
+				"descriptions": ["Gets the elapsed time in seconds"]
+			},
+			"Start": {
+				"descriptions": ["Starts the timer"]
+			}
+		}
+	}
+}

@@ -48,50 +48,75 @@ class JsonMaker {
 			return false;
 		};
 ~#
-
 		## bundles
 		bundles := @parser->GetBundles();
 		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
-"{"->PrintLine();
+
+		buffer := "{\n";
 		each(i : bundle_pairs) {
 			bundle_pair := bundle_pairs->Get(i);
 			bundle_name := bundle_pair->GetFirst();
 
 			# classes
 			classes := bundle_pair->GetSecond()->GetClasses();
-			class_key_values := classes->GetKeyValues()<Pair<String, ClassSnippet>>;
-			
-			each(j : class_key_values) {
-				class_key_value := class_key_values->Get(j);
-				class_name := String->New(bundle_name);
-				class_name += '.';
-				class_name += class_key_value->GetFirst();
+			if(<>classes->IsEmpty()) {
+				class_key_values := classes->GetKeyValues()<Pair<String, ClassSnippet>>;
+				each(j : class_key_values) {
+					class_key_value := class_key_values->Get(j);
+					class_name := String->New(bundle_name);
+					class_name += '.';
+					class_name += class_key_value->GetFirst();
 
-				ProcessClass(class_name, class_key_value->GetSecond(), j + 1 < class_key_values->Size());
-			};
+					ProcessClass(class_name, class_key_value->GetSecond(), buffer);
+					if(j + 1 < class_key_values->Size()) {
+						buffer += ",\n\t";
+					};
+				};
 
-			if(i + 1 < bundle_pairs->Size()) {
-"\t,"->PrintLine();
+				if(i + 1 < bundle_pairs->Size()) {
+					buffer += ",\n\t";
+				};
 			};
 			
 			# TODO: enums
 		};
-"}"->PrintLine();
+		buffer += "}";
 		
+		buffer->PrintLine();
+
 		return true;
 	}
 
-	method : ProcessClass(name : String, snippet : ClassSnippet, has_next : Bool) ~ Nil {
+	method : ProcessClass(class_name : String, snippet : ClassSnippet, buffer : String) ~ Nil {
 		description := snippet->GetDesc();
-"\t\"{$name}\": {"->PrintLine();
-"\t\t\"description\": "->Print();
-"\"{$description}\"\n\t}"->Print();
 
-		if(has_next) {
-			','->PrintLine();
-		}
-		else {
-			'\n'->Print();
+		buffer += "\"{$class_name}\": {\n";
+		buffer += "\t\t\"description\": ";
+		buffer += "\"{$description}\",\n";
+		buffer += "\t\t\"functions\": {\n";
+
+		function_names := snippet->GetFunctionNames()<String>;
+		each(i : function_names) {
+			function_name := function_names->Get(i);
+
+			buffer += "\t\t\t\"{$function_name}\": {\n";
+			buffer += "\t\t\t\t\"descriptions\": [";
+
+			functions := snippet->GetFunctions(function_name)<FuncSnippet>;
+			each(j : functions) {
+				description := functions->Get(j)->GetDesc();
+				buffer += "\"{$description}\"";
+				if(j + 1 < functions->Size()) {
+					buffer += ", ";
+				};
+			};
+			buffer += "]\n\t\t\t}";
+
+			if(i + 1 < function_names->Size()) {
+				buffer += ",\n";
+			};
 		};
+
+		buffer += "\n\t\t}\n\t}";
 	}
 }
