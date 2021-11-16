@@ -8,7 +8,7 @@ bundle LSP {
 	~#
 	class AstProxy {
 		@analysis : Analysis;
-		@doc_cache : static : Hash<String, String>;
+		@doc_cache : static : Cache<String, String>;
 		@is_debug : Bool;
 
 		New(workspace : LspWorkspace, uri : String, use_alt : Bool, is_debug : Bool) {
@@ -20,7 +20,7 @@ bundle LSP {
 		}
 
 		function : Init() ~ Nil {
-			@doc_cache := Hash->New()<String, String>;
+			@doc_cache := Cache->New(Cache->Type->LRU, 16)<String, String>;
 		}
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
