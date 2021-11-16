@@ -139,8 +139,6 @@ bundle LSP {
 			return Nil;
 		}
 
-		
-
 		method : public : CodeRename(new_name : String, line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
@@ -388,7 +386,7 @@ bundle LSP {
 			}
 			else {
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("### Read file: '{$@doc_path} ###");
+					System.IO.File.Logger->Instance()->Info("### Read file: '{$@doc_path}' ###");
 				};
 
 				parser := JsonParser->New(System.IO.File.FileReader->ReadFile(@doc_path));
