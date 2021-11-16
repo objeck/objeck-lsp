@@ -371,7 +371,19 @@ bundle LSP {
 			klass_json := @doc_cache->Find(klass_name);
 
 			if(klass_json <> Nil) {
-				return klass_json->Get("description")->GetValue();
+				if(method_name = Nil) {
+					return klass_json->Get("description")->GetValue();
+				}
+				else {
+					key := String->New("functions/");
+					key += String->New(method_name);
+					key += "/descriptions";
+
+					mthd_json := klass_json->FindElements(key);
+					if(mthd_json <> Nil) {
+						return mthd_json->Get(0)->GetValue();
+					};
+				};
 			}
 			else {
 				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
@@ -392,54 +404,14 @@ bundle LSP {
 					key += String->New(method_name);
 					key += "/descriptions";
 
-					parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
-					if(parser->Parse()) {
-						mthd_json := parser->GetRoot()->FindElements(key);
-						if(mthd_json <> Nil) {
-							return mthd_json->Get(0)->GetValue();
-						};
+					mthd_json := klass_json->FindElements(key);
+					if(mthd_json <> Nil) {
+						return mthd_json->Get(0)->GetValue();
 					};
 				};
 			};
 
 			return Nil;
-#~
-			key := String->New(klass_name);
-			if(method_name = Nil) {
-				key += "/description";
-			}
-			else {
-				key += "/functions/";
-				key += String->New(method_name);
-				key += "/descriptions";
-			};
-
-			# TODO: LRU queue
-			value := @doc_cache->Find(key);
-			if(value = Nil) {
-"******* LOADING: key='{$key}'***********"->PrintLine();				
-				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
-				if(parser->Parse() & klass_name <> Nil) {
-					result := parser->GetRoot()->FindElements(key);
-					if(result <> Nil) {
-						if(result->GetType() = JsonElement->JsonType->ARRAY) {
-							value := result->Get(0)->GetValue();
-							@doc_cache->Insert(key, value);
-						}
-						else {
-							value := result->GetValue();
-							@doc_cache->Insert(key, value);
-						};
-
-"******* INSERT: key='{$key}, value='{$value}'***********"->PrintLine();				
-
-						return value;
-					};
-				};
-			};
-
-			return value;
-~#			
 		}
 		
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
