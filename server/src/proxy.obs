@@ -385,7 +385,7 @@ bundle LSP {
 				};
 			}
 			else {
-				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("D:/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
+				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("C:/Users/objec/Documents/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
 				if(parser->Parse()) {
 					klass_json := parser->GetRoot()->Get(klass_name);
 					if(klass_json <> Nil) {

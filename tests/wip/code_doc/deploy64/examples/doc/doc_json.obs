@@ -117,8 +117,10 @@ class JsonMaker {
 
 			functions := snippet->GetFunctions(function_name)<FuncSnippet>;
 			each(j : functions) {
-				description := functions->Get(j)->GetDesc();
-				buffer += "\"{$description}\"";
+				func := functions->Get(j);
+				description := func->GetDesc();
+				signature := func->GetSignature();
+				buffer += "\"{$description}\\n\\n```{$signature}```\"";
 				if(j + 1 < functions->Size()) {
 					buffer += ", ";
 				};

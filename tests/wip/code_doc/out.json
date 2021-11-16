@@ -3,16 +3,54 @@
 		"description": "Backward iterator",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced Backward"]
+				"descriptions": ["Checks to see the pointer can be advanced Backward\n\n```method : public : More() ~ Bool```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer Backward"]
+				"descriptions": ["Advances the pointer Backward\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : Remove() ~ Nil```"]
+			}
+		}
+	},
+	"Collection.Generic.Cache": {
+		"description": "Object MRU/LRU cache",
+		"functions": {
+			"Empty": {
+				"descriptions": ["Clears the vector\n\n```method : public : Empty() ~ Nil```"]
+			},
+			"Find": {
+				"descriptions": ["Searches for a value in cache\n\n```method : public : Find(key:K) ~ S```"]
+			},
+			"GetKeyValues": {
+				"descriptions": ["Gets a collection of key/value pairs\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
+			},
+			"GetKeys": {
+				"descriptions": ["Get a collection of keys\n\n```method : public : GetKeys() ~ Vector&lt;K&gt;```"]
+			},
+			"GetValues": {
+				"descriptions": ["Gets a collection of values\n\n```method : public : GetValues() ~ Vector&lt;S&gt;```"]
+			},
+			"Has": {
+				"descriptions": ["Checks for a value in a cache\n\n```method : public : Has(key:K) ~ Bool```"]
+			},
+			"Insert": {
+				"descriptions": ["Inserts a value into the hash\n\n```method : public : Insert(key:K, value:S) ~ Bool```"]
+			},
+			"IsEmpty": {
+				"descriptions": ["Checks to see if the vector is empty\n\n```method : public : IsEmpty() ~ Bool```"]
+			},
+			"New": {
+				"descriptions": ["Default constructor\n\n```New(max:Int)```"]
+			},
+			"Remove": {
+				"descriptions": ["Removes a value from the cache\n\n```method : public : Remove(key:K) ~ Bool```"]
+			},
+			"Size": {
+				"descriptions": ["Size of cache\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -20,16 +58,16 @@
 		"description": "Backward iterator of comparables",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced Backward"]
+				"descriptions": ["Checks to see the pointer can be advanced Backward\n\n```method : public : More() ~ Bool```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer Backward"]
+				"descriptions": ["Advances the pointer Backward\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : Remove() ~ Nil```"]
 			}
 		}
 	},
@@ -37,16 +75,16 @@
 		"description": "Forward iterator of comparables",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced"]
+				"descriptions": ["Checks to see the pointer can be advanced\n\n```method : public : More() ~ Bool```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer"]
+				"descriptions": ["Advances the pointer\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : Remove() ~ Nil```"]
 			}
 		}
 	},
@@ -54,85 +92,85 @@
 		"description": "List of comparable generics",
 		"functions": {
 			"AddBack": {
-				"descriptions": ["Adds a value to the end"]
+				"descriptions": ["Adds a value to the end\n\n```method : public : native : AddBack(value:H) ~ Nil```"]
 			},
 			"AddFront": {
-				"descriptions": ["Adds a value to the front"]
+				"descriptions": ["Adds a value to the front\n\n```method : public : native : AddFront(value:H) ~ Nil```"]
 			},
 			"Back": {
-				"descriptions": ["Returns the last element in the list"]
+				"descriptions": ["Returns the last element in the list\n\n```method : public : Back() ~ H```"]
 			},
 			"BackwardIterator": {
-				"descriptions": ["Instance of a backward iterator"]
+				"descriptions": ["Instance of a backward iterator\n\n```method : public : BackwardIterator() ~ CompareBackwardIterator&lt;H&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the list"]
+				"descriptions": ["Clears the list\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Filter": {
-				"descriptions": ["Uses the given function to filter out values"]
+				"descriptions": ["Uses the given function to filter out values\n\n```method : public : Filter(f:(H)~Bool) ~ CompareList&lt;H&gt;```"]
 			},
 			"Find": {
-				"descriptions": ["Finds a value in the list and sets the pointer"]
+				"descriptions": ["Finds a value in the list and sets the pointer\n\n```method : public : Find(value:H) ~ H```"]
 			},
 			"Forward": {
-				"descriptions": ["Moves the pointer to the end of the list"]
+				"descriptions": ["Moves the pointer to the end of the list\n\n```method : public : Forward() ~ Nil```"]
 			},
 			"ForwardIterator": {
-				"descriptions": ["Instance of a forward iterator"]
+				"descriptions": ["Instance of a forward iterator\n\n```method : public : ForwardIterator() ~ CompareForwardIterator&lt;H&gt;```"]
 			},
 			"Front": {
-				"descriptions": ["Returns the first element in the list"]
+				"descriptions": ["Returns the first element in the list\n\n```method : public : Front() ~ H```"]
 			},
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"Has": {
-				"descriptions": ["Searches for a value"]
+				"descriptions": ["Searches for a value\n\n```method : public : Has(value:H) ~ Bool```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a value into the list based upon the pointer location"]
+				"descriptions": ["Inserts a value into the list based upon the pointer location\n\n```method : public : native : Insert(value:H) ~ Bool```"]
 			},
 			"IsBack": {
-				"descriptions": ["Checks to see if the pointer is at the end of the list"]
+				"descriptions": ["Checks to see if the pointer is at the end of the list\n\n```method : public : IsBack() ~ Bool```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the list is empty"]
+				"descriptions": ["Checks to see if the list is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"IsFront": {
-				"descriptions": ["Checks to see if the pointer is at the front of the list"]
+				"descriptions": ["Checks to see if the pointer is at the front of the list\n\n```method : public : IsFront() ~ Bool```"]
 			},
 			"Map": {
-				"descriptions": ["Maps the given function to each value in the list"]
+				"descriptions": ["Maps the given function to each value in the list\n\n```method : public : Map(f:(H)~H) ~ CompareList&lt;H&gt;```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced"]
+				"descriptions": ["Checks to see the pointer can be advanced\n\n```method : public : More() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer"]
+				"descriptions": ["Advances the pointer\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Previous": {
-				"descriptions": ["Retreats the pointer"]
+				"descriptions": ["Retreats the pointer\n\n```method : public : Previous() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position", "Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : native : Remove() ~ Nil```", "Removes the element at the pointer position\n\n```method : public : native : Remove(node:CompareListNode&lt;H&gt;) ~ Nil```"]
 			},
 			"RemoveBack": {
-				"descriptions": ["Removes the last value from the list"]
+				"descriptions": ["Removes the last value from the list\n\n```method : public : RemoveBack() ~ Nil```"]
 			},
 			"RemoveFront": {
-				"descriptions": ["Removes the first value from the list"]
+				"descriptions": ["Removes the first value from the list\n\n```method : public : RemoveFront() ~ Nil```"]
 			},
 			"Rest": {
-				"descriptions": ["List of all but first element"]
+				"descriptions": ["List of all but first element\n\n```method : public : Rest() ~ CompareList&lt;H&gt;```"]
 			},
 			"Rewind": {
-				"descriptions": ["Moves the pointer to the start of the list"]
+				"descriptions": ["Moves the pointer to the start of the list\n\n```method : public : Rewind() ~ Nil```"]
 			},
 			"Size": {
-				"descriptions": ["Size of list"]
+				"descriptions": ["Size of list\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -140,61 +178,61 @@
 		"description": "Growable array of comparable generics",
 		"functions": {
 			"AddBack": {
-				"descriptions": ["Adds a vector of values to the end of the vector", "Adds a value to the end"]
+				"descriptions": ["Adds a vector of values to the end of the vector\n\n```method : public : AddBack(values:Vector&lt;H&gt;) ~ Nil```", "Adds a value to the end\n\n```method : public : AddBack(value:H) ~ Nil```"]
 			},
 			"BinarySearch": {
-				"descriptions": ["Performs a binary search O(log n)"]
+				"descriptions": ["Performs a binary search O(log n)\n\n```method : public : native : BinarySearch(value:H) ~ Int```"]
 			},
 			"Compress": {
-				"descriptions": ["Compresses the Vector freeing unused memory"]
+				"descriptions": ["Compresses the Vector freeing unused memory\n\n```method : public : Compress() ~ Nil```"]
 			},
 			"Each": {
-				"descriptions": ["Function called for each element"]
+				"descriptions": ["Function called for each element\n\n```method : public : Each(f:(H)~Nil) ~ CompareVector&lt;H&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the vector"]
+				"descriptions": ["Clears the vector\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Filter": {
-				"descriptions": ["Uses the given function to filter out values"]
+				"descriptions": ["Uses the given function to filter out values\n\n```method : public : Filter(f:(H)~Bool) ~ CompareVector&lt;H&gt;```"]
 			},
 			"Find": {
-				"descriptions": ["Finds a given value in the vector via linear search"]
+				"descriptions": ["Finds a given value in the vector via linear search\n\n```method : public : Find(value:H) ~ Int```"]
 			},
 			"Get": {
-				"descriptions": ["Gets an indexed value"]
+				"descriptions": ["Gets an indexed value\n\n```method : public : Get(index:Int) ~ H```"]
 			},
 			"Has": {
-				"descriptions": ["Check of the given value is in the vector"]
+				"descriptions": ["Check of the given value is in the vector\n\n```method : public : Has(value:H) ~ Bool```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the vector is empty"]
+				"descriptions": ["Checks to see if the vector is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"Limit": {
-				"descriptions": ["Returns a limited list"]
+				"descriptions": ["Returns a limited list\n\n```method : public : Limit(l:Int) ~ CompareVector&lt;H&gt;```"]
 			},
 			"Map": {
-				"descriptions": ["Maps the given function to each value in the vector"]
+				"descriptions": ["Maps the given function to each value in the vector\n\n```method : public : Map(f:(H)~H) ~ CompareVector&lt;H&gt;```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(values:H[])```", "Copy constructor\n\n```New(values:Vector&lt;H&gt;)```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes an indexed value"]
+				"descriptions": ["Removes an indexed value\n\n```method : public : Remove(i:Int) ~ H```"]
 			},
 			"RemoveBack": {
-				"descriptions": ["Removes the last value"]
+				"descriptions": ["Removes the last value\n\n```method : public : RemoveBack() ~ H```"]
 			},
 			"Set": {
-				"descriptions": ["Sets an indexed value"]
+				"descriptions": ["Sets an indexed value\n\n```method : public : Set(value:H, index:Int) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Size of vector"]
+				"descriptions": ["Size of vector\n\n```method : public : Size() ~ Int```"]
 			},
 			"Sort": {
-				"descriptions": ["Sorts the values in the vector"]
+				"descriptions": ["Sorts the values in the vector\n\n```method : public : native : Sort() ~ Nil```"]
 			},
 			"ToArray": {
-				"descriptions": ["Converts the vector into an object array"]
+				"descriptions": ["Converts the vector into an object array\n\n```method : public : ToArray() ~ H[]```"]
 			}
 		}
 	},
@@ -202,16 +240,16 @@
 		"description": "Forward iterator",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced"]
+				"descriptions": ["Checks to see the pointer can be advanced\n\n```method : public : More() ~ Bool```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer"]
+				"descriptions": ["Advances the pointer\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : Remove() ~ Nil```"]
 			}
 		}
 	},
@@ -219,40 +257,40 @@
 		"description": "Hash table of generics",
 		"functions": {
 			"Capacity": {
-				"descriptions": ["Gets the hash table capacity"]
+				"descriptions": ["Gets the hash table capacity\n\n```method : public : Capacity() ~ Hash-&gt;Capacity```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the map"]
+				"descriptions": ["Clears the map\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Find": {
-				"descriptions": ["Searches for a value in a hash"]
+				"descriptions": ["Searches for a value in a hash\n\n```method : public : native : Find(key:K) ~ V```"]
 			},
 			"GetKeyValues": {
-				"descriptions": ["Gets a collection of key/value pairs"]
+				"descriptions": ["Gets a collection of key/value pairs\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
 			},
 			"GetKeys": {
-				"descriptions": ["Get a collection of keys"]
+				"descriptions": ["Get a collection of keys\n\n```method : public : native : GetKeys() ~ Vector&lt;K&gt;```"]
 			},
 			"GetValues": {
-				"descriptions": ["Gets a collection of values"]
+				"descriptions": ["Gets a collection of values\n\n```method : public : native : GetValues() ~ Vector&lt;V&gt;```"]
 			},
 			"Has": {
-				"descriptions": ["Checks for a value in a hash"]
+				"descriptions": ["Checks for a value in a hash\n\n```method : public : Has(key:K) ~ Bool```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a value into the hash"]
+				"descriptions": ["Inserts a value into the hash\n\n```method : public : Insert(key:K, value:V) ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Default constructor\n\n```New(capacity:Hash-&gt;Capacity)```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes a value from the hash"]
+				"descriptions": ["Removes a value from the hash\n\n```method : public : native : Remove(key:K) ~ Bool```"]
 			},
 			"Resize": {
-				"descriptions": ["Resizes the hash table"]
+				"descriptions": ["Resizes the hash table\n\n```method : public : native : Resize(capacity:Hash-&gt;Capacity, auto_resize:Bool) ~ Nil```"]
 			},
 			"Size": {
-				"descriptions": ["Size of map"]
+				"descriptions": ["Size of map\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -260,85 +298,85 @@
 		"description": "List of generics",
 		"functions": {
 			"AddBack": {
-				"descriptions": ["Adds a value to the end"]
+				"descriptions": ["Adds a value to the end\n\n```method : public : native : AddBack(value:H) ~ Nil```"]
 			},
 			"AddFront": {
-				"descriptions": ["Adds a value to the front"]
+				"descriptions": ["Adds a value to the front\n\n```method : public : native : AddFront(value:H) ~ Nil```"]
 			},
 			"Back": {
-				"descriptions": ["Returns the last element in the list"]
+				"descriptions": ["Returns the last element in the list\n\n```method : public : Back() ~ H```"]
 			},
 			"BackwardIterator": {
-				"descriptions": ["Instance of a backward iterator"]
+				"descriptions": ["Instance of a backward iterator\n\n```method : public : BackwardIterator() ~ BackwardIterator&lt;H&gt;```"]
 			},
 			"Each": {
-				"descriptions": ["Function called for each element"]
+				"descriptions": ["Function called for each element\n\n```method : public : Each(f:(H)~Nil) ~ List&lt;H&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the list"]
+				"descriptions": ["Clears the list\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Filter": {
-				"descriptions": ["Uses the given function to filter out values"]
+				"descriptions": ["Uses the given function to filter out values\n\n```method : public : Filter(f:(H)~Bool) ~ List&lt;H&gt;```"]
 			},
 			"Forward": {
-				"descriptions": ["Moves the pointer to the end of the list"]
+				"descriptions": ["Moves the pointer to the end of the list\n\n```method : public : Forward() ~ Nil```"]
 			},
 			"ForwardIterator": {
-				"descriptions": ["Instance of a forward iterator"]
+				"descriptions": ["Instance of a forward iterator\n\n```method : public : ForwardIterator() ~ ForwardIterator&lt;H&gt;```"]
 			},
 			"Front": {
-				"descriptions": ["Returns the first element in the list"]
+				"descriptions": ["Returns the first element in the list\n\n```method : public : Front() ~ H```"]
 			},
 			"Get": {
-				"descriptions": ["Gets the value that's currently pointed to"]
+				"descriptions": ["Gets the value that's currently pointed to\n\n```method : public : Get() ~ H```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a value into the list based upon the pointer location"]
+				"descriptions": ["Inserts a value into the list based upon the pointer location\n\n```method : public : native : Insert(value:H) ~ Bool```"]
 			},
 			"IsBack": {
-				"descriptions": ["Checks to see if the pointer is at the end of the list"]
+				"descriptions": ["Checks to see if the pointer is at the end of the list\n\n```method : public : IsBack() ~ Bool```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the list is empty"]
+				"descriptions": ["Checks to see if the list is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"IsFront": {
-				"descriptions": ["Checks to see if the pointer is at the front of the list"]
+				"descriptions": ["Checks to see if the pointer is at the front of the list\n\n```method : public : IsFront() ~ Bool```"]
 			},
 			"Limit": {
-				"descriptions": ["Returns a limited list"]
+				"descriptions": ["Returns a limited list\n\n```method : public : Limit(l:Int) ~ List&lt;H&gt;```"]
 			},
 			"Map": {
-				"descriptions": ["Maps the given function to each value in the list"]
+				"descriptions": ["Maps the given function to each value in the list\n\n```method : public : Map(f:(H)~H) ~ List&lt;H&gt;```"]
 			},
 			"More": {
-				"descriptions": ["Checks to see the pointer can be advanced"]
+				"descriptions": ["Checks to see the pointer can be advanced\n\n```method : public : More() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Next": {
-				"descriptions": ["Advances the pointer"]
+				"descriptions": ["Advances the pointer\n\n```method : public : Next() ~ Nil```"]
 			},
 			"Previous": {
-				"descriptions": ["Retreats the pointer"]
+				"descriptions": ["Retreats the pointer\n\n```method : public : Previous() ~ Nil```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes the element at the pointer position"]
+				"descriptions": ["Removes the element at the pointer position\n\n```method : public : native : Remove() ~ Nil```"]
 			},
 			"RemoveBack": {
-				"descriptions": ["Removes the last value from the list"]
+				"descriptions": ["Removes the last value from the list\n\n```method : public : RemoveBack() ~ Nil```"]
 			},
 			"RemoveFront": {
-				"descriptions": ["Removes the first value from the list"]
+				"descriptions": ["Removes the first value from the list\n\n```method : public : RemoveFront() ~ Nil```"]
 			},
 			"Rest": {
-				"descriptions": ["List of all but first element"]
+				"descriptions": ["List of all but first element\n\n```method : public : Rest() ~ List&lt;H&gt;```"]
 			},
 			"Rewind": {
-				"descriptions": ["Moves the pointer to the start of the list"]
+				"descriptions": ["Moves the pointer to the start of the list\n\n```method : public : Rewind() ~ Nil```"]
 			},
 			"Size": {
-				"descriptions": ["Size of list"]
+				"descriptions": ["Size of list\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -346,46 +384,46 @@
 		"description": "Balanced tree of generics",
 		"functions": {
 			"Each": {
-				"descriptions": ["Function called for each element"]
+				"descriptions": ["Function called for each element\n\n```method : public : Each(f:(K,V)~Nil) ~ Map&lt;K,V&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the map"]
+				"descriptions": ["Clears the map\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Filter": {
-				"descriptions": ["Uses the given function to filter out values"]
+				"descriptions": ["Uses the given function to filter out values\n\n```method : public : Filter(f:(K)~Bool) ~ Map&lt;K,V&gt;```"]
 			},
 			"Find": {
-				"descriptions": ["Searches for a value in a map"]
+				"descriptions": ["Searches for a value in a map\n\n```method : public : Find(key:K) ~ V```"]
 			},
 			"GetKeyValues": {
-				"descriptions": ["Get a collection of keys"]
+				"descriptions": ["Get a collection of keys\n\n```method : public : GetKeyValues() ~ Collection.Generic.Vector&lt;Pair&gt;```"]
 			},
 			"GetKeys": {
-				"descriptions": ["Get a collection of keys"]
+				"descriptions": ["Get a collection of keys\n\n```method : public : GetKeys() ~ Collection.Generic.Vector&lt;K&gt;```"]
 			},
 			"GetValues": {
-				"descriptions": ["Gets a collection of values"]
+				"descriptions": ["Gets a collection of values\n\n```method : public : GetValues() ~ Collection.Generic.Vector&lt;V&gt;```"]
 			},
 			"Has": {
-				"descriptions": ["Checks for a value in a map"]
+				"descriptions": ["Checks for a value in a map\n\n```method : public : Has(key:K) ~ Bool```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a value into the map"]
+				"descriptions": ["Inserts a value into the map\n\n```method : public : Insert(key:K, value:V) ~ Nil```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the queue is empty"]
+				"descriptions": ["Checks to see if the queue is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes a value from the map"]
+				"descriptions": ["Removes a value from the map\n\n```method : public : Remove(key:K) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Size of queue"]
+				"descriptions": ["Size of queue\n\n```method : public : Size() ~ Int```"]
 			},
 			"Zip": {
-				"descriptions": ["Creates a map from a vector of keys and values"]
+				"descriptions": ["Creates a map from a vector of keys and values\n\n```function : public : Zip(keys:CompareVector&lt;K&gt;, values:Vector&lt;V&gt;) ~ Map&lt;K,V&gt;```"]
 			}
 		}
 	},
@@ -393,46 +431,46 @@
 		"description": "Binary tree that holds multiple values with the same key",
 		"functions": {
 			"Each": {
-				"descriptions": ["Function called for each element"]
+				"descriptions": ["Function called for each element\n\n```method : public : Each(f:(K,V)~Nil) ~ MultiMap&lt;K,V&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the set"]
+				"descriptions": ["Clears the set\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Filter": {
-				"descriptions": ["Uses the given function to filter out values"]
+				"descriptions": ["Uses the given function to filter out values\n\n```method : public : Filter(f:(K)~Bool) ~ MultiMap&lt;K,V&gt;```"]
 			},
 			"Find": {
-				"descriptions": ["Checks for a value in a map"]
+				"descriptions": ["Checks for a value in a map\n\n```method : public : Find(key:K) ~ Vector&lt;V&gt;```"]
 			},
 			"GetKeys": {
-				"descriptions": ["Get a collection of keys"]
+				"descriptions": ["Get a collection of keys\n\n```method : public : GetKeys() ~ Vector&lt;K&gt;```"]
 			},
 			"GetValues": {
-				"descriptions": ["Gets a collection of values"]
+				"descriptions": ["Gets a collection of values\n\n```method : public : GetValues() ~ Vector&lt;V&gt;```"]
 			},
 			"Has": {
-				"descriptions": ["Checks for a value in a map"]
+				"descriptions": ["Checks for a value in a map\n\n```method : public : Has(key:K) ~ Bool```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a value into the map"]
+				"descriptions": ["Inserts a value into the map\n\n```method : public : Insert(key:K, value:V) ~ Nil```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the queue is empty"]
+				"descriptions": ["Checks to see if the queue is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes a set of values from the map"]
+				"descriptions": ["Removes a set of values from the map\n\n```method : public : Remove(key:K) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Size of unique keys"]
+				"descriptions": ["Size of unique keys\n\n```method : public : Size() ~ Int```"]
 			},
 			"TotalSize": {
-				"descriptions": ["Size of values"]
+				"descriptions": ["Size of values\n\n```method : public : TotalSize() ~ Int```"]
 			},
 			"Zip": {
-				"descriptions": ["Creates a map from a vector of keys and values"]
+				"descriptions": ["Creates a map from a vector of keys and values\n\n```function : public : Zip(keys:CompareVector&lt;K&gt;, values:Vector&lt;V&gt;) ~ MultiMap&lt;K,V&gt;```"]
 			}
 		}
 	},
@@ -440,25 +478,25 @@
 		"description": "Generic pair",
 		"functions": {
 			"Compare": {
-				"descriptions": ["Compares two objects based upon first value"]
+				"descriptions": ["Compares two objects based upon first value\n\n```method : public : Compare(first:System.Compare) ~ Int```"]
 			},
 			"GetFirst": {
-				"descriptions": ["Gets the first value"]
+				"descriptions": ["Gets the first value\n\n```method : public : GetFirst() ~ F```"]
 			},
 			"GetSecond": {
-				"descriptions": ["Gets the second value"]
+				"descriptions": ["Gets the second value\n\n```method : public : GetSecond() ~ S```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns the class default hash ID"]
+				"descriptions": ["Returns the class default hash ID\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(first:F, second:S)```"]
 			},
 			"SetFirst": {
-				"descriptions": ["Sets the first value"]
+				"descriptions": ["Sets the first value\n\n```method : public : SetFirst(first:F) ~ Nil```"]
 			},
 			"SetSecond": {
-				"descriptions": ["Sets the second value"]
+				"descriptions": ["Sets the second value\n\n```method : public : SetSecond(second:S) ~ Nil```"]
 			}
 		}
 	},
@@ -466,25 +504,25 @@
 		"description": "Queue of generics",
 		"functions": {
 			"Add": {
-				"descriptions": ["Adds a value to the back of the queue"]
+				"descriptions": ["Adds a value to the back of the queue\n\n```method : public : Add(value:H) ~ Nil```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the queue"]
+				"descriptions": ["Clears the queue\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Head": {
-				"descriptions": ["Get the value from the head of the queue"]
+				"descriptions": ["Get the value from the head of the queue\n\n```method : public : Head() ~ H```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the queue is empty"]
+				"descriptions": ["Checks to see if the queue is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes a value from the front of the queue"]
+				"descriptions": ["Removes a value from the front of the queue\n\n```method : public : Remove() ~ H```"]
 			},
 			"Size": {
-				"descriptions": ["Size of queue"]
+				"descriptions": ["Size of queue\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -492,28 +530,28 @@
 		"description": "Set of objects",
 		"functions": {
 			"Empty": {
-				"descriptions": ["Clears the set"]
+				"descriptions": ["Clears the set\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"GetKeys": {
-				"descriptions": ["Get a collection of keys"]
+				"descriptions": ["Get a collection of keys\n\n```method : public : GetKeys() ~ Vector&lt;K&gt;```"]
 			},
 			"Has": {
-				"descriptions": ["Checks for key in set"]
+				"descriptions": ["Checks for key in set\n\n```method : public : Has(key:K) ~ Bool```"]
 			},
 			"Insert": {
-				"descriptions": ["Inserts a key into the set"]
+				"descriptions": ["Inserts a key into the set\n\n```method : public : Insert(key:K) ~ Nil```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the map is empty"]
+				"descriptions": ["Checks to see if the map is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes a key from the set"]
+				"descriptions": ["Removes a key from the set\n\n```method : public : Remove(key:K) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Size of map"]
+				"descriptions": ["Size of map\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -521,25 +559,25 @@
 		"description": "Growable stack of generics",
 		"functions": {
 			"Empty": {
-				"descriptions": ["Clears the vector"]
+				"descriptions": ["Clears the vector\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the vector is empty"]
+				"descriptions": ["Checks to see if the vector is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			},
 			"Pop": {
-				"descriptions": ["Pushes a value from the stack"]
+				"descriptions": ["Pushes a value from the stack\n\n```method : public : Pop() ~ H```"]
 			},
 			"Push": {
-				"descriptions": ["Pushes a value onto the stack"]
+				"descriptions": ["Pushes a value onto the stack\n\n```method : public : Push(value:H) ~ Nil```"]
 			},
 			"Size": {
-				"descriptions": ["Size of stack"]
+				"descriptions": ["Size of stack\n\n```method : public : Size() ~ Int```"]
 			},
 			"Top": {
-				"descriptions": ["Check the top of the stack"]
+				"descriptions": ["Check the top of the stack\n\n```method : public : Top() ~ H```"]
 			}
 		}
 	},
@@ -547,49 +585,49 @@
 		"description": "Growable array of generics",
 		"functions": {
 			"AddBack": {
-				"descriptions": ["Adds a vector of values to the end of the vector", "Adds a value to the end"]
+				"descriptions": ["Adds a vector of values to the end of the vector\n\n```method : public : AddBack(values:Vector&lt;H&gt;) ~ Nil```", "Adds a value to the end\n\n```method : public : AddBack(value:H) ~ Nil```"]
 			},
 			"Compress": {
-				"descriptions": ["Compresses the Vector freeing unused memory"]
+				"descriptions": ["Compresses the Vector freeing unused memory\n\n```method : public : Compress() ~ Nil```"]
 			},
 			"Each": {
-				"descriptions": ["Function called for each element"]
+				"descriptions": ["Function called for each element\n\n```method : public : Each(f:(H)~Nil) ~ Vector&lt;H&gt;```"]
 			},
 			"Empty": {
-				"descriptions": ["Clears the vector"]
+				"descriptions": ["Clears the vector\n\n```method : public : Empty() ~ Nil```"]
 			},
 			"Get": {
-				"descriptions": ["Gets an indexed value"]
+				"descriptions": ["Gets an indexed value\n\n```method : public : Get(index:Int) ~ H```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Checks to see if the vector is empty"]
+				"descriptions": ["Checks to see if the vector is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"Limit": {
-				"descriptions": ["Returns a limited list"]
+				"descriptions": ["Returns a limited list\n\n```method : public : Limit(l:Int) ~ Vector&lt;H&gt;```"]
 			},
 			"Map": {
-				"descriptions": ["Maps the given function to each value in the vector"]
+				"descriptions": ["Maps the given function to each value in the vector\n\n```method : public : Map(f:(H)~H) ~ Vector&lt;H&gt;```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(values:H[])```", "Copy constructor\n\n```New(values:Vector&lt;H&gt;)```"]
 			},
 			"Remove": {
-				"descriptions": ["Removes an indexed value"]
+				"descriptions": ["Removes an indexed value\n\n```method : public : Remove(i:Int) ~ H```"]
 			},
 			"RemoveBack": {
-				"descriptions": ["Removes the last value"]
+				"descriptions": ["Removes the last value\n\n```method : public : RemoveBack() ~ H```"]
 			},
 			"Set": {
-				"descriptions": ["Sets an indexed value"]
+				"descriptions": ["Sets an indexed value\n\n```method : public : Set(value:H, index:Int) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Size of vector"]
+				"descriptions": ["Size of vector\n\n```method : public : Size() ~ Int```"]
 			},
 			"Swap": {
-				"descriptions": ["Swap two values in the vector"]
+				"descriptions": ["Swap two values in the vector\n\n```method : public : Swap(a:Int, b:Int) ~ Bool```"]
 			},
 			"ToArray": {
-				"descriptions": ["Converts the vector into an object array"]
+				"descriptions": ["Converts the vector into an object array\n\n```method : public : ToArray() ~ H[]```"]
 			}
 		}
 	},
@@ -597,16 +635,16 @@
 		"description": "Base class for all objects",
 		"functions": {
 			"GetClass": {
-				"descriptions": ["Returns the class associated with this instance"]
+				"descriptions": ["Returns the class associated with this instance\n\n```method : public : GetClass() ~ Introspection.Class```"]
 			},
 			"GetClassID": {
-				"descriptions": ["Returns the unique class ID"]
+				"descriptions": ["Returns the unique class ID\n\n```method : public : native : GetClassID() ~ ClassID```"]
 			},
 			"GetInstanceID": {
-				"descriptions": ["Returns the unique instance ID"]
+				"descriptions": ["Returns the unique instance ID\n\n```method : public : native : GetInstanceID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			}
 		}
 	},
@@ -614,13 +652,13 @@
 		"description": "Holds an base array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Get values"]
+				"descriptions": ["Get values\n\n```method : public : Get() ~ Base[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:Base[])```"]
 			},
 			"Set": {
-				"descriptions": ["Set values"]
+				"descriptions": ["Set values\n\n```method : public : Set(values:Base[]) ~ Nil```"]
 			}
 		}
 	},
@@ -628,13 +666,13 @@
 		"description": "Provides rudimentary compare functionality",
 		"functions": {
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns the class default hash ID"]
+				"descriptions": ["Returns the class default hash ID\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New()```"]
 			}
 		}
 	},
@@ -642,19 +680,19 @@
 		"description": "Boolean class",
 		"functions": {
 			"Error": {
-				"descriptions": ["Prints an error boolean value"]
+				"descriptions": ["Prints an error boolean value\n\n```function : public : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Prints an error boolean value with a newline"]
+				"descriptions": ["Prints an error boolean value with a newline\n\n```function : public : ErrorLine() ~ Nil```"]
 			},
 			"Print": {
-				"descriptions": ["Prints a boolean value"]
+				"descriptions": ["Prints a boolean value\n\n```function : public : Print() ~ Nil```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Prints a boolean value with a newline"]
+				"descriptions": ["Prints a boolean value with a newline\n\n```function : public : PrintLine() ~ Nil```"]
 			},
 			"ToString": {
-				"descriptions": ["Formats the boolean value into a string"]
+				"descriptions": ["Formats the boolean value into a string\n\n```function : public : native : ToString() ~ String```"]
 			}
 		}
 	},
@@ -662,22 +700,22 @@
 		"description": "Holds a boolean value",
 		"functions": {
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : native : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Get": {
-				"descriptions": ["Get boolean value"]
+				"descriptions": ["Get boolean value\n\n```method : public : Get() ~ Bool```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a boolean"]
+				"descriptions": ["Returns a unique hash ID for a boolean\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(value:Bool)```"]
 			},
 			"Set": {
-				"descriptions": ["Set boolean value"]
+				"descriptions": ["Set boolean value\n\n```method : public : Set(value:Bool) ~ Nil```"]
 			}
 		}
 	},
@@ -685,61 +723,61 @@
 		"description": "The byte class represents a 1-byte value.",
 		"functions": {
 			"Abs": {
-				"descriptions": ["Returns the absolute value"]
+				"descriptions": ["Returns the absolute value\n\n```function : public : native : Abs() ~ Byte```"]
 			},
 			"CRC32": {
-				"descriptions": ["Calculates the signed CRC32 value for the stream"]
+				"descriptions": ["Calculates the signed CRC32 value for the stream\n\n```function : public : CRC32() ~ Int```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two values"]
+				"descriptions": ["Compares two values\n\n```function : public : native : Compare(l:Byte, r:Byte) ~ Int```"]
 			},
 			"Compress": {
-				"descriptions": ["Compresses a byte stream using zlib"]
+				"descriptions": ["Compresses a byte stream using zlib\n\n```function : public : Compress() ~ Byte[]```"]
 			},
 			"Error": {
-				"descriptions": ["Prints error value"]
+				"descriptions": ["Prints error value\n\n```function : public : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Prints error value with newline"]
+				"descriptions": ["Prints error value with newline\n\n```function : public : ErrorLine() ~ Nil```"]
 			},
 			"IsNeg": {
-				"descriptions": ["Checks is a number is negative"]
+				"descriptions": ["Checks is a number is negative\n\n```function : public : native : IsNeg() ~ Bool```"]
 			},
 			"Max": {
-				"descriptions": ["Returns the largest byte value"]
+				"descriptions": ["Returns the largest byte value\n\n```function : public : Max(l:Byte, r:Byte) ~ Byte```"]
 			},
 			"Min": {
-				"descriptions": ["Returns the smallest byte value"]
+				"descriptions": ["Returns the smallest byte value\n\n```function : public : Min(l:Byte, r:Byte) ~ Byte```"]
 			},
 			"NotNeg": {
-				"descriptions": ["Checks is a number is not negative"]
+				"descriptions": ["Checks is a number is not negative\n\n```function : public : native : NotNeg() ~ Bool```"]
 			},
 			"Print": {
-				"descriptions": ["Prints value"]
+				"descriptions": ["Prints value\n\n```function : public : Print() ~ Nil```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Prints value with newline"]
+				"descriptions": ["Prints value with newline\n\n```function : public : PrintLine() ~ Nil```"]
 			},
 			"ToBinaryString": {
-				"descriptions": ["Returns a binary string representation of the value"]
+				"descriptions": ["Returns a binary string representation of the value\n\n```function : public : native : ToBinaryString() ~ String```"]
 			},
 			"ToChar": {
-				"descriptions": ["Returns the Character value"]
+				"descriptions": ["Returns the Character value\n\n```function : public : ToChar() ~ Char```"]
 			},
 			"ToFloat": {
-				"descriptions": ["Returns the Float value"]
+				"descriptions": ["Returns the Float value\n\n```function : public : ToFloat() ~ Float```"]
 			},
 			"ToHexString": {
-				"descriptions": ["Returns a hexadecimal string representation of the value"]
+				"descriptions": ["Returns a hexadecimal string representation of the value\n\n```function : public : native : ToHexString() ~ String```"]
 			},
 			"ToInt": {
-				"descriptions": ["Returns the Int value"]
+				"descriptions": ["Returns the Int value\n\n```function : public : ToInt() ~ Int```"]
 			},
 			"ToString": {
-				"descriptions": ["Returns a string representation of the value"]
+				"descriptions": ["Returns a string representation of the value\n\n```function : public : native : ToString() ~ String```"]
 			},
 			"Uncompress": {
-				"descriptions": ["Uncompresses a byte stream using zlib"]
+				"descriptions": ["Uncompresses a byte stream using zlib\n\n```function : public : Uncompress() ~ Byte[]```"]
 			}
 		}
 	},
@@ -747,13 +785,13 @@
 		"description": "Holds a byte array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Get values"]
+				"descriptions": ["Get values\n\n```method : public : Get() ~ Byte[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:Byte[])```"]
 			},
 			"Set": {
-				"descriptions": ["Sets values"]
+				"descriptions": ["Sets values\n\n```method : public : Set(values:Byte[]) ~ Nil```"]
 			}
 		}
 	},
@@ -761,22 +799,22 @@
 		"description": "Holds an byte value",
 		"functions": {
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : native : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Get": {
-				"descriptions": ["Get byte value"]
+				"descriptions": ["Get byte value\n\n```method : public : Get() ~ Byte```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a byte"]
+				"descriptions": ["Returns a unique hash ID for a byte\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(value:Byte)```"]
 			},
 			"Set": {
-				"descriptions": ["Set byte value"]
+				"descriptions": ["Set byte value\n\n```method : public : Set(value:Byte) ~ Nil```"]
 			}
 		}
 	},
@@ -784,55 +822,55 @@
 		"description": "Character class represents a Unicode character value.",
 		"functions": {
 			"Compare": {
-				"descriptions": ["Compares two values"]
+				"descriptions": ["Compares two values\n\n```function : public : native : Compare(l:Char, r:Char) ~ Int```"]
 			},
 			"Error": {
-				"descriptions": ["Prints error value"]
+				"descriptions": ["Prints error value\n\n```function : public : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Prints error value with newline"]
+				"descriptions": ["Prints error value with newline\n\n```function : public : ErrorLine() ~ Nil```"]
 			},
 			"IsChar": {
-				"descriptions": ["Checks of the character is a alpha digit"]
+				"descriptions": ["Checks of the character is a alpha digit\n\n```function : public : native : IsChar() ~ Bool```"]
 			},
 			"IsDigit": {
-				"descriptions": ["Checks of the character is a numeric digit"]
+				"descriptions": ["Checks of the character is a numeric digit\n\n```function : public : native : IsDigit() ~ Bool```"]
 			},
 			"IsLower": {
-				"descriptions": ["Checks if the character is lower-case"]
+				"descriptions": ["Checks if the character is lower-case\n\n```function : public : native : IsLower() ~ Bool```"]
 			},
 			"IsUpper": {
-				"descriptions": ["Checks if the character is upper-case"]
+				"descriptions": ["Checks if the character is upper-case\n\n```function : public : native : IsUpper() ~ Bool```"]
 			},
 			"Max": {
-				"descriptions": ["Returns the largest byte value"]
+				"descriptions": ["Returns the largest byte value\n\n```function : public : native : Max(l:Char, r:Char) ~ Char```"]
 			},
 			"Min": {
-				"descriptions": ["Returns the smallest byte value"]
+				"descriptions": ["Returns the smallest byte value\n\n```function : public : native : Min(l:Char, r:Char) ~ Char```"]
 			},
 			"Print": {
-				"descriptions": ["Prints value"]
+				"descriptions": ["Prints value\n\n```function : public : Print() ~ Nil```"]
 			},
 			"Sort": {
-				"descriptions": ["Prints value with newline"]
+				"descriptions": ["Prints value with newline\n\n```function : public : native : Sort() ~ Char[]```"]
 			},
 			"ToByte": {
-				"descriptions": ["Returns the Character value"]
+				"descriptions": ["Returns the Character value\n\n```function : public : ToByte() ~ Byte```"]
 			},
 			"ToFloat": {
-				"descriptions": ["Returns the Float value"]
+				"descriptions": ["Returns the Float value\n\n```function : public : ToFloat() ~ Float```"]
 			},
 			"ToInt": {
-				"descriptions": ["Returns the Int value"]
+				"descriptions": ["Returns the Int value\n\n```function : public : ToInt() ~ Int```"]
 			},
 			"ToLower": {
-				"descriptions": ["Converts character to lower-case"]
+				"descriptions": ["Converts character to lower-case\n\n```function : public : native : ToLower() ~ Char```"]
 			},
 			"ToString": {
-				"descriptions": ["Returns a string representation of the value"]
+				"descriptions": ["Returns a string representation of the value\n\n```function : public : native : ToString() ~ String```"]
 			},
 			"ToUpper": {
-				"descriptions": ["Converts character to upper-case"]
+				"descriptions": ["Converts character to upper-case\n\n```function : public : native : ToUpper() ~ Char```"]
 			}
 		}
 	},
@@ -840,13 +878,13 @@
 		"description": "Holds a character array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Get value"]
+				"descriptions": ["Get value\n\n```method : public : Get() ~ Char[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:Char[])```"]
 			},
 			"Set": {
-				"descriptions": ["Set value"]
+				"descriptions": ["Set value\n\n```method : public : Set(values:Char[]) ~ Nil```"]
 			}
 		}
 	},
@@ -854,22 +892,22 @@
 		"description": "Holds an character value",
 		"functions": {
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : native : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Get": {
-				"descriptions": ["Get character value"]
+				"descriptions": ["Get character value\n\n```method : public : Get() ~ Char```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a character"]
+				"descriptions": ["Returns a unique hash ID for a character\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(value:Char)```"]
 			},
 			"Set": {
-				"descriptions": ["Set character value"]
+				"descriptions": ["Set character value\n\n```method : public : Set(value:Char) ~ Nil```"]
 			}
 		}
 	},
@@ -877,7 +915,7 @@
 		"description": "Used to clone objects",
 		"functions": {
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : virutal : Clone() ~ System.Clone```"]
 			}
 		}
 	},
@@ -885,10 +923,10 @@
 		"description": "Used to compare two abstract values",
 		"functions": {
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : virutal : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a hash ID for the given class"]
+				"descriptions": ["Returns a hash ID for the given class\n\n```method : public : virutal : HashID() ~ Int```"]
 			}
 		}
 	},
@@ -896,97 +934,97 @@
 		"description": "Float class represents a double-precision floating-point value",
 		"functions": {
 			"Abs": {
-				"descriptions": ["Returns the absolute value"]
+				"descriptions": ["Returns the absolute value\n\n```function : public : native : Abs() ~ Float```"]
 			},
 			"ArcCos": {
-				"descriptions": ["Calculates the cosine value"]
+				"descriptions": ["Calculates the cosine value\n\n```function : public : ArcCos() ~ Float```"]
 			},
 			"ArcSin": {
-				"descriptions": ["Calculates the arc-sine value"]
+				"descriptions": ["Calculates the arc-sine value\n\n```function : public : ArcSin() ~ Float```"]
 			},
 			"ArcTan": {
-				"descriptions": ["Calculates the arc-tangent value"]
+				"descriptions": ["Calculates the arc-tangent value\n\n```function : public : ArcTan() ~ Float```"]
 			},
 			"ArcTan2": {
-				"descriptions": ["Calculates arc tangent of y/x"]
+				"descriptions": ["Calculates arc tangent of y/x\n\n```function : public : ArcTan2(y:Float, x:Float) ~ Float```"]
 			},
 			"Ceiling": {
-				"descriptions": ["Calculates the ceiling value"]
+				"descriptions": ["Calculates the ceiling value\n\n```function : public : Ceiling() ~ Float```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two value"]
+				"descriptions": ["Compares two value\n\n```function : public : native : Compare(l:Float, r:Float) ~ Int```"]
 			},
 			"Cos": {
-				"descriptions": ["Calculates the cosine value"]
+				"descriptions": ["Calculates the cosine value\n\n```function : public : Cos() ~ Float```"]
 			},
 			"E": {
-				"descriptions": ["Value of E"]
+				"descriptions": ["Value of E\n\n```function : public : native : E() ~ Float```"]
 			},
 			"Error": {
-				"descriptions": ["Prints error value"]
+				"descriptions": ["Prints error value\n\n```function : public : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Prints error value with newline"]
+				"descriptions": ["Prints error value with newline\n\n```function : public : ErrorLine() ~ Nil```"]
 			},
 			"Floor": {
-				"descriptions": ["Calculates the floor value"]
+				"descriptions": ["Calculates the floor value\n\n```function : public : Floor() ~ Float```"]
 			},
 			"IsNeg": {
-				"descriptions": ["Checks is a number is negative"]
+				"descriptions": ["Checks is a number is negative\n\n```function : public : native : IsNeg() ~ Bool```"]
 			},
 			"Log": {
-				"descriptions": ["Calculates the log value"]
+				"descriptions": ["Calculates the log value\n\n```function : public : Log() ~ Float```"]
 			},
 			"Max": {
-				"descriptions": ["Returns the largest float value"]
+				"descriptions": ["Returns the largest float value\n\n```function : public : native : Max(l:Float, r:Float) ~ Float```"]
 			},
 			"Min": {
-				"descriptions": ["Returns the smallest float value"]
+				"descriptions": ["Returns the smallest float value\n\n```function : public : native : Min(r:Float) ~ Float```"]
 			},
 			"NotNeg": {
-				"descriptions": ["Checks is a number is not negative"]
+				"descriptions": ["Checks is a number is not negative\n\n```function : public : native : NotNeg() ~ Bool```"]
 			},
 			"Pi": {
-				"descriptions": ["Value of Pi"]
+				"descriptions": ["Value of Pi\n\n```function : public : native : Pi() ~ Float```"]
 			},
 			"Power": {
-				"descriptions": ["Calculates the power value"]
+				"descriptions": ["Calculates the power value\n\n```function : public : Power(b:Float, r:Float) ~ Float```"]
 			},
 			"Print": {
-				"descriptions": ["Prints value"]
+				"descriptions": ["Prints value\n\n```function : public : Print() ~ Nil```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Prints value with newline"]
+				"descriptions": ["Prints value with newline\n\n```function : public : PrintLine() ~ Nil```"]
 			},
 			"Random": {
-				"descriptions": ["Returns a pseudo random value between 0.0 and 1.0"]
+				"descriptions": ["Returns a pseudo random value between 0.0 and 1.0\n\n```function : public : Random() ~ Float```"]
 			},
 			"Sin": {
-				"descriptions": ["Calculates the sine value"]
+				"descriptions": ["Calculates the sine value\n\n```function : public : Sin() ~ Float```"]
 			},
 			"SquareRoot": {
-				"descriptions": ["Calculates the natural log value"]
+				"descriptions": ["Calculates the natural log value\n\n```function : public : SquareRoot() ~ Float```"]
 			},
 			"Tan": {
-				"descriptions": ["Calculates the tangent value"]
+				"descriptions": ["Calculates the tangent value\n\n```function : public : Tan() ~ Float```"]
 			},
 			"ToByte": {
-				"descriptions": ["Returns the Character value"]
+				"descriptions": ["Returns the Character value\n\n```function : public : ToByte() ~ Byte```"]
 			},
 			"ToChar": {
-				"descriptions": ["Returns the Int value"]
+				"descriptions": ["Returns the Int value\n\n```function : public : ToChar() ~ Char```"]
 			},
 			"ToDegrees": {
-				"descriptions": ["Converts the value into degrees"]
+				"descriptions": ["Converts the value into degrees\n\n```function : public : native : ToDegrees() ~ Float```"]
 			},
 			"ToInt": {
-				"descriptions": ["Returns the Int value"]
+				"descriptions": ["Returns the Int value\n\n```function : public : ToInt() ~ Int```"]
 			},
 			"ToRadians": {
-				"descriptions": ["Converts the value into radians"]
+				"descriptions": ["Converts the value into radians\n\n```function : public : native : ToRadians() ~ Float```"]
 			},
 			"ToString": {
-				"descriptions": ["Returns a string representation of the value"]
+				"descriptions": ["Returns a string representation of the value\n\n```function : public : native : ToString() ~ String```"]
 			}
 		}
 	},
@@ -994,13 +1032,13 @@
 		"description": "Holds a float array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets values"]
+				"descriptions": ["Gets values\n\n```method : public : Get() ~ Float[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:Float[])```"]
 			},
 			"Set": {
-				"descriptions": ["Sets values"]
+				"descriptions": ["Sets values\n\n```method : public : Set(values:Float[]) ~ Nil```"]
 			}
 		}
 	},
@@ -1008,34 +1046,34 @@
 		"description": "Holds a float",
 		"functions": {
 			"Add": {
-				"descriptions": ["Adds to value"]
+				"descriptions": ["Adds to value\n\n```method : public : Add(value:Float) ~ Nil```"]
 			},
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : native : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Div": {
-				"descriptions": ["Divide by value"]
+				"descriptions": ["Divide by value\n\n```method : public : Div(value:Float) ~ Nil```"]
 			},
 			"Get": {
-				"descriptions": ["Get value"]
+				"descriptions": ["Get value\n\n```method : public : Get() ~ Float```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a float"]
+				"descriptions": ["Returns a unique hash ID for a float\n\n```method : public : HashID() ~ Int```"]
 			},
 			"Mul": {
-				"descriptions": ["Multiply to value"]
+				"descriptions": ["Multiply to value\n\n```method : public : Mul(value:Float) ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(value:Float)```"]
 			},
 			"Set": {
-				"descriptions": ["Set value"]
+				"descriptions": ["Set value\n\n```method : public : Set(value:Float) ~ Nil```"]
 			},
 			"Sub": {
-				"descriptions": ["Subtract from value"]
+				"descriptions": ["Subtract from value\n\n```method : public : Sub(value:Float) ~ Nil```"]
 			}
 		}
 	},
@@ -1043,16 +1081,16 @@
 		"description": "Holds a function of in type X and out type R",
 		"functions": {
 			"Apply": {
-				"descriptions": ["Apply function"]
+				"descriptions": ["Apply function\n\n```function : public : Apply(arg:X) ~ R```"]
 			},
 			"Get": {
-				"descriptions": ["Gets function"]
+				"descriptions": ["Gets function\n\n```method : public : Get() ~ (X)~R```"]
 			},
 			"New": {
-				"descriptions": ["Constructor"]
+				"descriptions": ["Constructor\n\n```New(func:(X)~R)```"]
 			},
 			"Set": {
-				"descriptions": ["Sets function"]
+				"descriptions": ["Sets function\n\n```method : public : Set(func:(X)~R) ~ Nil```"]
 			}
 		}
 	},
@@ -1060,13 +1098,13 @@
 		"description": "Holds a function of in types X, Y and out type R",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets function"]
+				"descriptions": ["Gets function\n\n```method : public : Get() ~ (X,Y)~R```"]
 			},
 			"New": {
-				"descriptions": ["Constructor"]
+				"descriptions": ["Constructor\n\n```New(func:(X,Y)~R)```"]
 			},
 			"Set": {
-				"descriptions": ["Sets function"]
+				"descriptions": ["Sets function\n\n```method : public : Set(func:(X,Y)~R) ~ Nil```"]
 			}
 		}
 	},
@@ -1074,13 +1112,13 @@
 		"description": "Holds a function of in types X, Y, Z and out type R",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets function"]
+				"descriptions": ["Gets function\n\n```method : public : Get() ~ (X,Y,Z)~R```"]
 			},
 			"New": {
-				"descriptions": ["Constructor"]
+				"descriptions": ["Constructor\n\n```New(func:(X,Y,Z)~R)```"]
 			},
 			"Set": {
-				"descriptions": ["Sets function"]
+				"descriptions": ["Sets function\n\n```method : public : Set(func:(X,Y,Z)~R) ~ Nil```"]
 			}
 		}
 	},
@@ -1088,13 +1126,13 @@
 		"description": "Holds a function of in/out type R",
 		"functions": {
 			"Get": {
-				"descriptions": ["Gets function"]
+				"descriptions": ["Gets function\n\n```method : public : Get() ~ ()~R```"]
 			},
 			"New": {
-				"descriptions": ["Constructor"]
+				"descriptions": ["Constructor\n\n```New(func:()~R)```"]
 			},
 			"Set": {
-				"descriptions": ["Sets function"]
+				"descriptions": ["Sets function\n\n```method : public : Set(func:()~R) ~ Nil```"]
 			}
 		}
 	},
@@ -1102,67 +1140,67 @@
 		"description": "Integer class represents an operating system long value",
 		"functions": {
 			"Abs": {
-				"descriptions": ["Returns the absolute value"]
+				"descriptions": ["Returns the absolute value\n\n```function : public : native : Abs() ~ Int```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two values"]
+				"descriptions": ["Compares two values\n\n```function : public : native : Compare(l:Int, r:Int) ~ Int```"]
 			},
 			"Error": {
-				"descriptions": ["Prints error value"]
+				"descriptions": ["Prints error value\n\n```function : public : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Prints error value with newline"]
+				"descriptions": ["Prints error value with newline\n\n```function : public : ErrorLine() ~ Nil```"]
 			},
 			"Factorial": {
-				"descriptions": ["Calculates the factorial of existing value"]
+				"descriptions": ["Calculates the factorial of existing value\n\n```function : public : native : Factorial() ~ Int```"]
 			},
 			"IsNeg": {
-				"descriptions": ["Checks is a number is negative"]
+				"descriptions": ["Checks is a number is negative\n\n```function : public : native : IsNeg() ~ Bool```"]
 			},
 			"Max": {
-				"descriptions": ["Returns the largest integer value"]
+				"descriptions": ["Returns the largest integer value\n\n```function : public : native : Max(l:Int, r:Int) ~ Int```"]
 			},
 			"MaxSize": {
-				"descriptions": ["Returns the maximum size of an integer"]
+				"descriptions": ["Returns the maximum size of an integer\n\n```function : public : native : MaxSize() ~ Int```"]
 			},
 			"Min": {
-				"descriptions": ["Returns the smallest integer value"]
+				"descriptions": ["Returns the smallest integer value\n\n```function : public : native : Min(l:Int, r:Int) ~ Int```"]
 			},
 			"MinSize": {
-				"descriptions": ["Returns the minimum size of an integer"]
+				"descriptions": ["Returns the minimum size of an integer\n\n```function : public : native : MinSize() ~ Int```"]
 			},
 			"NotNeg": {
-				"descriptions": ["Checks is a number is not negative"]
+				"descriptions": ["Checks is a number is not negative\n\n```function : public : native : NotNeg() ~ Bool```"]
 			},
 			"Print": {
-				"descriptions": ["Prints value"]
+				"descriptions": ["Prints value\n\n```function : public : Print() ~ Nil```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Prints value with newline"]
+				"descriptions": ["Prints value with newline\n\n```function : public : PrintLine() ~ Nil```"]
 			},
 			"Random": {
-				"descriptions": ["Returns a random number within the given range", "Returns a random number between 0 and max value"]
+				"descriptions": ["Returns a random number within the given range\n\n```function : public : Random(min:Int, max:Int) ~ Int```", "Returns a random number between 0 and max value\n\n```function : public : Random(max:Int) ~ Int```"]
 			},
 			"ToBinaryString": {
-				"descriptions": ["Returns the binary string value"]
+				"descriptions": ["Returns the binary string value\n\n```function : public : native : ToBinaryString() ~ String```"]
 			},
 			"ToByte": {
-				"descriptions": ["Returns the Byte value"]
+				"descriptions": ["Returns the Byte value\n\n```function : public : ToByte() ~ Byte```"]
 			},
 			"ToChar": {
-				"descriptions": ["Returns the Character value"]
+				"descriptions": ["Returns the Character value\n\n```function : public : ToChar() ~ Char```"]
 			},
 			"ToCommaString": {
-				"descriptions": ["Returns a comma formatted string value"]
+				"descriptions": ["Returns a comma formatted string value\n\n```function : public : native : ToCommaString() ~ String```"]
 			},
 			"ToFloat": {
-				"descriptions": ["Returns the Float value"]
+				"descriptions": ["Returns the Float value\n\n```function : public : ToFloat() ~ Float```"]
 			},
 			"ToHexString": {
-				"descriptions": ["Returns the hex string value"]
+				"descriptions": ["Returns the hex string value\n\n```function : public : native : ToHexString() ~ String```"]
 			},
 			"ToString": {
-				"descriptions": ["Returns the string value", "Returns a string representation of the value"]
+				"descriptions": ["Returns the string value\n\n```function : public : ToString() ~ String```", "Returns a string representation of the value\n\n```function : public : native : ToString() ~ String```"]
 			}
 		}
 	},
@@ -1170,13 +1208,13 @@
 		"description": "Holds an integer array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Get values"]
+				"descriptions": ["Get values\n\n```method : public : Get() ~ Int[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:Int[])```"]
 			},
 			"Set": {
-				"descriptions": ["Set values"]
+				"descriptions": ["Set values\n\n```method : public : Set(values:Int[]) ~ Nil```"]
 			}
 		}
 	},
@@ -1184,40 +1222,40 @@
 		"description": "Holds an integer value",
 		"functions": {
 			"Add": {
-				"descriptions": ["Adds to value"]
+				"descriptions": ["Adds to value\n\n```method : public : Add(value:Int) ~ Nil```"]
 			},
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : native : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Dec": {
-				"descriptions": ["Decrements value by 1"]
+				"descriptions": ["Decrements value by 1\n\n```method : public : Dec() ~ Nil```"]
 			},
 			"Div": {
-				"descriptions": ["Divide by value"]
+				"descriptions": ["Divide by value\n\n```method : public : Div(value:Int) ~ Nil```"]
 			},
 			"Get": {
-				"descriptions": ["Get integer value"]
+				"descriptions": ["Get integer value\n\n```method : public : Get() ~ Int```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a integer"]
+				"descriptions": ["Returns a unique hash ID for a integer\n\n```method : public : HashID() ~ Int```"]
 			},
 			"Inc": {
-				"descriptions": ["Increments value by 1"]
+				"descriptions": ["Increments value by 1\n\n```method : public : Inc() ~ Nil```"]
 			},
 			"Mul": {
-				"descriptions": ["Multiply to value"]
+				"descriptions": ["Multiply to value\n\n```method : public : Mul(value:Int) ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(value:Int)```"]
 			},
 			"Set": {
-				"descriptions": ["Set integer value"]
+				"descriptions": ["Set integer value\n\n```method : public : Set(value:Int) ~ Nil```"]
 			},
 			"Sub": {
-				"descriptions": ["Subtract from value"]
+				"descriptions": ["Subtract from value\n\n```method : public : Sub(value:Int) ~ Nil```"]
 			}
 		}
 	},
@@ -1225,46 +1263,46 @@
 		"description": "Provides access to runtime system",
 		"functions": {
 			"Assert": {
-				"descriptions": ["Asserts runtime value to be true. If false, program exits with stack trace."]
+				"descriptions": ["Asserts runtime value to be true. If false, program exits with stack trace.\n\n```function : public : Assert(assert:Bool) ~ Nil```"]
 			},
 			"Command": {
-				"descriptions": ["Executes a system command"]
+				"descriptions": ["Executes a system command\n\n```function : public : Command(n:System.String) ~ Int```"]
 			},
 			"CommandOutput": {
-				"descriptions": ["Executes a system command"]
+				"descriptions": ["Executes a system command\n\n```function : public : CommandOutput(n:System.String) ~ System.String[]```"]
 			},
 			"Copy": {
-				"descriptions": ["Copies data between two byte arrays", "Copies data between two character arrays", "Copies data between two integer arrays", "Copies data between two Base arrays", "Copies data between two Compare arrays", "Copies data between two float arrays"]
+				"descriptions": ["Copies data between two byte arrays\n\n```function : public : Copy(dest:Byte[], dest_offset:Int, src:Byte[], src_offset:Int, len:Int) ~ Bool```", "Copies data between two character arrays\n\n```function : public : Copy(dest:Char[], dest_offset:Int, src:Char[], src_offset:Int, len:Int) ~ Bool```", "Copies data between two integer arrays\n\n```function : public : Copy(dest:Int[], dest_offset:Int, src:Int[], src_offset:Int, len:Int) ~ Bool```", "Copies data between two Base arrays\n\n```function : public : Copy(dest:Base[], dest_offset:Int, src:Base[], src_offset:Int, len:Int) ~ Bool```", "Copies data between two Compare arrays\n\n```function : public : Copy(dest:Compare[], dest_offset:Int, src:Compare[], src_offset:Int, len:Int) ~ Bool```", "Copies data between two float arrays\n\n```function : public : Copy(dest:Float[], dest_offset:Int, src:Float[], src_offset:Int, len:Int) ~ Bool```"]
 			},
 			"Exit": {
-				"descriptions": ["Causes the executing program to halt"]
+				"descriptions": ["Causes the executing program to halt\n\n```function : public : Exit(code:Int) ~ Nil```"]
 			},
 			"GetInstallDir": {
-				"descriptions": ["Returns the installation directory"]
+				"descriptions": ["Returns the installation directory\n\n```function : public : GetInstallDir() ~ String```"]
 			},
 			"GetPlatform": {
-				"descriptions": ["Returns an OS platform string"]
+				"descriptions": ["Returns an OS platform string\n\n```function : public : GetPlatform() ~ String```"]
 			},
 			"GetProperty": {
-				"descriptions": ["Fetches a runtime property. System properties include: 'user_dir', temp_dir and 'install_dir'."]
+				"descriptions": ["Fetches a runtime property. System properties include: 'user_dir', temp_dir and 'install_dir'.\n\n```function : public : GetProperty(key:String) ~ String```"]
 			},
 			"GetTempDir": {
-				"descriptions": ["Returns the system's temporary directory"]
+				"descriptions": ["Returns the system's temporary directory\n\n```function : public : GetTempDir() ~ String```"]
 			},
 			"GetTime": {
-				"descriptions": ["Returns the current time"]
+				"descriptions": ["Returns the current time\n\n```function : public : GetTime(gmt:Bool) ~ Time.Date```"]
 			},
 			"GetUserDir": {
-				"descriptions": ["Returns the current user's working directory"]
+				"descriptions": ["Returns the current user's working directory\n\n```function : public : GetUserDir() ~ String```"]
 			},
 			"GetVersion": {
-				"descriptions": ["Returns the package version string"]
+				"descriptions": ["Returns the package version string\n\n```function : public : GetVersion() ~ String```"]
 			},
 			"SetPrecision": {
-				"descriptions": ["Set floating point display precision. Valid values are a number, 'fixed' or 'scientific'."]
+				"descriptions": ["Set floating point display precision. Valid values are a number, 'fixed' or 'scientific'.\n\n```function : public : SetPrecision(value:String) ~ Nil```"]
 			},
 			"SetProperty": {
-				"descriptions": ["Sets a runtime property"]
+				"descriptions": ["Sets a runtime property\n\n```function : public : SetProperty(key:String, value:String) ~ Nil```"]
 			}
 		}
 	},
@@ -1272,121 +1310,121 @@
 		"description": "Resizeable Unicode string class that supports typical string operations.",
 		"functions": {
 			"Append": {
-				"descriptions": ["Appends a boolean value", "Appends a integer value", "Appends a float value", "Appends a string", "Appends a character array", "Appends a portion of character array", "Appends a character array", "Appends a portion of byte array", "Appends a character", "Appends a byte"]
+				"descriptions": ["Appends a boolean value\n\n```method : public : Append(flag:Bool) ~ Nil```", "Appends a integer value\n\n```method : public : Append(i:Int) ~ Nil```", "Appends a float value\n\n```method : public : Append(f:Float) ~ Nil```", "Appends a string\n\n```method : public : native : Append(str:String) ~ Nil```", "Appends a character array\n\n```method : public : Append(array:Char[]) ~ Nil```", "Appends a portion of character array\n\n```method : public : native : Append(array:Char[], offset:Int, length:Int) ~ Nil```", "Appends a character array\n\n```method : public : native : Append(array:Byte[]) ~ Nil```", "Appends a portion of byte array\n\n```method : public : native : Append(array:Byte[], offset:Int, length:Int) ~ Nil```", "Appends a character\n\n```method : public : Append(c:Char) ~ Nil```", "Appends a byte\n\n```method : public : Append(c:Byte) ~ Nil```"]
 			},
 			"Capacity": {
-				"descriptions": ["Gets the current string capacity."]
+				"descriptions": ["Gets the current string capacity.\n\n```method : public : Capacity() ~ Int```"]
 			},
 			"Clear": {
-				"descriptions": ["Clears string"]
+				"descriptions": ["Clears string\n\n```method : public : Clear() ~ Nil```"]
 			},
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two objects"]
+				"descriptions": ["Compares two objects\n\n```method : public : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"Compress": {
-				"descriptions": ["Compresses a string removing unused space."]
+				"descriptions": ["Compresses a string removing unused space.\n\n```method : public : Compress() ~ Nil```"]
 			},
 			"Count": {
-				"descriptions": ["Count the occurrences of the character"]
+				"descriptions": ["Count the occurrences of the character\n\n```method : public : Count(char:Char) ~ Int```"]
 			},
 			"Delete": {
-				"descriptions": ["Deletes the character at the given index", "Deletes the characters at the given range"]
+				"descriptions": ["Deletes the character at the given index\n\n```method : public : Delete(offset:Int) ~ Bool```", "Deletes the characters at the given range\n\n```method : public : Delete(offset:Int, length:Int) ~ Bool```"]
 			},
 			"EndsWith": {
-				"descriptions": ["Checks if the string ends with the given character", "Checks if the string ends with the given character"]
+				"descriptions": ["Checks if the string ends with the given character\n\n```method : public : EndsWith(char:Char) ~ Bool```", "Checks if the string ends with the given character\n\n```method : public : native : EndsWith(string:String) ~ Bool```"]
 			},
 			"Equals": {
-				"descriptions": ["Compares two strings"]
+				"descriptions": ["Compares two strings\n\n```method : public : Equals(rhs:String) ~ Bool```"]
 			},
 			"Error": {
-				"descriptions": ["Print an error string"]
+				"descriptions": ["Print an error string\n\n```method : public : native : Error() ~ Nil```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Print an error string with a newline"]
+				"descriptions": ["Print an error string with a newline\n\n```method : public : native : ErrorLine() ~ Nil```"]
 			},
 			"Find": {
-				"descriptions": ["Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a string", "Searches for the first occurrence of a string"]
+				"descriptions": ["Searches for the first occurrence of a character\n\n```method : public : Find(char:Char) ~ Int```", "Searches for the first occurrence of a character\n\n```method : public : native : Find(offset:Int, char:Char) ~ Int```", "Searches for the first occurrence of a string\n\n```method : public : Find(find:String) ~ Int```", "Searches for the first occurrence of a string\n\n```method : public : native : Find(offset:Int, find:String) ~ Int```"]
 			},
 			"FindAll": {
-				"descriptions": ["Searches for all occurrences of a string"]
+				"descriptions": ["Searches for all occurrences of a string\n\n```method : public : FindAll(find:String) ~ Int[]```"]
 			},
 			"FindLast": {
-				"descriptions": ["Searches for the last occurrence of a character", "Searches for the last occurrence of a character"]
+				"descriptions": ["Searches for the last occurrence of a character\n\n```method : public : FindLast(char:Char) ~ Int```", "Searches for the last occurrence of a character\n\n```method : public : native : FindLast(offset:Int, char:Char) ~ Int```"]
 			},
 			"Get": {
-				"descriptions": ["Returns character at the given index"]
+				"descriptions": ["Returns character at the given index\n\n```method : public : native : Get(index:Int) ~ Char```"]
 			},
 			"Has": {
-				"descriptions": ["Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a character", "Searches for the first occurrence of a character"]
+				"descriptions": ["Searches for the first occurrence of a character\n\n```method : public : Has(char:Char) ~ Bool```", "Searches for the first occurrence of a character\n\n```method : public : Has(offset:Int, char:Char) ~ Bool```", "Searches for the first occurrence of a character\n\n```method : public : Has(str:String) ~ Bool```", "Searches for the first occurrence of a character\n\n```method : public : Has(offset:Int, str:String) ~ Bool```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a unique hash ID for a given string sequence"]
+				"descriptions": ["Returns a unique hash ID for a given string sequence\n\n```method : public : native : HashID() ~ Int```"]
 			},
 			"Insert": {
-				"descriptions": ["Insert inserts a character", "Insert inserts a string"]
+				"descriptions": ["Insert inserts a character\n\n```method : public : Insert(index:Int, char:Char) ~ Bool```", "Insert inserts a string\n\n```method : public : Insert(index:Int, string:String) ~ Bool```"]
 			},
 			"IsEmpty": {
-				"descriptions": ["Returns rather the string is empty"]
+				"descriptions": ["Returns rather the string is empty\n\n```method : public : IsEmpty() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor", "Copy constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Copy constructor\n\n```New(string:String)```", "Copy constructor\n\n```New(array:Char[])```", "Copy constructor\n\n```New(array:Char[], copy:Bool)```", "Copy constructor\n\n```New(array:Char[], offset:Int, length:Int)```", "Copy constructor\n\n```New(bytes:Byte[])```", "Copy constructor\n\n```New(bytes:Byte[], offset:Int, length:Int)```"]
 			},
 			"Pop": {
-				"descriptions": ["Pops the last character from the string reducing the size by 1"]
+				"descriptions": ["Pops the last character from the string reducing the size by 1\n\n```method : public : native : Pop() ~ Char```"]
 			},
 			"Print": {
-				"descriptions": ["Print a string"]
+				"descriptions": ["Print a string\n\n```method : public : native : Print() ~ Nil```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Print a string with a newline"]
+				"descriptions": ["Print a string with a newline\n\n```method : public : native : PrintLine() ~ Nil```"]
 			},
 			"Replace": {
-				"descriptions": ["Replaces the first occurrence the search string"]
+				"descriptions": ["Replaces the first occurrence the search string\n\n```method : public : Replace(find:String, replace:String) ~ String```"]
 			},
 			"ReplaceAll": {
-				"descriptions": ["Replaces all occurrences the search string", "Replaces all occurrences the search string"]
+				"descriptions": ["Replaces all occurrences the search string\n\n```method : public : ReplaceAll(find:String, replace:String) ~ String```", "Replaces all occurrences the search string\n\n```method : public : native : ReplaceAll(find:Char, replace:Char) ~ String```"]
 			},
 			"Reverse": {
-				"descriptions": ["Reverses a string"]
+				"descriptions": ["Reverses a string\n\n```method : public : native : Reverse() ~ String```"]
 			},
 			"Set": {
-				"descriptions": ["Sets character at the given index"]
+				"descriptions": ["Sets character at the given index\n\n```method : public : native : Set(char:Char, index:Int) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Return the size of the string"]
+				"descriptions": ["Return the size of the string\n\n```method : public : Size() ~ Int```"]
 			},
 			"Split": {
-				"descriptions": ["Splits a string based upon delimiter"]
+				"descriptions": ["Splits a string based upon delimiter\n\n```method : public : native : Split(delim:String) ~ String[]```"]
 			},
 			"StartsWith": {
-				"descriptions": ["Checks if the string starts with the given character", "Checks if the string starts with the given string"]
+				"descriptions": ["Checks if the string starts with the given character\n\n```method : public : StartsWith(char:Char) ~ Bool```", "Checks if the string starts with the given string\n\n```method : public : StartsWith(string:String) ~ Bool```"]
 			},
 			"SubString": {
-				"descriptions": ["Creates a sub-string", "Creates a sub-string"]
+				"descriptions": ["Creates a sub-string\n\n```method : public : SubString(length:Int) ~ String```", "Creates a sub-string\n\n```method : public : SubString(offset:Int, length:Int) ~ String```"]
 			},
 			"ToByteArray": {
-				"descriptions": ["Returns a byte array representation of the String"]
+				"descriptions": ["Returns a byte array representation of the String\n\n```method : public : native : ToByteArray() ~ Byte[]```"]
 			},
 			"ToCharArray": {
-				"descriptions": ["Returns a character array representation of the String"]
+				"descriptions": ["Returns a character array representation of the String\n\n```method : public : ToCharArray() ~ Char[]```"]
 			},
 			"ToFloat": {
-				"descriptions": ["Parses the string into a float"]
+				"descriptions": ["Parses the string into a float\n\n```method : public : ToFloat() ~ Float```"]
 			},
 			"ToInt": {
-				"descriptions": ["Parses the string into an integer", "Parses the string into an integer"]
+				"descriptions": ["Parses the string into an integer\n\n```method : public : ToInt() ~ Int```", "Parses the string into an integer\n\n```method : public : ToInt(base:Int) ~ Int```"]
 			},
 			"ToLower": {
-				"descriptions": ["Transforms a to lower case"]
+				"descriptions": ["Transforms a to lower case\n\n```method : public : native : ToLower() ~ String```"]
 			},
 			"ToUpper": {
-				"descriptions": ["Transforms a to upper case"]
+				"descriptions": ["Transforms a to upper case\n\n```method : public : native : ToUpper() ~ String```"]
 			},
 			"Trim": {
-				"descriptions": ["Removes all leading and ending white space"]
+				"descriptions": ["Removes all leading and ending white space\n\n```method : public : native : Trim() ~ String```"]
 			}
 		}
 	},
@@ -1394,13 +1432,13 @@
 		"description": "Holds an base array",
 		"functions": {
 			"Get": {
-				"descriptions": ["Get values"]
+				"descriptions": ["Get values\n\n```method : public : Get() ~ String[]```"]
 			},
 			"New": {
-				"descriptions": ["Copy constructor"]
+				"descriptions": ["Copy constructor\n\n```New(values:String[])```"]
 			},
 			"Set": {
-				"descriptions": ["Set values"]
+				"descriptions": ["Set values\n\n```method : public : Set(values:String[]) ~ Nil```"]
 			}
 		}
 	},
@@ -1408,16 +1446,16 @@
 		"description": "Class allow programmers to load native shared libraries that can be called by Objeck classes. Programmers can call native C functions within these libraries.",
 		"functions": {
 			"CallFunction": {
-				"descriptions": ["Calls a native C function."]
+				"descriptions": ["Calls a native C function.\n\n```method : public : CallFunction(name:String, args:Base[]) ~ Nil```"]
 			},
 			"IsLoaded": {
-				"descriptions": ["Returns rather the shared library has been successfully loaded"]
+				"descriptions": ["Returns rather the shared library has been successfully loaded\n\n```method : public : IsLoaded() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Path to the shared library. The path should not include the extension name (i.e. .dll, .so, etc.) for platform portability"]
+				"descriptions": ["Path to the shared library. The path should not include the extension name (i.e. .dll, .so, etc.) for platform portability\n\n```New(name:String)```"]
 			},
 			"Unload": {
-				"descriptions": ["Unloads the shared library"]
+				"descriptions": ["Unloads the shared library\n\n```method : public : Unload() ~ Nil```"]
 			}
 		}
 	},
@@ -1425,25 +1463,25 @@
 		"description": "Abstracts native system thread execution",
 		"functions": {
 			"Execute": {
-				"descriptions": ["Called to execute a new thread"]
+				"descriptions": ["Called to execute a new thread\n\n```method : public : Execute(param:System.Base) ~ Nil```"]
 			},
 			"GetExecuteID": {
-				"descriptions": ["Returns a unique execution ID"]
+				"descriptions": ["Returns a unique execution ID\n\n```method : public : GetExecuteID() ~ Int```"]
 			},
 			"GetName": {
-				"descriptions": ["Returns the thread's name"]
+				"descriptions": ["Returns the thread's name\n\n```method : public : GetName() ~ String```"]
 			},
 			"Join": {
-				"descriptions": ["Joins the executing thread with the caller"]
+				"descriptions": ["Joins the executing thread with the caller\n\n```method : public : Join() ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Name of the thread"]
+				"descriptions": ["Name of the thread\n\n```New(name:String)```"]
 			},
 			"Run": {
-				"descriptions": ["Prototype for the thread to be executed"]
+				"descriptions": ["Prototype for the thread to be executed\n\n```method : public : virutal : Run(param:System.Base) ~ Nil```"]
 			},
 			"Sleep": {
-				"descriptions": ["Sleeps the executing thread"]
+				"descriptions": ["Sleeps the executing thread\n\n```function : public : Sleep(t:Int) ~ Nil```"]
 			}
 		}
 	},
@@ -1451,10 +1489,10 @@
 		"description": "Thread mutex used to protect critical sections",
 		"functions": {
 			"GetName": {
-				"descriptions": ["Name of the mutex"]
+				"descriptions": ["Name of the mutex\n\n```method : public : GetName() ~ String```"]
 			},
 			"New": {
-				"descriptions": ["Name of the mutex"]
+				"descriptions": ["Name of the mutex\n\n```New(name:String)```"]
 			}
 		}
 	},
@@ -1462,40 +1500,40 @@
 		"description": "Used to deserialize objects",
 		"functions": {
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(buffer:Byte[])```"]
 			},
 			"ReadBool": {
-				"descriptions": ["Reads a value"]
+				"descriptions": ["Reads a value\n\n```method : public : ReadBool() ~ Bool```"]
 			},
 			"ReadBoolArray": {
-				"descriptions": ["Reads an array of values"]
+				"descriptions": ["Reads an array of values\n\n```method : public : ReadBoolArray() ~ Bool[]```"]
 			},
 			"ReadByteArray": {
-				"descriptions": ["Reads an array of values"]
+				"descriptions": ["Reads an array of values\n\n```method : public : ReadByteArray() ~ Byte[]```"]
 			},
 			"ReadChar": {
-				"descriptions": ["Reads a value"]
+				"descriptions": ["Reads a value\n\n```method : public : ReadChar() ~ Char```"]
 			},
 			"ReadCharArray": {
-				"descriptions": ["Reads an array of values"]
+				"descriptions": ["Reads an array of values\n\n```method : public : ReadCharArray() ~ Char[]```"]
 			},
 			"ReadFloat": {
-				"descriptions": ["Reads a value"]
+				"descriptions": ["Reads a value\n\n```method : public : ReadFloat() ~ Float```"]
 			},
 			"ReadFloatArray": {
-				"descriptions": ["Reads an array of values"]
+				"descriptions": ["Reads an array of values\n\n```method : public : ReadFloatArray() ~ Float[]```"]
 			},
 			"ReadInt": {
-				"descriptions": ["Reads a value"]
+				"descriptions": ["Reads a value\n\n```method : public : ReadInt() ~ Int```"]
 			},
 			"ReadIntArray": {
-				"descriptions": ["Reads an array of values"]
+				"descriptions": ["Reads an array of values\n\n```method : public : ReadIntArray() ~ Int[]```"]
 			},
 			"ReadObject": {
-				"descriptions": ["Reads an object"]
+				"descriptions": ["Reads an object\n\n```method : public : ReadObject() ~ Base```"]
 			},
 			"ReadObjectArray": {
-				"descriptions": ["Reads an object array"]
+				"descriptions": ["Reads an object array\n\n```method : public : ReadObjectArray() ~ Base[]```"]
 			}
 		}
 	},
@@ -1503,16 +1541,16 @@
 		"description": "An abstract input stream",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes the stream"]
+				"descriptions": ["Closes the stream\n\n```method : public : virutal : Close() ~ Nil```"]
 			},
 			"ReadBuffer": {
-				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+				"descriptions": ["Reads bytes into a byte buffer\n\n```method : public : virutal : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Reads bytes into a character buffer\n\n```method : public : virutal : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"ReadByte": {
-				"descriptions": ["Reads a byte"]
+				"descriptions": ["Reads a byte\n\n```method : public : virutal : ReadByte() ~ Byte```"]
 			},
 			"ReadLine": {
-				"descriptions": ["Reads a string until a newline or character return is detected"]
+				"descriptions": ["Reads a string until a newline or character return is detected\n\n```method : public : virutal : ReadLine() ~ System.String```"]
 			}
 		}
 	},
@@ -1520,16 +1558,16 @@
 		"description": "An abstract output stream",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes the stream"]
+				"descriptions": ["Closes the stream\n\n```method : public : virutal : Close() ~ Nil```"]
 			},
 			"WriteBuffer": {
-				"descriptions": ["Writes bytes from a buffer", "Writes characters from a buffer"]
+				"descriptions": ["Writes bytes from a buffer\n\n```method : public : virutal : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Writes characters from a buffer\n\n```method : public : virutal : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"WriteByte": {
-				"descriptions": ["Writes a byte"]
+				"descriptions": ["Writes a byte\n\n```method : public : virutal : WriteByte(b:Int) ~ Bool```"]
 			},
 			"WriteString": {
-				"descriptions": ["Writes a character string"]
+				"descriptions": ["Writes a character string\n\n```method : public : virutal : WriteString(str:System.String) ~ Nil```"]
 			}
 		}
 	},
@@ -1537,10 +1575,10 @@
 		"description": "Used to serialize objects",
 		"functions": {
 			"Serialize": {
-				"descriptions": ["Create a byte stream of the objects that have been serialized"]
+				"descriptions": ["Create a byte stream of the objects that have been serialized\n\n```method : public : Serialize() ~ Byte[]```"]
 			},
 			"Write": {
-				"descriptions": ["Serializes a value", "Serializes a value", "Serializes a value", "Serializes a value", "Serializes a base object", "Serializes a base object", "Serializes base objects", "Serializes a value", "Serializes an array of values", "Serializes an array of values", "Serializes an array of values"]
+				"descriptions": ["Serializes a value\n\n```method : public : Write(b:Bool) ~ Nil```", "Serializes a value\n\n```method : public : Write(c:Char) ~ Nil```", "Serializes a value\n\n```method : public : Write(i:Int) ~ Nil```", "Serializes a value\n\n```method : public : Write(f:Float) ~ Nil```", "Serializes a base object\n\n```method : public : Write(o:Base) ~ Nil```", "Serializes a base object\n\n```method : public : Write(b:Bool[]) ~ Nil```", "Serializes base objects\n\n```method : public : Write(o:Base[]) ~ Nil```", "Serializes a value\n\n```method : public : Write(b:Byte[]) ~ Nil```", "Serializes an array of values\n\n```method : public : Write(c:Char[]) ~ Nil```", "Serializes an array of values\n\n```method : public : Write(i:Int[]) ~ Nil```", "Serializes an array of values\n\n```method : public : Write(f:Float[]) ~ Nil```"]
 			}
 		}
 	},
@@ -1548,28 +1586,28 @@
 		"description": "Provides standard I/O operations",
 		"functions": {
 			"Error": {
-				"descriptions": ["Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value"]
+				"descriptions": ["Writes an error value\n\n```function : public : Error(b:Bool) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(b:Byte) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(c:Char) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(i:Int) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(f:Float) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(cc:Char[]) ~ ConsoleIO```", "Writes an error value\n\n```function : public : Error(s:System.String) ~ ConsoleIO```"]
 			},
 			"ErrorLine": {
-				"descriptions": ["Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error value", "Writes an error character return"]
+				"descriptions": ["Writes an error value\n\n```function : public : ErrorLine(b:Bool) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(b:Byte) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(c:Char) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(i:Int) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(f:Float) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(cc:Char[]) ~ ConsoleIO```", "Writes an error value\n\n```function : public : ErrorLine(s:System.String) ~ ConsoleIO```", "Writes an error character return\n\n```function : public : ErrorLine() ~ ConsoleIO```"]
 			},
 			"Print": {
-				"descriptions": ["Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value"]
+				"descriptions": ["Writes a value\n\n```function : public : Print(b:Bool) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(b:Byte) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(c:Char) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(i:Int) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(f:Float) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(cc:Char[]) ~ ConsoleIO```", "Writes a value\n\n```function : public : Print(s:System.String) ~ ConsoleIO```"]
 			},
 			"PrintLine": {
-				"descriptions": ["Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Writes a value", "Prints a character return"]
+				"descriptions": ["Writes a value\n\n```function : public : PrintLine(b:Bool) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(b:Byte) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(c:Char) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(i:Int) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(f:Float) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(cc:Char[]) ~ ConsoleIO```", "Writes a value\n\n```function : public : PrintLine(s:System.String) ~ ConsoleIO```", "Prints a character return\n\n```function : public : PrintLine() ~ ConsoleIO```"]
 			},
 			"ReadBuffer": {
-				"descriptions": ["Reads bytes from STDIN", "Read characters from STDIN"]
+				"descriptions": ["Reads bytes from STDIN\n\n```function : public : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Read characters from STDIN\n\n```function : public : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"ReadLine": {
-				"descriptions": ["Reads a string from STDIN"]
+				"descriptions": ["Reads a string from STDIN\n\n```function : public : ReadLine() ~ System.String```"]
 			},
 			"WriteBuffer": {
-				"descriptions": ["Write a byte buffer to STDOUT", "Write a character buffer to STDOUT"]
+				"descriptions": ["Write a byte buffer to STDOUT\n\n```function : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Bool```", "Write a character buffer to STDOUT\n\n```function : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Bool```"]
 			},
 			"WriteErrorBuffer": {
-				"descriptions": ["Write a byte buffer to STDERR", "Write a character buffer to STDERR"]
+				"descriptions": ["Write a byte buffer to STDERR\n\n```function : public : WriteErrorBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Bool```", "Write a character buffer to STDERR\n\n```function : public : WriteErrorBuffer(offset:Int, num:Int, buffer:Char[]) ~ Bool```"]
 			}
 		}
 	},
@@ -1577,16 +1615,16 @@
 		"description": "Provide file directory operations",
 		"functions": {
 			"Create": {
-				"descriptions": ["Creates a directory"]
+				"descriptions": ["Creates a directory\n\n```function : public : Create(n:System.String) ~ Bool```"]
 			},
 			"CreatePath": {
-				"descriptions": ["Creates a directory path"]
+				"descriptions": ["Creates a directory path\n\n```function : public : CreatePath(n:String) ~ Bool```"]
 			},
 			"Exists": {
-				"descriptions": ["Checks to see if the given directory exists"]
+				"descriptions": ["Checks to see if the given directory exists\n\n```function : public : Exists(n:System.String) ~ Bool```"]
 			},
 			"List": {
-				"descriptions": ["List of directory content"]
+				"descriptions": ["List of directory content\n\n```function : public : List(n:System.String) ~ System.String[]```"]
 			}
 		}
 	},
@@ -1594,64 +1632,64 @@
 		"description": "Provides file operations",
 		"functions": {
 			"AccessedTime": {
-				"descriptions": ["Returns the time in which the file was accessed", "Returns the time in which the file was accessed", "Returns the time in which the file was accessed", "Returns the time in which the file was accessed"]
+				"descriptions": ["Returns the time in which the file was accessed\n\n```function : public : AccessedTime(n:System.String) ~ Date```", "Returns the time in which the file was accessed\n\n```method : public : AccessedTime() ~ Date```", "Returns the time in which the file was accessed\n\n```function : public : AccessedTime(n:System.String, gmt:Bool) ~ Date```", "Returns the time in which the file was accessed\n\n```method : public : AccessedTime(gmt:Bool) ~ Date```"]
 			},
 			"CreateTime": {
-				"descriptions": ["Returns the time in which the file was created", "Returns the time in which the file was created", "Returns the time in which the file was created", "Returns the time in which the file was created"]
+				"descriptions": ["Returns the time in which the file was created\n\n```function : public : CreateTime(n:System.String) ~ Date```", "Returns the time in which the file was created\n\n```method : public : CreateTime() ~ Date```", "Returns the time in which the file was created\n\n```function : public : CreateTime(n:System.String, gmt:Bool) ~ Date```", "Returns the time in which the file was created\n\n```method : public : CreateTime(gmt:Bool) ~ Date```"]
 			},
 			"Delete": {
-				"descriptions": ["Deletes a file", "Deletes a file"]
+				"descriptions": ["Deletes a file\n\n```function : public : Delete(n:System.String) ~ Bool```", "Deletes a file\n\n```method : public : Delete() ~ Bool```"]
 			},
 			"Exists": {
-				"descriptions": ["Check to see if a file exists", "Check to see if a file exists"]
+				"descriptions": ["Check to see if a file exists\n\n```function : public : Exists(n:System.String) ~ Bool```", "Check to see if a file exists\n\n```method : public : Exists() ~ Bool```"]
 			},
 			"GetFullName": {
-				"descriptions": ["Gets the full path name for file", "Gets the full path name for file"]
+				"descriptions": ["Gets the full path name for file\n\n```function : public : GetFullName(n:System.String) ~ System.String```", "Gets the full path name for file\n\n```method : public : GetFullName() ~ System.String```"]
 			},
 			"GetName": {
-				"descriptions": ["Gets the file name"]
+				"descriptions": ["Gets the file name\n\n```method : public : GetName() ~ String```"]
 			},
 			"GetTempName": {
-				"descriptions": ["Gets a temporary file name"]
+				"descriptions": ["Gets a temporary file name\n\n```function : public : GetTempName() ~ System.String```"]
 			},
 			"Group": {
-				"descriptions": ["Gets the file group name", "Gets the file group name"]
+				"descriptions": ["Gets the file group name\n\n```function : public : Group(n:System.String) ~ System.String```", "Gets the file group name\n\n```method : public : Group() ~ System.String```"]
 			},
 			"IsEOF": {
-				"descriptions": ["Check if seek pointer is at the end-of-file"]
+				"descriptions": ["Check if seek pointer is at the end-of-file\n\n```method : public : IsEOF() ~ Bool```"]
 			},
 			"IsOpen": {
-				"descriptions": ["Checks of the file is open"]
+				"descriptions": ["Checks of the file is open\n\n```method : public : IsOpen() ~ Bool```"]
 			},
 			"IsReadOnly": {
-				"descriptions": ["Check to see if a file can be read", "Check to see if a file can be read"]
+				"descriptions": ["Check to see if a file can be read\n\n```function : public : IsReadOnly(n:System.String) ~ Bool```", "Check to see if a file can be read\n\n```method : public : IsReadOnly() ~ Bool```"]
 			},
 			"IsReadWrite": {
-				"descriptions": ["Check to see if a file can be read-only", "Check to see if a file can be read-only"]
+				"descriptions": ["Check to see if a file can be read-only\n\n```function : public : IsReadWrite(n:System.String) ~ Bool```", "Check to see if a file can be read-only\n\n```method : public : IsReadWrite() ~ Bool```"]
 			},
 			"IsWriteOnly": {
-				"descriptions": ["Check to see if a file can be written", "Check to see if a file can be written"]
+				"descriptions": ["Check to see if a file can be written\n\n```function : public : IsWriteOnly(n:System.String) ~ Bool```", "Check to see if a file can be written\n\n```method : public : IsWriteOnly() ~ Bool```"]
 			},
 			"ModifiedTime": {
-				"descriptions": ["Returns the time in which the file was modified", "Returns the time in which the file was modified"]
+				"descriptions": ["Returns the time in which the file was modified\n\n```function : public : ModifiedTime(n:System.String) ~ Date```", "Returns the time in which the file was modified\n\n```function : public : ModifiedTime(n:System.String, gmt:Bool) ~ Date```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(name:System.String)```"]
 			},
 			"Owner": {
-				"descriptions": ["Gets the file owner name", "Gets the file owner name"]
+				"descriptions": ["Gets the file owner name\n\n```function : public : Owner(n:System.String) ~ System.String```", "Gets the file owner name\n\n```method : public : Owner() ~ System.String```"]
 			},
 			"Rename": {
-				"descriptions": ["Renames a file"]
+				"descriptions": ["Renames a file\n\n```function : public : Rename(o:System.String, n:System.String) ~ Bool```"]
 			},
 			"Rewind": {
-				"descriptions": ["Rewinds the seek pointer"]
+				"descriptions": ["Rewinds the seek pointer\n\n```method : public : Rewind() ~ Nil```"]
 			},
 			"Seek": {
-				"descriptions": ["Seeks to a point in the file"]
+				"descriptions": ["Seeks to a point in the file\n\n```method : public : Seek(p:Int) ~ Bool```"]
 			},
 			"Size": {
-				"descriptions": ["Returns the size of the file", "Returns the size of the file"]
+				"descriptions": ["Returns the size of the file\n\n```function : public : Size(n:System.String) ~ Int```", "Returns the size of the file\n\n```method : public : Size() ~ Int```"]
 			}
 		}
 	},
@@ -1659,25 +1697,25 @@
 		"description": "Supports file read operations",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes the file"]
+				"descriptions": ["Closes the file\n\n```method : public : Close() ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor."]
+				"descriptions": ["Default constructor.\n\n```New(name:System.String)```"]
 			},
 			"ReadBinaryFile": {
-				"descriptions": ["Reads a file's contents into byte array"]
+				"descriptions": ["Reads a file's contents into byte array\n\n```function : public : ReadBinaryFile(name:String) ~ Byte[]```"]
 			},
 			"ReadBuffer": {
-				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+				"descriptions": ["Reads bytes into a byte buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```", "Reads bytes into a character buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```"]
 			},
 			"ReadByte": {
-				"descriptions": ["Reads a byte"]
+				"descriptions": ["Reads a byte\n\n```method : public : ReadByte() ~ Byte```"]
 			},
 			"ReadFile": {
-				"descriptions": ["Reads a file's contents into a string"]
+				"descriptions": ["Reads a file's contents into a string\n\n```function : public : ReadFile(name:String) ~ String```"]
 			},
 			"ReadLine": {
-				"descriptions": ["Reads a string until a newline or character return is detected"]
+				"descriptions": ["Reads a string until a newline or character return is detected\n\n```method : public : ReadLine() ~ System.String```"]
 			}
 		}
 	},
@@ -1685,28 +1723,28 @@
 		"description": "Supports file write operations",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes a file"]
+				"descriptions": ["Closes a file\n\n```method : public : Close() ~ Nil```"]
 			},
 			"Flush": {
-				"descriptions": ["Flushes the file buffer"]
+				"descriptions": ["Flushes the file buffer\n\n```method : public : Flush() ~ Nil```"]
 			},
 			"New": {
-				"descriptions": ["Opens a new file.", "Opens a new file or appends to an existing one."]
+				"descriptions": ["Opens a new file.\n\n```New(name:System.String)```", "Opens a new file or appends to an existing one.\n\n```New(name:System.String, append:Bool)```"]
 			},
 			"Temp": {
-				"descriptions": ["Creates a temporary file"]
+				"descriptions": ["Creates a temporary file\n\n```function : public : Temp() ~ FileWriter```"]
 			},
 			"WriteBuffer": {
-				"descriptions": ["Writes bytes from a buffer", "Writes characters from a buffer", "Writes bytes from a buffer", "Writes characters from a buffer"]
+				"descriptions": ["Writes bytes from a buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Writes characters from a buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```", "Writes bytes from a buffer\n\n```method : public : WriteBuffer(buffer:Byte[]) ~ Int```", "Writes characters from a buffer\n\n```method : public : WriteBuffer(buffer:Char[]) ~ Int```"]
 			},
 			"WriteByte": {
-				"descriptions": ["Writes a byte"]
+				"descriptions": ["Writes a byte\n\n```method : public : WriteByte(b:Int) ~ Bool```"]
 			},
 			"WriteFile": {
-				"descriptions": ["Write a file's contents into a string"]
+				"descriptions": ["Write a file's contents into a string\n\n```function : public : WriteFile(name:String, content:String) ~ Bool```"]
 			},
 			"WriteString": {
-				"descriptions": ["Writes a character string"]
+				"descriptions": ["Writes a character string\n\n```method : public : WriteString(str:System.String) ~ Nil```"]
 			}
 		}
 	},
@@ -1714,37 +1752,37 @@
 		"description": "Logs messages to temporary files",
 		"functions": {
 			"ClearError": {
-				"descriptions": ["Clears the error log file"]
+				"descriptions": ["Clears the error log file\n\n```method : public : ClearError() ~ Nil```"]
 			},
 			"ClearInfo": {
-				"descriptions": ["Clears the info log file"]
+				"descriptions": ["Clears the info log file\n\n```method : public : ClearInfo() ~ Nil```"]
 			},
 			"ClearWarn": {
-				"descriptions": ["Clears the warning log file"]
+				"descriptions": ["Clears the warning log file\n\n```method : public : ClearWarn() ~ Nil```"]
 			},
 			"Error": {
-				"descriptions": ["Logs an error message"]
+				"descriptions": ["Logs an error message\n\n```method : public : Error(message:String) ~ Bool```"]
 			},
 			"GetDirectory": {
-				"descriptions": ["Gets the logging directory"]
+				"descriptions": ["Gets the logging directory\n\n```method : public : GetDirectory() ~ String```"]
 			},
 			"GetErrorFile": {
-				"descriptions": ["Gets path to error file"]
+				"descriptions": ["Gets path to error file\n\n```method : public : GetErrorFile() ~ String```"]
 			},
 			"GetInfoFile": {
-				"descriptions": ["Gets path to information file"]
+				"descriptions": ["Gets path to information file\n\n```method : public : GetInfoFile() ~ String```"]
 			},
 			"GetWarnFile": {
-				"descriptions": ["Gets path to warning file"]
+				"descriptions": ["Gets path to warning file\n\n```method : public : GetWarnFile() ~ String```"]
 			},
 			"Info": {
-				"descriptions": ["Logs an informational message"]
+				"descriptions": ["Logs an informational message\n\n```method : public : Info(message:String) ~ Bool```"]
 			},
 			"Instance": {
-				"descriptions": ["Gets an instance of the logger"]
+				"descriptions": ["Gets an instance of the logger\n\n```function : public : Instance() ~ Logger```"]
 			},
 			"Warn": {
-				"descriptions": ["Logs a warning message"]
+				"descriptions": ["Logs a warning message\n\n```method : public : Warn(message:String) ~ Bool```"]
 			}
 		}
 	},
@@ -1752,43 +1790,43 @@
 		"description": "Secure SSL TCP/IP socket",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes the socket"]
+				"descriptions": ["Closes the socket\n\n```method : public : Close() ~ Nil```"]
 			},
 			"Flush": {
-				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer."]
+				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer.\n\n```method : public : Flush() ~ Nil```"]
 			},
 			"GetAddress": {
-				"descriptions": ["Returns the connected network address"]
+				"descriptions": ["Returns the connected network address\n\n```method : public : GetAddress() ~ String```"]
 			},
 			"GetCert": {
-				"descriptions": ["Gets the X.509 certificate's subject name"]
+				"descriptions": ["Gets the X.509 certificate's subject name\n\n```method : public : GetCert() ~ String```"]
 			},
 			"GetPort": {
-				"descriptions": ["Returns the connected network port"]
+				"descriptions": ["Returns the connected network port\n\n```method : public : GetPort() ~ Int```"]
 			},
 			"IsOpen": {
-				"descriptions": ["Returns rather the socket is open"]
+				"descriptions": ["Returns rather the socket is open\n\n```method : public : IsOpen() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(address:System.String, port:Int)```"]
 			},
 			"ReadBuffer": {
-				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+				"descriptions": ["Reads bytes into a byte buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Reads bytes into a character buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"ReadByte": {
-				"descriptions": ["Reads a byte"]
+				"descriptions": ["Reads a byte\n\n```method : public : ReadByte() ~ Byte```"]
 			},
 			"ReadLine": {
-				"descriptions": ["Reads a string until a newline or character return is detected"]
+				"descriptions": ["Reads a string until a newline or character return is detected\n\n```method : public : native : ReadLine() ~ System.String```"]
 			},
 			"WriteBuffer": {
-				"descriptions": ["Writes bytes from a byte buffer", "Writes characters from a character buffer"]
+				"descriptions": ["Writes bytes from a byte buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Writes characters from a character buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"WriteByte": {
-				"descriptions": ["Writes a byte"]
+				"descriptions": ["Writes a byte\n\n```method : public : WriteByte(b:Int) ~ Bool```"]
 			},
 			"WriteString": {
-				"descriptions": ["Writes a character string"]
+				"descriptions": ["Writes a character string\n\n```method : public : WriteString(str:System.String) ~ Nil```"]
 			}
 		}
 	},
@@ -1796,46 +1834,46 @@
 		"description": "TCP/IP socket",
 		"functions": {
 			"Close": {
-				"descriptions": ["Closes the socket"]
+				"descriptions": ["Closes the socket\n\n```method : public : Close() ~ Nil```"]
 			},
 			"Flush": {
-				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer."]
+				"descriptions": ["Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer.\n\n```method : public : Flush() ~ Nil```"]
 			},
 			"GetAddress": {
-				"descriptions": ["Returns the connected network address"]
+				"descriptions": ["Returns the connected network address\n\n```method : public : GetAddress() ~ String```"]
 			},
 			"GetPort": {
-				"descriptions": ["Returns the connected network port"]
+				"descriptions": ["Returns the connected network port\n\n```method : public : GetPort() ~ Int```"]
 			},
 			"HostName": {
-				"descriptions": ["Reads the host name"]
+				"descriptions": ["Reads the host name\n\n```function : public : HostName() ~ System.String```"]
 			},
 			"IsOpen": {
-				"descriptions": ["Returns rather the socket is open"]
+				"descriptions": ["Returns rather the socket is open\n\n```method : public : IsOpen() ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(address:System.String, port:Int)```"]
 			},
 			"ReadBuffer": {
-				"descriptions": ["Reads bytes into a byte buffer", "Reads bytes into a character buffer"]
+				"descriptions": ["Reads bytes into a byte buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Reads bytes into a character buffer\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"ReadByte": {
-				"descriptions": ["Reads a byte"]
+				"descriptions": ["Reads a byte\n\n```method : public : ReadByte() ~ Byte```"]
 			},
 			"ReadLine": {
-				"descriptions": ["Reads a string until a newline or character return is detected"]
+				"descriptions": ["Reads a string until a newline or character return is detected\n\n```method : public : ReadLine() ~ System.String```"]
 			},
 			"Resolve": {
-				"descriptions": ["List of resolved IP addresses"]
+				"descriptions": ["List of resolved IP addresses\n\n```function : public : Resolve(n:System.String) ~ System.String[]```"]
 			},
 			"WriteBuffer": {
-				"descriptions": ["Writes bytes from a byte buffer", "Writes characters from a character buffer"]
+				"descriptions": ["Writes bytes from a byte buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```", "Writes characters from a character buffer\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```"]
 			},
 			"WriteByte": {
-				"descriptions": ["Writes a byte"]
+				"descriptions": ["Writes a byte\n\n```method : public : WriteByte(b:Int) ~ Bool```"]
 			},
 			"WriteString": {
-				"descriptions": ["Writes a character string"]
+				"descriptions": ["Writes a character string\n\n```method : public : WriteString(str:System.String) ~ Nil```"]
 			}
 		}
 	},
@@ -1843,16 +1881,16 @@
 		"description": "TCP/IP Server socket",
 		"functions": {
 			"Accept": {
-				"descriptions": ["Accepts a client connection"]
+				"descriptions": ["Accepts a client connection\n\n```method : public : Accept() ~ TCPSocket```"]
 			},
 			"Close": {
-				"descriptions": ["Closes the server socket"]
+				"descriptions": ["Closes the server socket\n\n```method : public : Close() ~ Nil```"]
 			},
 			"Listen": {
-				"descriptions": ["Listens for incoming client connections"]
+				"descriptions": ["Listens for incoming client connections\n\n```method : public : Listen(backlog:Int) ~ Bool```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor"]
+				"descriptions": ["Default constructor\n\n```New(port:Int)```"]
 			}
 		}
 	},
@@ -1860,19 +1898,19 @@
 		"description": "Represents a runtime class",
 		"functions": {
 			"GetMethodNumber": {
-				"descriptions": ["Returns the number of methods associated with the class"]
+				"descriptions": ["Returns the number of methods associated with the class\n\n```method : public : GetMethodNumber() ~ Int```"]
 			},
 			"GetMethods": {
-				"descriptions": ["Returns an array of associated methods"]
+				"descriptions": ["Returns an array of associated methods\n\n```method : public : GetMethods() ~ Method[]```"]
 			},
 			"GetName": {
-				"descriptions": ["Returns the type name of the class"]
+				"descriptions": ["Returns the type name of the class\n\n```method : public : GetName() ~ String```"]
 			},
 			"Instance": {
-				"descriptions": ["Creates an instance of the given class. The class must have a zero-parameter constructor to support this operation."]
+				"descriptions": ["Creates an instance of the given class. The class must have a zero-parameter constructor to support this operation.\n\n```function : public : Instance(name:System.String) ~ System.Base```"]
 			},
 			"IsLoaded": {
-				"descriptions": ["Checks rather the class has been loaded"]
+				"descriptions": ["Checks rather the class has been loaded\n\n```method : public : IsLoaded() ~ Bool```"]
 			}
 		}
 	},
@@ -1880,13 +1918,13 @@
 		"description": "Represents a runtime data type",
 		"functions": {
 			"GetClassName": {
-				"descriptions": ["Returns array the class type name"]
+				"descriptions": ["Returns array the class type name\n\n```method : public : GetClassName() ~ String```"]
 			},
 			"GetDimension": {
-				"descriptions": ["Returns array dimension size of the data type. Will return 0 if type is a scalar"]
+				"descriptions": ["Returns array dimension size of the data type. Will return 0 if type is a scalar\n\n```method : public : GetDimension() ~ Int```"]
 			},
 			"GetType": {
-				"descriptions": ["Returns the data type's type"]
+				"descriptions": ["Returns the data type's type\n\n```method : public : GetType() ~ TypeId```"]
 			}
 		}
 	},
@@ -1894,16 +1932,16 @@
 		"description": "Represents a runtime method or function",
 		"functions": {
 			"GetClass": {
-				"descriptions": ["Returns the class associated with this method"]
+				"descriptions": ["Returns the class associated with this method\n\n```method : public : GetClass() ~ Class```"]
 			},
 			"GetName": {
-				"descriptions": ["Returns the name of the method"]
+				"descriptions": ["Returns the name of the method\n\n```method : public : GetName() ~ String```"]
 			},
 			"GetParameters": {
-				"descriptions": ["Returns an array of method parameters"]
+				"descriptions": ["Returns an array of method parameters\n\n```method : public : GetParameters() ~ DataType[]```"]
 			},
 			"GetReturn": {
-				"descriptions": ["Returns the method's return type"]
+				"descriptions": ["Returns the method's return type\n\n```method : public : GetReturn() ~ DataType```"]
 			}
 		}
 	},
@@ -1911,40 +1949,40 @@
 		"description": "Encapsulates 2D matrix operations",
 		"functions": {
 			"Add": {
-				"descriptions": ["Adds a constant to a matrix", "Adds a constant to a matrix", "Adds two matrices"]
+				"descriptions": ["Adds a constant to a matrix\n\n```function : public : native : Add(x:Float, b:Float[,]) ~ Float[,]```", "Adds a constant to a matrix\n\n```function : public : native : Add(b:Float[,], x:Float) ~ Float[,]```", "Adds two matrices\n\n```function : public : native : Add(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"Concatenate": {
-				"descriptions": ["Concatenates two matrix"]
+				"descriptions": ["Concatenates two matrix\n\n```function : public : Concatenate(a:Float[,], b:Float[,], is_row:Bool) ~ Float[,]```"]
 			},
 			"Divide": {
-				"descriptions": ["Divides a constant by a matrix", "Divides a constant by a matrix", "Divides two matrices"]
+				"descriptions": ["Divides a constant by a matrix\n\n```function : public : native : Divide(b:Float[,], x:Float) ~ Float[,]```", "Divides a constant by a matrix\n\n```function : public : native : Divide(x:Float, b:Float[,]) ~ Float[,]```", "Divides two matrices\n\n```function : public : native : Divide(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"Dot": {
-				"descriptions": ["Calculates the dot product."]
+				"descriptions": ["Calculates the dot product.\n\n```function : public : native : Dot(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"DotSigmoid": {
-				"descriptions": ["Calculates the Dot Product applying while applying the Sigmoid function to all elements"]
+				"descriptions": ["Calculates the Dot Product applying while applying the Sigmoid function to all elements\n\n```function : public : native : DotSigmoid(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"Multiple": {
-				"descriptions": ["Multiplies a constant by a matrix", "Multiplies a constant by a matrix", "Multiplies two matrices using the Hadamard rule"]
+				"descriptions": ["Multiplies a constant by a matrix\n\n```function : public : native : Multiple(x:Float, b:Float[,]) ~ Float[,]```", "Multiplies a constant by a matrix\n\n```function : public : native : Multiple(b:Float[,], x:Float) ~ Float[,]```", "Multiplies two matrices using the Hadamard rule\n\n```function : public : native : Multiple(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"Random": {
-				"descriptions": ["Generates a random 2D array of values from 0.0 to 1.0"]
+				"descriptions": ["Generates a random 2D array of values from 0.0 to 1.0\n\n```function : public : Random(rows:Int, cols:Int) ~ Float[,]```"]
 			},
 			"RandomNormal": {
-				"descriptions": ["Generates a random normal distribution of values", "Generates a random normal value"]
+				"descriptions": ["Generates a random normal distribution of values\n\n```function : public : RandomNormal(mean:Float, variance:Float, rows:Int, cols:Int) ~ Float[,]```", "Generates a random normal value\n\n```function : public : RandomNormal(mean:Float, variance:Float) ~ Float```"]
 			},
 			"Sigmoid": {
-				"descriptions": ["Sigmoid 'S' function", "Applies the Sigmoid function to all elements"]
+				"descriptions": ["Sigmoid 'S' function\n\n```function : public : native : Sigmoid(x:Float) ~ Float```", "Applies the Sigmoid function to all elements\n\n```function : public : native : Sigmoid(b:Float[,]) ~ Float[,]```"]
 			},
 			"Split": {
-				"descriptions": ["Splits a matrix"]
+				"descriptions": ["Splits a matrix\n\n```function : public : Split(b:Float[,], offset:Int, count:Int, is_row:Bool) ~ Float[,]```"]
 			},
 			"Subtract": {
-				"descriptions": ["Subtracts a constant from a matrix", "Adds a constant to a matrix", "Subtracts two matrices"]
+				"descriptions": ["Subtracts a constant from a matrix\n\n```function : public : native : Subtract(x:Float, b:Float[,]) ~ Float[,]```", "Adds a constant to a matrix\n\n```function : public : native : Subtract(b:Float[,], x:Float) ~ Float[,]```", "Subtracts two matrices\n\n```function : public : native : Subtract(a:Float[,], b:Float[,]) ~ Float[,]```"]
 			},
 			"Transpose": {
-				"descriptions": ["Transpose a matrix swapping rows and columns."]
+				"descriptions": ["Transpose a matrix swapping rows and columns.\n\n```function : public : native : Transpose(a:Float[,]) ~ Float[,]```"]
 			}
 		}
 	},
@@ -1952,58 +1990,58 @@
 		"description": "Provides date and time functionality",
 		"functions": {
 			"AddDays": {
-				"descriptions": ["Add days to the date"]
+				"descriptions": ["Add days to the date\n\n```method : public : AddDays(value:Int) ~ Nil```"]
 			},
 			"AddHours": {
-				"descriptions": ["Add hours to the date"]
+				"descriptions": ["Add hours to the date\n\n```method : public : AddHours(value:Int) ~ Nil```"]
 			},
 			"AddMinutes": {
-				"descriptions": ["Add minutes to the date"]
+				"descriptions": ["Add minutes to the date\n\n```method : public : AddMinutes(value:Int) ~ Nil```"]
 			},
 			"AddSeconds": {
-				"descriptions": ["Add seconds to the date"]
+				"descriptions": ["Add seconds to the date\n\n```method : public : AddSeconds(value:Int) ~ Nil```"]
 			},
 			"Clone": {
-				"descriptions": ["Clones the object instance"]
+				"descriptions": ["Clones the object instance\n\n```method : public : Clone() ~ System.Compare```"]
 			},
 			"Compare": {
-				"descriptions": ["Compares two dates"]
+				"descriptions": ["Compares two dates\n\n```method : public : Compare(rhs:System.Compare) ~ Int```"]
 			},
 			"GetDay": {
-				"descriptions": ["Returns the day"]
+				"descriptions": ["Returns the day\n\n```method : public : GetDay() ~ Int```"]
 			},
 			"GetDayName": {
-				"descriptions": ["Returns name of the day"]
+				"descriptions": ["Returns name of the day\n\n```method : public : GetDayName() ~ String```"]
 			},
 			"GetHours": {
-				"descriptions": ["Returns the hours"]
+				"descriptions": ["Returns the hours\n\n```method : public : GetHours() ~ Int```"]
 			},
 			"GetMinutes": {
-				"descriptions": ["Returns the minutes"]
+				"descriptions": ["Returns the minutes\n\n```method : public : GetMinutes() ~ Int```"]
 			},
 			"GetMonth": {
-				"descriptions": ["Returns the month"]
+				"descriptions": ["Returns the month\n\n```method : public : GetMonth() ~ Int```"]
 			},
 			"GetMonthName": {
-				"descriptions": ["Returns name of the month"]
+				"descriptions": ["Returns name of the month\n\n```method : public : GetMonthName() ~ String```"]
 			},
 			"GetSeconds": {
-				"descriptions": ["Returns the seconds"]
+				"descriptions": ["Returns the seconds\n\n```method : public : GetSeconds() ~ Int```"]
 			},
 			"GetYear": {
-				"descriptions": ["Returns the year"]
+				"descriptions": ["Returns the year\n\n```method : public : GetYear() ~ Int```"]
 			},
 			"HashID": {
-				"descriptions": ["Returns a hash ID for the given class"]
+				"descriptions": ["Returns a hash ID for the given class\n\n```method : public : HashID() ~ Int```"]
 			},
 			"New": {
-				"descriptions": ["Default constructor", "Constructor", "Constructor, sets time to midnight of the given day", "Constructor"]
+				"descriptions": ["Default constructor\n\n```New()```", "Constructor\n\n```New(gmt:Bool)```", "Constructor, sets time to midnight of the given day\n\n```New(day:Int, month:Int, year:Int, gmt:Bool)```", "Constructor\n\n```New(day:Int, month:Int, year:Int, hours:Int, mins:Int, secs:Int, gmt:Bool)```"]
 			},
 			"ToShortString": {
-				"descriptions": ["Creates a shortened string representation of the date"]
+				"descriptions": ["Creates a shortened string representation of the date\n\n```method : public : ToShortString() ~ String```"]
 			},
 			"ToString": {
-				"descriptions": ["Creates a string representation of the date"]
+				"descriptions": ["Creates a string representation of the date\n\n```method : public : ToString() ~ String```"]
 			}
 		}
 	},
@@ -2011,13 +2049,13 @@
 		"description": "Provides elapsed time",
 		"functions": {
 			"End": {
-				"descriptions": ["Ends the timer"]
+				"descriptions": ["Ends the timer\n\n```method : public : End() ~ Nil```"]
 			},
 			"GetElapsedTime": {
-				"descriptions": ["Gets the elapsed time in seconds"]
+				"descriptions": ["Gets the elapsed time in seconds\n\n```method : public : GetElapsedTime() ~ Float```"]
 			},
 			"Start": {
-				"descriptions": ["Starts the timer"]
+				"descriptions": ["Starts the timer\n\n```method : public : Start() ~ Nil```"]
 			}
 		}
 	}}
