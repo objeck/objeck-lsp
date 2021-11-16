@@ -25,19 +25,7 @@ class JsonMaker {
 	DOC ME
 	~#
 	function : Main(args : String[]) ~ Nil {
-		if(args->Size() = 1) {
-			parser := JsonParser->New(FileReader->ReadFile(args[0]));
-			if(parser->Parse()) {
-#				result := parser->GetRoot()->FindElements("System.Int/descriptions");
-				results := parser->GetRoot()->FindElements("System.Int/functions/PrintLine/descriptions");
-				if(results <> Nil) {
-					each(i : results) {
-						results->Get(i)->GetValue()->PrintLine();
-					};
-				};
-			};
-		}
-		else if(args->Size() > 2) {
+		if(args->Size() > 2) {
 			JsonMaker->New(args)->Make()->PrintLine();
 		};
 	}
@@ -120,7 +108,17 @@ class JsonMaker {
 				func := functions->Get(j);
 				description := func->GetDesc();
 				signature := func->GetSignature();
-				buffer += "\"{$description}\\n\\n```{$signature}```\"";
+
+				params_buffer := "";
+				params := func->GetParams();
+				each(k : params) {
+					param := params->Get(k);
+					name := param->GetName();
+					type_name := param->GetTypeName();
+					params_buffer += "\\n\\n{$type_name} - {$name}";
+				};
+
+				buffer += "\"**{$description}**\\n\\n{$params_buffer}\\n\\n```{$signature}```\"";
 				if(j + 1 < functions->Size()) {
 					buffer += ", ";
 				};

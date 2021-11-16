@@ -10,6 +10,7 @@ bundle LSP {
 		@analysis : Analysis;
 		@doc_cache : static : Cache<String, JsonElement>;
 		@is_debug : Bool;
+		@doc_path : static : String;
 
 		New(workspace : LspWorkspace, uri : String, use_alt : Bool, is_debug : Bool) {
 			@is_debug := is_debug;
@@ -19,7 +20,8 @@ bundle LSP {
 			};
 		}
 
-		function : Init() ~ Nil {
+		function : Init(doc_path : String) ~ Nil {
+			@doc_path := doc_path;
 			@doc_cache := Cache->New(Cache->Type->LRU, 16)<String, JsonElement>;
 		}
 
@@ -355,7 +357,7 @@ bundle LSP {
 						};
 					};
 
-
+					# TODO: array of api docs JsonElement->JsonType->ARRAY
 					if(content <> Nil) {
 						content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 						content_json->Insert("contents", content);
@@ -385,7 +387,11 @@ bundle LSP {
 				};
 			}
 			else {
-				parser := JsonParser->New(System.IO.File.FileReader->ReadFile("C:/Users/objec/Documents/Code/objeck-lang-server/tests/wip/code_doc/out.json"));
+				if(@is_debug) {
+					System.IO.File.Logger->Instance()->Info("### Read file: '{$@doc_path} ###");
+				};
+
+				parser := JsonParser->New(System.IO.File.FileReader->ReadFile(@doc_path));
 				if(parser->Parse()) {
 					klass_json := parser->GetRoot()->Get(klass_name);
 					if(klass_json <> Nil) {

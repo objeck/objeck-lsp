@@ -16,9 +16,6 @@ bundle LSP {
 		@socket : TCPSocket;
 		@cancel_id : Int;
 
-		function : Init() ~ Nil {
-		}
-
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent();
 			@socket := socket;

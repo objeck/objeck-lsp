@@ -4,6 +4,10 @@ class Hello {
 		twenty := a + 13 + 7;
 		twenty->PrintLine();
 
+		foo := "foo";
+		bar := foo->SubString(1,2);
+		bar->PrintLine();
+
 		if(twenty <> 19) {
 			select(3) {
 				label 1: {
