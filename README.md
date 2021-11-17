@@ -3,7 +3,9 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 
 ![alt text](images/design.svg "Objeck LSP")
 
-## Message Support
+*Latest:*
+* Adding hover Support `textDocument/Hover`
+* Better support for literals
 
 #### Notifications
 * Initialized `initialized`
