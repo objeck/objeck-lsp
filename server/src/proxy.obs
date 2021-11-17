@@ -292,7 +292,7 @@ bundle LSP {
 
 			root_signature := @analysis->Hover(uri, line_pos, char_pos, var_str, mthd_str, sys_path);
 			if(root_signature <> Nil) {
-				content : String;
+				content : JsonElement;
 
 				# class variable
 				name := root_signature->GetName();
@@ -355,11 +355,26 @@ bundle LSP {
 						};
 					};
 
-					# TODO: array of api docs JsonElement->JsonType->ARRAY
 					if(content <> Nil) {
-						content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						content_json->Insert("contents", content);
-						return content_json;
+						if(content->GetType() = JsonElement->JsonType->OBJECT) {
+							content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+
+							content_json->Insert("contents", content->GetValue());
+							return content_json;
+						}
+						else {
+							docs_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+							
+							each(i : content) {
+								docs_json->Add(content->Get(i)->GetValue());
+							};
+
+							content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							content_json->Insert("contents", docs_json);
+
+							return content_json;
+
+						};
 					};
 				};
 			};
@@ -367,21 +382,17 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : GetDocumentation(klass_name : String, method_name : String) ~ String {
+		method : public : GetDocumentation(klass_name : String, method_name : String) ~ JsonElement {
 			klass_json := @doc_cache->Find(klass_name);
 			if(klass_json <> Nil) {
 				if(method_name = Nil) {
-					return klass_json->Get("description")->GetValue();
+					return klass_json->Get("description");
 				}
 				else {
 					key := String->New("functions/");
 					key += String->New(method_name);
 					key += "/descriptions";
-
-					mthd_json := klass_json->FindElements(key);
-					if(mthd_json <> Nil) {
-						return mthd_json->Get(0)->GetValue();
-					};
+					return klass_json->FindElements(key);
 				};
 			}
 			else {
@@ -396,17 +407,13 @@ bundle LSP {
 						@doc_cache->Insert(klass_name, klass_json);
 
 						if(method_name = Nil) {
-							return klass_json->Get("description")->GetValue();
+							return klass_json->Get("description");
 						}
 						else {
 							key := String->New("functions/");
 							key += String->New(method_name);
 							key += "/descriptions";
-
-							mthd_json := klass_json->FindElements(key);
-							if(mthd_json <> Nil) {
-								return mthd_json->Get(0)->GetValue();
-							};
+							return klass_json->FindElements(key);
 						};
 					};
 				};

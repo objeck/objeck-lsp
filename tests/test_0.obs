@@ -8,6 +8,9 @@ class Hello {
 		bar := foo->SubString(1,2);
 		bar->PrintLine();
 
+		z := "foo";
+		z->SubString(2,3);
+
 		if(twenty <> 19) {
 			select(3) {
 				label 1: {
