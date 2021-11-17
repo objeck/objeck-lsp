@@ -118,6 +118,11 @@ class JsonMaker {
 					params_buffer += "\\n\\n{$type_name} - {$name}";
 				};
 
+				if(func->GetReturnType() <> Nil) {
+					return_str := func->GetReturnType()->GetTypeName();
+					params_buffer += "\\n\\nreturn - {$return_str}";
+				};
+
 				buffer += "\"**{$description}**\\n\\n{$params_buffer}\\n\\n```{$signature}```\"";
 				if(j + 1 < functions->Size()) {
 					buffer += ", ";
