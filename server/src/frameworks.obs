@@ -560,6 +560,7 @@ bundle LSP {
 
 		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String, offset : Bool := true) ~ Bool {
 			start_pos := index;
+
 			while(@text->Get(index)->IsChar() | @text->Get(index) = '_'  | @text->Get(index) = '@' | @text->Get(index) = '(' | @text->Get(index) = ')') {
 				index -= 1;
 			};
@@ -587,10 +588,23 @@ bundle LSP {
 			has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
 			if(has_var) {
 				index -= 2;
+				
 				start_pos := index;
-				while(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
-					index -= 1;
+
+				# variable
+				if(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
+					while(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
+						index -= 1;
+					};
+				}
+				# number
+				else if(@text->Get(index)->IsDigit() | @text->Get(index) = '.') {
+					while(@text->Get(index)->IsDigit() | @text->Get(index) = '.'  | @text->Get(index) = '+'  | @text->Get(index) = '-'  | 
+							@text->Get(index) = 'x'  | (@text->Get(index) >= 'a' & @text->Get(index) <= 'f') | (@text->Get(index) >= 'A' & @text->Get(index) <= 'F')) {
+						index -= 1;
+					};
 				};
+
 				end_pos := index;
 
 				length := start_pos - end_pos;
