@@ -599,11 +599,9 @@ bundle LSP {
 				}
 				# number
 				else if(@text->Get(index)->IsDigit() | @text->Get(index) = '.') {
-"--- 0 ---"->PrintLine();
 					while(@text->Get(index)->IsDigit() | @text->Get(index) = '.'  | @text->Get(index) = '+'  | @text->Get(index) = '-'  | 
 							@text->Get(index) = 'x'  | (@text->Get(index) >= 'a' & @text->Get(index) <= 'f') | (@text->Get(index) >= 'A' & @text->Get(index) <= 'F')) {
 						index -= 1;
-"--- 1 ---"->PrintLine();						
 					};
 				};
 

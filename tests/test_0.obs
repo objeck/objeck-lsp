@@ -11,6 +11,8 @@ class Hello {
 		z := "foo";
 		z->SubString(2,3);
 
+		13->ToBinaryString();
+
 		if(twenty <> 19) {
 			select(3) {
 				label 1: {
