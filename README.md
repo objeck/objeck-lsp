@@ -1,7 +1,7 @@
 # Objeck LSP
 LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorporated into v6.0. Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) will be built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes a TCP socket interface. The backend handles client requests, formats responses and maintains the state of in-memory documents.
 
-*Latest Work in Progress:*
+*Work in Progress:*
 * Adding hover support `textDocument/Hover`
 * Support for literal and nested method calls 
 * Ignore case for method/function completions 
