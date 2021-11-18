@@ -13,6 +13,8 @@ class Hello {
 
 		'u'->ToInt();
 
+		"hello world!"->ToUpper();
+
 		hex_str := 13->ToHexString();
 		hex_str->ToUpper()->PrintLine();
 		
