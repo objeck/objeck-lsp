@@ -604,6 +604,14 @@ bundle LSP {
 						index -= 1;
 					};
 					index -= 1;
+				}
+				# string
+				else if(@text->Get(index) = '"') {
+					index -= 1;
+					while(@text->Get(index) <> '"' & @text->Get(index - 1) <> '\\') {
+						index -= 1;
+					};
+					index -= 1;
 				};
 
 				end_pos := index;
