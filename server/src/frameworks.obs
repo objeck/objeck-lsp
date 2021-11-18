@@ -597,12 +597,13 @@ bundle LSP {
 						index -= 1;
 					};
 				}
-				# number
-				else if(@text->Get(index)->IsDigit() | @text->Get(index) = '.') {
-					while(@text->Get(index)->IsDigit() | @text->Get(index) = '.'  | @text->Get(index) = '+'  | @text->Get(index) = '-'  | 
-							@text->Get(index) = 'x'  | (@text->Get(index) >= 'a' & @text->Get(index) <= 'f') | (@text->Get(index) >= 'A' & @text->Get(index) <= 'F')) {
+				# character
+				else if(@text->Get(index) = '\'') {
+					index -= 1;
+					while(@text->Get(index) <> '\'' & @text->Get(index - 1) <> '\\') {
 						index -= 1;
 					};
+					index -= 1;
 				};
 
 				end_pos := index;

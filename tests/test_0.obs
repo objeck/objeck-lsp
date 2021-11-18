@@ -11,6 +11,8 @@ class Hello {
 		z := "foo";
 		z->SubString(2,3);
 
+		'u'->ToInt();
+
 		hex_str := 13->ToHexString();
 		hex_str->ToUpper()->PrintLine();
 		
