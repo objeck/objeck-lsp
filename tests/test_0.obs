@@ -11,8 +11,9 @@ class Hello {
 		z := "foo";
 		z->SubString(2,3);
 
-		13->ToBinaryString();
-
+		hex_str := 13->ToHexString();
+		hex_str->ToUpper()->PrintLine();
+		
 		if(twenty <> 19) {
 			select(3) {
 				label 1: {
