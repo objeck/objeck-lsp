@@ -9,9 +9,12 @@ class Hello {
 		bar->PrintLine();
 
 		z := "foo";
+		z->ToInt();
 		z->SubString(2,3);
 
 		'u'->ToInt();
+
+		Foo();
 
 		"hello world!"->ToUpper();
 
@@ -30,5 +33,9 @@ class Hello {
 			};
 			3->PrintLine();
 		};
+	}
+
+	function : Foo() ~ Int {
+		return 13;
 	}
 }
