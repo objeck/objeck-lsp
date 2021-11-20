@@ -10,7 +10,7 @@ class Hello {
 
 		z := "foo";
 		z->ToInt();
-		z->SubString(2,3);
+		z->SubString(2,3)->ToFloat();
 
 		'u'->ToInt();
 
