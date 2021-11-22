@@ -356,10 +356,9 @@ bundle LSP {
 					};
 
 					if(content <> Nil) {
-						if(content->GetType() = JsonElement->JsonType->OBJECT) {
+						if(content->GetType() = JsonElement->JsonType->STRING) {
 							content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-
-							content_json->Insert("contents", content->GetValue());
+							content_json->Insert("contents", content);
 							return content_json;
 						}
 						else {
