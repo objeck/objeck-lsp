@@ -3,8 +3,7 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 
 *Work in Progress:*
 * Adding hover support `textDocument/Hover`, literal support
-* Support for literal and nested method calls 
-* Ignore case for method/function completions 
+* Completion support for literals
 
 ![alt text](images/design.svg "Objeck LSP")
 
