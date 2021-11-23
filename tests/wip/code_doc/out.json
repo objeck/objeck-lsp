@@ -26,7 +26,7 @@
 				"descriptions": ["**Searches for a value in cache**\n\n\n\nkey - K\n\nreturn: S\n\n```method : public : Find(key:K) ~ S```"]
 			},
 			"GetKeyValues": {
-				"descriptions": ["**Gets a collection of key/value pairs**\n\n\n\nreturn: Vector&lt;Pair&gt;\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
+				"descriptions": ["**Gets a collection of key\/value pairs**\n\n\n\nreturn: Vector&lt;Pair&gt;\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
 			},
 			"GetKeys": {
 				"descriptions": ["**Get a collection of keys**\n\n\n\nreturn: Vector&lt;K&gt;\n\n```method : public : GetKeys() ~ Vector&lt;K&gt;```"]
@@ -266,7 +266,7 @@
 				"descriptions": ["**Searches for a value in a hash**\n\n\n\nkey - K\n\nreturn: V\n\n```method : public : native : Find(key:K) ~ V```"]
 			},
 			"GetKeyValues": {
-				"descriptions": ["**Gets a collection of key/value pairs**\n\n\n\nreturn: Vector&lt;Pair&gt;\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
+				"descriptions": ["**Gets a collection of key\/value pairs**\n\n\n\nreturn: Vector&lt;Pair&gt;\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&gt;```"]
 			},
 			"GetKeys": {
 				"descriptions": ["**Get a collection of keys**\n\n\n\nreturn: Vector&lt;K&gt;\n\n```method : public : native : GetKeys() ~ Vector&lt;K&gt;```"]
@@ -784,7 +784,7 @@
 				"descriptions": ["**General encoding for JSON strings**\n\n\n\nstr - String\n\nreturn: String\n\n```function : public : native : Encode(str:String) ~ String```"]
 			},
 			"FindElements": {
-				"descriptions": ["**Queries the object graph. Object attributes referenced by '/' while array elements are referenced by '[index]'. Example "cars/[last]/make".**\n\n\n\npath - String\n\nreturn: JsonElement\n\n```method : public : FindElements(path:String) ~ JsonElement```"]
+				"descriptions": ["**Queries the object graph. Object attributes referenced by '\/' while array elements are referenced by '[index]'. Example \"cars\/[last]\/make\".**\n\n\n\npath - String\n\nreturn: JsonElement\n\n```method : public : FindElements(path:String) ~ JsonElement```"]
 			},
 			"Get": {
 				"descriptions": ["**Gets an indexed value from an array type**\n\n\n\nindex - Int\n\nreturn: JsonElement\n\n```method : public : Get(index:Int) ~ JsonElement```", "**Gets a named value from an object type**\n\n\n\nname - String\n\nreturn: JsonElement\n\n```method : public : Get(name:String) ~ JsonElement```"]
@@ -2081,7 +2081,7 @@
 				"descriptions": ["**Get the directory where the application was run from. This is where the application data directory is.**\n\n\n\nreturn: String\n\n```function : public : GetBasePath() ~ String```"]
 			},
 			"GetPrefPath": {
-				"descriptions": ["**Use this function to get the "pref dir". This is meant to be where the application can write personal files (Preferences and save games, etc.) that are specific to the application. This directory is unique per user and per application.**\n\n\n\norg - String\n\napp - String\n\nreturn: String\n\n```function : public : GetPrefPath(org:String, app:String) ~ String```"]
+				"descriptions": ["**Use this function to get the \"pref dir\". This is meant to be where the application can write personal files (Preferences and save games, etc.) that are specific to the application. This directory is unique per user and per application.**\n\n\n\norg - String\n\napp - String\n\nreturn: String\n\n```function : public : GetPrefPath(org:String, app:String) ~ String```"]
 			}
 		}
 	},
@@ -2697,7 +2697,7 @@
 				"descriptions": ["**Copy a portion of the texture to the current rendering target**\n\n\n\ntexture - Texture\n\nsrcrect - Rect\n\ndstrect - Rect\n\nreturn: Int\n\n```method : public : Copy(texture:Texture, srcrect:Rect, dstrect:Rect) ~ Int```"]
 			},
 			"CopyEx": {
-				"descriptions": ["**Copy a portion of the texture to the current rendering target, optionally rotating it by angle around the given center and also flipping it top-bottom and/or left-right**\n\n\n\ntexture - Texture\n\nsrcrect - Rect\n\ndstrect - Rect\n\nangle - Float\n\ncenter - Point\n\nflip - RendererFlip\n\nreturn: Int\n\n```method : public : CopyEx(texture:Texture, srcrect:Rect, dstrect:Rect, angle:Float, center:Point, flip:RendererFlip) ~ Int```"]
+				"descriptions": ["**Copy a portion of the texture to the current rendering target, optionally rotating it by angle around the given center and also flipping it top-bottom and\/or left-right**\n\n\n\ntexture - Texture\n\nsrcrect - Rect\n\ndstrect - Rect\n\nangle - Float\n\ncenter - Point\n\nflip - RendererFlip\n\nreturn: Int\n\n```method : public : CopyEx(texture:Texture, srcrect:Rect, dstrect:Rect, angle:Float, center:Point, flip:RendererFlip) ~ Int```"]
 			},
 			"CreateSoftwareRenderer": {
 				"descriptions": ["**Create a 2D software rendering context for a surface**\n\n\n\nsurface - Surface\n\nreturn: Renderer\n\n```function : public : CreateSoftwareRenderer(surface:Surface) ~ Renderer```"]
@@ -2911,7 +2911,7 @@
 				"descriptions": ["**Creates new RGB surface**\n\n\n\nflags - Int\n\nwidth - Int\n\nheight - Int\n\ndepth - Int\n\nRmask - Int\n\nGmask - Int\n\nBmask - Int\n\nAmask - Int\n\n```New(flags:Int, width:Int, height:Int, depth:Int, Rmask:Int, Gmask:Int, Bmask:Int, Amask:Int)```"]
 			},
 			"Rotate90Degrees": {
-				"descriptions": ["**Rotates a 8/16/24/32 bit surface in increments of 90 degrees.**\n\n\n\nnumClockwiseTurns - Int\n\nreturn: Surface\n\n```method : public : Rotate90Degrees(numClockwiseTurns:Int) ~ Surface```"]
+				"descriptions": ["**Rotates a 8\/16\/24\/32 bit surface in increments of 90 degrees.**\n\n\n\nnumClockwiseTurns - Int\n\nreturn: Surface\n\n```method : public : Rotate90Degrees(numClockwiseTurns:Int) ~ Surface```"]
 			},
 			"RotoZoom": {
 				"descriptions": ["**Rotates and zooms a surface and optional anti-aliasing.**\n\n\n\nangle - Float\n\nzoom - Float\n\nsmooth - Bool\n\nreturn: Surface\n\n```method : public : RotoZoom(angle:Float, zoom:Float, smooth:Bool) ~ Surface```"]
@@ -3614,7 +3614,7 @@
 				"descriptions": ["**Calculates the arc-tangent value**\n\n\n\nreturn: Float\n\n```function : public : ArcTan() ~ Float```"]
 			},
 			"ArcTan2": {
-				"descriptions": ["**Calculates arc tangent of y/x**\n\n\n\ny - Float\n\nx - Float\n\nreturn: Float\n\n```function : public : ArcTan2(y:Float, x:Float) ~ Float```"]
+				"descriptions": ["**Calculates arc tangent of y\/x**\n\n\n\ny - Float\n\nx - Float\n\nreturn: Float\n\n```function : public : ArcTan2(y:Float, x:Float) ~ Float```"]
 			},
 			"Ceiling": {
 				"descriptions": ["**Calculates the ceiling value**\n\n\n\nreturn: Float\n\n```function : public : Ceiling() ~ Float```"]
@@ -4168,7 +4168,7 @@
 		"description": "Analysis results",
 		"functions": {
 			"CodeRename": {
-				"descriptions": ["**Renames a variable or method/function**\n\n\n\nuri - String\n\nline - Int\n\npos - Int\n\nsys_path - String\n\nreturn: Result[]\n\n```method : public : CodeRename(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```"]
+				"descriptions": ["**Renames a variable or method\/function**\n\n\n\nuri - String\n\nline - Int\n\npos - Int\n\nsys_path - String\n\nreturn: Result[]\n\n```method : public : CodeRename(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```"]
 			},
 			"Completion": {
 				"descriptions": ["**Get completion options**\n\n\n\nuri - String\n\nline - Int\n\npos - Int\n\nvar_str - String\n\nmthd_str - String\n\nsys_path - String\n\nreturn: Result\n\n```method : public : Completion(uri:String, line:Int, pos:Int, var_str:String, mthd_str:String, sys_path:String) ~ Result```"]
@@ -4801,7 +4801,7 @@
 		"description": "Utilities for handling dates.",
 		"functions": {
 			"Parse": {
-				"descriptions": ["**Parses a date from a String. Format <i>MM: </i>month, <i>dd: </i>day, <i>yy(yy): </i>year, <i>hh: </i>hour, <i>mm: </i>minutes and <i>ss: </i>seconds.**\n\n\n\ndate_str - String\n\nformat - String\n\ngmt - Bool\n\nreturn: Date\n\n```function : public : Parse(date_str:String, format:String, gmt:Bool) ~ Date```"]
+				"descriptions": ["**Parses a date from a String. Format <i>MM: <\/i>month, <i>dd: <\/i>day, <i>yy(yy): <\/i>year, <i>hh: <\/i>hour, <i>mm: <\/i>minutes and <i>ss: <\/i>seconds.**\n\n\n\ndate_str - String\n\nformat - String\n\ngmt - Bool\n\nreturn: Date\n\n```function : public : Parse(date_str:String, format:String, gmt:Bool) ~ Date```"]
 			}
 		}
 	},

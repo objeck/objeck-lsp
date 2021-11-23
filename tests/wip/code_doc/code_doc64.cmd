@@ -1,6 +1,7 @@
 SETLOCAL
 set ZIP_BIN="\Program Files\7-Zip"
 
+del /q deploy64\code_doc.obe
 rmdir /s /q ..\html 
 mkdir ..\html
 obc -src deploy64\examples\doc\doc_json.obs,deploy64\examples\doc\doc_parser.obs -lib gen_collect,json -dest deploy64\code_doc.obe

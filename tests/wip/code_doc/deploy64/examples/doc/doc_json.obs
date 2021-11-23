@@ -106,7 +106,7 @@ class JsonMaker {
 			functions := snippet->GetFunctions(function_name)<FuncSnippet>;
 			each(j : functions) {
 				func := functions->Get(j);
-				description := func->GetDesc();
+				description := JsonElement->Encode(func->GetDesc());
 				signature := func->GetSignature();
 
 				params_buffer := "";
