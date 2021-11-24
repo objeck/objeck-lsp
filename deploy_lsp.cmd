@@ -10,9 +10,9 @@ cd ..\..\server\doc_json
 call gen_json.cmd
 cd ..
 
-mv objk_apis.json ..\objeck-lsp
+copy objk_apis.json ..\objeck-lsp
 call build_server.cmd
-move /y objeck_lsp.obe ..\objeck-lsp
+copy /y objeck_lsp.obe ..\objeck-lsp
 cd ..
 
 copy README.txt objeck-lsp

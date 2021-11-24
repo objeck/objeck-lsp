@@ -1,0 +1,140 @@
+#~
+Objeck HTML code documentation system
+Copyright (c) 2021 Randy Hollines
+~#
+
+use System.IO.File;
+use Collection.Generic;
+use Data.JSON;
+
+class JsonMaker {
+	@parser : SnippetParser;
+	@css_path : String;
+	@version : String;
+	
+	#~
+	DOC ME
+	~#
+	New(args : String[]) {
+		@css_path := args[0];
+		@version := args[1];
+		@parser := SnippetParser->New(args);
+	}
+	
+	#~
+	DOC ME
+	~#
+	function : Main(args : String[]) ~ Nil {
+		if(args->Size() > 2) {
+			JsonMaker->New(args)->Make()->PrintLine();
+		};
+	}
+	
+	#~
+	DOC ME
+	~#
+	method : Make() ~ Bool {
+		if(<>@parser->Parse()) {
+			"--- Unable to parse source file ---"->ErrorLine();
+			return false;
+		};
+		
+#~		
+		class_css_path := String->New(@css_path);
+		class_css_path += '/';
+		class_css_path += "class_header.dat";
+		class_header := FileReader->ReadFile(class_css_path);
+		if(class_header = Nil) {
+			"--- Unable load header CSS template ---"->ErrorLine();
+			return false;
+		};
+~#
+		## bundles
+		bundles := @parser->GetBundles();
+		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
+
+		buffer := "{\n";
+		each(i : bundle_pairs) {
+			bundle_pair := bundle_pairs->Get(i);
+			bundle_name := bundle_pair->GetFirst();
+
+			# classes
+			classes := bundle_pair->GetSecond()->GetClasses();
+			if(<>classes->IsEmpty()) {
+				class_key_values := classes->GetKeyValues()<Pair<String, ClassSnippet>>;
+				each(j : class_key_values) {
+					class_key_value := class_key_values->Get(j);
+					class_name := String->New(bundle_name);
+					class_name += '.';
+					class_name += class_key_value->GetFirst();
+
+					ProcessClass(class_name, class_key_value->GetSecond(), buffer);
+					if(j + 1 < class_key_values->Size()) {
+						buffer += ",\n\t";
+					};
+				};
+
+				if(i + 1 < bundle_pairs->Size()) {
+					buffer += ",\n\t";
+				};
+			};
+			
+			# TODO: enums
+		};
+		buffer += "}";
+		
+		FileWriter->WriteFile("out.json", buffer);
+
+		return true;
+	}
+
+	method : ProcessClass(class_name : String, snippet : ClassSnippet, buffer : String) ~ Nil {
+		description := snippet->GetDesc();
+
+		buffer += "\"{$class_name}\": {\n";
+		buffer += "\t\t\"description\": ";
+		buffer += "\"{$description}\",\n";
+		buffer += "\t\t\"functions\": {\n";
+
+		function_names := snippet->GetFunctionNames()<String>;
+		each(i : function_names) {
+			function_name := function_names->Get(i);
+
+			buffer += "\t\t\t\"{$function_name}\": {\n";
+			buffer += "\t\t\t\t\"descriptions\": [";
+
+			functions := snippet->GetFunctions(function_name)<FuncSnippet>;
+			each(j : functions) {
+				func := functions->Get(j);
+				description := JsonElement->Encode(func->GetDesc());
+				signature := func->GetSignature();
+
+				params_buffer := "";
+				params := func->GetParams();
+				each(k : params) {
+					param := params->Get(k);
+					name := param->GetName();
+					type_name := param->GetTypeName();
+					params_buffer += "\\n\\n{$name} - {$type_name}";
+				};
+
+				if(func->GetReturnType() <> Nil) {
+					return_str := func->GetReturnType()->GetTypeName();
+					params_buffer += "\\n\\nreturn: {$return_str}";
+				};
+
+				buffer += "\"**{$description}**\\n\\n{$params_buffer}\\n\\n```{$signature}```\"";
+				if(j + 1 < functions->Size()) {
+					buffer += ", ";
+				};
+			};
+			buffer += "]\n\t\t\t}";
+
+			if(i + 1 < function_names->Size()) {
+				buffer += ",\n";
+			};
+		};
+
+		buffer += "\n\t\t}\n\t}";
+	}
+}

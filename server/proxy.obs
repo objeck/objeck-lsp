@@ -415,6 +415,12 @@ bundle LSP {
 							return klass_json->FindElements(key);
 						};
 					};
+				}
+				else {
+					if(@is_debug) {
+#						System.IO.File.Logger->Instance()->Info("### Unable to open file: '{$@doc_path}' ###");
+						"### Unable to open file: '{$@doc_path}' ###"->ErrorLine();
+					};
 				};
 			};
 
