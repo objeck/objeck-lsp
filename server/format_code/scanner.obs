@@ -1,0 +1,348 @@
+use Collection.Generic;
+
+class Scanner {
+	@buffer : Char[];
+	@buffer_index : Int;
+	@cur_char : Char;
+	@next_char : Char;
+	@line_num : Int;
+	@line_pos : Int;
+	@keywords : Hash<String, Token>;
+	@tokens : Vector<Token>;
+
+	New(input : String) {
+		@buffer := input->ToCharArray();
+		@line_num := @line_pos := 1;
+		@tokens := Vector->New()<Token>;
+
+		@keywords := Hash->New()<String, Token>;
+		@keywords->Insert("class", Token->New(@line_num, Token->Type->CLASS_ID, "class_id"));
+		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
+		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
+		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
+		@keywords->Insert("whiile", Token->New(@line_num, Token->Type->WHILE_ID, "while_id"));
+	}
+
+	method : NextChar() ~ Nil {
+		if(@buffer_index < @buffer->Size()) {
+			@cur_char := @buffer[@buffer_index++];
+			@line_pos += 1;
+
+			if(@buffer_index < @buffer->Size()) {
+				@next_char := @buffer[@buffer_index];
+			}
+			else {
+				@next_char := '\0';
+			};
+		}
+		else {
+			@cur_char := next_char := '\0';
+		};
+	}
+
+	method : Whitespace() ~ Nil {
+		if(@cur_char = ' ' | @cur_char = '\t') {
+			NextChar();
+		};
+
+		# windows eol
+		if(@cur_char = '\r' & @next_char = '\n') {
+			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
+			@line_pos := 1;
+			NextChar();
+			NextChar();
+		}
+		# unix eol
+		else if(@cur_char = '\n') {
+			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
+			@line_pos := 1;
+			NextChar();
+		}
+		# mac eol
+		else if(@cur_char = '\r') {
+			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
+			@line_pos := 1;
+			NextChar();
+		};
+	}
+
+	method : public : GetTokens() ~ Vector<Token> {
+		return @tokens;
+	}
+
+	method : public : Scan() ~ Bool {
+		NextChar();
+
+		while(@cur_char <> '\0') {
+			Whitespace();
+			
+			# comment
+			if(@cur_char = '#') {
+
+			}
+			# string literal
+			else if(@cur_char = '"') {
+
+			}
+			# char const
+			else if(@cur_char = '\'') {
+				
+			}
+			# keyword or variable
+			else if(@cur_char = '@' | @cur_char->IsChar()) {
+				start := @buffer_index - 1;
+				while(@cur_char = '@' | @cur_char->IsChar()) {
+					NextChar();
+				};
+				end := @buffer_index;
+				word := String->New(@buffer, start, end - start - 1);
+				
+				keyword := @keywords->Find(word);
+				if(keyword = Nil) {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->IDENT, word));
+				}
+				else {
+					@tokens->AddBack(keyword);
+				};
+			}
+			# number or digit
+			else if(@cur_char = '.' | @cur_char->IsDigit()) {
+				found_dot := 0;
+				start := @buffer_index - 1;
+				while(@cur_char = '.' | @cur_char->IsDigit()) {
+					if(@cur_char = '.') {
+						found_dot += 1;
+					};
+
+					NextChar();
+				};
+				end := @buffer_index;
+				num_str := String->New(@buffer, start, end - start - 1);
+
+				if(found_dot > 1) {
+					@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
+				}
+				else if(found_dot = 1) {					
+					value := num_str->ToFloat();
+					@tokens->AddBack(Token->New(@line_num, Token->Type->FLOAT_NUM, "float_value", value));
+				}
+				else {
+					value := num_str->ToInt();
+					@tokens->AddBack(Token->New(@line_num, Token->Type->INT_NUM, "int_value", value));
+				};
+			}
+			else {
+				select(@cur_char) {
+					label '{' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OCBRACE, "ocbrace"));
+						NextChar();
+					}
+
+					label '}' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CCBRACE, "ccbrace"));
+						NextChar();
+					}
+
+					label '(' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OPREN, "opern"));
+						NextChar();
+					}
+
+					label '[' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OBRACE, "obrace"));
+						NextChar();
+					}
+
+					label ']' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CBRACE, "cbrace"));
+						NextChar();
+					}
+
+					label ')' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
+						NextChar();
+					}
+
+					label '<' {
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
+							NextChar();
+						}
+						else if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS, "less"));
+						};
+						NextChar();
+					}
+
+					label '>' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, "gtr"));
+						NextChar();
+					}
+
+					label ':' {
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->COLON, "colon"));
+						};
+						NextChar();
+					}
+
+					label '~' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->TILDE, "tilde"));
+						NextChar();
+					}
+
+					label ';' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->SEMI, "semi"));
+						NextChar();
+					}
+
+					label '+' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
+						NextChar();
+					}
+
+					label '-' {
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ASSESSOR, "assessor"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB, "sub"));
+						};
+						NextChar();
+					}
+
+					other {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
+					}
+				};
+			};
+		};
+
+		return true;
+	}
+}
+
+class Token {
+	@line_num : Int;
+	@type : Token->Type;
+	@str_value : String;
+	@int_value : Int;
+	@float_value : Float;
+
+	enum Type := -128 {
+		USE_ID,
+		WHILE_ID,
+		DO_ID,
+		FOR_ID,
+		EACH_ID,
+		SELECT_ID,
+		NIL_ID,
+		STRING_ID,
+		CLASS_ID,
+		FUNCTION_ID,
+		ELSE_ID,
+		IF_ID,
+		ASGN,
+		INT_NUM,
+		FLOAT_NUM,
+		CHAR,
+		STR,
+		VAR,
+		OPREN,
+		CPREN,
+		OBRACE,
+		CBRACE,
+		OCBRACE,
+		CCBRACE,
+		ASSESSOR,
+		AND,
+		OR,
+		DIV,
+		MOD,
+		MUL,
+		ADD,
+		SUB,
+		COLON,
+		SEMI,
+		COMMA,
+		TILDE,
+		LESS,
+		LESS_EQL,
+		GTR,
+		GTR_EQL,
+		EQL,
+		NEQL,
+		NOT,
+		VSPACE,
+		IDENT,
+		EOS,
+		OTHER
+	}
+	
+	New(line_num : Int, type : Token->Type, name : String) {
+		@line_num := line_num;
+		@type := type;
+		@str_value := name;
+	}
+	
+	New(@line_num : Int, type : Token->Type, name : String, int_value : Int) {
+		@line_num := @line_num;
+		@type := type;
+		@int_value := int_value;
+		@str_value := name;
+	}
+
+	New(@line_num : Int, type : Token->Type, name : String, float_value : Float) {
+		@line_num := @line_num;
+		@type := type;
+		@float_value := float_value;
+		@str_value := name;
+	}
+	
+	method : public : GetLine() ~ Int {
+		return @line_num;
+	}
+	
+	method : public : GetType() ~ Token->Type {
+		return @type;
+	}
+	
+	method : public : GetValue() ~ String {
+		return @str_value;
+	}
+	
+	method : public : GetInt() ~ Int {
+		return @int_value;
+	}
+
+	method : public : GetFloat() ~ Int {
+		return @float_value;
+	}
+
+	method : public : ToString() ~ String {
+		select(@type) {
+			label Token->Type->INT_NUM: {
+				return @int_value->ToString();
+			}
+
+			label Token->Type->FLOAT_NUM: {
+				return @float_value->ToString();
+			}
+			
+			other: {
+				return @str_value;
+			}
+		};
+
+		return "<unknown>";
+	}
+}
