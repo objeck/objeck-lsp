@@ -2,7 +2,7 @@
 SETLOCAL
 
 SET PORT=6013
-SET OBJECK_ROOT=..\..\..\objeck-lang
+SET OBJECK_ROOT=..\..\objeck-lang
 
 SET PATH=%PATH%;%OBJECK_ROOT%\core\release\deploy64\bin
 SET OBJECK_LIB_PATH=%OBJECK_ROOT%\core\release\deploy64\lib
