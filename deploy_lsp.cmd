@@ -1,4 +1,4 @@
-SET ZIP_BIN=\Program Files\7-Zip
+SET ZIP_BIN="\Program Files\7-Zip"
 
 rmdir /s /q objeck-lsp
 mkdir objeck-lsp

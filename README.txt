@@ -1,9 +1,9 @@
-v1.0.2
+v1.0.4
 ===
 
-What's new
-* Fixed bug with find definition for standalone function/method calls
-* Improved stability
+What's new?
+* Added hover support for documentation
+* Extended completion support to literals
 
 Install
 ===
