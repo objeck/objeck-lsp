@@ -1,9 +1,8 @@
-v1.0.4
+v1.0.5
 ===
 
 What's new?
-* Added hover support for documentation
-* Extended completion support to literals
+* Minor bug fixes
 
 Install
 ===
