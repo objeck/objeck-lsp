@@ -19,5 +19,6 @@ copy README.txt objeck-lsp
 
 REM finished
 if [%1] NEQ [deploy] goto end
-	%ZIP_BIN%\7z.exe a -r -tzip "objeck-lsp-1.0.4.zip" "objeck-lsp\*"
+	del /f *.zip
+	%ZIP_BIN%\7z.exe a -r -tzip "objeck-lsp-1.0.5.zip" "objeck-lsp\*"
 :end
