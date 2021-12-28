@@ -1,8 +1,8 @@
-v1.0.5
+v1.0.7
 ===
 
 What's new?
-* Minor bug fixes
+* Updated API docs for v6.1.2
 
 Install
 ===
@@ -15,7 +15,7 @@ Visual Studio Code
 4. Copy all files in <objeck_install_dir>/doc/syntax/vscode to <user_home>/.vscode/extensions/objeck-syntax
 5. Launch vscode
 6. Click on the extension button (bottom left hand side); drag and drop objeck-lsp-xxx.vsix to "installed"
-7. Goto the objeck-lsp directory and run "obr objeck_lsp.obe 6013 debug" (remove "debug" once working)
+7. Goto the objeck-lsp directory and run "obr objeck_lsp.obe objk_apis.json 6013 debug" (remove "debug" once working)
 8. Open a *.obs file
 
 Sublime
