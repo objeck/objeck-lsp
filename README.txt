@@ -2,7 +2,7 @@ v1.0.7
 ===
 
 What's new?
-* Updated API docs for v6.1.2
+* Updated API docs for v6.1.3
 
 Install
 ===
