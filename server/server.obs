@@ -29,6 +29,18 @@ bundle LSP {
 		method : public : Listen() ~ Nil {
 			port := 6013;
 			"Objeck LSP Server on localhost:{$port}"->PrintLine();
+
+			if(@is_debug) {
+				dir := System.IO.File.Logger->Instance()->GetDirectory();
+				info := System.IO.File.Logger->Instance()->GetInfoFile();
+				error := System.IO.File.Logger->Instance()->GetErrorFile();
+
+				"----"->PrintLine();
+				"Logging diretory='{$dir}'"->PrintLine();
+				"\tInfo file='{$info}'"->PrintLine();
+				"\tError file='{$error}'"->PrintLine();
+				"----"->PrintLine();
+			};
 			
 			server := TCPSocketServer->New(port);
 			leaving {
@@ -52,18 +64,6 @@ bundle LSP {
 
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent(socket, is_debug);
-
-			if(@is_debug) {
-				dir := System.IO.File.Logger->Instance()->GetDirectory();
-				info := System.IO.File.Logger->Instance()->GetInfoFile();
-				error := System.IO.File.Logger->Instance()->GetErrorFile();
-
-				"----"->PrintLine();
-				"Logging diretory='{$dir}'"->PrintLine();
-				"\tInfo file='{$info}'"->PrintLine();
-				"\tError file='{$error}'"->PrintLine();
-				"----"->PrintLine();
-			};
 		}
 
 		#
