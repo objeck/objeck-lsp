@@ -12,12 +12,12 @@ bundle LSP {
 
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 2) {
-				AstProxy->Init(args[1]);
-				LintServer->New(args[0]->ToInt(), false)->Listen();
+				AstProxy->Init(args[0]);
+				LintServer->New(args[1]->ToInt(), false)->Listen();
 			}
 			else if(args->Size() = 3 & args[2]->Equals("debug")) {
-				AstProxy->Init(args[1]);
-				LintServer->New(args[0]->ToInt(), true)->Listen();
+				AstProxy->Init(args[0]);
+				LintServer->New(args[1]->ToInt(), true)->Listen();
 			};
 		}
 

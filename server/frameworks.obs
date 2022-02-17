@@ -681,10 +681,10 @@ bundle LSP {
 		}
 
 		method : GetDocumentIndex(line_pos : Int, char_pos : Int) ~ Int {
-			if(line_pos = 0 & char_pos = 0) {
+			if(@text = Nil  | (line_pos = 0 & char_pos = 0)) {
 				return 0;
 			};
-
+			
 			cur_line := 0; cur_char := 0;
 			each(pos : @text) {
 				char := @text->Get(pos);
