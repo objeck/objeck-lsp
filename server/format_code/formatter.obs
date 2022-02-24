@@ -26,10 +26,18 @@ class CodeFormatter {
 							insert_tabs := false;
 						};
 
+						# set current, previous and next tokens
 						if(token <> Nil) {
 							prev_token := token;
 						};
-						token := tokens->Get(i);
+
+						if(next_token <> Nil) {
+							token := next_token;
+						}
+						else {
+							token := tokens->Get(i);
+						};
+
 						if(i + 1 < tokens->Size()) {
 							next_token := tokens->Get(i + 1);
 						}
