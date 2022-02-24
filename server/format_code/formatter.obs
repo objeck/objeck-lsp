@@ -8,7 +8,7 @@ class CodeFormatter {
 			if(input <> Nil) {
 				scanner := Scanner->New(input);
 				if(scanner->Scan()) {
-					buffer := "";
+					buffer := "\n---\n";
 
 					tab_space := 0;
 					insert_tabs := false;
@@ -108,6 +108,22 @@ class CodeFormatter {
 								buffer += '/';
 							}
 
+							label Token->Type->ADD_ASN {
+								buffer += "+=";
+							}
+
+							label Token->Type->SUB_ASN {
+								buffer += "-=";
+							}
+
+							label Token->Type->MUL_ASN {
+								buffer += "*=";
+							}
+
+							label Token->Type->DIV_ASN {
+								buffer += "/=";
+							}
+
 							label Token->Type->TILDE {
 								buffer += '~';
 							}
@@ -165,7 +181,6 @@ class CodeFormatter {
 							}
 
 							other {
-"?"->PrintLine();
 							}
 						};
 

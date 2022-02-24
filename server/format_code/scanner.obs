@@ -143,26 +143,6 @@ class Scanner {
 						NextChar();
 					}
 
-					label '<' {
-						if(@next_char = '>') {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
-							NextChar();
-						}
-						else if(@next_char = '=') {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
-							NextChar();
-						}
-						else {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS, "less"));
-						};
-						NextChar();
-					}
-
-					label '>' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, "gtr"));
-						NextChar();
-					}
-
 					label ':' {
 						if(@next_char = '=') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));
@@ -185,13 +165,23 @@ class Scanner {
 					}
 
 					label '+' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ADD_ASN, "add_asn"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
+						};
 						NextChar();
 					}
 
 					label '-' {
 						if(@next_char = '>') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ASSESSOR, "assessor"));
+							NextChar();
+						}
+						else if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB_ASN, "sub_asn"));
 							NextChar();
 						}
 						else {
@@ -201,16 +191,65 @@ class Scanner {
 					}
 
 					label '*' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->MUL, "mul"));
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->MUL_ASN, "mul_asn"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->MUL, "mul"));
+						};
 						NextChar();
 					}
 
 					label '/' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->DIV, "div"));
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->DIV_ASN, "div_asn"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->DIV, "div"));
+						};
+						NextChar();
+					}
+
+					label '%' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->MOD, "mod"));
+						NextChar();
+					}
+
+					label '=' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->EQL, "eql"));
+						NextChar();
+					}
+
+					label '<' {
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
+							NextChar();
+						}
+						else if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS, "less"));
+						};
+						NextChar();
+					}
+
+					label '>' {
+						if(@next_char = '=') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->GTR_EQL, "gtr_eql"));
+							NextChar();
+						}
+						else { 
+							@tokens->AddBack(Token->New(@line_num, Token->Type->GTR, "gtr"));
+						};
 						NextChar();
 					}
 
 					other {
+						"[Other: {$@cur_char}]"->ErrorLine();						
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
 					}
 				};
@@ -261,6 +300,10 @@ class Token {
 		MUL,
 		ADD,
 		SUB,
+		DIV_ASN,
+		MUL_ASN,
+		ADD_ASN,
+		SUB_ASN,
 		COLON,
 		SEMI,
 		COMMA,
