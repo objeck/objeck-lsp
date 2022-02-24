@@ -16,7 +16,7 @@ class CodeFormatter {
 					no_space := false;
 					chomp_space := false;
 
-					token : Token;
+					token, next_token : Token;
 					prev_token := Token->New(-1, Token->Type->OTHER, "other");
 
 					tokens := scanner->GetTokens();
@@ -30,6 +30,12 @@ class CodeFormatter {
 							prev_token := token;
 						};
 						token := tokens->Get(i);
+						if(i + 1 < tokens->Size()) {
+							next_token := tokens->Get(i + 1);
+						}
+						else {
+							next_token := Token->New(-1, Token->Type->OTHER, "other");
+						};
 						
 						select(token->GetType()) {
 							label Token->Type->CLASS_ID {
@@ -55,7 +61,10 @@ class CodeFormatter {
 
 							label Token->Type->SEMI {
 				buffer->Pop();
-								buffer += ";\n";
+								buffer += ';';
+								if(next_token->GetType() <> Token->Type->CCBRACE) {
+									buffer += '\n';
+								};
 								insert_tabs := true;
 							}
 
@@ -85,6 +94,18 @@ class CodeFormatter {
 
 							label Token->Type->ADD {
 								buffer += '+';
+							}
+
+							label Token->Type->SUB {
+								buffer += '-';
+							}
+
+							label Token->Type->MUL {
+								buffer += '*';
+							}
+
+							label Token->Type->DIV {
+								buffer += '/';
 							}
 
 							label Token->Type->TILDE {
@@ -144,7 +165,7 @@ class CodeFormatter {
 							}
 
 							other {
-
+"?"->PrintLine();
 							}
 						};
 

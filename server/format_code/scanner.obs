@@ -41,27 +41,7 @@ class Scanner {
 	}
 
 	method : Whitespace() ~ Nil {
-		if(@cur_char = ' ' | @cur_char = '\t') {
-			NextChar();
-		};
-
-		# windows eol
-		if(@cur_char = '\r' & @next_char = '\n') {
-			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@line_pos := 1;
-			NextChar();
-			NextChar();
-		}
-		# unix eol
-		else if(@cur_char = '\n') {
-			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@line_pos := 1;
-			NextChar();
-		}
-		# mac eol
-		else if(@cur_char = '\r') {
-			@tokens->AddBack(Token->New(@line_num, Token->Type->VSPACE, "vspace"));
-			@line_pos := 1;
+		while(@cur_char = ' ' | @cur_char = '\t' | @cur_char = '\r' | @cur_char = '\n') {
 			NextChar();
 		};
 	}
@@ -220,6 +200,16 @@ class Scanner {
 						NextChar();
 					}
 
+					label '*' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->MUL, "mul"));
+						NextChar();
+					}
+
+					label '/' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->DIV, "div"));
+						NextChar();
+					}
+
 					other {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
 					}
@@ -282,7 +272,6 @@ class Token {
 		EQL,
 		NEQL,
 		NOT,
-		VSPACE,
 		IDENT,
 		EOS,
 		OTHER

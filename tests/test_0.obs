@@ -1,1 +1,3 @@
-class Hello { function : Main(args : String[]) ~ Nil {	a := 13; a->PrintLine(); } }
+class Hello {function:Main(args : String[]) ~ 
+
+	Nil {	a := 13; a->PrintLine(); b:=1+2/3; } }
