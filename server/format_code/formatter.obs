@@ -160,7 +160,7 @@ class CodeFormatter {
 							}
 
 							label Token->Type->OPREN {
-			if(prev_token->GetType() = Token->Type->IDENT) {
+			if(prev_token->GetType() = Token->Type->IDENT | prev_token->GetType() = Token->Type->IF_ID) {
 				buffer->Pop();
 			};
 
