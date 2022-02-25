@@ -20,7 +20,8 @@ class Scanner {
 		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
 		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
 		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
-		@keywords->Insert("whiile", Token->New(@line_num, Token->Type->WHILE_ID, "while_id"));
+		@keywords->Insert("while", Token->New(@line_num, Token->Type->WHILE_ID, "while_id"));
+		@keywords->Insert("select", Token->New(@line_num, Token->Type->SELECT_ID, "select_id"));
 	}
 
 	method : NextChar() ~ Nil {
@@ -283,17 +284,17 @@ class Token {
 
 	enum Type := -128 {
 		USE_ID,
-		WHILE_ID,
 		DO_ID,
 		FOR_ID,
 		EACH_ID,
-		SELECT_ID,
 		NIL_ID,
 		STRING_ID,
 		CLASS_ID,
 		FUNCTION_ID,
 		ELSE_ID,
 		IF_ID,
+		WHILE_ID,
+		SELECT_ID,
 		ASGN,
 		INT_NUM,
 		FLOAT_NUM,

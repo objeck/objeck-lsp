@@ -58,17 +58,25 @@ class CodeFormatter {
 								buffer += "if";
 							}
 
+							label Token->Type->WHILE_ID {
+								buffer += "while";
+							}
+
+							label Token->Type->SELECT_ID {
+								buffer += "select";
+							}
+
 							label Token->Type->ASGN {
 								buffer += ":=";
 							}
 
 							label Token->Type->ASSESSOR {
-				buffer->Pop();
+								buffer->Pop();
 								buffer += "->";
 							}
 
 							label Token->Type->SEMI {
-				buffer->Pop();
+								buffer->Pop();
 								buffer += ';';
 								if(next_token->GetType() <> Token->Type->CCBRACE) {
 									buffer += '\n';
@@ -89,9 +97,9 @@ class CodeFormatter {
 							}
 
 							label Token->Type->IDENT {
-			if(prev_token->GetType() = Token->Type->ASSESSOR) {
-				buffer->Pop();
-			};
+								if(prev_token->GetType() = Token->Type->ASSESSOR) {
+									buffer->Pop();
+								};
 								value := token->GetValue();
 								buffer += "{$value}";
 							}
@@ -114,6 +122,18 @@ class CodeFormatter {
 
 							label Token->Type->DIV {
 								buffer += '/';
+							}
+
+							label Token->Type->EQL {
+								buffer += '=';
+							}
+
+							label Token->Type->LESS_EQL {
+								buffer += "<=";
+							}
+
+							label Token->Type->GTR_EQL {
+								buffer += ">=";
 							}
 
 							label Token->Type->ADD_ASN {
@@ -145,33 +165,38 @@ class CodeFormatter {
 							}
 
 							label Token->Type->OBRACE {
-			if(prev_token->GetType() = Token->Type->IDENT) {
-				buffer->Pop();
-			};
+								if(prev_token->GetType() = Token->Type->IDENT) {
+									buffer->Pop();
+								};
 								buffer += '[';
-			no_space := true;
+								no_space := true;
 							}
 
 							label Token->Type->CBRACE {
-			if(prev_token->GetType() <> Token->Type->OBRACE) {
-				buffer->Pop();
-			};
+								if(prev_token->GetType() <> Token->Type->OBRACE) {
+									buffer->Pop();
+								};
 								buffer += ']';
 							}
 
 							label Token->Type->OPREN {
-			if(prev_token->GetType() = Token->Type->IDENT | prev_token->GetType() = Token->Type->IF_ID) {
-				buffer->Pop();
-			};
+								select(prev_token->GetType()) {
+									label Token->Type->IDENT
+									label Token->Type->IF_ID
+									label Token->Type->SELECT_ID
+									label Token->Type->WHILE_ID {
+										buffer->Pop();
+									}
+								};
 
 								buffer += '(';
-			no_space := true;
+								no_space := true;
 							}
 
 							label Token->Type->CPREN {
-			if(prev_token->GetType() <> Token->Type->OPREN) {
-				buffer->Pop();
-			};
+								if(prev_token->GetType() <> Token->Type->OPREN) {
+									buffer->Pop();
+								};
 								buffer += ')';
 							}
 
@@ -189,9 +214,11 @@ class CodeFormatter {
 							}
 
 							label Token->Type->VTAB {
-								buffer += '\n';
-								TabSpace(tab_space, buffer);
-								no_space := true;
+								if(next_token->GetType() <> Token->Type->CCBRACE) {
+									buffer += '\n';
+									TabSpace(tab_space, buffer);
+									no_space := true;
+								};
 							}
 
 							other {
