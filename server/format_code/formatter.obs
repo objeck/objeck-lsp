@@ -188,6 +188,12 @@ class CodeFormatter {
 								buffer += '}';
 							}
 
+							label Token->Type->VTAB {
+								buffer += '\n';
+								TabSpace(tab_space, buffer);
+								no_space := true;
+							}
+
 							other {
 							}
 						};

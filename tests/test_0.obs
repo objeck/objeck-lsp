@@ -1,9 +1,9 @@
-class Hello 
+class Hello {
 
-{function:Main(args : String[]) ~ 
+function:Main(args : String[]) ~ 			Nil {	
+	a := 13; a->PrintLine(); b:=1+2/3;
 
-	Nil {	a := 13; a->PrintLine(); b:=1+2/3;
-
-		if(a = 1) {			a *= 3;		};
+		
+		if(a = 1) {			a *= 3;}; 		z := a + b; select(a) { label 5: {a := 45;}};
 
 	 } }

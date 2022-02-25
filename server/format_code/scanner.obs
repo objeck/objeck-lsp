@@ -41,8 +41,22 @@ class Scanner {
 	}
 
 	method : Whitespace() ~ Nil {
+		new_line_count := 0;
+
 		while(@cur_char = ' ' | @cur_char = '\t' | @cur_char = '\r' | @cur_char = '\n') {
+			if(@cur_char = '\n') {
+				@line_num += 1;
+				new_line_count += 1;
+			};
+
 			NextChar();
+		};
+
+		line_num := @line_num - 1;
+		if(new_line_count > 1) {
+			for(i := 0; i < new_line_count; i += 2;) {
+				@tokens->AddBack(Token->New(@line_num, Token->Type->VTAB, "vtab"));
+			};
 		};
 	}
 
@@ -316,6 +330,7 @@ class Token {
 		NEQL,
 		NOT,
 		IDENT,
+		VTAB,
 		EOS,
 		OTHER
 	}
