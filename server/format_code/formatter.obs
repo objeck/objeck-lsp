@@ -2,287 +2,281 @@ use System.IO.File;
 use Collection.Generic;
 
 class CodeFormatter {
-	function : Main(args : String[]) ~ Nil {
-		if(args->Size() = 1) {
-			# TODO: get options
+	function : Format(source : String, options : Map<String, String>) ~ String {
+		# get options
+		stmt_space := options->Has("function-space");
 
-			stmt_space := false;
+		buffer := "\n---\n";
 
-			source := FileReader->ReadFile(args[0]);
-			if(source <> Nil) {
-				scanner := Scanner->New(source);
-				if(scanner->Scan()) {
-					buffer := "\n---\n";
+		scanner := Scanner->New(source);
+		if(scanner->Scan()) {
 
-					tab_space := 0;
+			tab_space := 0;
+			insert_tabs := false;
+
+			no_space := false;
+			in_label := false;
+
+			token, next_token : Token;
+			prev_token := Token->New(-1, Token->Type->OTHER, "other");
+
+			tokens := scanner->GetTokens();
+			each(i : tokens) {
+				if(insert_tabs) {
+					TabSpace(tab_space, buffer);
 					insert_tabs := false;
+				};
 
-					no_space := false;
-					in_label := false;
+				# set current, previous and next tokens
+				if(token <> Nil) {
+					prev_token := token;
+				};
 
-					token, next_token : Token;
-					prev_token := Token->New(-1, Token->Type->OTHER, "other");
+				if(next_token <> Nil) {
+					token := next_token;
+				}
+				else {
+					token := tokens->Get(i);
+				};
 
-					tokens := scanner->GetTokens();
-					each(i : tokens) {
-						if(insert_tabs) {
+				if(i + 1 < tokens->Size()) {
+					next_token := tokens->Get(i + 1);
+				}
+				else {
+					next_token := Token->New(-1, Token->Type->OTHER, "other");
+				};
+				
+				select(token->GetType()) {
+					label Token->Type->CLASS_ID {
+						buffer += "class";
+					}
+
+					label Token->Type->FUNCTION_ID {
+						buffer += "function";
+					}
+
+					label Token->Type->IF_ID {
+						buffer += "if";
+					}
+
+					label Token->Type->WHILE_ID {
+						buffer += "while";
+					}
+
+					label Token->Type->FOR_ID {
+						buffer += "for";
+					}
+
+					label Token->Type->EACH_ID {
+						buffer += "each";
+					}
+
+					label Token->Type->BREAK_ID {
+						buffer += "break";
+					}
+
+					label Token->Type->SELECT_ID {
+						buffer += "select";
+					}
+
+					label Token->Type->LABEL_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
 							TabSpace(tab_space, buffer);
-							insert_tabs := false;
-						};
-
-						# set current, previous and next tokens
-						if(token <> Nil) {
-							prev_token := token;
-						};
-
-						if(next_token <> Nil) {
-							token := next_token;
-						}
-						else {
-							token := tokens->Get(i);
-						};
-
-						if(i + 1 < tokens->Size()) {
-							next_token := tokens->Get(i + 1);
-						}
-						else {
-							next_token := Token->New(-1, Token->Type->OTHER, "other");
 						};
 						
-						select(token->GetType()) {
-							label Token->Type->CLASS_ID {
-								buffer += "class";
-							}
+						buffer += "label";
+						in_label := true;
+					}
 
-							label Token->Type->FUNCTION_ID {
-								buffer += "function";
-							}
-
-							label Token->Type->IF_ID {
-								buffer += "if";
-							}
-
-							label Token->Type->WHILE_ID {
-								buffer += "while";
-							}
-
-							label Token->Type->FOR_ID {
-								buffer += "for";
-							}
-
-							label Token->Type->EACH_ID {
-								buffer += "each";
-							}
-
-							label Token->Type->BREAK_ID {
-								buffer += "break";
-							}
-
-							label Token->Type->SELECT_ID {
-								buffer += "select";
-							}
-
-							label Token->Type->LABEL_ID {
-								if(prev_token->GetType() = Token->Type->CCBRACE) {
-									buffer += "\n\n";
-									TabSpace(tab_space, buffer);
-								};
-								
-								buffer += "label";
-								in_label := true;
-							}
-
-							label Token->Type->OTHER_ID {
-								if(prev_token->GetType() = Token->Type->CCBRACE) {
-									buffer += "\n\n";
-									TabSpace(tab_space, buffer);
-								};
-
-								buffer += "other";
-								in_label := true;
-							}
-
-							label Token->Type->ASGN {
-								buffer += ":=";
-							}
-
-							label Token->Type->ASSESSOR {
-								buffer->Pop();
-								buffer += "->";
-							}
-
-							label Token->Type->SEMI {
-								buffer->Pop();
-								buffer += ';';
-								if(next_token->GetType() <> Token->Type->CCBRACE) {
-									buffer += '\n';
-								};
-								insert_tabs := true;
-							}
-
-							label Token->Type->LESS {
-								buffer += '<';
-							}
-
-							label Token->Type->GTR {
-								buffer += '>';
-							}
-
-							label Token->Type->NEQL {
-								buffer += "<>";
-							}
-
-							label Token->Type->IDENT {
-								if(prev_token->GetType() = Token->Type->ASSESSOR) {
-									buffer->Pop();
-								};
-								value := token->GetValue();
-								buffer += "{$value}";
-							}
-
-							label Token->Type->COLON {
-								if(in_label) {
-									buffer->Pop();
-								};
-								buffer += ':';
-							}
-
-							label Token->Type->ADD {
-								buffer += '+';
-							}
-
-							label Token->Type->SUB {
-								buffer += '-';
-							}
-
-							label Token->Type->MUL {
-								buffer += '*';
-							}
-
-							label Token->Type->DIV {
-								buffer += '/';
-							}
-
-							label Token->Type->EQL {
-								buffer += '=';
-							}
-
-							label Token->Type->LESS_EQL {
-								buffer += "<=";
-							}
-
-							label Token->Type->GTR_EQL {
-								buffer += ">=";
-							}
-
-							label Token->Type->ADD_ASN {
-								buffer += "+=";
-							}
-
-							label Token->Type->SUB_ASN {
-								buffer += "-=";
-							}
-
-							label Token->Type->MUL_ASN {
-								buffer += "*=";
-							}
-
-							label Token->Type->DIV_ASN {
-								buffer += "/=";
-							}
-
-							label Token->Type->TILDE {
-								buffer += '~';
-							}
-
-							label Token->Type->INT_NUM {
-								buffer += token->GetInt();
-							}
-
-							label Token->Type->FLOAT_NUM {
-								buffer += token->GetFloat();
-							}
-
-							label Token->Type->OBRACE {
-								if(prev_token->GetType() = Token->Type->IDENT) {
-									buffer->Pop();
-								};
-								buffer += '[';
-								no_space := true;
-							}
-
-							label Token->Type->CBRACE {
-								if(prev_token->GetType() <> Token->Type->OBRACE) {
-									buffer->Pop();
-								};
-								buffer += ']';
-							}
-
-							label Token->Type->OPREN {
-								if(<>stmt_space) {
-									select(prev_token->GetType()) {
-										label Token->Type->IDENT
-										label Token->Type->IF_ID
-										label Token->Type->SELECT_ID
-										label Token->Type->WHILE_ID {
-											buffer->Pop();
-										}
-									};
-								};
-
-								buffer += '(';
-								no_space := true;
-							}
-
-							label Token->Type->CPREN {
-								if(prev_token->GetType() <> Token->Type->OPREN) {
-									buffer->Pop();
-								};
-								buffer += ')';
-							}
-
-							label Token->Type->OCBRACE {
-								buffer += "{\n";
-								tab_space += 1;
-								insert_tabs := true;
-
-								if(in_label) {
-									in_label := false;
-								};
-							}
-
-							label Token->Type->CCBRACE {
-								buffer += '\n';
-								tab_space -= 1;
-								TabSpace(tab_space, buffer);
-								buffer += '}';                       
-							}
-
-							label Token->Type->VTAB {
-								if(next_token->GetType() <> Token->Type->CCBRACE) {
-									buffer += '\n';
-									TabSpace(tab_space, buffer);
-									no_space := true;
-								};
-							}
-
-							other {
-							}
+					label Token->Type->OTHER_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
 						};
 
-						if(<>no_space) {
-							buffer += " ";
-						}
-						else {
-							no_space := false;
-						};
-					};
+						buffer += "other";
+						in_label := true;
+					}
 
-					# show buffer
-					buffer->PrintLine();
+					label Token->Type->ASGN {
+						buffer += ":=";
+					}
+
+					label Token->Type->ASSESSOR {
+						buffer->Pop();
+						buffer += "->";
+					}
+
+					label Token->Type->SEMI {
+						buffer->Pop();
+						buffer += ';';
+						if(next_token->GetType() <> Token->Type->CCBRACE) {
+							buffer += '\n';
+						};
+						insert_tabs := true;
+					}
+
+					label Token->Type->LESS {
+						buffer += '<';
+					}
+
+					label Token->Type->GTR {
+						buffer += '>';
+					}
+
+					label Token->Type->NEQL {
+						buffer += "<>";
+					}
+
+					label Token->Type->IDENT {
+						if(prev_token->GetType() = Token->Type->ASSESSOR) {
+							buffer->Pop();
+						};
+						value := token->GetValue();
+						buffer += "{$value}";
+					}
+
+					label Token->Type->COLON {
+						if(in_label) {
+							buffer->Pop();
+						};
+						buffer += ':';
+					}
+
+					label Token->Type->ADD {
+						buffer += '+';
+					}
+
+					label Token->Type->SUB {
+						buffer += '-';
+					}
+
+					label Token->Type->MUL {
+						buffer += '*';
+					}
+
+					label Token->Type->DIV {
+						buffer += '/';
+					}
+
+					label Token->Type->EQL {
+						buffer += '=';
+					}
+
+					label Token->Type->LESS_EQL {
+						buffer += "<=";
+					}
+
+					label Token->Type->GTR_EQL {
+						buffer += ">=";
+					}
+
+					label Token->Type->ADD_ASN {
+						buffer += "+=";
+					}
+
+					label Token->Type->SUB_ASN {
+						buffer += "-=";
+					}
+
+					label Token->Type->MUL_ASN {
+						buffer += "*=";
+					}
+
+					label Token->Type->DIV_ASN {
+						buffer += "/=";
+					}
+
+					label Token->Type->TILDE {
+						buffer += '~';
+					}
+
+					label Token->Type->INT_NUM {
+						buffer += token->GetInt();
+					}
+
+					label Token->Type->FLOAT_NUM {
+						buffer += token->GetFloat();
+					}
+
+					label Token->Type->OBRACE {
+						if(prev_token->GetType() = Token->Type->IDENT) {
+							buffer->Pop();
+						};
+						buffer += '[';
+						no_space := true;
+					}
+
+					label Token->Type->CBRACE {
+						if(prev_token->GetType() <> Token->Type->OBRACE) {
+							buffer->Pop();
+						};
+						buffer += ']';
+					}
+
+					label Token->Type->OPREN {
+						if(<>stmt_space) {
+							select(prev_token->GetType()) {
+								label Token->Type->IDENT
+								label Token->Type->IF_ID
+								label Token->Type->SELECT_ID
+								label Token->Type->WHILE_ID {
+									buffer->Pop();
+								}
+							};
+						};
+
+						buffer += '(';
+						no_space := true;
+					}
+
+					label Token->Type->CPREN {
+						if(prev_token->GetType() <> Token->Type->OPREN) {
+							buffer->Pop();
+						};
+						buffer += ')';
+					}
+
+					label Token->Type->OCBRACE {
+						buffer += "{\n";
+						tab_space += 1;
+						insert_tabs := true;
+
+						if(in_label) {
+							in_label := false;
+						};
+					}
+
+					label Token->Type->CCBRACE {
+						buffer += '\n';
+						tab_space -= 1;
+						TabSpace(tab_space, buffer);
+						buffer += '}';                       
+					}
+
+					label Token->Type->VTAB {
+						if(next_token->GetType() <> Token->Type->CCBRACE) {
+							buffer += '\n';
+							TabSpace(tab_space, buffer);
+							no_space := true;
+						};
+					}
+
+					other {
+					}
+				};
+
+				if(<>no_space) {
+					buffer += " ";
+				}
+				else {
+					no_space := false;
 				};
 			};
 		};
+
+		return buffer;
 	}
 
 	function : TabSpace(space : Int, buffer : String) ~ Nil {
