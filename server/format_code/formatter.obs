@@ -3,10 +3,14 @@ use Collection.Generic;
 
 class CodeFormatter {
 	function : Main(args : String[]) ~ Nil {
-		if(args->Size() = 1) {			
-			input := FileReader->ReadFile(args[0]);
-			if(input <> Nil) {
-				scanner := Scanner->New(input);
+		if(args->Size() = 1) {
+			# TODO: get options
+
+			stmt_space := false;
+
+			source := FileReader->ReadFile(args[0]);
+			if(source <> Nil) {
+				scanner := Scanner->New(source);
 				if(scanner->Scan()) {
 					buffer := "\n---\n";
 
@@ -14,7 +18,7 @@ class CodeFormatter {
 					insert_tabs := false;
 
 					no_space := false;
-					chomp_space := false;
+					in_label := false;
 
 					token, next_token : Token;
 					prev_token := Token->New(-1, Token->Type->OTHER, "other");
@@ -62,8 +66,40 @@ class CodeFormatter {
 								buffer += "while";
 							}
 
+							label Token->Type->FOR_ID {
+								buffer += "for";
+							}
+
+							label Token->Type->EACH_ID {
+								buffer += "each";
+							}
+
+							label Token->Type->BREAK_ID {
+								buffer += "break";
+							}
+
 							label Token->Type->SELECT_ID {
 								buffer += "select";
+							}
+
+							label Token->Type->LABEL_ID {
+								if(prev_token->GetType() = Token->Type->CCBRACE) {
+									buffer += "\n\n";
+									TabSpace(tab_space, buffer);
+								};
+								
+								buffer += "label";
+								in_label := true;
+							}
+
+							label Token->Type->OTHER_ID {
+								if(prev_token->GetType() = Token->Type->CCBRACE) {
+									buffer += "\n\n";
+									TabSpace(tab_space, buffer);
+								};
+
+								buffer += "other";
+								in_label := true;
 							}
 
 							label Token->Type->ASGN {
@@ -105,6 +141,9 @@ class CodeFormatter {
 							}
 
 							label Token->Type->COLON {
+								if(in_label) {
+									buffer->Pop();
+								};
 								buffer += ':';
 							}
 
@@ -180,13 +219,15 @@ class CodeFormatter {
 							}
 
 							label Token->Type->OPREN {
-								select(prev_token->GetType()) {
-									label Token->Type->IDENT
-									label Token->Type->IF_ID
-									label Token->Type->SELECT_ID
-									label Token->Type->WHILE_ID {
-										buffer->Pop();
-									}
+								if(<>stmt_space) {
+									select(prev_token->GetType()) {
+										label Token->Type->IDENT
+										label Token->Type->IF_ID
+										label Token->Type->SELECT_ID
+										label Token->Type->WHILE_ID {
+											buffer->Pop();
+										}
+									};
 								};
 
 								buffer += '(';
@@ -204,13 +245,17 @@ class CodeFormatter {
 								buffer += "{\n";
 								tab_space += 1;
 								insert_tabs := true;
+
+								if(in_label) {
+									in_label := false;
+								};
 							}
 
 							label Token->Type->CCBRACE {
 								buffer += '\n';
 								tab_space -= 1;
 								TabSpace(tab_space, buffer);
-								buffer += '}';
+								buffer += '}';                       
 							}
 
 							label Token->Type->VTAB {

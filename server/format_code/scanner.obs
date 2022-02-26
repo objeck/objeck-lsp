@@ -20,8 +20,13 @@ class Scanner {
 		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
 		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
 		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
+		@keywords->Insert("for", Token->New(@line_num, Token->Type->FOR_ID, "for_id"));
+		@keywords->Insert("each", Token->New(@line_num, Token->Type->EACH_ID, "each_id"));
 		@keywords->Insert("while", Token->New(@line_num, Token->Type->WHILE_ID, "while_id"));
 		@keywords->Insert("select", Token->New(@line_num, Token->Type->SELECT_ID, "select_id"));
+		@keywords->Insert("label", Token->New(@line_num, Token->Type->LABEL_ID, "label_id"));
+		@keywords->Insert("break", Token->New(@line_num, Token->Type->BREAK_ID, "break_id"));
+		@keywords->Insert("other", Token->New(@line_num, Token->Type->OTHER_ID, "other_id"));
 	}
 
 	method : NextChar() ~ Nil {
@@ -287,6 +292,7 @@ class Token {
 		DO_ID,
 		FOR_ID,
 		EACH_ID,
+		BREAK_ID,
 		NIL_ID,
 		STRING_ID,
 		CLASS_ID,
@@ -295,6 +301,8 @@ class Token {
 		IF_ID,
 		WHILE_ID,
 		SELECT_ID,
+		LABEL_ID,
+		OTHER_ID,
 		ASGN,
 		INT_NUM,
 		FLOAT_NUM,
