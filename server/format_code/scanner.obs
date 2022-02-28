@@ -89,7 +89,24 @@ class Scanner {
 			}
 			# string literal
 			else if(@cur_char = '"') {
-"TODO: String literal"->ErrorLine();
+				NextChar();				
+				is_escape := false;
+
+				start := @buffer_index - 1;
+				while(<>is_escape & @cur_char <> '"') {
+					if(@cur_char = '\'') {
+						is_escape := true;
+					}
+					else {
+						is_escape := false;
+					};
+					NextChar();
+				};				
+				end := @buffer_index;
+				NextChar();
+				
+				string_lit :=  String->New(@buffer, start, end - start - 1);
+"TODO: String literal ({$start},{$end}): |{$string_lit}|"->ErrorLine();
 			}
 			# char const
 			else if(@cur_char = '\'') {

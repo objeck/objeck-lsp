@@ -7,7 +7,7 @@ class Hello { function:Main(args : String[]) ~ 			Nil {
 			other { a := 12; }
 
 				};
-				
+
 each(i : b) {
 				13->PrintLine();
 					break;
@@ -15,6 +15,7 @@ each(i : b) {
 
 			Foo(2,3);
 		Bar(b);
+		"Hello World\'"->PrintLine();
 	 } 
 function : Bar(a : Int) ~ Int {
 	return a * 5;
