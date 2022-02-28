@@ -7,7 +7,8 @@ class Test {
 			source := FileReader->ReadFile(args[0]);
 			if(source <> Nil) {
 				options := Map->New()<String, String>;
-				options->Insert("function-space", "true");
+				options->Insert("function-space", "false");
+				options->Insert("ident-space", "tab");
 
 				CodeFormatter->Format(source, options)->PrintLine();
 			};

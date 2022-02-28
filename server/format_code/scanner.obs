@@ -18,6 +18,11 @@ class Scanner {
 		@keywords := Hash->New()<String, Token>;
 		@keywords->Insert("class", Token->New(@line_num, Token->Type->CLASS_ID, "class_id"));
 		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
+		@keywords->Insert("alias", Token->New(@line_num, Token->Type->ALIAS_ID, "alias_id"));
+		@keywords->Insert("method", Token->New(@line_num, Token->Type->METHOD_ID, "method_id"));
+		@keywords->Insert("public", Token->New(@line_num, Token->Type->PUBLIC_ID, "public_id"));
+		@keywords->Insert("private", Token->New(@line_num, Token->Type->PRIVATE_ID, "private_id"));
+		@keywords->Insert("native", Token->New(@line_num, Token->Type->NATIVE_ID, "native_id"));
 		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
 		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
 		@keywords->Insert("for", Token->New(@line_num, Token->Type->FOR_ID, "for_id"));
@@ -26,6 +31,8 @@ class Scanner {
 		@keywords->Insert("select", Token->New(@line_num, Token->Type->SELECT_ID, "select_id"));
 		@keywords->Insert("label", Token->New(@line_num, Token->Type->LABEL_ID, "label_id"));
 		@keywords->Insert("break", Token->New(@line_num, Token->Type->BREAK_ID, "break_id"));
+		@keywords->Insert("return", Token->New(@line_num, Token->Type->RETURN_ID, "return_id"));
+		@keywords->Insert("leaving", Token->New(@line_num, Token->Type->LEAVING_ID, "leaving_id"));
 		@keywords->Insert("other", Token->New(@line_num, Token->Type->OTHER_ID, "other_id"));
 	}
 
@@ -78,15 +85,15 @@ class Scanner {
 			
 			# comment
 			if(@cur_char = '#') {
-
+"TODO: Comment"->ErrorLine();
 			}
 			# string literal
 			else if(@cur_char = '"') {
-
+"TODO: String literal"->ErrorLine();
 			}
 			# char const
 			else if(@cur_char = '\'') {
-				
+"TODO: Character const"->ErrorLine();				
 			}
 			# keyword or variable
 			else if(@cur_char = '@' | @cur_char->IsChar()) {
@@ -148,6 +155,11 @@ class Scanner {
 						NextChar();
 					}
 
+					label ')' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
+						NextChar();
+					}
+
 					label '[' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OBRACE, "obrace"));
 						NextChar();
@@ -158,8 +170,8 @@ class Scanner {
 						NextChar();
 					}
 
-					label ')' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->CPREN, "cpren"));
+					label ',' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->COMMA, "COMMA"));
 						NextChar();
 					}
 
@@ -237,6 +249,11 @@ class Scanner {
 						NextChar();
 					}
 
+					label '\'' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->FWD_SLASH, "mod"));
+						NextChar();
+					}
+
 					label '=' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->EQL, "eql"));
 						NextChar();
@@ -293,10 +310,17 @@ class Token {
 		FOR_ID,
 		EACH_ID,
 		BREAK_ID,
+		ALIAS_ID,
+		RETURN_ID,
+		LEAVING_ID,
 		NIL_ID,
 		STRING_ID,
 		CLASS_ID,
 		FUNCTION_ID,
+		METHOD_ID,
+		PUBLIC_ID,
+		PRIVATE_ID,
+		NATIVE_ID,
 		ELSE_ID,
 		IF_ID,
 		WHILE_ID,
@@ -331,6 +355,7 @@ class Token {
 		SEMI,
 		COMMA,
 		TILDE,
+		FWD_SLASH,
 		LESS,
 		LESS_EQL,
 		GTR,

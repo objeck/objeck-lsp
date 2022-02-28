@@ -4,7 +4,8 @@ use Collection.Generic;
 class CodeFormatter {
 	function : Format(source : String, options : Map<String, String>) ~ String {
 		# get options
-		stmt_space := options->Has("function-space");
+		stmt_space_check := options->Find("function-space");
+		stmt_space := stmt_space_check <> Nil & stmt_space_check->Equals("true");
 
 		buffer := "\n---\n";
 
@@ -48,11 +49,48 @@ class CodeFormatter {
 				
 				select(token->GetType()) {
 					label Token->Type->CLASS_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
+						};
+
 						buffer += "class";
 					}
 
 					label Token->Type->FUNCTION_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
+						};
+
 						buffer += "function";
+					}
+
+					label Token->Type->METHOD_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
+						};
+
+						buffer += "method";
+					}
+
+					label Token->Type->PUBLIC_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
+						};
+
+						buffer += "public";
+					}
+
+					label Token->Type->PRIVATE_ID {
+						if(prev_token->GetType() = Token->Type->CCBRACE) {
+							buffer += "\n\n";
+							TabSpace(tab_space, buffer);
+						};
+
+						buffer += "private";
 					}
 
 					label Token->Type->IF_ID {
@@ -73,6 +111,22 @@ class CodeFormatter {
 
 					label Token->Type->BREAK_ID {
 						buffer += "break";
+					}
+
+					label Token->Type->RETURN_ID {
+						buffer += "return";
+					}
+
+					label Token->Type->ALIAS_ID {
+						buffer += "alias";
+					}
+
+					label Token->Type->LEAVING_ID {
+						buffer += "leaving";
+					}
+
+					label Token->Type->NATIVE_ID {
+						buffer += "native";
 					}
 
 					label Token->Type->SELECT_ID {
@@ -125,6 +179,10 @@ class CodeFormatter {
 						buffer += '>';
 					}
 
+					label Token->Type->COMMA {
+						buffer += ',';
+					}
+
 					label Token->Type->NEQL {
 						buffer += "<>";
 					}
@@ -158,6 +216,10 @@ class CodeFormatter {
 
 					label Token->Type->DIV {
 						buffer += '/';
+					}
+
+					label Token->Type->FWD_SLASH {
+						buffer += '\'';
 					}
 
 					label Token->Type->EQL {
@@ -220,6 +282,8 @@ class CodeFormatter {
 							select(prev_token->GetType()) {
 								label Token->Type->IDENT
 								label Token->Type->IF_ID
+								label Token->Type->FOR_ID
+								label Token->Type->EACH_ID
 								label Token->Type->SELECT_ID
 								label Token->Type->WHILE_ID {
 									buffer->Pop();
