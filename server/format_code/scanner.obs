@@ -106,6 +106,7 @@ class Scanner {
 				
 				keyword := @keywords->Find(word);
 				if(keyword = Nil) {
+"|{$word}"->Print();
 					@tokens->AddBack(Token->New(@line_num, Token->Type->IDENT, word));
 				}
 				else {
