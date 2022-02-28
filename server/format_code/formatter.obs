@@ -195,6 +195,12 @@ class CodeFormatter {
 						buffer += "{$value}";
 					}
 
+					label Token->Type->STRING_ID {
+						buffer += '"';
+						buffer += token->GetValue();
+						buffer += '"';
+					}
+
 					label Token->Type->COLON {
 						if(in_label) {
 							buffer->Pop();

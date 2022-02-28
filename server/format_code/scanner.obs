@@ -93,22 +93,23 @@ class Scanner {
 				is_escape := false;
 
 				start := @buffer_index - 1;
-				while(<>is_escape & @cur_char <> '"') {
+				while(is_escape | @cur_char <> '"') {
 					if(is_escape) {
-						NextChar();
 						is_escape := false;
 					};
 
-					if(@cur_char = '\'') {
+					if(@cur_char = '\\') {
 						is_escape := true;
 					};
+					
 					NextChar();
 				};				
 				end := @buffer_index;
 				NextChar();
 
 				string_lit :=  String->New(@buffer, start, end - start - 1);
-"TODO: String literal ({$start},{$end}): |{$string_lit}|"->ErrorLine();
+# "TODO: String literal ({$start},{$end}): |{$string_lit}|"->ErrorLine();
+				@tokens->AddBack(Token->New(@line_num, Token->Type->STRING_ID, string_lit));
 			}
 			# char const
 			else if(@cur_char = '\'') {
