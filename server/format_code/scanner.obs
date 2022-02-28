@@ -94,17 +94,19 @@ class Scanner {
 
 				start := @buffer_index - 1;
 				while(<>is_escape & @cur_char <> '"') {
+					if(is_escape) {
+						NextChar();
+						is_escape := false;
+					};
+
 					if(@cur_char = '\'') {
 						is_escape := true;
-					}
-					else {
-						is_escape := false;
 					};
 					NextChar();
 				};				
 				end := @buffer_index;
 				NextChar();
-				
+
 				string_lit :=  String->New(@buffer, start, end - start - 1);
 "TODO: String literal ({$start},{$end}): |{$string_lit}|"->ErrorLine();
 			}

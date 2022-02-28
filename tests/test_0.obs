@@ -15,7 +15,7 @@ each(i : b) {
 
 			Foo(2,3);
 		Bar(b);
-		"Hello World\'"->PrintLine();
+		"Hello World\""->PrintLine();
 	 } 
 function : Bar(a : Int) ~ Int {
 	return a * 5;
