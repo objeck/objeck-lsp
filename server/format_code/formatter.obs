@@ -10,7 +10,7 @@ class CodeFormatter {
 		ident_space_check := options->Find("ident-space");
 		ident_space := 0;
 		if(ident_space_check <> Nil & <>ident_space_check->IsEmpty()) {
-			ident_space := ident_space_check->ToInt();
+			ident_space := ident_space_check->ToInt() - 1;
 		};
 
 		buffer := "\n---\n";
@@ -377,14 +377,15 @@ class CodeFormatter {
 						buffer += '\n';
 						tab_space -= 1;
 						TabSpace(tab_space, ident_space, buffer);
-						buffer += '}';
+						buffer += '}'; # TODO: Fix me!
+
 					}
 
 					label Token->Type->VTAB {
 						if(next_token->GetType() <> Token->Type->CCBRACE) {
 							buffer += '\n';
+							buffer += '\n';
 							TabSpace(tab_space, ident_space, buffer);
-							no_space := true;
 						};
 					}
 
@@ -392,7 +393,7 @@ class CodeFormatter {
 					}
 				};
 
-				if(<>no_space & prev_token->GetType() <> Token->Type->SEMI) {
+				if(<>no_space) {
 					buffer += " ";
 				}
 				else {
@@ -405,11 +406,7 @@ class CodeFormatter {
 	}
 
 	function : VerticalSpace(prev_token : Token, tab_space : Int, ident_space : Int, buffer : String) ~ Nil {
-		if(prev_token->GetType() = Token->Type->VTAB) {
-			buffer += '\n';
-			TabSpace(tab_space, ident_space, buffer);
-		}
-		else if(prev_token->GetType() = Token->Type->CCBRACE) {
+		if(prev_token->GetType() = Token->Type->CCBRACE) {
 			buffer += "\n\n";
 			TabSpace(tab_space, ident_space, buffer);
 		};
@@ -418,6 +415,7 @@ class CodeFormatter {
 	function : TabSpace(tab_space : Int, ident_space : Int, buffer : String) ~ Nil {
 		if(ident_space > 0) {
 			each(i : tab_space) {
+				buffer += ' ';
 				each(j : ident_space) {
 					buffer += ' ';
 				};
