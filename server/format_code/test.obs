@@ -8,7 +8,7 @@ class Test {
 			if(source <> Nil) {
 				options := Map->New()<String, String>;
 				options->Insert("function-space", "false");
-				options->Insert("ident-space", "tab");
+				options->Insert("ident-space", "3");
 
 				CodeFormatter->Format(source, options)->PrintLine();
 			};

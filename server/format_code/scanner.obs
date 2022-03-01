@@ -16,6 +16,7 @@ class Scanner {
 		@tokens := Vector->New()<Token>;
 
 		@keywords := Hash->New()<String, Token>;
+		@keywords->Insert("use", Token->New(@line_num, Token->Type->USE_ID, "use_id"));
 		@keywords->Insert("class", Token->New(@line_num, Token->Type->CLASS_ID, "class_id"));
 		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
 		@keywords->Insert("alias", Token->New(@line_num, Token->Type->ALIAS_ID, "alias_id"));
@@ -23,6 +24,7 @@ class Scanner {
 		@keywords->Insert("public", Token->New(@line_num, Token->Type->PUBLIC_ID, "public_id"));
 		@keywords->Insert("private", Token->New(@line_num, Token->Type->PRIVATE_ID, "private_id"));
 		@keywords->Insert("native", Token->New(@line_num, Token->Type->NATIVE_ID, "native_id"));
+		@keywords->Insert("static", Token->New(@line_num, Token->Type->STATIC_ID, "static_id"));
 		@keywords->Insert("if", Token->New(@line_num, Token->Type->IF_ID, "if_id"));
 		@keywords->Insert("else", Token->New(@line_num, Token->Type->ELSE_ID, "else_id"));
 		@keywords->Insert("for", Token->New(@line_num, Token->Type->FOR_ID, "for_id"));
@@ -67,6 +69,7 @@ class Scanner {
 			if(@cur_char = '\n') {
 				@line_num += 1;
 				new_line_count += 1;
+				@line_pos := 1;
 			};
 
 			NextChar();
@@ -92,7 +95,37 @@ class Scanner {
 			
 			# comment
 			if(@cur_char = '#') {
-"TODO: Comment"->ErrorLine();
+				NextChar();
+
+				if(@cur_char = '~') {
+					NextChar();
+					start := @buffer_index - 1;
+					while(<>(@cur_char = '~' & @next_char = '#')) {
+						if(@cur_char = '\n') {
+							@line_num += 1;
+							@line_pos := 1;
+						};
+
+						NextChar();
+					};
+					end := @buffer_index;
+					NextChar();
+					NextChar();
+
+					comment :=  String->New(@buffer, start, end - start - 1);
+					@tokens->AddBack(Token->New(@line_num, Token->Type->MULTI_COMMENT, comment));
+				}
+				else {
+					start := @buffer_index - 1;
+					while(<>@cur_char = '\n') {
+						NextChar();
+					};
+					end := @buffer_index;
+					NextChar();
+
+					comment :=  String->New(@buffer, start, end - start - 1);
+					@tokens->AddBack(Token->New(@line_num, Token->Type->LINE_COMMENT, comment));
+				};
 			}
 			# string literal
 			else if(@cur_char = '"') {
@@ -141,9 +174,9 @@ class Scanner {
 				@tokens->AddBack(Token->New(@line_num, Token->Type->CHAR_LIT, string_lit));
 			}
 			# keyword or variable
-			else if(@cur_char = '@' | @cur_char->IsChar()) {
+			else if(@cur_char->IsChar() | @cur_char = '@' | @cur_char = '$') {
 				start := @buffer_index - 1;
-				while(@cur_char = '@' | @cur_char->IsChar()) {
+				while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '@' | @cur_char = '.' | @cur_char = '$') {
 					NextChar();
 				};
 				end := @buffer_index;
@@ -239,6 +272,10 @@ class Scanner {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ADD_ASN, "add_asn"));
 							NextChar();
 						}
+						else if(@next_char = '+') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->ADD_ADD, "add_add"));
+							NextChar();
+						}
 						else {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->ADD, "add"));
 						};
@@ -254,9 +291,18 @@ class Scanner {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB_ASN, "sub_asn"));
 							NextChar();
 						}
+						else if(@next_char = '-') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB_SUB, "sub_sub"));
+							NextChar();
+						}
 						else {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->SUB, "sub"));
 						};
+						NextChar();
+					}
+
+					label '→' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->ASSESSOR, "assessor"));
 						NextChar();
 					}
 
@@ -324,7 +370,7 @@ class Scanner {
 					}
 
 					other {
-						"[Other: {$@cur_char}]"->ErrorLine();						
+						"[Other ({$@line_num},{$@line_pos}): {$@cur_char}]"->ErrorLine();						
 						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
 					}
 				};
@@ -362,6 +408,7 @@ class Token {
 		PUBLIC_ID,
 		PRIVATE_ID,
 		NATIVE_ID,
+		STATIC_ID,
 		STRING_LIT,
 		CHAR_LIT,
 		NUM_LIT,
@@ -393,6 +440,8 @@ class Token {
 		MUL_ASN,
 		ADD_ASN,
 		SUB_ASN,
+		ADD_ADD,
+		SUB_SUB,
 		COLON,
 		SEMI,
 		COMMA,
@@ -407,6 +456,8 @@ class Token {
 		NOT,
 		IDENT,
 		VTAB,
+		LINE_COMMENT,
+		MULTI_COMMENT,
 		EOS,
 		OTHER
 	}

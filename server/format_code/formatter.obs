@@ -7,16 +7,22 @@ class CodeFormatter {
 		stmt_space_check := options->Find("function-space");
 		stmt_space := stmt_space_check <> Nil & stmt_space_check->Equals("true");
 
+		ident_space_check := options->Find("ident-space");
+		ident_space := 0;
+		if(ident_space_check <> Nil & <>ident_space_check->IsEmpty()) {
+			ident_space := ident_space_check->ToInt();
+		};
+
 		buffer := "\n---\n";
 
 		scanner := Scanner->New(source);
 		if(scanner->Scan()) {
-
 			tab_space := 0;
 			insert_tabs := false;
 
 			no_space := false;
 			in_label := false;
+			in_for := false;
 
 			token, next_token : Token;
 			prev_token := Token->New(-1, Token->Type->OTHER, "other");
@@ -24,7 +30,7 @@ class CodeFormatter {
 			tokens := scanner->GetTokens();
 			each(i : tokens) {
 				if(insert_tabs) {
-					TabSpace(tab_space, buffer);
+					TabSpace(tab_space, ident_space, buffer);
 					insert_tabs := false;
 				};
 
@@ -49,17 +55,17 @@ class CodeFormatter {
 				
 				select(token->GetType()) {
 					label Token->Type->CLASS_ID {
-						VerticalSpace(prev_token, tab_space, buffer);
+						VerticalSpace(prev_token, tab_space, ident_space, buffer);
 						buffer += "class";
 					}
 
 					label Token->Type->FUNCTION_ID {
-						VerticalSpace(prev_token, tab_space, buffer);
+						VerticalSpace(prev_token, tab_space, ident_space, buffer);
 						buffer += "function";
 					}
 
 					label Token->Type->METHOD_ID {
-						VerticalSpace(prev_token, tab_space, buffer);
+						VerticalSpace(prev_token, tab_space, ident_space, buffer);
 						buffer += "method";
 					}
 
@@ -75,12 +81,19 @@ class CodeFormatter {
 						buffer += "if";
 					}
 
+					label Token->Type->ELSE_ID {
+						buffer += '\n';
+						TabSpace(tab_space, ident_space, buffer);
+						buffer += "else";
+					}					
+
 					label Token->Type->WHILE_ID {
 						buffer += "while";
 					}
 
 					label Token->Type->FOR_ID {
 						buffer += "for";
+						in_for := true;
 					}
 
 					label Token->Type->EACH_ID {
@@ -103,8 +116,16 @@ class CodeFormatter {
 						buffer += "leaving";
 					}
 
+					label Token->Type->USE_ID {
+						buffer += "use";
+					}
+
 					label Token->Type->NATIVE_ID {
 						buffer += "native";
+					}
+
+					label Token->Type->STATIC_ID {
+						buffer += "static";
 					}
 
 					label Token->Type->SELECT_ID {
@@ -112,13 +133,13 @@ class CodeFormatter {
 					}
 
 					label Token->Type->LABEL_ID {
-						VerticalSpace(prev_token, tab_space, buffer);
+						VerticalSpace(prev_token, tab_space, ident_space, buffer);
 						buffer += "label";
 						in_label := true;
 					}
 
 					label Token->Type->OTHER_ID {
-						VerticalSpace(prev_token, tab_space, buffer);
+						VerticalSpace(prev_token, tab_space, ident_space, buffer);
 						buffer += "other";
 						in_label := true;
 					}
@@ -132,13 +153,27 @@ class CodeFormatter {
 						buffer += "->";
 					}
 
+					label Token->Type->LINE_COMMENT {
+						buffer += '#';
+						buffer += token->GetValue();
+					}
+
+					label Token->Type->MULTI_COMMENT {
+						buffer += "#~";
+						buffer += token->GetValue();
+						buffer += "~#";
+					}
+
 					label Token->Type->SEMI {
 						buffer->Pop();
 						buffer += ';';
-						if(next_token->GetType() <> Token->Type->CCBRACE) {
+						if(next_token->GetType() <> Token->Type->CCBRACE & next_token->GetType() <> Token->Type->VTAB & <>in_for) {
 							buffer += '\n';
 						};
-						insert_tabs := true;
+
+						if(<>in_for) {
+							insert_tabs := true;
+						};
 					}
 
 					label Token->Type->LESS {
@@ -150,6 +185,7 @@ class CodeFormatter {
 					}
 
 					label Token->Type->COMMA {
+						buffer->Pop();
 						buffer += ',';
 					}
 
@@ -158,7 +194,9 @@ class CodeFormatter {
 					}
 
 					label Token->Type->IDENT {
-						if(prev_token->GetType() = Token->Type->ASSESSOR) {
+						if(prev_token->GetType() = Token->Type->ASSESSOR | 
+								prev_token->GetType() = Token->Type->ADD_ADD | 
+								prev_token->GetType() = Token->Type->SUB_SUB) {
 							buffer->Pop();
 						};
 						value := token->GetValue();
@@ -232,6 +270,10 @@ class CodeFormatter {
 						buffer += '/';
 					}
 
+					label Token->Type->MOD {
+						buffer += '%';
+					}
+
 					label Token->Type->FWD_SLASH {
 						buffer += '\'';
 					}
@@ -254,6 +296,14 @@ class CodeFormatter {
 
 					label Token->Type->SUB_ASN {
 						buffer += "-=";
+					}
+
+					label Token->Type->ADD_ADD {
+						buffer += "++";
+					}
+
+					label Token->Type->SUB_SUB {
+						buffer += "--";
 					}
 
 					label Token->Type->MUL_ASN {
@@ -305,6 +355,11 @@ class CodeFormatter {
 						if(prev_token->GetType() <> Token->Type->OPREN) {
 							buffer->Pop();
 						};
+
+						if(in_for) {
+							in_for := false;
+						};
+
 						buffer += ')';
 					}
 
@@ -321,14 +376,14 @@ class CodeFormatter {
 					label Token->Type->CCBRACE {
 						buffer += '\n';
 						tab_space -= 1;
-						TabSpace(tab_space, buffer);
-						buffer += '}';                       
+						TabSpace(tab_space, ident_space, buffer);
+						buffer += '}';
 					}
 
 					label Token->Type->VTAB {
 						if(next_token->GetType() <> Token->Type->CCBRACE) {
 							buffer += '\n';
-							TabSpace(tab_space, buffer);
+							TabSpace(tab_space, ident_space, buffer);
 							no_space := true;
 						};
 					}
@@ -349,16 +404,29 @@ class CodeFormatter {
 		return buffer;
 	}
 
-	function : VerticalSpace(prev_token : Token, tab_space : Int, buffer : String) ~ Nil {
-		if(prev_token->GetType() = Token->Type->CCBRACE) {
+	function : VerticalSpace(prev_token : Token, tab_space : Int, ident_space : Int, buffer : String) ~ Nil {
+		if(prev_token->GetType() = Token->Type->VTAB) {
+			buffer += '\n';
+			TabSpace(tab_space, ident_space, buffer);
+		}
+		else if(prev_token->GetType() = Token->Type->CCBRACE) {
 			buffer += "\n\n";
-			TabSpace(tab_space, buffer);
+			TabSpace(tab_space, ident_space, buffer);
 		};
 	}
 
-	function : TabSpace(tab_space : Int, buffer : String) ~ Nil {
-		each(i : tab_space) {
-			buffer += '\t';
+	function : TabSpace(tab_space : Int, ident_space : Int, buffer : String) ~ Nil {
+		if(ident_space > 0) {
+			each(i : tab_space) {
+				each(j : ident_space) {
+					buffer += ' ';
+				};
+			};
+		}
+		else {
+			each(i : tab_space) {
+				buffer += '\t';
+			};
 		};
 	}
 }
