@@ -5,7 +5,7 @@ class CodeFormatter {
 	@token : Token;
 	@prev_token : Token;
 	@next_token : Token;
-	@no_space : Bool;
+	@skip_space : Bool;
 
 	@stmt_space : Bool;
 	@ident_space : Int;
@@ -30,7 +30,7 @@ class CodeFormatter {
 			tab_space := 0;
 			insert_tabs := false;
 
-			@no_space := false;
+			@skip_space := false;
 			in_label := false;
 			in_for := false;
 
@@ -147,12 +147,14 @@ class CodeFormatter {
 						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
 						buffer += "label";
 						in_label := true;
+						@skip_space := false;
 					}
 
 					label Token->Type->OTHER_ID {
 						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
 						buffer += "other";
 						in_label := true;
+						@skip_space := false;
 					}
 
 					label Token->Type->ASGN {
@@ -168,7 +170,7 @@ class CodeFormatter {
 						buffer += '#';
 						buffer += @token->GetValue();
 						buffer += '\n';
-						@no_space := insert_tabs := true;
+						@skip_space := insert_tabs := true;
 					}
 
 					label Token->Type->MULTI_COMMENT {
@@ -184,7 +186,7 @@ class CodeFormatter {
 						if(@next_token->GetType() <> Token->Type->CCBRACE & @next_token->GetType() <> Token->Type->VTAB & <>in_for) {
 							buffer += '\n';
 							
-							@no_space := true;
+							@skip_space := true;
 							if(<>in_for) {
 								insert_tabs := true;
 							};
@@ -350,7 +352,7 @@ class CodeFormatter {
 							buffer->Pop();
 						};
 						buffer += '[';
-						@no_space := true;
+						@skip_space := true;
 					}
 
 					label Token->Type->CBRACE {
@@ -375,7 +377,7 @@ class CodeFormatter {
 						};
 
 						buffer += '(';
-						@no_space := true;
+						@skip_space := true;
 					}
 
 					label Token->Type->CPREN {
@@ -392,7 +394,7 @@ class CodeFormatter {
 
 					label Token->Type->OCBRACE {
 						buffer += "{\n";
-						@no_space := true;
+						@skip_space := true;
 						tab_space += 1;
 						insert_tabs := true;
 
@@ -413,7 +415,7 @@ class CodeFormatter {
 						if(@next_token->GetType() <> Token->Type->CCBRACE) {
 							buffer += "\n\n";
 							TabSpace(tab_space, @ident_space, buffer);
-							@no_space := true;
+							@skip_space := true;
 						};
 					}
 
@@ -422,11 +424,11 @@ class CodeFormatter {
 					}
 				};
 
-				if(<>@no_space) {
-					buffer += " ";
+				if(<>@skip_space) {
+					buffer += ' ';
 				}
 				else {
-					@no_space := false;
+					@skip_space := false;
 				};
 			};
 		};
@@ -438,16 +440,14 @@ class CodeFormatter {
 		if(@prev_token->GetType() = Token->Type->CCBRACE) {
 			buffer += "\n\n";
 			TabSpace(tab_space, @ident_space, buffer);
-			@no_space := true;
+			@skip_space := true;
 		};
 	}
 
 	method : TabSpace(tab_space : Int, @ident_space : Int, buffer : String) ~ Nil {
 		if(@ident_space > 0) {
-#			c := ' ';
-#			c2 := c;
- c := '·';
- c2 := '•';
+#			c := c2 := ' ';
+c := '·'; c2 := '•';
 			each(i : tab_space) {
 				
 				each(j : @ident_space) {
