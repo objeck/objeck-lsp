@@ -49,47 +49,25 @@ class CodeFormatter {
 				
 				select(token->GetType()) {
 					label Token->Type->CLASS_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
+						VerticalSpace(prev_token, tab_space, buffer);
 						buffer += "class";
 					}
 
 					label Token->Type->FUNCTION_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
+						VerticalSpace(prev_token, tab_space, buffer);
 						buffer += "function";
 					}
 
 					label Token->Type->METHOD_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
+						VerticalSpace(prev_token, tab_space, buffer);
 						buffer += "method";
 					}
 
 					label Token->Type->PUBLIC_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
 						buffer += "public";
 					}
 
 					label Token->Type->PRIVATE_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
 						buffer += "private";
 					}
 
@@ -134,21 +112,13 @@ class CodeFormatter {
 					}
 
 					label Token->Type->LABEL_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-						
+						VerticalSpace(prev_token, tab_space, buffer);
 						buffer += "label";
 						in_label := true;
 					}
 
 					label Token->Type->OTHER_ID {
-						if(prev_token->GetType() = Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, buffer);
-						};
-
+						VerticalSpace(prev_token, tab_space, buffer);
 						buffer += "other";
 						in_label := true;
 					}
@@ -195,10 +165,48 @@ class CodeFormatter {
 						buffer += "{$value}";
 					}
 
-					label Token->Type->STRING_ID {
+					label Token->Type->STRING_LIT {
 						buffer += '"';
 						buffer += token->GetValue();
 						buffer += '"';
+					}
+
+					label Token->Type->CHAR_LIT {
+						buffer += '\'';
+						buffer += token->GetValue();
+						buffer += '\'';
+					}
+
+					label Token->Type->NUM_LIT {
+						buffer += token->GetValue();
+					}
+
+					label Token->Type->STRING_ID {
+						buffer += "String";
+					}
+
+					label Token->Type->INT_ID {
+						buffer += "Int";
+					}
+
+					label Token->Type->FLOAT_ID {
+						buffer += "Float";
+					}
+
+					label Token->Type->CHAR_ID {
+						buffer += "Char";
+					}
+
+					label Token->Type->BOOL_ID {
+						buffer +=  "Bool";
+					}
+
+					label Token->Type->BYTE_ID {
+						buffer +=  "Byte";
+					}
+
+					label Token->Type->NIL_ID {
+						buffer +=  "Nil";
 					}
 
 					label Token->Type->COLON {
@@ -258,14 +266,6 @@ class CodeFormatter {
 
 					label Token->Type->TILDE {
 						buffer += '~';
-					}
-
-					label Token->Type->INT_NUM {
-						buffer += token->GetInt();
-					}
-
-					label Token->Type->FLOAT_NUM {
-						buffer += token->GetFloat();
 					}
 
 					label Token->Type->OBRACE {
@@ -349,8 +349,15 @@ class CodeFormatter {
 		return buffer;
 	}
 
-	function : TabSpace(space : Int, buffer : String) ~ Nil {
-		each(i : space) {
+	function : VerticalSpace(prev_token : Token, tab_space : Int, buffer : String) ~ Nil {
+		if(prev_token->GetType() = Token->Type->CCBRACE) {
+			buffer += "\n\n";
+			TabSpace(tab_space, buffer);
+		};
+	}
+
+	function : TabSpace(tab_space : Int, buffer : String) ~ Nil {
+		each(i : tab_space) {
 			buffer += '\t';
 		};
 	}

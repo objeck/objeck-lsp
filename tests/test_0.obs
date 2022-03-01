@@ -15,8 +15,12 @@ each(i : b) {
 
 			Foo(2,3);
 		Bar(b);
-		"Hello World"->PrintLine();
+		"Hello \t World"->PrintLine();
+		0x34->PrintLine();
+
+		c := '\u0444';
+		c->Size()->PrintLine()	;
 	 } 
 function : Bar(a : Int) ~ Int {
 	return a * 5;
-}function : Foo(a : Int, b : Int) ~ Int {	return 13 + 7;}	 }
+}function : Foo(a : Int, b : Int) ~ Int {	return 13 + 7;} method : private : Get() ~ Float { return 3.145;}	 }
