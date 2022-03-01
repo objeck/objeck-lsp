@@ -167,6 +167,8 @@ class CodeFormatter {
 					label Token->Type->LINE_COMMENT {
 						buffer += '#';
 						buffer += @token->GetValue();
+						buffer += '\n';
+						@no_space := insert_tabs := true;
 					}
 
 					label Token->Type->MULTI_COMMENT {
