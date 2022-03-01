@@ -206,6 +206,18 @@ class CodeFormatter {
 						buffer += "<>";
 					}
 
+					label Token->Type->AND {
+						buffer += '&';
+					}
+
+					label Token->Type->OR {
+						buffer += '|';
+					}
+
+					label Token->Type->QUESTION {
+						buffer += '?';
+					}
+
 					label Token->Type->IDENT {
 						if(@prev_token->GetType() = Token->Type->ASSESSOR | 
 								@prev_token->GetType() = Token->Type->ADD_ADD | 
@@ -431,12 +443,15 @@ class CodeFormatter {
 	method : TabSpace(tab_space : Int, @ident_space : Int, buffer : String) ~ Nil {
 		if(@ident_space > 0) {
 #			c := ' ';
- c := '•';
+#			c2 := c;
+ c := '·';
+ c2 := '•';
 			each(i : tab_space) {
-				buffer += c;
+				
 				each(j : @ident_space) {
 					buffer += c;
 				};
+				buffer += c2;
 			};
 		}
 		else {

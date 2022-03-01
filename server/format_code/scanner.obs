@@ -333,6 +333,21 @@ class Scanner {
 						NextChar();
 					}
 
+					label '&' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->AND, "and"));
+						NextChar();
+					}
+
+					label '|' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->OR, "or"));
+						NextChar();
+					}
+
+					label '?' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->QUESTION, "question"));
+						NextChar();
+					}
+
 					label '\'' {
 						@tokens->AddBack(Token->New(@line_num, Token->Type->FWD_SLASH, "mod"));
 						NextChar();
@@ -370,8 +385,10 @@ class Scanner {
 					}
 
 					other {
-						"[Other ({$@line_num},{$@line_pos}): {$@cur_char}]"->ErrorLine();						
-						@tokens->AddBack(Token->New(@line_num, Token->Type->OTHER, "other"));
+						if(@cur_char <> '\0') {
+							"\n--- [Other ({$@line_num},{$@line_pos}): '{$@cur_char}'] ---"->ErrorLine();						
+							Runtime->Exit(1);
+						};
 					}
 				};
 			};
@@ -431,6 +448,7 @@ class Token {
 		ASSESSOR,
 		AND,
 		OR,
+		QUESTION,
 		DIV,
 		MOD,
 		MUL,
