@@ -78,7 +78,6 @@ class Scanner {
 		line_num := @line_num - 1;
 		if(new_line_count > 1) {
 			for(i := 0; i < new_line_count; i += 2;) {
-@line_num->PrintLine();				
 				@tokens->AddBack(Token->New(@line_num, Token->Type->VTAB, "vtab"));
 			};
 		};
