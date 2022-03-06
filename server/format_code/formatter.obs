@@ -10,6 +10,10 @@ class CodeFormatter {
 	@stmt_space : Bool;
 	@ident_space : Int;
 
+	@buffer : String;
+	@start_range : Int;
+	@end_range : Int;
+
 	New(options : Map<String, String>) {
 		# get options
 		stmt_space_check := options->Find("function-space");
@@ -20,11 +24,34 @@ class CodeFormatter {
 		if(ident_space_check <> Nil & <>ident_space_check->IsEmpty()) {
 			@ident_space := ident_space_check->ToInt() - 1;
 		};
+		
+		# TODO: get range
+		@start_range := @end_range := -1;
+		@buffer := "\n---\n";
 	}
 
-	method : public : Format(source : String) ~ String {
-		buffer := "\n---\n";
+	method : AppendBuffer(str : String) ~ Nil {
+		# TODO: add ranges
+		if(@start_range < 0 & @end_range < 0) {
+			@buffer += str;
+		};
+	}
 
+	method : AppendBuffer(char : Char) ~ Nil {
+		# TODO: add ranges
+		if(@start_range < 0 & @end_range < 0) {
+			@buffer += char;
+		};
+	}
+
+	method : PopBuffer() ~ Nil {
+		# TODO: add ranges
+		if(@start_range < 0 & @end_range < 0) {
+			@buffer->Pop();
+		};
+	}	
+
+	method : public : Format(source : String) ~ String {
 		scanner := Scanner->New(source);
 		if(scanner->Scan()) {
 			tab_space := 0;
@@ -40,7 +67,7 @@ class CodeFormatter {
 			tokens := scanner->GetTokens();
 			each(i : tokens) {
 				if(insert_tabs) {
-					TabSpace(tab_space, @ident_space, buffer);
+					TabSpace(tab_space, @ident_space);
 					insert_tabs := false;
 				};
 
@@ -65,126 +92,126 @@ class CodeFormatter {
 				
 				select(@token->GetType()) {
 					label Token->Type->CLASS_ID {
-						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
-						buffer += "class";
+						VerticalSpace(@prev_token, tab_space, @ident_space);
+						AppendBuffer("class");
 					}
 
 					label Token->Type->FUNCTION_ID {
-						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
+						VerticalSpace(@prev_token, tab_space, @ident_space);
 
-						buffer += "function";
+						AppendBuffer("function");
 					}
 
 					label Token->Type->METHOD_ID {
-						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
-						buffer += "method";
+						VerticalSpace(@prev_token, tab_space, @ident_space);
+						AppendBuffer("method");
 					}
 
 					label Token->Type->PUBLIC_ID {
-						buffer += "public";
+						AppendBuffer("public");
 					}
 
 					label Token->Type->PRIVATE_ID {
-						buffer += "private";
+						AppendBuffer("private");
 					}
 
 					label Token->Type->IF_ID {
-						buffer += "if";
+						AppendBuffer("if");
 					}
 
 					label Token->Type->ELSE_ID {
-						buffer += '\n';
-						TabSpace(tab_space, @ident_space, buffer);
-						buffer += "else";
+						AppendBuffer('\n');
+						TabSpace(tab_space, @ident_space);
+						AppendBuffer("else");
 					}					
 
 					label Token->Type->WHILE_ID {
-						buffer += "while";
+						AppendBuffer("while");
 					}
 
 					label Token->Type->FOR_ID {
-						buffer += "for";
+						AppendBuffer("for");
 						in_for := true;
 					}
 
 					label Token->Type->EACH_ID {
-						buffer += "each";
+						AppendBuffer("each");
 					}
 
 					label Token->Type->BREAK_ID {
-						buffer += "break";
+						AppendBuffer("break");
 					}
 
 					label Token->Type->RETURN_ID {
-						buffer += "return";
+						AppendBuffer("return");
 					}
 
 					label Token->Type->ALIAS_ID {
-						buffer += "alias";
+						AppendBuffer("alias");
 					}
 
 					label Token->Type->LEAVING_ID {
-						buffer += "leaving";
+						AppendBuffer("leaving");
 					}
 
 					label Token->Type->USE_ID {
-						buffer += "use";
+						AppendBuffer("use");
 					}
 
 					label Token->Type->NATIVE_ID {
-						buffer += "native";
+						AppendBuffer("native");
 					}
 
 					label Token->Type->STATIC_ID {
-						buffer += "static";
+						AppendBuffer("static");
 					}
 
 					label Token->Type->SELECT_ID {
-						buffer += "select";
+						AppendBuffer("select");
 					}
 
 					label Token->Type->LABEL_ID {
-						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
-						buffer += "label";
+						VerticalSpace(@prev_token, tab_space, @ident_space);
+						AppendBuffer("label");
 						in_label := true;
 						@skip_space := false;
 					}
 
 					label Token->Type->OTHER_ID {
-						VerticalSpace(@prev_token, tab_space, @ident_space, buffer);
-						buffer += "other";
+						VerticalSpace(@prev_token, tab_space, @ident_space);
+						AppendBuffer("other");
 						in_label := true;
 						@skip_space := false;
 					}
 
 					label Token->Type->ASGN {
-						buffer += ":=";
+						AppendBuffer(":=");
 					}
 
 					label Token->Type->ASSESSOR {
-						buffer->Pop();
-						buffer += "->";
+						PopBuffer();
+						AppendBuffer("->");
 					}
 
 					label Token->Type->LINE_COMMENT {
-						buffer += '#';
-						buffer += @token->GetValue();
-						buffer += '\n';
+						AppendBuffer('#');
+						AppendBuffer(@token->GetValue());
+						AppendBuffer('\n');
 						@skip_space := insert_tabs := true;
 					}
 
 					label Token->Type->MULTI_COMMENT {
-						buffer += "#~";
-						buffer += @token->GetValue();
-						buffer += "~#";
+						AppendBuffer("#~");
+						AppendBuffer(@token->GetValue());
+						AppendBuffer("~#");
 					}
 
 					label Token->Type->SEMI {
-						buffer->Pop();
-						buffer += ';';
+						PopBuffer();
+						AppendBuffer(';');
 
 						if(@next_token->GetType() <> Token->Type->CCBRACE & @next_token->GetType() <> Token->Type->VTAB & <>in_for) {
-							buffer += '\n';
+							AppendBuffer('\n');
 							
 							@skip_space := true;
 							if(<>in_for) {
@@ -194,172 +221,172 @@ class CodeFormatter {
 					}
 
 					label Token->Type->LESS {
-						buffer += '<';
+						AppendBuffer('<');
 					}
 
 					label Token->Type->GTR {
-						buffer += '>';
+						AppendBuffer('>');
 					}
 
 					label Token->Type->COMMA {
-						buffer->Pop();
-						buffer += ',';
+						PopBuffer();
+						AppendBuffer(',');
 					}
 
 					label Token->Type->NEQL {
-						buffer += "<>";
+						AppendBuffer("<>");
 					}
 
 					label Token->Type->AND {
-						buffer += '&';
+						AppendBuffer('&');
 					}
 
 					label Token->Type->OR {
-						buffer += '|';
+						AppendBuffer('|');
 					}
 
 					label Token->Type->QUESTION {
-						buffer += '?';
+						AppendBuffer('?');
 					}
 
 					label Token->Type->IDENT {
 						if(@prev_token->GetType() = Token->Type->ASSESSOR | 
 								@prev_token->GetType() = Token->Type->ADD_ADD | 
 								@prev_token->GetType() = Token->Type->SUB_SUB) {
-							buffer->Pop();
+							PopBuffer();
 						};
 						value := @token->GetValue();
-						buffer += "{$value}";
+						AppendBuffer("{$value}");
 					}
 
 					label Token->Type->STRING_LIT {
-						buffer += '"';
-						buffer += @token->GetValue();
-						buffer += '"';
+						AppendBuffer('"');
+						AppendBuffer(@token->GetValue());
+						AppendBuffer('"');
 					}
 
 					label Token->Type->CHAR_LIT {
-						buffer += '\'';
-						buffer += @token->GetValue();
-						buffer += '\'';
+						AppendBuffer('\'');
+						AppendBuffer(@token->GetValue());
+						AppendBuffer('\'');
 					}
 
 					label Token->Type->NUM_LIT {
-						buffer += @token->GetValue();
+						AppendBuffer(@token->GetValue());
 					}
 
 					label Token->Type->STRING_ID {
-						buffer += "String";
+						AppendBuffer("String");
 					}
 
 					label Token->Type->INT_ID {
-						buffer += "Int";
+						AppendBuffer("Int");
 					}
 
 					label Token->Type->FLOAT_ID {
-						buffer += "Float";
+						AppendBuffer("Float");
 					}
 
 					label Token->Type->CHAR_ID {
-						buffer += "Char";
+						AppendBuffer("Char");
 					}
 
 					label Token->Type->BOOL_ID {
-						buffer +=  "Bool";
+						AppendBuffer( "Bool");
 					}
 
 					label Token->Type->BYTE_ID {
-						buffer +=  "Byte";
+						AppendBuffer( "Byte");
 					}
 
 					label Token->Type->NIL_ID {
-						buffer +=  "Nil";
+						AppendBuffer( "Nil");
 					}
 
 					label Token->Type->COLON {
 						if(in_label) {
-							buffer->Pop();
+							PopBuffer();
 						};
-						buffer += ':';
+						AppendBuffer(':');
 					}
 
 					label Token->Type->ADD {
-						buffer += '+';
+						AppendBuffer('+');
 					}
 
 					label Token->Type->SUB {
-						buffer += '-';
+						AppendBuffer('-');
 					}
 
 					label Token->Type->MUL {
-						buffer += '*';
+						AppendBuffer('*');
 					}
 
 					label Token->Type->DIV {
-						buffer += '/';
+						AppendBuffer('/');
 					}
 
 					label Token->Type->MOD {
-						buffer += '%';
+						AppendBuffer('%');
 					}
 
 					label Token->Type->FWD_SLASH {
-						buffer += '\'';
+						AppendBuffer('\'');
 					}
 
 					label Token->Type->EQL {
-						buffer += '=';
+						AppendBuffer('=');
 					}
 
 					label Token->Type->LESS_EQL {
-						buffer += "<=";
+						AppendBuffer("<=");
 					}
 
 					label Token->Type->GTR_EQL {
-						buffer += ">=";
+						AppendBuffer(">=");
 					}
 
 					label Token->Type->ADD_ASN {
-						buffer += "+=";
+						AppendBuffer("+=");
 					}
 
 					label Token->Type->SUB_ASN {
-						buffer += "-=";
+						AppendBuffer("-=");
 					}
 
 					label Token->Type->ADD_ADD {
-						buffer += "++";
+						AppendBuffer("++");
 					}
 
 					label Token->Type->SUB_SUB {
-						buffer += "--";
+						AppendBuffer("--");
 					}
 
 					label Token->Type->MUL_ASN {
-						buffer += "*=";
+						AppendBuffer("*=");
 					}
 
 					label Token->Type->DIV_ASN {
-						buffer += "/=";
+						AppendBuffer("/=");
 					}
 
 					label Token->Type->TILDE {
-						buffer += '~';
+						AppendBuffer('~');
 					}
 
 					label Token->Type->OBRACE {
 						if(@prev_token->GetType() = Token->Type->IDENT) {
-							buffer->Pop();
+							PopBuffer();
 						};
-						buffer += '[';
+						AppendBuffer('[');
 						@skip_space := true;
 					}
 
 					label Token->Type->CBRACE {
 						if(@prev_token->GetType() <> Token->Type->OBRACE) {
-							buffer->Pop();
+							PopBuffer();
 						};
-						buffer += ']';
+						AppendBuffer(']');
 					}
 
 					label Token->Type->OPREN {
@@ -371,29 +398,29 @@ class CodeFormatter {
 								label Token->Type->EACH_ID
 								label Token->Type->SELECT_ID
 								label Token->Type->WHILE_ID {
-									buffer->Pop();
+									PopBuffer();
 								}
 							};
 						};
 
-						buffer += '(';
+						AppendBuffer('(');
 						@skip_space := true;
 					}
 
 					label Token->Type->CPREN {
 						if(@prev_token->GetType() <> Token->Type->OPREN) {
-							buffer->Pop();
+							PopBuffer();
 						};
 
 						if(in_for) {
 							in_for := false;
 						};
 
-						buffer += ')';
+						AppendBuffer(')');
 					}
 
 					label Token->Type->OCBRACE {
-						buffer += "{\n";
+						AppendBuffer("{\n");
 						@skip_space := true;
 						tab_space += 1;
 						insert_tabs := true;
@@ -404,17 +431,17 @@ class CodeFormatter {
 					}
 
 					label Token->Type->CCBRACE {
-						buffer += '\n';
+						AppendBuffer('\n');
 						tab_space -= 1;
-						TabSpace(tab_space, @ident_space, buffer);
-						buffer += '}'; # TODO: Fix me!
+						TabSpace(tab_space, @ident_space);
+						AppendBuffer('}'); # TODO: Fix me!
 
 					}
 
 					label Token->Type->VTAB {
 						if(@next_token->GetType() <> Token->Type->CCBRACE) {
-							buffer += "\n\n";
-							TabSpace(tab_space, @ident_space, buffer);
+							AppendBuffer("\n\n");
+							TabSpace(tab_space, @ident_space);
 							@skip_space := true;
 						};
 					}
@@ -425,7 +452,7 @@ class CodeFormatter {
 				};
 
 				if(<>@skip_space) {
-					buffer += ' ';
+					AppendBuffer(' ');
 				}
 				else {
 					@skip_space := false;
@@ -433,32 +460,32 @@ class CodeFormatter {
 			};
 		};
 
-		return buffer;
+		return @buffer;
 	}
 
-	method : VerticalSpace(@prev_token : Token, tab_space : Int, @ident_space : Int, buffer : String) ~ Nil {
+	method : VerticalSpace(@prev_token : Token, tab_space : Int, @ident_space : Int) ~ Nil {
 		if(@prev_token->GetType() = Token->Type->CCBRACE) {
-			buffer += "\n\n";
-			TabSpace(tab_space, @ident_space, buffer);
+			AppendBuffer("\n\n");
+			TabSpace(tab_space, @ident_space);
 			@skip_space := true;
 		};
 	}
 
-	method : TabSpace(tab_space : Int, @ident_space : Int, buffer : String) ~ Nil {
+	method : TabSpace(tab_space : Int, @ident_space : Int) ~ Nil {
 		if(@ident_space > 0) {
 #			c := c2 := ' ';
 c := '·'; c2 := '•';
 			each(i : tab_space) {
 				
 				each(j : @ident_space) {
-					buffer += c;
+					AppendBuffer(c);
 				};
-				buffer += c2;
+				AppendBuffer(c2);
 			};
 		}
 		else {
 			each(i : tab_space) {
-				buffer += '\t';
+				AppendBuffer('\t');
 			};
 		};
 	}
