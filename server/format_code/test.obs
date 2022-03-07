@@ -9,6 +9,8 @@ class Test {
 				options := Map->New()<String, String>;
 				options->Insert("function-space", "false");
 				options->Insert("ident-space", "3");
+				options->Insert("start-line", "1");
+				options->Insert("end-line", "2");
 				
 				formatter := CodeFormatter->New(options);
 				formatter->Format(source)->PrintLine();

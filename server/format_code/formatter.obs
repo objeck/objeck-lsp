@@ -19,36 +19,50 @@ class CodeFormatter {
 		stmt_space_check := options->Find("function-space");
 		@stmt_space := stmt_space_check <> Nil & stmt_space_check->Equals("true");
 
-		ident_space_check := options->Find("ident-space");
 		@ident_space := 0;
+		ident_space_check := options->Find("ident-space");
 		if(ident_space_check <> Nil & <>ident_space_check->IsEmpty()) {
 			@ident_space := ident_space_check->ToInt() - 1;
 		};
 		
-		# TODO: get range
-		@start_range := @end_range := -1;
-		@buffer := "\n---\n";
+		# get start and end range
+		@start_range := -1;
+		start_line_check := options->Find("start-line");
+		if(start_line_check <> Nil & <>start_line_check->IsEmpty()) {
+			@start_range := start_line_check->ToInt();
+		};
+
+		@end_range := -1;
+		end_line_check := options->Find("end-line");
+		if(end_line_check <> Nil & <>end_line_check->IsEmpty()) {
+			@end_range := end_line_check->ToInt();
+		};
+
+# "ranges: ({$@start_range},{$@end_range})"->PrintLine();
+
+		@buffer := "---\n";
 	}
 
 	method : AppendBuffer(str : String) ~ Nil {
-		# TODO: add ranges
-		if(@start_range < 0 & @end_range < 0) {
+		if(InRange()) {
 			@buffer += str;
 		};
 	}
 
 	method : AppendBuffer(char : Char) ~ Nil {
-		# TODO: add ranges
-		if(@start_range < 0 & @end_range < 0) {
+		if(InRange()) {
 			@buffer += char;
 		};
 	}
 
 	method : PopBuffer() ~ Nil {
-		# TODO: add ranges
-		if(@start_range < 0 & @end_range < 0) {
+		if(InRange()) {
 			@buffer->Pop();
 		};
+	}
+
+	method : InRange() ~ Bool {
+		return (@start_range < 0 & @end_range < 0) | (@token <> Nil & @start_range <= @token->GetLine() & @end_range >= @token->GetLine());
 	}	
 
 	method : public : Format(source : String) ~ String {
@@ -61,7 +75,6 @@ class CodeFormatter {
 			in_label := false;
 			in_for := false;
 
-			@token, @next_token : Token;
 			@prev_token := Token->New(-1, Token->Type->OTHER, "other");
 
 			tokens := scanner->GetTokens();

@@ -74,8 +74,7 @@ class Scanner {
 
 			NextChar();
 		};
-
-		line_num := @line_num - 1;
+		
 		if(new_line_count > 1) {
 			for(i := 0; i < new_line_count; i += 2;) {
 				@tokens->AddBack(Token->New(@line_num, Token->Type->VTAB, "vtab"));
@@ -188,7 +187,7 @@ class Scanner {
 					@tokens->AddBack(Token->New(@line_num, Token->Type->IDENT, word));
 				}
 				else {
-					@tokens->AddBack(keyword);
+					@tokens->AddBack(keyword->Copy(@line_num));
 				};
 			}
 			# number or digit
@@ -480,10 +479,14 @@ class Token {
 		OTHER
 	}
 	
-	New(line_num : Int, type : Token->Type, name : String) {
+	New(line_num : Int, type : Token->Type, value : String) {
 		@line_num := line_num;
 		@type := type;
-		@value := name;
+		@value := value;
+	}
+
+	method : public : Copy(line_num : Int) ~ Token {
+		return Token->New(line_num, @type, @value);
 	}
 	
 	method : public : GetLine() ~ Int {
