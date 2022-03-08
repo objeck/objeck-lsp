@@ -138,6 +138,10 @@ class CodeFormatter {
 						AppendBuffer("else");
 					}					
 
+					label Token->Type->DO_ID {
+						AppendBuffer("do");
+					}
+
 					label Token->Type->WHILE_ID {
 						AppendBuffer("while");
 					}
@@ -153,6 +157,10 @@ class CodeFormatter {
 
 					label Token->Type->BREAK_ID {
 						AppendBuffer("break");
+					}
+
+					label Token->Type->CONTINUE_ID {
+						AppendBuffer("continue");
 					}
 
 					label Token->Type->RETURN_ID {
