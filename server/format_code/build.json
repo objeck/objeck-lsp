@@ -1,7 +1,8 @@
 {
 	"files": [
 		"scanner.obs",
-		"formatter.obs"
+		"formatter.obs",
+		"test.obs"
 	],
 	"libs": [
 		"gen_collect.obl",
