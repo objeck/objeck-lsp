@@ -97,7 +97,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-			response:= @workspace->GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -111,16 +111,25 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 			
-			response:= @workspace->GetDocument(uri)->FindDefinition(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->FindDefinition(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
-		method : SignatureHelp(id : Int, params : JsonElement) ~ Nil {
+		method : CallbackSignatureHelp(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 			
-			response:= @workspace->GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
+			WriteRpcResponse(id, response);
+		}
+
+		method : CallbackFormatDocument(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			tab_size := params->FindElements("options/tabSize")->GetValue();
+			insert_spaces := params->FindElements("options/insertSpaces")->GetValue();
+			
+			response := @workspace->GetDocument(uri)->FormatDocument(tab_size->ToInt(), insert_spaces->Equals("true"));
 			WriteRpcResponse(id, response);
 		}
 
@@ -129,7 +138,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-			response:= @workspace->GetDocument(uri)->Hover(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->Hover(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -138,7 +147,7 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 			
-			response:= @workspace->GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
+			response := @workspace->GetDocument(uri)->Completion(line_pos->ToInt(), char_pos->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
@@ -168,6 +177,7 @@ bundle LSP {
 			
 			# build response
 			response := JsonElement->New(JsonElement->JsonType->OBJECT);
+
 			capabilities := response->AddChild("capabilities");
 			completionProvider := capabilities->AddChild("completionProvider");
 			completionProvider->Insert("resolveProvider", true);
@@ -194,6 +204,8 @@ bundle LSP {
 			capabilities->Insert("definitionProvider", true);
 			capabilities->Insert("renameProvider", true);
 			capabilities->Insert("hoverProvider", true);
+			capabilities->Insert("documentFormattingProvider", true);
+			capabilities->Insert("documentRangeFormattingProvider", true);
 
 			WriteRpcResponse(id, response);
 
@@ -284,7 +296,7 @@ bundle LSP {
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			response:= @workspace->GetDocument(uri)->GetSymbols(uri);
+			response := @workspace->GetDocument(uri)->GetSymbols(uri);
 			WriteRpcResponse(id, response);
 		}
 

@@ -67,7 +67,8 @@ bundle LSP {
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDefinition(id : Int, params : JsonElement) ~ Nil;
-		method : virtual : SignatureHelp(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackSignatureHelp(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackFormatDocument(id : Int, params : JsonElement) ~ Nil;
 
 		# --- process requests ---
 		method : ProcessResponse(request : RpcRequest) ~ Nil {
@@ -144,10 +145,13 @@ bundle LSP {
 					CallbackDefinition(id, request->GetParams());
 				}
 				else if(method_id->Equals("textDocument/signatureHelp")) {
-					SignatureHelp(id, request->GetParams());
+					CallbackSignatureHelp(id, request->GetParams());
 				}
 				else if(method_id->Equals("shutdown")) {
 					CallbackShutdown(id, request->GetParams());
+				}
+				else if(method_id->Equals("textDocument/formatting")) {
+					CallbackFormatDocument(id, request->GetParams());
 				}
 				else {
 					if(@is_debug & <>method_id->Equals("<none>")) {
@@ -555,6 +559,15 @@ bundle LSP {
 				};
 			};
 			
+			return Nil;
+		}
+
+		method : public : FormatDocument(tab_spaces : Int, insert_spaces : Bool) ~  JsonElement {
+			if(@is_debug) {
+				uri := Web.HTTP.Url->Decode(@uri);
+				System.IO.File.Logger->Instance()->Info("=> FormatDocument: uri='{$uri}', {$tab_spaces}, {$insert_spaces}");
+			};
+
 			return Nil;
 		}
 

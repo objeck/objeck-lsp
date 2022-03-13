@@ -20,5 +20,5 @@ obc -src *.obs -lib diags,net,json,regex -dest objeck_lsp.obe
 if [%1] NEQ [brun] goto end
 echo ---
 echo Running on port %PORT%...
-obr objeck_lsp.obe objk_apis.json %PORT%
+obr objeck_lsp.obe objk_apis.json %PORT% debug
 :end
