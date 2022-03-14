@@ -144,7 +144,7 @@ bundle LSP {
 			end_line := params->FindElements("range/end/line")->GetValue();
 			end_char := params->FindElements("range/end/character")->GetValue();
 
-			response := @workspace->GetDocument(uri)->FormatRange(tab_size->ToInt(), insert_spaces->Equals("true"), start_line, start_char, end_line, end_char);
+			response := @workspace->GetDocument(uri)->FormatRange(tab_size->ToInt(), insert_spaces->Equals("true"), start_line->ToInt(), start_char->ToInt(), end_line->ToInt(), end_char->ToInt());
 			WriteRpcResponse(id, response);
 		}
 
