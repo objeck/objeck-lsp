@@ -20,15 +20,17 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) will be incorpor
 
 #### Callbacks
 * Initialize `initialize`
-* Code Completion `textDocument/completion`
-* Code Resolution `completionItem/resolve`
-* Code Symbol `textDocument/documentSymbol`
-* Method/Function Signature Help `textDocument/signatureHelp`
-* Goto Code References `textDocument/references`
-* Goto Code Definitions `textDocument/definition`
-* Goto Code Declaration `textDocument/declaration`
+* Code completion `textDocument/completion`
+* Code resolution `completionItem/resolve`
+* Code symbol `textDocument/documentSymbol`
+* Method/Function signature help `textDocument/signatureHelp`
+* Goto code references `textDocument/references`
+* Goto code definitions `textDocument/definition`
+* Goto code declaration `textDocument/declaration`
 * Variable rename `textDocument/rename`
-* Editor Shutdown `shutdown`
+* Format document `textDocument/formatting`
+* Format selection `textDocument/rangeFormatting`
+* Editor shutdown `shutdown`
 
 <figure>
 <figcaption>Fig.1 - Error checking</figcaption>
