@@ -324,6 +324,78 @@ class CodeFormatter {
 						AppendBuffer( "Nil");
 					}
 
+					label Token->Type->AND_ID {
+						AppendBuffer( "and");
+					}
+
+					label Token->Type->OR_ID {
+						AppendBuffer( "or");
+					}
+
+					label Token->Type->XOR_ID {
+						AppendBuffer( "xor");
+					}
+
+					label Token->Type->VIRTUAL_ID {
+						AppendBuffer( "virtual");
+					}
+
+					label Token->Type->BUNDLE_ID {
+						AppendBuffer( "bundle");
+					}
+
+					label Token->Type->INTERFACE_ID {
+						AppendBuffer( "interface");
+					}
+
+					label Token->Type->IMPLEMENTS_ID {
+						AppendBuffer( "implements");
+					}
+
+					label Token->Type->ENUM_ID {
+						AppendBuffer( "enum");
+					}
+
+					label Token->Type->CONSTS_ID {
+						AppendBuffer( "consts");
+					}
+
+					label Token->Type->REVERSE_ID {
+						AppendBuffer( "reverse");
+					}
+
+					label Token->Type->PARENT_ID {
+						AppendBuffer( "parent");
+					}
+
+					label Token->Type->FROM_ID {
+						AppendBuffer( "from");
+					}
+
+					label Token->Type->TRUE_ID {
+						AppendBuffer( "true");
+					}
+
+					label Token->Type->FALSE_ID {
+						AppendBuffer( "false");
+					}
+
+					label Token->Type->NEW_ID {
+						AppendBuffer( "New");
+					}
+
+					label Token->Type->AS_ID {
+						AppendBuffer( "As");
+					}
+
+					label Token->Type->TYPE_OF_ID {
+						AppendBuffer( "TypeOf");
+					}
+
+					label Token->Type->CRITICAL_ID {
+						AppendBuffer( "critical");
+					}
+
 					label Token->Type->COLON {
 						if(in_label) {
 							PopBuffer();
@@ -389,6 +461,10 @@ class CodeFormatter {
 
 					label Token->Type->DIV_ASN {
 						AppendBuffer("/=");
+					}
+
+					label Token->Type->LAMBDA {
+						AppendBuffer("=>");
 					}
 
 					label Token->Type->TILDE {

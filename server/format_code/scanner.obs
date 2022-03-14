@@ -16,6 +16,25 @@ class Scanner {
 		@tokens := Vector->New()<Token>;
 
 		@keywords := Hash->New()<String, Token>;
+		
+		@keywords->Insert("and", Token->New(@line_num, Token->Type->AND_ID, "and_id"));
+		@keywords->Insert("or", Token->New(@line_num, Token->Type->OR_ID, "or_id"));
+		@keywords->Insert("xor", Token->New(@line_num, Token->Type->XOR_ID, "xor_id"));
+		@keywords->Insert("virtual", Token->New(@line_num, Token->Type->VIRTUAL_ID, "virtual_id"));
+		@keywords->Insert("bundle", Token->New(@line_num, Token->Type->BUNDLE_ID, "bundle_id"));
+		@keywords->Insert("interface", Token->New(@line_num, Token->Type->INTERFACE_ID, "interface_id"));
+		@keywords->Insert("implements", Token->New(@line_num, Token->Type->IMPLEMENTS_ID, "implements_id"));
+		@keywords->Insert("enum", Token->New(@line_num, Token->Type->ENUM_ID, "enum_id"));
+		@keywords->Insert("consts", Token->New(@line_num, Token->Type->CONSTS_ID, "consts_id"));
+		@keywords->Insert("reverse", Token->New(@line_num, Token->Type->REVERSE_ID, "reverse_id"));
+		@keywords->Insert("Parent", Token->New(@line_num, Token->Type->PARENT_ID, "parent_id"));
+		@keywords->Insert("from", Token->New(@line_num, Token->Type->FROM_ID, "from_id"));
+		@keywords->Insert("true", Token->New(@line_num, Token->Type->TRUE_ID, "true_id"));
+		@keywords->Insert("false", Token->New(@line_num, Token->Type->FALSE_ID, "false_id"));
+		@keywords->Insert("New", Token->New(@line_num, Token->Type->NEW_ID, "new_id"));
+		@keywords->Insert("As", Token->New(@line_num, Token->Type->AS_ID, "as_id"));
+		@keywords->Insert("TypeOf", Token->New(@line_num, Token->Type->TYPE_OF_ID, "typeof_id"));
+		@keywords->Insert("critical", Token->New(@line_num, Token->Type->CRITICAL_ID, "critical_id"));
 		@keywords->Insert("use", Token->New(@line_num, Token->Type->USE_ID, "use_id"));
 		@keywords->Insert("class", Token->New(@line_num, Token->Type->CLASS_ID, "class_id"));
 		@keywords->Insert("function", Token->New(@line_num, Token->Type->FUNCTION_ID, "function_id"));
@@ -185,7 +204,7 @@ class Scanner {
 				
 				keyword := @keywords->Find(word);
 				if(keyword = Nil) {
-"|{$word}"->Print();
+# "|{$word}"->Print();
 					@tokens->AddBack(Token->New(@line_num, Token->Type->IDENT, word));
 				}
 				else {
@@ -307,6 +326,26 @@ class Scanner {
 						NextChar();
 					}
 
+					label '←' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->ASGN, "asgn"));
+						NextChar();
+					}
+
+					label '≠' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
+						NextChar();
+					}
+
+					label '≥' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->GTR_EQL, "gtr_eql"));
+						NextChar();
+					}
+					
+					label '≤' {
+						@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
+						NextChar();
+					}
+
 					label '*' {
 						if(@next_char = '=') {
 							@tokens->AddBack(Token->New(@line_num, Token->Type->MUL_ASN, "mul_asn"));
@@ -355,8 +394,14 @@ class Scanner {
 					}
 
 					label '=' {
-						@tokens->AddBack(Token->New(@line_num, Token->Type->EQL, "eql"));
-						NextChar();
+						if(@next_char = '>') {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->NEQL, "neql"));
+							NextChar();
+						}
+						else {
+							@tokens->AddBack(Token->New(@line_num, Token->Type->EQL, "eql"));
+							NextChar();
+						};
 					}
 
 					label '<' {
@@ -365,7 +410,7 @@ class Scanner {
 							NextChar();
 						}
 						else if(@next_char = '=') {
-							@tokens->AddBack(Token->New(@line_num, Token->Type->LESS_EQL, "less_eql"));
+							@tokens->AddBack(Token->New(@line_num, Token->Type->LAMBDA, "less_eql"));
 							NextChar();
 						}
 						else {
@@ -405,6 +450,26 @@ class Token {
 	@value : String;
 
 	enum Type := -128 {
+		AND_ID,
+		OR_ID,
+		XOR_ID,
+		VIRTUAL_ID,
+		BUNDLE_ID,
+		INTERFACE_ID,
+		IMPLEMENTS_ID,
+		ENUM_ID,
+		CONSTS_ID,
+		REVERSE_ID,
+		PARENT_ID,
+		FROM_ID,
+		TRUE_ID,
+		FALSE_ID,
+		NEW_ID,
+		AS_ID,
+		TYPE_OF_ID,
+		CRITICAL_ID,
+		LAMBDA,
+# ---
 		USE_ID,
 		DO_ID,
 		FOR_ID,

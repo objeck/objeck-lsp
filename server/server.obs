@@ -133,6 +133,21 @@ bundle LSP {
 			WriteRpcResponse(id, response);
 		}
 
+		method : CallbackFormatRange(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			tab_size := params->FindElements("options/tabSize")->GetValue();
+			insert_spaces := params->FindElements("options/insertSpaces")->GetValue();
+
+			start_line := params->FindElements("range/start/line")->GetValue();
+			start_char := params->FindElements("range/start/character")->GetValue();
+
+			end_line := params->FindElements("range/end/line")->GetValue();
+			end_char := params->FindElements("range/end/character")->GetValue();
+
+			response := @workspace->GetDocument(uri)->FormatRange(tab_size->ToInt(), insert_spaces->Equals("true"), start_line, start_char, end_line, end_char);
+			WriteRpcResponse(id, response);
+		}
+
 		method : CallbackHover(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
