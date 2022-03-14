@@ -580,13 +580,14 @@ bundle LSP {
 			# create formatter
 			options := Map->New()<String, String>;
 			options->Insert("function-space", "false");
-			options->Insert("ident-space", "3");
+			if(insert_spaces) {
+				options->Insert("ident-space", tab_spaces->ToString());
+			};
 			options->Insert("start-line", (start_range_line + 1)->ToString());
 			options->Insert("end-line", (end_range_line + 1)->ToString());
 
 			formatter := CodeFormatter->New(options);
 			new_name := PutText(formatter->Format(GetText(@text)));
-# new_name->PrintLine();
 
 			# format and upate json
 			edits_builder := JsonBuilder->New();
@@ -626,12 +627,12 @@ bundle LSP {
 			# create formatter
 			options := Map->New()<String, String>;
 			options->Insert("function-space", "false");
-			options->Insert("ident-space", "3");			
+			if(insert_spaces) {
+				options->Insert("ident-space", tab_spaces->ToString());
+			};
 			formatter := CodeFormatter->New(options);
 			new_name := PutText(formatter->Format(GetText(@text)));
-
-# new_name->PrintLine();
-
+			
 			# format and upate json
 			edits_builder := JsonBuilder->New();
 			edits_builder->PushArray();
