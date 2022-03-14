@@ -40,7 +40,7 @@ class CodeFormatter {
 
 # "ranges: ({$@start_range},{$@end_range})"->PrintLine();
 
-		@buffer := "---\n";
+		@buffer := "";
 	}
 
 	method : AppendBuffer(str : String) ~ Nil {
@@ -494,8 +494,8 @@ class CodeFormatter {
 
 	method : TabSpace(tab_space : Int, @ident_space : Int) ~ Nil {
 		if(@ident_space > 0) {
-#			c := c2 := ' ';
-c := '·'; c2 := '•';
+			c := c2 := ' ';
+# c := '·'; c2 := '•';
 			each(i : tab_space) {
 				
 				each(j : @ident_space) {

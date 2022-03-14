@@ -564,11 +564,46 @@ bundle LSP {
 
 		method : public : FormatDocument(tab_spaces : Int, insert_spaces : Bool) ~  JsonElement {
 			if(@is_debug) {
-				uri := Web.HTTP.Url->Decode(@uri);
-				System.IO.File.Logger->Instance()->Info("=> FormatDocument: uri='{$uri}', {$tab_spaces}, {$insert_spaces}");
+				System.IO.File.Logger->Instance()->Info("=> FormatDocument: uri='{$@uri}', {$tab_spaces}, {$insert_spaces}");
 			};
 
-			return Nil;
+			# get ranges
+			end_ranges := GetDocumentEnd();
+
+			end_line := end_ranges[0];
+			end_index := end_ranges[1];
+
+			# create formatter
+			options := Map->New()<String, String>;
+			options->Insert("function-space", "false");
+			options->Insert("ident-space", "3");			
+			formatter := CodeFormatter->New(options);
+			new_name := PutText(formatter->Format(GetText(@text)));
+
+# new_name->PrintLine();
+
+			# format and upate json
+			edits_builder := JsonBuilder->New();
+			edits_builder->PushArray();
+			
+			edits_builder->PushObject();
+			edits_builder->Insert("newText", new_name);
+
+			edits_builder->PushObject("range");
+			obj := edits_builder->PushObject("start");
+			obj->Insert("line", 0);
+			obj->Insert("character", 0);
+			edits_builder->Pop();
+
+			obj := edits_builder->PushObject("end");
+			obj->Insert("line", end_line);
+			obj->Insert("character", end_index);
+
+			edits_builder->Pop();
+			edits_builder->Pop();
+			edits_builder->Pop();
+			
+			return edits_builder->Pop();
 		}
 
 		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String, offset : Bool := true) ~ Bool {
@@ -722,6 +757,64 @@ bundle LSP {
 			};
 
 			return -1;
+		}
+
+		method : GetDocumentEnd() ~ Int[] {
+			indexes := Int->New[2];
+
+			cur_line := 0; cur_char := 0;
+			each(pos : @text) {
+				char := @text->Get(pos);
+				next_char := '\0';				
+				if(pos + 1 < @text->Size()) {
+					next_char := @text->Get(pos + 1);
+				};
+
+				if(char = '\n') {
+					cur_line += 1;
+					cur_char := 0;			
+				};
+				cur_char += 1;
+			};
+			indexes[0] := cur_line;
+			indexes[1] := cur_char;
+
+			return indexes;
+		}
+
+		function : PutText(text : String) ~ String {
+			out := "";
+
+			each(i : text) {
+				cur_char := text->Get(i);
+				select(cur_char) {
+					label '\t' {
+						out += "\\t";
+					}
+
+					label '\r' {
+						out += "\\r";
+					}
+
+					label '\n' {
+						out += "\\n";
+					}
+
+					label '\\' {
+						out += "\\\\";
+					}
+
+					label '"' {
+						out += "\\\"";
+					}
+
+					other {
+						out += cur_char;
+					}
+				};
+			};
+
+			return out;
 		}
 
 		function : GetText(text : String) ~ String {

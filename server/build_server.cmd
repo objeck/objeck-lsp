@@ -15,7 +15,7 @@ copy %OBJECK_ROOT%\core\lib\diags.obl %OBJECK_ROOT%\core\release\deploy64\lib\di
 
 echo ---
 
-obc -src *.obs -lib diags,net,json,regex -dest objeck_lsp.obe
+obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex -dest objeck_lsp.obe
 
 if [%1] NEQ [brun] goto end
 echo ---
