@@ -586,7 +586,6 @@ bundle LSP {
 
 			formatter := CodeFormatter->New(options);
 			new_name := PutText(formatter->Format(GetText(@text)));
-
 # new_name->PrintLine();
 
 			# format and upate json
