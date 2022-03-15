@@ -253,9 +253,9 @@ class CodeFormatter {
 					label Token->Type->COMMA {
 						PopBuffer();
 						AppendBuffer(',');
-						
+
 						if(in_consts) {
-							AppendBuffer("\n");
+							AppendBuffer('\n');
 							insert_tabs := @skip_space := true;
 						};
 					}
