@@ -196,7 +196,7 @@ class Scanner {
 			# keyword or variable
 			else if(@cur_char->IsChar() | @cur_char = '@' | @cur_char = '$') {
 				start := @buffer_index - 1;
-				while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '@' | @cur_char = '.' | @cur_char = '$') {
+				while(@cur_char->IsChar() | @cur_char->IsDigit() | @cur_char = '_' | @cur_char = '@' | @cur_char = '.' | @cur_char = '$') {
 					NextChar();
 				};
 				end := @buffer_index;
