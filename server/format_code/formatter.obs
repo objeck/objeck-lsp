@@ -74,6 +74,7 @@ class CodeFormatter {
 			@skip_space := false;
 			in_label := false;
 			in_for := false;
+			in_consts := false;
 
 			@prev_token := Token->New(-1, Token->Type->OTHER, "other");
 
@@ -252,6 +253,11 @@ class CodeFormatter {
 					label Token->Type->COMMA {
 						PopBuffer();
 						AppendBuffer(',');
+						
+						if(in_consts) {
+							AppendBuffer("\n");
+							insert_tabs := @skip_space := true;
+						};
 					}
 
 					label Token->Type->NEQL {
@@ -313,87 +319,88 @@ class CodeFormatter {
 					}
 
 					label Token->Type->BOOL_ID {
-						AppendBuffer( "Bool");
+						AppendBuffer("Bool");
 					}
 
 					label Token->Type->BYTE_ID {
-						AppendBuffer( "Byte");
+						AppendBuffer("Byte");
 					}
 
 					label Token->Type->NIL_ID {
-						AppendBuffer( "Nil");
+						AppendBuffer("Nil");
 					}
 
 					label Token->Type->AND_ID {
-						AppendBuffer( "and");
+						AppendBuffer("and");
 					}
 
 					label Token->Type->OR_ID {
-						AppendBuffer( "or");
+						AppendBuffer("or");
 					}
 
 					label Token->Type->XOR_ID {
-						AppendBuffer( "xor");
+						AppendBuffer("xor");
 					}
 
 					label Token->Type->VIRTUAL_ID {
-						AppendBuffer( "virtual");
+						AppendBuffer("virtual");
 					}
 
 					label Token->Type->BUNDLE_ID {
-						AppendBuffer( "bundle");
+						AppendBuffer("bundle");
 					}
 
 					label Token->Type->INTERFACE_ID {
-						AppendBuffer( "interface");
+						AppendBuffer("interface");
 					}
 
 					label Token->Type->IMPLEMENTS_ID {
-						AppendBuffer( "implements");
+						AppendBuffer("implements");
 					}
 
 					label Token->Type->ENUM_ID {
-						AppendBuffer( "enum");
+						AppendBuffer("enum");
 					}
 
 					label Token->Type->CONSTS_ID {
-						AppendBuffer( "consts");
+						in_consts := true;
+						AppendBuffer("consts");
 					}
 
 					label Token->Type->REVERSE_ID {
-						AppendBuffer( "reverse");
+						AppendBuffer("reverse");
 					}
 
 					label Token->Type->PARENT_ID {
-						AppendBuffer( "parent");
+						AppendBuffer("parent");
 					}
 
 					label Token->Type->FROM_ID {
-						AppendBuffer( "from");
+						AppendBuffer("from");
 					}
 
 					label Token->Type->TRUE_ID {
-						AppendBuffer( "true");
+						AppendBuffer("true");
 					}
 
 					label Token->Type->FALSE_ID {
-						AppendBuffer( "false");
+						AppendBuffer("false");
 					}
 
 					label Token->Type->NEW_ID {
-						AppendBuffer( "New");
+						AppendBuffer("New");
 					}
 
 					label Token->Type->AS_ID {
-						AppendBuffer( "As");
+						AppendBuffer("As");
 					}
 
 					label Token->Type->TYPE_OF_ID {
-						AppendBuffer( "TypeOf");
+						AppendBuffer("TypeOf");
 					}
 
 					label Token->Type->CRITICAL_ID {
-						AppendBuffer( "critical");
+						AppendBuffer("critical");
 					}
 
 					label Token->Type->COLON {
@@ -533,6 +540,9 @@ class CodeFormatter {
 						TabSpace(tab_space, @ident_space);
 						AppendBuffer('}'); # TODO: Fix me!
 
+						if(in_consts) {
+							in_consts := false;
+						};
 					}
 
 					label Token->Type->VTAB {
