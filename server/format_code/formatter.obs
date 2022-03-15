@@ -388,6 +388,7 @@ class CodeFormatter {
 					}
 
 					label Token->Type->NEW_ID {
+						@skip_space := true;
 						AppendBuffer("New");
 					}
 

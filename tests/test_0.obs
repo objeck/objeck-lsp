@@ -1,4 +1,4 @@
-class Hello { function:Main(args : String[]) ~ 			Nil {	
+class Hello { New(a : Int) { @a:=a;}function:Main(args : String[]) ~ 			Nil {	
 	a := 13; a->PrintLine(); b:=1+2/3;
 
 		if(a >= 1) {			a *= 3;}; 		z := a + b; select(a) { 
