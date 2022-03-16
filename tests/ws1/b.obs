@@ -21,3 +21,11 @@ class ValueHolder {
 		return @value / a;
 	}
 }
+
+enum Foo {
+	A, B, C
+}
+
+consts Bar {
+	A := 18, B := 9, C := 99
+}

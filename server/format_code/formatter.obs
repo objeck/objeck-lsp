@@ -568,7 +568,17 @@ class CodeFormatter {
 			};
 		};
 
-		return @buffer;
+		offset := 0;
+		for(i := 0; i < @buffer->Size(); i += 1;) {
+			if(@buffer->Get(i) = '\n' | @buffer->Get(i) = '\r') {
+				offset += 1;
+			}
+			else {
+				break;
+			};
+		};
+
+		return @buffer->SubString(offset, @buffer->Size() - offset - 1);
 	}
 
 	method : VerticalSpace(@prev_token : Token, tab_space : Int, @ident_space : Int) ~ Nil {
