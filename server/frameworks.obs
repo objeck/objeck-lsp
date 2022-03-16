@@ -587,19 +587,25 @@ bundle LSP {
 			options->Insert("end-line", (end_range_line + 1)->ToString());
 
 			formatter := CodeFormatter->New(options);
-			new_name := PutText(formatter->Format(GetText(@text)));
+			new_text := PutText(formatter->Format(GetText(@text)));
 
 			# format and upate json
 			edits_builder := JsonBuilder->New();
 			edits_builder->PushArray();
 			
 			edits_builder->PushObject();
-			edits_builder->Insert("newText", new_name);
+			edits_builder->Insert("newText", new_text);
 
 			edits_builder->PushObject("range");
 			obj := edits_builder->PushObject("start");
 			obj->Insert("line", start_range_line);
-			obj->Insert("character", start_range_char);
+			if(new_text->StartsWith(' ') | new_text->StartsWith('\t')) {
+				obj->Insert("character", start_range_char);
+			}
+			else {
+				obj->Insert("character", 0);
+			};
+			
 			edits_builder->Pop();
 
 			obj := edits_builder->PushObject("end");
@@ -631,14 +637,14 @@ bundle LSP {
 				options->Insert("ident-space", tab_spaces->ToString());
 			};
 			formatter := CodeFormatter->New(options);
-			new_name := PutText(formatter->Format(GetText(@text)));
+			new_text := PutText(formatter->Format(GetText(@text)));
 			
 			# format and upate json
 			edits_builder := JsonBuilder->New();
 			edits_builder->PushArray();
 			
 			edits_builder->PushObject();
-			edits_builder->Insert("newText", new_name);
+			edits_builder->Insert("newText", new_text);
 
 			edits_builder->PushObject("range");
 			obj := edits_builder->PushObject("start");
