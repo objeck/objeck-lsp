@@ -1,9 +1,8 @@
 class Hello {
-  function : Main(args : String[]) ~ Nil {
-    aa := 7;
-    abc := aa + 13;
-    abc->PrintLine();
+  function : Main(args : String[]) ~ Nil {    aa := 7;
+    abc := aa + 13;    abc->PrintLine(); }
 
-    
+  function : Add(l : Int, r : Int) ~ Int {
+    return l + r;
   }
 }

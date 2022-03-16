@@ -41,3 +41,23 @@ Sublime
 	}
 }
 4. Open Tools > LSP > Enable Language and select objeck
+
+Projects
+===
+1. To set up projects with multiple files, create a "build.json" file in the directory of the files you want to be scanned.
+2. The structure of the "build.json" file is as follows:
+{
+	"files": [
+		"file_1.obs",
+		"file_2.obs"
+	],
+	"libs": [
+		"gen_collect.obl",
+		"regex.obl",
+		"net.obl",
+		"misc.obl",
+		"odbc.obl"
+	],
+	"flags": ""
+}
+3. To enable the project file, Close all open files and open the directory that contains the "build.json" file
