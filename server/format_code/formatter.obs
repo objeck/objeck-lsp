@@ -567,7 +567,8 @@ class CodeFormatter {
 				};
 			};
 		};
-
+		
+		# clean up output
 		offset_start := 0;
 		each(i : @buffer) {
 			if(@buffer->Get(i) = '\n' | @buffer->Get(i) = '\r') {
