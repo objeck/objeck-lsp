@@ -233,7 +233,7 @@ bundle LSP {
 
 			@decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
 			if(@decoded_folder_uri->StartsWith("file:///")) {
-				offset := "file:///"->Size();
+				offset := "file://"->Size();
 				@decoded_folder_uri->Delete(0, offset);
 			};
 			@build_json_file := String->New(@decoded_folder_uri);
@@ -273,7 +273,13 @@ bundle LSP {
 
 						@workspace->SetFilesLibs(@decoded_folder_uri, file_strs, libs_str);
 					};
+				}
+				else {
+					System.IO.File.Logger->Instance()->Error("--- Unable to parse configuration '{$@build_json_file}' ---");
 				};
+			}
+			else {
+				System.IO.File.Logger->Instance()->Error("--- Unable to load configuration '{$@build_json_file}' ---");
 			};
 		}
 
