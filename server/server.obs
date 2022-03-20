@@ -244,9 +244,7 @@ bundle LSP {
 			};
 			@build_json_file := String->New(@decoded_folder_uri);
 			@build_json_file += "/build.json";
-
-@build_json_file->PrintLine();
-
+			
 			LoadConfigurationFile();
 		}
 
