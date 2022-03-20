@@ -1,6 +1,6 @@
 class Test {
 	@abc : ValueHolder;
-
+	
 	New() {
 		@abc := ValueHolder->New(7);
 	}
