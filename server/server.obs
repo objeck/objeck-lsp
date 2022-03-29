@@ -233,12 +233,18 @@ bundle LSP {
 
 			@decoded_folder_uri := Web.HTTP.Url->Decode(folder_uri);
 			if(@decoded_folder_uri->StartsWith("file:///")) {
-				offset := "file://"->Size();
+				offset : Int;
+				if(Query.RegEx.RegEx->New("file:///([a-z]|[A-Z]):.*")->MatchExact(@decoded_folder_uri)) {
+					offset := "file:///"->Size();
+				}
+				else {
+					offset := "file://"->Size();
+				};
 				@decoded_folder_uri->Delete(0, offset);
 			};
 			@build_json_file := String->New(@decoded_folder_uri);
 			@build_json_file += "/build.json";
-
+			
 			LoadConfigurationFile();
 		}
 
