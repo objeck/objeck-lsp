@@ -1,8 +1,8 @@
-v1.0.7
+v1.1.5
 ===
 
 What's new?
-* Updated API docs for v6.1.3
+* Updated API docs for Objec v6.3.6
 
 Install
 ===
