@@ -45,12 +45,20 @@ class CodeFormatter {
 
 	method : AppendBuffer(str : String) ~ Nil {
 		if(InRange()) {
+			if(@buffer->EndsWith("; ") | @buffer->EndsWith("} ")) {
+				@buffer->Pop();
+			};
+
 			@buffer += str;
 		};
 	}
 
 	method : AppendBuffer(char : Char) ~ Nil {
 		if(InRange()) {
+			if(@buffer->EndsWith("; ") | @buffer->EndsWith("} ")) {
+				@buffer->Pop();
+			};
+
 			@buffer += char;
 		};
 	}
