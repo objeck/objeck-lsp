@@ -12,8 +12,7 @@ class Test {
 #				options->Insert("start-line", "1");
 #				options->Insert("end-line", "2");
 				
-				formatter := CodeFormatter->New(options);
-				formatter->Format(source)->PrintLine();
+				CodeFormatter->New(options)->Format(source)->PrintLine();
 			};
 		};
 	}

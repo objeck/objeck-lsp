@@ -597,7 +597,12 @@ class CodeFormatter {
 			};
 		};
 
-		return @buffer->SubString(offset_start, @buffer->Size() - offset_start - offset_end);
+		formatted := @buffer->SubString(offset_start, @buffer->Size() - offset_start - offset_end);
+		
+test := formatted->Last();
+"|{$test}|"->PrintLine();
+
+		return formatted;
 	}
 
 	method : VerticalSpace(@prev_token : Token, tab_space : Int, @ident_space : Int) ~ Nil {
