@@ -615,7 +615,7 @@ class CodeFormatter {
 		}
 		else if(@trim_newline) {
 "-- ok --"->PrintLine();			
-			while(formatted->Last() = '\r' | formatted->Last() = '\n') {
+			while(formatted->Last() = ' ') {
 				formatted->Pop();
 			};
 		};
