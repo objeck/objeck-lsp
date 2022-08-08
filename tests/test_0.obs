@@ -28,3 +28,13 @@ function : Foo(a : Int, b : Int) ~ Int {	return 13 + 7;
 } 
 
 method : private : Get() ~ Float { return 3.145;}	 }
+
+
+
+			
+
+
+
+
+
+

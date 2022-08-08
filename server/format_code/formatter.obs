@@ -14,10 +14,21 @@ class CodeFormatter {
 	@start_range : Int;
 	@end_range : Int;
 
+	@trim_trailing : Bool;
+	@trim_newline : Bool;
+
 	New(options : Map<String, String>) {
 		# get options
 		stmt_space_check := options->Find("function-space");
 		@stmt_space := stmt_space_check <> Nil & stmt_space_check->Equals("true");
+
+		# trim trailing
+		trim_trailing_check := options->Find("trim-trailing");
+		@trim_trailing := trim_trailing_check <> Nil & trim_trailing_check->Equals("true");
+
+		# trim newline
+		trim_newline_check := options->Find("trim-newline");
+		@trim_newline := trim_newline_check <> Nil & trim_newline_check->Equals("true");
 
 		@ident_space := 0;
 		ident_space_check := options->Find("ident-space");
@@ -599,8 +610,15 @@ class CodeFormatter {
 
 		formatted := @buffer->SubString(offset_start, @buffer->Size() - offset_start - offset_end);
 		
-test := formatted->Last();
-"|{$test}|"->PrintLine();
+		if(@trim_trailing) {
+			formatted := formatted->Trim();
+		}
+		else if(@trim_newline) {
+"-- ok --"->PrintLine();			
+			while(formatted->Last() = '\r' | formatted->Last() = '\n') {
+				formatted->Pop();
+			};
+		};
 
 		return formatted;
 	}
