@@ -629,10 +629,11 @@ bundle LSP {
 
 			end_line := end_ranges[0];
 			end_index := end_ranges[1];
-
+			
 			# create formatter
 			options := Map->New()<String, String>;
 			options->Insert("function-space", "false");
+			options->Insert("trim-trailing", "true");
 			if(insert_spaces) {
 				options->Insert("ident-space", tab_spaces->ToString());
 			};
