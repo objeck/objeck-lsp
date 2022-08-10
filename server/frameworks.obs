@@ -629,7 +629,7 @@ bundle LSP {
 
 			end_line := end_ranges[0];
 			end_index := end_ranges[1];
-			
+
 			# create formatter
 			options := Map->New()<String, String>;
 			options->Insert("function-space", "false");
@@ -657,11 +657,7 @@ bundle LSP {
 			obj->Insert("line", end_line);
 			obj->Insert("character", end_index);
 
-			edits_builder->Pop();
-			edits_builder->Pop();
-			edits_builder->Pop();
-			
-			return edits_builder->Pop();
+			return edits_builder->PopAll();
 		}
 
 		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String, offset : Bool := true) ~ Bool {
