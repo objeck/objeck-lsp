@@ -52,8 +52,8 @@ The server is functional but there is still work to do.
     1. Visual Studio Code
     2. Sublime
 1. Platform support
-    1. Windows (AMD64 and IA32)
-    2. Linux (AMD64, IA32 and ARMv7)
+    1. Windows (AMD64)
+    2. Linux (AMD64)
     3. macOS (AMD64 and ARM64)
 2. Multi-document support
     1. Project workspaces
