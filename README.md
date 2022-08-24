@@ -53,7 +53,7 @@ The server is functional but there is still work to do.
     2. Sublime
 1. Platform support
     1. Windows (AMD64)
-    2. Linux (AMD64)
+    2. Linux (AMD64 and ARM64)
     3. macOS (AMD64 and ARM64)
 2. Multi-document support
     1. Project workspaces
