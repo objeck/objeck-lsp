@@ -956,6 +956,7 @@ class FuncSnippet from Snippet {
 	@func_types : Vector<SnippetType>;
 	@is_func : Bool;
 	@is_private : Bool;
+	@is_public : Bool;
 	@is_native : Bool;
 	@is_virtual : Bool;
 	@is_new : Bool;

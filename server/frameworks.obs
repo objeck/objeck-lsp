@@ -572,10 +572,9 @@ bundle LSP {
 			};
 
 			# get ranges
-			end_ranges := GetDocumentEnd();
-
-			end_line := end_ranges[0];
-			end_index := end_ranges[1];
+#			end_ranges := GetDocumentEnd();
+#			end_line := end_ranges[0];
+#			end_index := end_ranges[1];
 
 			# create formatter
 			options := Map->New()<String, String>;
@@ -935,6 +934,7 @@ bundle LSP {
 		@id : Int;
 		@mthd : String;
 		@params : JsonElement;
+		@is_debug : Bool;
 
 		New(id : Int, mthd : String, params : JsonElement) {
 			@id := id;
