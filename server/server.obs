@@ -31,9 +31,9 @@ bundle LSP {
 			"Objeck LSP Server on localhost:{$port}"->PrintLine();
 
 			if(@is_debug) {
-				dir := System.IO.File.Logger->Instance()->GetDirectory();
-				info := System.IO.File.Logger->Instance()->GetInfoFile();
-				error := System.IO.File.Logger->Instance()->GetErrorFile();
+				dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
+				info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
+				error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
 
 				"----"->PrintLine();
 				"Logging diretory='{$dir}'"->PrintLine();
@@ -85,7 +85,7 @@ bundle LSP {
 			char_pos := params->FindElements("position/character")->GetValue();
 
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("=> CallbackRename: new_name={$new_name}, uri={$uri}, line_pos={$line_pos}, char_pos={$char_pos}");
+				System.IO.Filesystem.Logger->Instance()->Info("=> CallbackRename: new_name={$new_name}, uri={$uri}, line_pos={$line_pos}, char_pos={$char_pos}");
 			};
 
 			response := @workspace->GetDocument(uri)->CodeRename(new_name, line_pos->ToInt(), char_pos->ToInt());
@@ -104,7 +104,7 @@ bundle LSP {
 
 		method : CallbackDefinition(id : Int, params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("=> CallbackDefinition");
+				System.IO.Filesystem.Logger->Instance()->Info("=> CallbackDefinition");
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();
@@ -182,7 +182,7 @@ bundle LSP {
 							folder_uri := folder_uri_obj->GetValue();
 
 							if(@is_debug) {
-								System.IO.File.Logger->Instance()->Info("\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n");
+								System.IO.Filesystem.Logger->Instance()->Info("\n--- Added workspace:  folder_uri='{$folder_uri}', folder_name='{$folder_name}' ---\n");
 							};
 							ProcessConfiguration(folder_name, folder_uri);
 						};
@@ -249,7 +249,7 @@ bundle LSP {
 		}
 
 		method : LoadConfigurationFile() ~ Nil {
-			text := System.IO.File.FileReader->ReadFile(@build_json_file);
+			text := System.IO.Filesystem.FileReader->ReadFile(@build_json_file);
 			if(text <> Nil) {
 				json :=JsonParser->New(text);
 				if(json->Parse()) {
@@ -274,18 +274,18 @@ bundle LSP {
 						};
 
 						if(@is_debug) {
-							System.IO.File.Logger->Instance()->Info("--- Files and libraries:  @decoded_folder_uri='{$@decoded_folder_uri}', libs_str='{$libs_str}' ---\n");
+							System.IO.Filesystem.Logger->Instance()->Info("--- Files and libraries:  @decoded_folder_uri='{$@decoded_folder_uri}', libs_str='{$libs_str}' ---\n");
 						};
 
 						@workspace->SetFilesLibs(@decoded_folder_uri, file_strs, libs_str);
 					};
 				}
 				else {
-					System.IO.File.Logger->Instance()->Error("--- Unable to parse configuration '{$@build_json_file}' ---");
+					System.IO.Filesystem.Logger->Instance()->Error("--- Unable to parse configuration '{$@build_json_file}' ---");
 				};
 			}
 			else {
-				System.IO.File.Logger->Instance()->Error("--- Unable to load configuration '{$@build_json_file}' ---");
+				System.IO.Filesystem.Logger->Instance()->Error("--- Unable to load configuration '{$@build_json_file}' ---");
 			};
 		}
 
@@ -315,7 +315,7 @@ bundle LSP {
 
 		method : CallbackShutdown(id : Int, params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("=> CallbackShutdown");
+				System.IO.Filesystem.Logger->Instance()->Info("=> CallbackShutdown");
 			};
 
 			@quit := true;
@@ -343,7 +343,7 @@ bundle LSP {
 			id := params->Get("id")->GetValue();
 
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("NotifyCancel: id={$id}");
+				System.IO.Filesystem.Logger->Instance()->Info("NotifyCancel: id={$id}");
 			};
 		}
 
@@ -356,7 +356,7 @@ bundle LSP {
 				type := change->Get("type")->GetValue()->ToInt();
 
 				if(IsDebug()) {
-					System.IO.File.Logger->Instance()->Info("NotifyDidChangeWatchedFiles: uri='{$uri}', uri={$type}");
+					System.IO.Filesystem.Logger->Instance()->Info("NotifyDidChangeWatchedFiles: uri='{$uri}', uri={$type}");
 				};
 
 				# configuration file added or changed
@@ -371,7 +371,7 @@ bundle LSP {
 			text := params->FindElements("textDocument/text")->GetValue();
 
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("NotifyDidOpen: uri='{$uri}', text=\"{$text}\"");
+				System.IO.Filesystem.Logger->Instance()->Info("NotifyDidOpen: uri='{$uri}', text=\"{$text}\"");
 			};
 			
 			@workspace->AddDocument(uri, Document->New(uri, text, @workspace, IsDebug()));
@@ -400,7 +400,7 @@ bundle LSP {
 				folder_uri := folder->Get("uri")->GetValue();
 				folder_name := folder->Get("name")->GetValue();
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("--- Added workspace: '{$folder_uri}', '{$folder_name}' ---");
+					System.IO.Filesystem.Logger->Instance()->Info("--- Added workspace: '{$folder_uri}', '{$folder_name}' ---");
 				};
 			};
 
@@ -411,7 +411,7 @@ bundle LSP {
 				folder_uri := folder->Get("uri")->GetValue();
 				folder_name := folder->Get("name")->GetValue();
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("--- Removed workspace: '{$folder_uri}', '{$folder_name}' ---");
+					System.IO.Filesystem.Logger->Instance()->Info("--- Removed workspace: '{$folder_uri}', '{$folder_name}' ---");
 				};
 			};
 		}
@@ -419,7 +419,7 @@ bundle LSP {
 
 		method : NotifyDidChange(params : JsonElement) ~ Nil {
 			if(IsDebug()) {
-				System.IO.File.Logger->Instance()->Info("NotifyDidChange");
+				System.IO.Filesystem.Logger->Instance()->Info("NotifyDidChange");
 			};
 
 			uri := params->FindElements("textDocument/uri")->GetValue();

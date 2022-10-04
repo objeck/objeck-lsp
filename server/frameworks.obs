@@ -79,7 +79,7 @@ bundle LSP {
 			# notification
 			if(id->IsNeg()) {
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("NOTIFICATION='{$method_id}'\n");
+					System.IO.Filesystem.Logger->Instance()->Info("NOTIFICATION='{$method_id}'\n");
 				};
 
 				if(method_id->Equals("initialized")) {
@@ -108,14 +108,14 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug) {
-						System.IO.File.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
+						System.IO.Filesystem.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
 					};
 				};
 			}
 			# callback
 			else {
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("METHOD='{$method_id}', id={$id}");
+					System.IO.Filesystem.Logger->Instance()->Info("METHOD='{$method_id}', id={$id}");
 				};
 
 				if(method_id->Equals("initialize")) {
@@ -159,7 +159,7 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug & <>method_id->Equals("<none>")) {
-						System.IO.File.Logger->Instance()->Error("*** Unknown method='{$method_id}' ***");
+						System.IO.Filesystem.Logger->Instance()->Error("*** Unknown method='{$method_id}' ***");
 					};
 				};
 			};
@@ -180,7 +180,7 @@ bundle LSP {
 
 				text := String->New(buffer->ToUnicode());
 				if(@is_debug) {
-					System.IO.File.Logger->Instance()->Info("====\nREAD='{$text}'");
+					System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
 				};
 
 				return text;
@@ -191,7 +191,7 @@ bundle LSP {
 
 		method : WriteString(text : String) ~ Nil {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("WRITE='{$text}'");
+				System.IO.Filesystem.Logger->Instance()->Info("WRITE='{$text}'");
 			};		
 			length := text->Size();
 			@socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
@@ -346,19 +346,19 @@ bundle LSP {
 
 							if(@is_debug & text <> Nil) {
 								size := text->Size();
-								System.IO.File.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
+								System.IO.Filesystem.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
 							};
 						}
 						else {
-							text := System.IO.File.FileReader->ReadFile(local_file_path);
+							text := System.IO.Filesystem.FileReader->ReadFile(local_file_path);
 							if(@is_debug & text <> Nil) {
 								size := text->Size();
-								System.IO.File.Logger->Instance()->Info("### From disk: local_file_path='{$local_file_path}', size={$size} ###");
+								System.IO.Filesystem.Logger->Instance()->Info("### From disk: local_file_path='{$local_file_path}', size={$size} ###");
 							};
 						};
 
 						if(text = Nil) {
-							System.IO.File.Logger->Instance()->Error("Unable to open file: {$local_file_path}");
+							System.IO.Filesystem.Logger->Instance()->Error("Unable to open file: {$local_file_path}");
 						}
 						else {
 							@texts[i,0] := file_uri;
@@ -392,7 +392,7 @@ bundle LSP {
 
 						if(@is_debug & text <> Nil) {
 							size := text->Size();
-							System.IO.File.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
+							System.IO.Filesystem.Logger->Instance()->Info("### Cached: file_uri='{$file_uri}', size={$size} ###");
 						};
 
 						@texts[0,0] := file_uri;
@@ -414,7 +414,7 @@ bundle LSP {
 
 		method : public : AddDocument(uri : String, document : Document) ~ Nil {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("=> Add: {$uri}");
+				System.IO.Filesystem.Logger->Instance()->Info("=> Add: {$uri}");
 			};
 
 			@documents->Remove(uri);
@@ -423,7 +423,7 @@ bundle LSP {
 
 		method : public : RemoveDocument(uri : String, document : Document) ~ Nil {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("=> Remove: {$uri}");
+				System.IO.Filesystem.Logger->Instance()->Info("=> Remove: {$uri}");
 			};
 
 			if(@documents->Remove(uri)) {
@@ -568,7 +568,7 @@ bundle LSP {
 
 		method : public : FormatRange(tab_spaces : Int, insert_spaces : Bool, start_range_line : Int, start_range_char : Int, end_range_line : Int, end_range_char : Int) ~  JsonElement {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("=> FormatRange: uri='{$@uri}', tab_spaces={$tab_spaces}, insert_spaces={$insert_spaces}, start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char})");
+				System.IO.Filesystem.Logger->Instance()->Info("=> FormatRange: uri='{$@uri}', tab_spaces={$tab_spaces}, insert_spaces={$insert_spaces}, start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char})");
 			};
 
 			# get ranges
@@ -620,7 +620,7 @@ bundle LSP {
 
 		method : public : FormatDocument(tab_spaces : Int, insert_spaces : Bool) ~  JsonElement {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("=> FormatDocument: uri='{$@uri}', tab_spaces={$tab_spaces}, insert_spaces={$insert_spaces}");
+				System.IO.Filesystem.Logger->Instance()->Info("=> FormatDocument: uri='{$@uri}', tab_spaces={$tab_spaces}, insert_spaces={$insert_spaces}");
 			};
 
 			# get ranges
@@ -729,7 +729,7 @@ bundle LSP {
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###");
+				System.IO.Filesystem.Logger->Instance()->Info("### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###");
 			};
 			
 			if(start > -1) {
@@ -922,7 +922,7 @@ bundle LSP {
 
 		method : DumpDocument() ~ Nil {
 			if(@is_debug) {
-				System.IO.File.Logger->Instance()->Info("TEXT='{$@text}'");
+				System.IO.Filesystem.Logger->Instance()->Info("TEXT='{$@text}'");
 			};
 		}
 	}
