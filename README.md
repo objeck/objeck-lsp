@@ -83,7 +83,3 @@ The server is functional but there is still work to do.
     2. Dead stores (compiler now support this, needs to be added)
     3. Dead code
 4. Testing with Emacs
-
-### Future
-1. Code formatting 
-2. Document hover support
