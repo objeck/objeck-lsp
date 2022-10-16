@@ -6,7 +6,7 @@ export PATH=$PATH:$OBJECK_ROOT/core/release/deploy/bin
 export OBJECK_LIB_PATH=$OBJECK_ROOT/core/release/deploy/lib
 
 rm *.obe
-rm /tmp/objk-*
+rm -f /tmp/objk-*
 
 echo ---
 

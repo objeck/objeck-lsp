@@ -19,5 +19,5 @@ cp README.txt objeck-lsp
 # finished
 if [ ! -z "$1" ] && [ "$1" = "deploy" ]; then
 	del /f objeck-lsp-*.zip
-	zip a -r -tzip "objeck-lsp-6.8.3.zip" "objeck-lsp/*"
+	zip a -r -tzip objeck-lsp-6.8.3.zip objeck-lsp
 fi;
