@@ -1,4 +1,5 @@
 @echo off
+
 del *.obe
 obc -src test.obs,formatter.obs,scanner.obs -lib gen_collect -dest code_formatter
 

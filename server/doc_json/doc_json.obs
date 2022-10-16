@@ -26,7 +26,7 @@ class JsonMaker {
 	~#
 	function : Main(args : String[]) ~ Nil {
 		if(args->Size() > 2) {
-			JsonMaker->New(args)->Make()->PrintLine();
+			JsonMaker->New(args)->Make();
 		};
 	}
 	
@@ -38,17 +38,7 @@ class JsonMaker {
 			"--- Unable to parse source file ---"->ErrorLine();
 			return false;
 		};
-		
-#~		
-		class_css_path := String->New(@css_path);
-		class_css_path += '/';
-		class_css_path += "class_header.dat";
-		class_header := FileReader->ReadFile(class_css_path);
-		if(class_header = Nil) {
-			"--- Unable load header CSS template ---"->ErrorLine();
-			return false;
-		};
-~#
+
 		## bundles
 		bundles := @parser->GetBundles();
 		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
