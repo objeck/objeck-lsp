@@ -79,8 +79,9 @@ The server is functional but there is still work to do.
 2. Finding definitions
     1. Enums
 3. Linting
-    1. Unused variables
-    2. Dead code
+    1. Unused variables (compiler now support this, needs to be added)
+    2. Dead stores (compiler now support this, needs to be added)
+    3. Dead code
 4. Testing with Emacs
 
 ### Future
