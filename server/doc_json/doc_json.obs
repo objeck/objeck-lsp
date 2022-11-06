@@ -74,7 +74,11 @@ class JsonMaker {
 			
 			# TODO: enums
 		};
-		buffer += "\n\t}\n}";
+		buffer += "\n\t}";
+
+		buffer += "\"names"\": []"		
+
+		buffer += "\n}";
 		
 		FileWriter->WriteFile("out.json", buffer);
 
