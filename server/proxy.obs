@@ -396,7 +396,7 @@ bundle LSP {
 			}
 			else {
 				if(@is_debug) {
-					System.IO.Filesystem.Logger->Instance()->Info("### Read file: '{$@doc_path}' ###");
+					System.IO.Filesystem.Logger->Instance()->Info("### Reading file: '{$@doc_path}'... ###");
 				};
 
 				parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
@@ -421,7 +421,7 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug) {
-#						System.IO.Filesystem.Logger->Instance()->Info("### Unable to open file: '{$@doc_path}' ###");
+						System.IO.Filesystem.Logger->Instance()->Error("### Unable to open file: '{$@doc_path}' ###");
 						"### Unable to open file: '{$@doc_path}' ###"->ErrorLine();
 					};
 				};
