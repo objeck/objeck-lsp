@@ -45,7 +45,7 @@ class JsonMaker {
 
 		classes_names := Vector->New()<String>;
 
-		buffer := "{\n\t\"details\": {\n\t\t";
+		buffer := "{\n\t\"details\": {\n\t";
 		each(i : bundle_pairs) {
 			bundle_pair := bundle_pairs->Get(i);
 			bundle_name := bundle_pair->GetFirst();
@@ -84,17 +84,17 @@ class JsonMaker {
 	method : ProcessClass(class_name : String, snippet : ClassSnippet, buffer : String) ~ Nil {
 		description := snippet->GetDesc();
 
-		buffer += "\"{$class_name}\": {\n";
-		buffer += "\t\t\"description\": ";
+		buffer += "\t\"{$class_name}\": {\n";
+		buffer += "\t\t\t\"description\": ";
 		buffer += "\"{$description}\",\n";
-		buffer += "\t\t\"functions\": {\n";
+		buffer += "\t\t\t\"functions\": {\n";
 
 		function_names := snippet->GetFunctionNames()<String>;
 		each(i : function_names) {
 			function_name := function_names->Get(i);
 
-			buffer += "\t\t\t\"{$function_name}\": {\n";
-			buffer += "\t\t\t\t\"descriptions\": [";
+			buffer += "\t\t\t\t\"{$function_name}\": {\n";
+			buffer += "\t\t\t\t\t\"descriptions\": [";
 
 			functions := snippet->GetFunctions(function_name)<FuncSnippet>;
 			each(j : functions) {
@@ -121,13 +121,13 @@ class JsonMaker {
 					buffer += ", ";
 				};
 			};
-			buffer += "]\n\t\t\t}";
+			buffer += "]\n\t\t\t\t}";
 
 			if(i + 1 < function_names->Size()) {
 				buffer += ",\n";
 			};
 		};
 
-		buffer += "\n\t\t}\n\t}";
+		buffer += "\n\t\t\t}\n\t\t}";
 	}
 }
