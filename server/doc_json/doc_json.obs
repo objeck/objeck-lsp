@@ -75,7 +75,7 @@ class JsonMaker {
 			};			
 		};
 		buffer += "\n\t},\n\t\"names\": [\n\t";
-		
+
 		each(i : classes_bundle) {
 			class_bundle := classes_bundle->Get(i)<Pair<String, String>>;
 
@@ -122,7 +122,7 @@ class JsonMaker {
 					param := params->Get(k);
 					name := param->GetName();
 					type_name := param->GetTypeName();
-					params_buffer += "\\n\\n{$name} - {$type_name}";
+					params_buffer += "\\n\\n{$name}: {$type_name}";
 				};
 
 				if(func->GetReturnType() <> Nil) {
@@ -130,7 +130,7 @@ class JsonMaker {
 					params_buffer += "\\n\\nreturn: {$return_str}";
 				};
 
-				buffer += "\"**{$description}**\\n\\n{$params_buffer}\\n\\n```{$signature}```\"";
+				buffer += "\"**{$description}**\\n\\n```{$signature}```\\n\\n{$params_buffer}\"";
 				if(j + 1 < functions->Size()) {
 					buffer += ", ";
 				};

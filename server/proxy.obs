@@ -382,16 +382,16 @@ bundle LSP {
 		}
 
 		method : public : GetDocumentation(klass_name : String, method_name : String) ~ JsonElement {
-			klass_json := @doc_cache->Find(klass_name);
-			if(klass_json <> Nil) {
+			klass_detail_json := @doc_cache->Find(klass_name);
+			if(klass_detail_json <> Nil) {
 				if(method_name = Nil) {
-					return klass_json->Get("description");
+					return klass_detail_json->Get("description");
 				}
 				else {
 					key := String->New("functions/");
 					key += String->New(method_name);
 					key += "/descriptions";
-					return klass_json->FindElements(key);
+					return klass_detail_json->FindElements(key);
 				};
 			}
 			else {
@@ -401,24 +401,28 @@ bundle LSP {
 
 				parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
 				if(parser->Parse()) {
-					klass_json := parser->GetRoot()->FindElements("class-details/{$klass_name}");
-					if(klass_json <> Nil) {
-						@doc_cache->Insert(klass_name, klass_json);
+					klass_details_json := parser->GetRoot()->Get("class-details");
+					if(klass_details_json <> Nil) {
+						klass_detail_json := klass_details_json->Get(klass_name);
+						if(klass_detail_json <> Nil) {
+							@doc_cache->Insert(klass_name, klass_detail_json);
 
-						if(method_name = Nil) {
-							return klass_json->Get("description");
-						}
-						else {
-							key := String->New("functions/");
-							key += String->New(method_name);
-							key += "/descriptions";
-							return klass_json->FindElements(key);
+							if(method_name = Nil) {
+								return klass_detail_json->Get("description");
+							}
+							else {
+								key := String->New("functions/");
+								key += String->New(method_name);
+								key += "/descriptions";
+								return klass_detail_json->FindElements(key);
+							};
 						};
 					};
 				}
 				else {
 					if(@is_debug) {
-						System.IO.Filesystem.Logger->Instance()->Error("### Unable to read JSON documentation file: '{$@doc_path}' ###");
+#						System.IO.Filesystem.Logger->Instance()->Info("### Unable to open file: '{$@doc_path}' ###");
+						"### Unable to open file: '{$@doc_path}' ###"->ErrorLine();
 					};
 				};
 			};
