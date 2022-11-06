@@ -418,8 +418,7 @@ bundle LSP {
 				}
 				else {
 					if(@is_debug) {
-#						System.IO.Filesystem.Logger->Instance()->Info("### Unable to open file: '{$@doc_path}' ###");
-						"### Unable to open file: '{$@doc_path}' ###"->ErrorLine();
+						System.IO.Filesystem.Logger->Instance()->Error("### Unable to read JSON documentation file: '{$@doc_path}' ###");
 					};
 				};
 			};
