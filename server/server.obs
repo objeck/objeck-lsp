@@ -157,6 +157,37 @@ bundle LSP {
 			WriteRpcResponse(id, response);
 		}
 
+		method : CallbackCodeAction(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+
+			start_line := params->FindElements("range/start/line")->GetInt();
+			start_char := params->FindElements("range/start/character")->GetInt();
+			
+			response : JsonElement;
+
+			diagnostics_json := params->FindElements("context/diagnostics");
+			each(i : diagnostics_json) {
+				diagnostic_json := diagnostics_json->Get(i);
+
+				diagnostic_start_line := diagnostic_json->FindElements("range/start/line")->GetInt();
+				diagnostic_start_char := diagnostic_json->FindElements("range/start/character")->GetInt();
+
+				diagnostic_end_line := diagnostic_json->FindElements("range/end/line")->GetInt();
+				diagnostic_end_char := diagnostic_json->FindElements("range/end/character")->GetInt();
+
+				diagnostic_message := diagnostic_json->FindElements("message")->GetValue();
+
+				if(start_line = diagnostic_start_line & start_char = diagnostic_start_char) {
+					only_json := params->FindElements("context/only");
+					if(only_json->GetType() = JsonElement->JsonType->ARRAY & only_json->Size() = 1) {
+						response := @workspace->GetDocument(uri)->CodeAction(diagnostic_start_line, diagnostic_start_char, diagnostic_end_line, diagnostic_end_char, diagnostic_message, only_json->Get(0)->GetValue());
+					};
+				};
+			};
+
+			WriteRpcResponse(id, response);
+		}
+
 		method : CallbackCompletion(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
@@ -214,6 +245,7 @@ bundle LSP {
 			capabilities->Insert("workspace", workspace);
 			capabilities->Insert("textDocumentSync", 2);
 			capabilities->Insert("documentSymbolProvider", true);
+			capabilities->Insert("codeActionProvider", true);
 			capabilities->Insert("referencesProvider", true);
 			capabilities->Insert("declarationProvider", true);
 			capabilities->Insert("definitionProvider", true);
