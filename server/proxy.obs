@@ -401,7 +401,7 @@ bundle LSP {
 
 				parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
 				if(parser->Parse()) {
-					klass_json := parser->GetRoot()->Get(klass_name);
+					klass_json := parser->GetRoot()->FindElements("class-details/{$klass_name}");
 					if(klass_json <> Nil) {
 						@doc_cache->Insert(klass_name, klass_json);
 

@@ -43,9 +43,9 @@ class JsonMaker {
 		bundles := @parser->GetBundles();
 		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
 
-		classes_names := Vector->New()<String>;
+		classes_bundle := Vector->New()<Pair<String, String>>;
 
-		buffer := "{\n\t\"details\": {\n\t";
+		buffer := "{\n\t\"class-details\": {\n\t";
 		each(i : bundle_pairs) {
 			bundle_pair := bundle_pairs->Get(i);
 			bundle_name := bundle_pair->GetFirst();
@@ -58,10 +58,12 @@ class JsonMaker {
 					class_key_value := class_key_values->Get(j);
 					class_name := String->New(bundle_name);
 					class_name += '.';
-					class_name += class_key_value->GetFirst();
-					classes_names->AddBack(class_name);
+					short_class_name := class_key_value->GetFirst();
+					class_name += short_class_name;
 
+					classes_bundle->AddBack(Pair->New(short_class_name, bundle_name)<String, String>);
 					ProcessClass(class_name, class_key_value->GetSecond(), buffer);
+
 					if(j + 1 < class_key_values->Size()) {
 						buffer += ",\n\t";
 					};
@@ -70,15 +72,22 @@ class JsonMaker {
 				if(i + 1 < bundle_pairs->Size()) {
 					buffer += ",\n\t";
 				};
-			};
-			
-			# TODO: enums
+			};			
 		};
-		buffer += "\n\t},\n\t\"names\": [\n\t\t";
+		buffer += "\n\t},\n\t\"names\": [\n\t";
+		
+		each(i : classes_bundle) {
+			class_bundle := classes_bundle->Get(i)<Pair<String, String>>;
 
-		# TODO: write out class names
-		buffer += "1, 2, 3";
+			class_name := class_bundle->GetFirst();
+			bundle_name := class_bundle->GetSecond();
 
+			buffer += "\t{\n\t\t\t\"{$class_name}\": {\n\t\t\t\t\"bundle\": \"{$bundle_name}\"\n\t\t\t}\n\t\t}";
+
+			if(i + 1 < classes_bundle->Size()) {
+				buffer += ",\n\t";
+			};
+		};
 		buffer += "\n\t]\n}";
 		
 		FileWriter->WriteFile("out.json", buffer);
@@ -87,7 +96,7 @@ class JsonMaker {
 	}
 
 	method : ProcessClass(class_name : String, snippet : ClassSnippet, buffer : String) ~ Nil {
-		description := snippet->GetDesc();
+		description := JsonElement->Encode(snippet->GetDesc());
 
 		buffer += "\t\"{$class_name}\": {\n";
 		buffer += "\t\t\t\"description\": ";
