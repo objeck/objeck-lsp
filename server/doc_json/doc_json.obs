@@ -43,7 +43,7 @@ class JsonMaker {
 		bundles := @parser->GetBundles();
 		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
 
-		buffer := "{\n";
+		buffer := "{\n\t";
 		each(i : bundle_pairs) {
 			bundle_pair := bundle_pairs->Get(i);
 			bundle_name := bundle_pair->GetFirst();
@@ -71,7 +71,7 @@ class JsonMaker {
 			
 			# TODO: enums
 		};
-		buffer += "}";
+		buffer += "\n}";
 		
 		FileWriter->WriteFile("out.json", buffer);
 
