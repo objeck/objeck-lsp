@@ -43,7 +43,9 @@ class JsonMaker {
 		bundles := @parser->GetBundles();
 		bundle_pairs := bundles->GetKeyValues()<Pair<String, BundleSnippet>>;
 
-		buffer := "{\n\t";
+		classes_names := Vector->New()<String>;
+
+		buffer := "{\n\t\"details\": {\n\t\t";
 		each(i : bundle_pairs) {
 			bundle_pair := bundle_pairs->Get(i);
 			bundle_name := bundle_pair->GetFirst();
@@ -57,6 +59,7 @@ class JsonMaker {
 					class_name := String->New(bundle_name);
 					class_name += '.';
 					class_name += class_key_value->GetFirst();
+					classes_names->AddBack(class_name);
 
 					ProcessClass(class_name, class_key_value->GetSecond(), buffer);
 					if(j + 1 < class_key_values->Size()) {
@@ -71,7 +74,7 @@ class JsonMaker {
 			
 			# TODO: enums
 		};
-		buffer += "\n}";
+		buffer += "\n\t}\n}";
 		
 		FileWriter->WriteFile("out.json", buffer);
 
