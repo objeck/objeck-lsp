@@ -8,7 +8,8 @@ bundle LSP {
 	~#
 	class AstProxy {
 		@analysis : Analysis;
-		@doc_cache : static : Cache<String, JsonElement>;
+		@doc_json_cache : static : Cache<String, JsonElement>;
+		@klass_bundle_json : JsonElement;
 		@is_debug : Bool;
 		@doc_path : static : String;
 
@@ -22,7 +23,7 @@ bundle LSP {
 
 		function : Init(doc_path : String) ~ Nil {
 			@doc_path := doc_path;
-			@doc_cache := Cache->New(Cache->Type->LRU, 16)<String, JsonElement>;
+			@doc_json_cache := Cache->New(Cache->Type->LRU, 16)<String, JsonElement>;
 		}
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
@@ -382,7 +383,7 @@ bundle LSP {
 		}
 
 		method : public : GetDocumentation(klass_name : String, method_name : String) ~ JsonElement {
-			klass_detail_json := @doc_cache->Find(klass_name);
+			klass_detail_json := @doc_json_cache->Find(klass_name);
 			if(klass_detail_json <> Nil) {
 				if(method_name = Nil) {
 					return klass_detail_json->Get("description");
@@ -401,11 +402,18 @@ bundle LSP {
 
 				parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
 				if(parser->Parse()) {
+					if(@klass_bundle_json = Nil) {
+						@klass_bundle_json := parser->GetRoot()->Get("class-bundle-names");
+						if(@klass_bundle_json <> Nil) {
+							@klass_bundle_json->Size()->PrintLine();
+						};
+					};
+
 					klass_details_json := parser->GetRoot()->Get("class-details");
 					if(klass_details_json <> Nil) {
 						klass_detail_json := klass_details_json->Get(klass_name);
 						if(klass_detail_json <> Nil) {
-							@doc_cache->Insert(klass_name, klass_detail_json);
+							@doc_json_cache->Insert(klass_name, klass_detail_json);
 
 							if(method_name = Nil) {
 								return klass_detail_json->Get("description");

@@ -74,7 +74,7 @@ class JsonMaker {
 				};
 			};			
 		};
-		buffer += "\n\t},\n\t\"names\": [\n\t";
+		buffer += "\n\t},\n\t\"class-bundle-names\": [\n\t";
 
 		each(i : classes_bundle) {
 			class_bundle := classes_bundle->Get(i)<Pair<String, String>>;
