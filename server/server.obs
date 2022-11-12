@@ -180,7 +180,7 @@ bundle LSP {
 				if(start_line = diagnostic_start_line & start_char = diagnostic_start_char) {
 					only_json := params->FindElements("context/only");
 					if(only_json <> Nil & only_json->GetType() = JsonElement->JsonType->ARRAY & only_json->Size() = 1) {
-						response := @workspace->GetDocument(uri)->CodeAction(diagnostic_start_line, diagnostic_start_char, diagnostic_end_line, diagnostic_end_char, diagnostic_message, only_json->Get(0)->GetValue());
+						response := @workspace->GetDocument(uri)->CodeAction(diagnostic_start_line, diagnostic_start_char, diagnostic_end_line, diagnostic_end_char, diagnostic_message, only_json->Get(0)->GetValue(), @build_json_file);
 					};
 				};
 			};

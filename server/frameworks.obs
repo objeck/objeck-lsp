@@ -570,9 +570,22 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : CodeAction(start_range_line : Int, start_range_char : Int, end_range_line : Int, end_range_char : Int, message : String, context : String) ~  JsonElement {
+		method : public : CodeAction(start_range_line : Int, start_range_char : Int, end_range_line : Int, end_range_char : Int, message : String, context : String, build_file : String) ~  JsonElement {
 			if(@is_debug) {
-				System.IO.Filesystem.Logger->Instance()->Info("=> CodeAction: uri='{$@uri}', start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char}), message='{$message}', context='{$context}'");
+				System.IO.Filesystem.Logger->Instance()->Info("=> CodeAction: uri='{$@uri}', start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char}), message='{$message}', context='{$context}', build_file='{$build_file}'");
+			};
+
+			if(context->Equals("quickfix") & message->StartsWith("Undefined class")) {
+				start := message->Find('\'');
+				last := message->FindLast('\'');
+
+				if(last > start) {
+					start += 1;
+					class_name := message->SubString(start, last - start);
+
+					"({$start},{$last}, \"{$class_name}\")"->PrintLine();
+
+				};
 			};
 
 			return Nil;
@@ -582,13 +595,6 @@ bundle LSP {
 			if(@is_debug) {
 				System.IO.Filesystem.Logger->Instance()->Info("=> FormatRange: uri='{$@uri}', tab_spaces={$tab_spaces}, insert_spaces={$insert_spaces}, start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char})");
 			};
-
-#~
-			# get ranges
-			end_ranges := GetDocumentEnd();
-			end_line := end_ranges[0];
-			end_index := end_ranges[1];
-~#
 
 			# create formatter
 			options := Map->New()<String, String>;
