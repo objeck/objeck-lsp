@@ -437,6 +437,18 @@ bundle LSP {
 
 			return Nil;
 		}
+
+		method : public : CodeAction(uri : String, start_range_line : Int, start_range_char : Int, var_name : String)  ~ JsonElement {
+"--- 0 ---"->PrintLine();
+			if(@analysis = Nil) {
+				return Nil;
+			};
+"--- 1 ---"->PrintLine();
+
+			root_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
+"--- 2 ---"->PrintLine();
+			return Nil;
+		}
 		
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {

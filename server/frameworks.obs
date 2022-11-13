@@ -574,6 +574,11 @@ bundle LSP {
 			if(@is_debug) {
 				System.IO.Filesystem.Logger->Instance()->Info("=> CodeAction: uri='{$@uri}', start=({$start_range_line},{$start_range_char}), end=({$end_range_line},{$end_range_char}), message='{$message}', context='{$context}', build_file='{$build_file}'");
 			};
+			
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
 
 			if(context->Equals("quickfix") & message->StartsWith("Undefined class")) {
 				start := message->Find('\'');
@@ -581,10 +586,7 @@ bundle LSP {
 
 				if(last > start) {
 					start += 1;
-					class_name := message->SubString(start, last - start);
-
-					"({$start},{$last}, \"{$class_name}\")"->PrintLine();
-
+					return proxy->CodeAction(@uri, start_range_line, start_range_char, message->SubString(start, last - start));
 				};
 			};
 
