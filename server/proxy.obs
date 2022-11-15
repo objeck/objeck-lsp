@@ -443,15 +443,22 @@ bundle LSP {
 				return Nil;
 			};
 
+			result_json : JsonElement;
+
 			code_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
 			if(code_action <> Nil) {
 				class_name := code_action->GetName();
 				var_name := code_action->GetDescription();
 
-"=> {$class_name}, {$var_name}"->PrintLine();
+				code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				code_action_json->Insert("title", "Add 'use' for 'Foo.Bar'");
+				code_action_json->Insert("kind", "quickfix");
+				
+				result_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+				result_json->Add(code_action_json);
 			};
 			
-			return Nil;
+			return result_json;
 		}
 		
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
