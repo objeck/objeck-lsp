@@ -443,7 +443,13 @@ bundle LSP {
 				return Nil;
 			};
 
-			root_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
+			code_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
+			if(code_action <> Nil) {
+				class_name := code_action->GetName();
+				var_name := code_action->GetDescription();
+
+"=> {$class_name}, {$var_name}"->PrintLine();
+			};
 			
 			return Nil;
 		}
