@@ -447,15 +447,20 @@ bundle LSP {
 
 			code_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
 			if(code_action <> Nil) {
+				result_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+
 				class_name := code_action->GetName();
 				var_name := code_action->GetDescription();
 
-				code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-				code_action_json->Insert("title", "Add 'use' for 'Foo.Bar'");
-				code_action_json->Insert("kind", "quickfix");
-				
-				result_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-				result_json->Add(code_action_json);
+				use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				use_code_action_json->Insert("title", "Add 'use' statement for class '{$class_name}'");
+				use_code_action_json->Insert("kind", "quickfix");
+				result_json->Add(use_code_action_json);
+
+				qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
+				qualify_code_action_json->Insert("kind", "quickfix");
+				result_json->Add(qualify_code_action_json);
 			};
 			
 			return result_json;
