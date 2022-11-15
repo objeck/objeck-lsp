@@ -451,18 +451,125 @@ bundle LSP {
 
 				class_name := code_action->GetName();
 				var_name := code_action->GetDescription();
-				
+
 				# add use statement
 				use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 				use_code_action_json->Insert("title", "Add 'use' statement for class '{$class_name}'");
 				use_code_action_json->Insert("kind", "quickfix");
+#~
+				doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+				
+				each(i : found_uris) {
+					found_uri := found_uris->Get(i);
+
+					edits_builder := JsonBuilder->New();
+					edits_builder->PushArray();
+
+					file_references := file_reference_map->Find(found_uri)<Result>;
+					each(j : file_references) {
+						file_reference := file_references->Get(j);
+
+						start_line := end_line := file_reference->GetStartLine();
+						start_index := file_reference->GetStartPosition();
+						end_index := file_reference->GetEndPosition();
+						
+						edits_builder->PushObject();
+						edits_builder->Insert("newText", new_name);
+
+						edits_builder->PushObject("range");
+						obj := edits_builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						edits_builder->Pop();
+
+						obj := edits_builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+
+						edits_builder->Pop();
+						edits_builder->Pop();
+						edits_builder->Pop();
+					};
+
+					edits_json := edits_builder->Pop();
+
+					text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					text_doc_json->Insert("uri", found_uri);
+					text_doc_json->Insert("version", Nil);
+
+					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					doc_changes_json->Insert("textDocument", text_doc_json);
+					doc_changes_json->Insert("edits", edits_json);
+
+					doc_changes_array_json->Add(doc_changes_json);
+				};
+
+				apply_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				apply_changes_json->Insert("documentChanges", doc_changes_array_json);
+				
+				return apply_changes_json;
+~#
 				result_json->Add(use_code_action_json);
 
 				# variable qualification
 				qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 				qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
 				qualify_code_action_json->Insert("kind", "quickfix");
+#~
+				doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : found_uris) {
+					found_uri := found_uris->Get(i);
+
+					edits_builder := JsonBuilder->New();
+					edits_builder->PushArray();
+
+					file_references := file_reference_map->Find(found_uri)<Result>;
+					each(j : file_references) {
+						file_reference := file_references->Get(j);
+
+						start_line := end_line := file_reference->GetStartLine();
+						start_index := file_reference->GetStartPosition();
+						end_index := file_reference->GetEndPosition();
+						
+						edits_builder->PushObject();
+						edits_builder->Insert("newText", new_name);
+
+						edits_builder->PushObject("range");
+						obj := edits_builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						edits_builder->Pop();
+
+						obj := edits_builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+
+						edits_builder->Pop();
+						edits_builder->Pop();
+						edits_builder->Pop();
+					};
+
+					edits_json := edits_builder->Pop();
+
+					text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					text_doc_json->Insert("uri", found_uri);
+					text_doc_json->Insert("version", Nil);
+
+					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					doc_changes_json->Insert("textDocument", text_doc_json);
+					doc_changes_json->Insert("edits", edits_json);
+
+					doc_changes_array_json->Add(doc_changes_json);
+				};
+
+				apply_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+				apply_changes_json->Insert("documentChanges", doc_changes_array_json);
+				
+				return apply_changes_json;
+~#				
 				result_json->Add(qualify_code_action_json);
+
 			};
 			
 			return result_json;
