@@ -451,12 +451,14 @@ bundle LSP {
 
 				class_name := code_action->GetName();
 				var_name := code_action->GetDescription();
-
+				
+				# add use statement
 				use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 				use_code_action_json->Insert("title", "Add 'use' statement for class '{$class_name}'");
 				use_code_action_json->Insert("kind", "quickfix");
 				result_json->Add(use_code_action_json);
 
+				# variable qualification
 				qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 				qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
 				qualify_code_action_json->Insert("kind", "quickfix");
