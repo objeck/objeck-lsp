@@ -9,9 +9,10 @@ bundle LSP {
 	class AstProxy {
 		@analysis : Analysis;
 		@doc_json_cache : static : Cache<String, JsonElement>;
-		@klass_bundles_json : JsonElement;
-		@is_debug : Bool;
+		@klass_bundles_json : static : JsonElement;
+		@klass_details_json : static : JsonElement;
 		@doc_path : static : String;
+		@is_debug : Bool;
 
 		New(workspace : LspWorkspace, uri : String, use_alt : Bool, is_debug : Bool) {
 			@is_debug := is_debug;
@@ -24,6 +25,7 @@ bundle LSP {
 		function : Init(doc_path : String) ~ Nil {
 			@doc_path := doc_path;
 			@doc_json_cache := Cache->New(Cache->Type->LRU, 16)<String, JsonElement>;
+			LoadDocsFile();
 		}
 
 		method : public : GetDiagnosis(uri : String, sys_path : String) ~ JsonElement {
@@ -396,38 +398,18 @@ bundle LSP {
 				};
 			}
 			else {
-				if(@is_debug) {
-					System.IO.Filesystem.Logger->Instance()->Info("### Reading file: '{$@doc_path}'... ###");
-				};
+				klass_detail_json := @klass_details_json->Get(klass_name);
+				if(klass_detail_json <> Nil) {
+					@doc_json_cache->Insert(klass_name, klass_detail_json);
 
-				parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
-				if(parser->Parse()) {
-					if(@klass_bundles_json = Nil) {
-						@klass_bundles_json := parser->GetRoot()->Get("class-bundle-names");
-					};
-
-					klass_details_json := parser->GetRoot()->Get("class-details");
-					if(klass_details_json <> Nil) {
-						klass_detail_json := klass_details_json->Get(klass_name);
-						if(klass_detail_json <> Nil) {
-							@doc_json_cache->Insert(klass_name, klass_detail_json);
-
-							if(method_name = Nil) {
-								return klass_detail_json->Get("description");
-							}
-							else {
-								key := String->New("functions/");
-								key += String->New(method_name);
-								key += "/descriptions";
-								return klass_detail_json->FindElements(key);
-							};
-						};
-					};
-				}
-				else {
-					if(@is_debug) {
-						System.IO.Filesystem.Logger->Instance()->Error("### Unable to open file: '{$@doc_path}' ###");
-						"### Unable to open file: '{$@doc_path}' ###"->ErrorLine();
+					if(method_name = Nil) {
+						return klass_detail_json->Get("description");
+					}
+					else {
+						key := String->New("functions/");
+						key += String->New(method_name);
+						key += "/descriptions";
+						return klass_detail_json->FindElements(key);
 					};
 				};
 			};
@@ -435,39 +417,43 @@ bundle LSP {
 			return Nil;
 		}
 
+		function : LoadDocsFile() ~ Nil {
+			parser := JsonParser->New(System.IO.Filesystem.FileReader->ReadFile(@doc_path));
+			if(parser->Parse()) {
+				@klass_details_json := parser->GetRoot()->Get("class-details");
+				@klass_bundles_json := parser->GetRoot()->Get("class-bundle-names");
+
+				if(@klass_details_json = Nil | @klass_bundles_json = Nil) {
+					"### Unable to process JSON configuration file: {$@doc_path}"->ErrorLine();
+					Runtime->Exit(1);
+				};
+			}
+			else {
+				"### Unable to process JSON configuration file: {$@doc_path}"->ErrorLine();
+				Runtime->Exit(1);
+			};
+		}
+
 		method : public : CodeAction(uri : String, start_range_line : Int, start_range_char : Int, var_name : String)  ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
 
-			result_json : JsonElement;
+			result_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 			code_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
 			if(code_action <> Nil & @klass_bundles_json <> Nil) {
-				result_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-
 				class_name := code_action->GetName();
 
-				class_bundle_json : JsonElement;
-
-				each(i : @klass_bundles_json) {
-					klass_bundle_json := @klass_bundles_json->Get(i);
-
-					klass_bundle_json->GetString()->PrintLine(); 
-					# class_bundle_json := @klass_bundles_json->Get(class_name);
-				};
-
+				class_bundle_json := @klass_bundles_json->Get(class_name);
 				if(class_bundle_json <> Nil) {
-					var_name := code_action->GetDescription();
-
+					#
 					# add use statement
+					#
 					use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					use_code_action_json->Insert("title", "Add 'use' statement for class '{$class_name}'");
+					use_code_action_json->Insert("title", "Add 'use' statement for class resolution '{$class_name}'");
 					use_code_action_json->Insert("kind", "quickfix");
-
-					
-					# -----------------
-					
+									
 					doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
 					edits_builder := JsonBuilder->New();
@@ -475,7 +461,16 @@ bundle LSP {
 
 					start_line := end_line := 0;
 					start_index := end_index := 0;
-					new_name := "use Foo.Bar;\\r\\n";
+
+					bundle_name := class_bundle_json->Get("bundle")->GetString();
+
+					new_name : String;
+					if(@analysis->HasUses()) {
+						new_name := "use {$bundle_name};\\r\\n";
+					}
+					else {
+						new_name := "use {$bundle_name};\\r\\n\\r\\n";
+					};
 					
 					edits_builder->PushObject();
 					edits_builder->Insert("newText", new_name);
@@ -510,12 +505,15 @@ bundle LSP {
 
 					doc_changes_array_json->Add(doc_changes_json);
 					
-					# -----------------
-
 					use_code_action_json->Insert("edit", doc_changes_json);
+
+					
 					result_json->Add(use_code_action_json);
 					
+					#
 					# variable qualification
+					#
+					var_name := code_action->GetDescription();
 					qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
 					qualify_code_action_json->Insert("kind", "quickfix");
