@@ -463,7 +463,14 @@ bundle LSP {
 					start_index := end_index := 0;
 
 					bundle_name := class_bundle_json->Get("bundle")->GetString();
-					new_name := "use {$bundle_name};\\r\\n";
+
+					new_name : String;
+					if(@analysis->HasUses()) {
+						new_name := "use {$bundle_name};\\r\\n";
+					}
+					else {
+						new_name := "use {$bundle_name};\\r\\n\\r\\n";
+					};
 					
 					edits_builder->PushObject();
 					edits_builder->Insert("newText", new_name);

@@ -1,4 +1,4 @@
-@echo off
+REM @echo off
 SETLOCAL
 
 SET PORT=6013
