@@ -440,6 +440,7 @@ bundle LSP {
 			};
 
 			result_json : JsonElement;
+			
 
 			code_action := @analysis->CodeAction(uri, start_range_line, start_range_char, var_name);
 			if(code_action <> Nil & @klass_bundles_json <> Nil) {
