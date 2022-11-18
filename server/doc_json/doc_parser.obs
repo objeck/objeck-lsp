@@ -1,6 +1,5 @@
 #~
-Objeck HTML code documentation system
-Copyright (c) 2014-2019 Randy Hollines
+Objeck JSON LSP documentation generator
 ~#
 
 use System.IO;
@@ -148,7 +147,7 @@ class SnippetParser {
 		block := "";		
 	}
 	
-	method : public : native : ParseBundle(block : String) ~ Nil {
+	method : public : native : ParseBundle(block : String, file : String) ~ Nil {
 		block->Append(" bundle ");
 		while(@cur_char <> '\0' & @cur_char <> '{' & @cur_char <> ';') {
 			block->Append(@cur_char);
@@ -156,7 +155,7 @@ class SnippetParser {
 		};
 		block->Append(" {");
 		
-		bundle_block := BundleSnippet->New(block, @uses);
+		bundle_block := BundleSnippet->New(block, @uses, file);
 		if(bundle_block->IsParsed()) {
 			SetBundle(bundle_block);
 		}
@@ -291,7 +290,7 @@ class SnippetParser {
 
 			state := 0;
 			start := 0;
-			bundle_block := BundleSnippet->New(@uses);
+			bundle_block := BundleSnippet->New(@uses, file);
 			bundle_block->SetName("Default");
 			SetBundle(bundle_block);
 
@@ -303,7 +302,7 @@ class SnippetParser {
 				if(state = 2) {
 					ident := ParseIdent();
 					if(ident->Equals("bundle")) {
-						ParseBundle(block);				
+						ParseBundle(block, file);				
 					}
 					else if(ident->Equals("use")) {
 						ParseUse(block);				
@@ -338,7 +337,7 @@ class SnippetParser {
 					if(ident->Equals("bundle")) {
 						@bundle_name := ParseIdent();
 						if(@bundle_name->Size() > 0) {
-							bundle_block := BundleSnippet->New(@uses);
+							bundle_block := BundleSnippet->New(@uses, file);
 							bundle_block->SetName(@bundle_name);
 							SetBundle(bundle_block);
 						};
@@ -536,20 +535,42 @@ class BundleSnippet from Snippet {
 	@classes : Map<String, ClassSnippet>;
 	@enums : Map<String, EnumConstSnippet>;
 	@uses : Vector<String>;
+	@file : String;
 
-	New(uses : Vector<String>) {
+	New(uses : Vector<String>, file : String) {
 		Parent("");
 		@uses := uses;
 		@classes := Map->New()<String, ClassSnippet>;
 		@enums := Map->New()<String, EnumConstSnippet>;
+		@file := GetLibName(file);
 	}
 
-	New(buffer : String, uses : Vector<String>) {
+	New(buffer : String, uses : Vector<String>, file : String) {
 		Parent(buffer);
 		@uses := uses;
 		@classes := Map->New()<String, ClassSnippet>;
 		@enums := Map->New()<String, EnumConstSnippet>;
 		@parsed := Parse();
+		@file := GetLibName(file);
+	}
+
+	method : GetLibName(file : String) ~ String {
+		result : String;
+
+		file_index := file->FindLast('\\');
+		if(file_index > -1) {
+			file_index += 1;
+			result := file->SubString(file_index, file->Size() - file_index);
+		}
+		else {
+			result := "";
+		};
+
+		if(<>result->IsEmpty()) {
+			result->Set('l', result->Size() - 1);
+		};
+		
+		return result;
 	}
 	
 	method : public : IsParsed() ~ Bool {
@@ -558,6 +579,10 @@ class BundleSnippet from Snippet {
 
 	method : public : GetName() ~ String {
 		return @name;
+	}
+
+	method : public : GetFile() ~ String {
+		return @file;
 	}
 
 	method : public : GetDesc() ~ String {
