@@ -62,7 +62,7 @@ class JsonMaker {
 					short_class_name := class_key_value->GetFirst();
 					class_name += short_class_name;
 
-					classes_bundle->AddBack(Foo->New(short_class_name, bundle_name, bundle_snippet->GetFile());
+					classes_bundle->AddBack(Foo->New(short_class_name, bundle_name, bundle_snippet->GetFile()));
 					ProcessClass(class_name, class_key_value->GetSecond(), buffer);
 
 					if(j + 1 < class_key_values->Size()) {
@@ -78,13 +78,13 @@ class JsonMaker {
 		buffer += "\n\t},\n\t\"class-bundle-names\": {\n\t";
 
 		each(i : classes_bundle) {
-			class_bundle := classes_bundle->Get(i)<Foo>;
+			foo := classes_bundle->Get(i);
 
 			class_name := foo->GetClassName();
 			bundle_name := foo->GetBundleName();
 			file_name := foo->GetFileName();
 
-			buffer += "\t\"{$class_name}\": {\n\t\t\t\"bundle\": \"{$bundle_name}\"\n\t\t}";
+			buffer += "\t\"{$class_name}\": {\n\t\t\t\"bundle\": \"{$bundle_name}\"\n,\t\t\t\"file\": \"{$file_name}\"\n \t\t}";
 
 			if(i + 1 < classes_bundle->Size()) {
 				buffer += ",\n\t";
@@ -159,15 +159,15 @@ class Foo {
 		@file_name := file_name;
 	}
 
-	method : public GetClassName() ~ String {
+	method : public : GetClassName() ~ String {
 		return @short_class_name;
 	}
 
-	method : public GetBundleName() ~ String {
+	method : public : GetBundleName() ~ String {
 		return @bundle_name;
 	}
 
-	method : public GetFileName() ~ String {
+	method : public : GetFileName() ~ String {
 		return @file_name;
 	}
 }
