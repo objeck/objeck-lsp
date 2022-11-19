@@ -457,18 +457,13 @@ bundle LSP {
 										
 						doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
-						edits_builder := JsonBuilder->New();
-						edits_builder->PushArray();
-
 						start_line := end_line := 0;
 						start_index := end_index := 0;
 
 						bundle_name := class_bundle_json->Get("bundle")->GetString();
-						lib_file_name := class_bundle_json->Get("file")->GetString();
-
-"--- File exists: lib_file_name='{$lib_file_name}', bundle_name='{$bundle_name}' ---"->PrintLine();
 
 						new_name : String;
+
 						if(@analysis->HasUses()) {
 							new_name := "use {$bundle_name};\\r\\n";
 						}
@@ -476,31 +471,7 @@ bundle LSP {
 							new_name := "use {$bundle_name};\\r\\n\\r\\n";
 						};
 						
-						edits_builder->PushObject();
-						edits_builder->Insert("newText", new_name);
-
-						edits_builder->PushObject("range");
-						obj := edits_builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
-						edits_builder->Pop();
-
-						obj := edits_builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
-
-						edits_builder->Pop();
-						edits_builder->Pop();
-						edits_builder->Pop();
-
-						text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						text_doc_json->Insert("uri", uri);
-						text_doc_json->Insert("version", Nil);
-
-						text_doc_edit_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						text_doc_edit_json->Insert("textDocument", text_doc_json);
-						text_doc_edit_json->Insert("edits", edits_builder->Pop());
-
+						text_doc_edit_json := MakeTextEdit(new_name, start_line, start_index, end_line, end_index, uri);
 						text_doc_edit_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 						text_doc_edit_array_json->Add(text_doc_edit_json);
 
@@ -512,22 +483,26 @@ bundle LSP {
 						use_code_action_json->Insert("edit", doc_changes_json);
 					}
 					else {
-"--- New file: build_file='{$build_file}' ---"->PrintLine();
+						lib_file_name := class_bundle_json->Get("file")->GetString();
 
 						use_code_action_json->Insert("title", "Create custom build file");
 						use_code_action_json->Insert("kind", "quickfix");
 
-
-						create_file_uri := "file:///";
-						create_file_uri += build_file->ToLower()->ReplaceAll('\\', '/');
+						# create build file
+						create_uri := "file:///";
+						create_uri += build_file->ToLower()->ReplaceAll('\\', '/');
 
 						create_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 						create_doc_json->Insert("kind", "create");
-						create_doc_json->Insert("uri", create_file_uri);
+						create_doc_json->Insert("uri", create_uri);
 
 						create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 						create_doc_array_json->Add(create_doc_json);
 
+						# TODO: add changes to the file
+						build_file_json := JsonElement->New(JsonElement->JsonType->OBJECT);						
+
+						# add changes
 						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 						doc_changes_json->Insert("documentChanges", create_doc_array_json);
 												
@@ -543,65 +518,43 @@ bundle LSP {
 					qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
 					qualify_code_action_json->Insert("kind", "quickfix");
-#~
-					doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-
-					each(i : found_uris) {
-						found_uri := found_uris->Get(i);
-
-						edits_builder := JsonBuilder->New();
-						edits_builder->PushArray();
-
-						file_references := file_reference_map->Find(found_uri)<Result>;
-						each(j : file_references) {
-							file_reference := file_references->Get(j);
-
-							start_line := end_line := file_reference->GetStartLine();
-							start_index := file_reference->GetStartPosition();
-							end_index := file_reference->GetEndPosition();
-							
-							edits_builder->PushObject();
-							edits_builder->Insert("newText", new_name);
-
-							edits_builder->PushObject("range");
-							obj := edits_builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							edits_builder->Pop();
-
-							obj := edits_builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-
-							edits_builder->Pop();
-							edits_builder->Pop();
-							edits_builder->Pop();
-						};
-
-						edits_json := edits_builder->Pop();
-
-						text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						text_doc_json->Insert("uri", found_uri);
-						text_doc_json->Insert("version", Nil);
-
-						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						doc_changes_json->Insert("textDocument", text_doc_json);
-						doc_changes_json->Insert("edits", edits_json);
-
-						doc_changes_array_json->Add(doc_changes_json);
-					};
-
-					apply_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					apply_changes_json->Insert("documentChanges", doc_changes_array_json);
-					
-					return apply_changes_json;
-~#				
 					result_json->Add(qualify_code_action_json);
-
 				};
 			};
 			
 			return result_json;
+		}
+
+		method : public : MakeTextEdit(text : String, start_line : Int, start_index : Int, end_line : Int, end_index : Int, uri : String) ~ JsonElement {
+			edits_builder := JsonBuilder->New();
+			edits_builder->PushArray();
+			
+			edits_builder->PushObject();
+			edits_builder->Insert("newText", text);
+
+			edits_builder->PushObject("range");
+			range_json := edits_builder->PushObject("start");
+			range_json->Insert("line", start_line);
+			range_json->Insert("character", start_index);
+			edits_builder->Pop();
+
+			range_json := edits_builder->PushObject("end");
+			range_json->Insert("line", end_line);
+			range_json->Insert("character", end_index);
+
+			edits_builder->Pop();
+			edits_builder->Pop();
+			edits_builder->Pop();
+
+			text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+			text_doc_json->Insert("uri", uri);
+			text_doc_json->Insert("version", Nil);
+
+			text_doc_edit_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+			text_doc_edit_json->Insert("textDocument", text_doc_json);
+			text_doc_edit_json->Insert("edits", edits_builder->Pop());
+
+			return text_doc_edit_json;
 		}
 		
 		method : public : SignatureHelp(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {

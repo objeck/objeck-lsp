@@ -20,6 +20,7 @@ class Test {
 
 	method : Foo(a : Int) ~ Int {
 		elem : JsonElement;
+	
 		
 		return 14 + @abc->GetValue(12) * 7;
 	}
