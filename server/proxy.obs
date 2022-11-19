@@ -528,10 +528,8 @@ bundle LSP {
 								new_name := "use {$bundle_name};\\r\\n\\r\\n";
 							};
 							create_doc_array_json->Add(MakeTextEdit(new_name, 0, 0, 0, 0, uri));
-
 							doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 							doc_changes_json->Insert("documentChanges", create_doc_array_json);
-													
 							use_code_action_json->Insert("edit", doc_changes_json);
 						};
 					};
@@ -545,6 +543,17 @@ bundle LSP {
 					qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
 					qualify_code_action_json->Insert("kind", "quickfix");
+
+					edit_start_line := code_action->GetStartLine();
+					edit_start_pos := code_action->GetStartPosition();
+
+					create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+					create_doc_array_json->Add(MakeTextEdit("Foo.Bar.", edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+
+					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					doc_changes_json->Insert("documentChanges", create_doc_array_json);
+					qualify_code_action_json->Insert("edit", doc_changes_json);
+
 					result_json->Add(qualify_code_action_json);
 				};
 			};
