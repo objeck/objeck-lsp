@@ -449,21 +449,17 @@ bundle LSP {
 					#
 					# add use statement
 					#
-					use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 
+					# build file exists
+					use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					if(System.IO.Filesystem.File->Exists(build_file)) {
-						use_code_action_json->Insert("title", "Add 'use' statement for class resolution '{$class_name}'");
+						use_code_action_json->Insert("title", "Add 'use' statement to resolve '{$class_name}'");
 						use_code_action_json->Insert("kind", "quickfix");
 										
 						doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
-						start_line := end_line := 0;
-						start_index := end_index := 0;
-
-						bundle_name := class_bundle_json->Get("bundle")->GetString();
-
 						new_name : String;
-
+						bundle_name := class_bundle_json->Get("bundle")->GetString();
 						if(@analysis->HasUses()) {
 							new_name := "use {$bundle_name};\\r\\n";
 						}
@@ -471,9 +467,8 @@ bundle LSP {
 							new_name := "use {$bundle_name};\\r\\n\\r\\n";
 						};
 						
-						text_doc_edit_json := MakeTextEdit(new_name, start_line, start_index, end_line, end_index, uri);
 						text_doc_edit_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-						text_doc_edit_array_json->Add(text_doc_edit_json);
+						text_doc_edit_array_json->Add(MakeTextEdit(new_name, 0, 0, 0, 0, uri));
 
 						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 						doc_changes_json->Insert("documentChanges", text_doc_edit_array_json);
@@ -482,31 +477,63 @@ bundle LSP {
 						
 						use_code_action_json->Insert("edit", doc_changes_json);
 					}
+					# no build file
 					else {
-						lib_file_name := class_bundle_json->Get("file")->GetString();
+						src_file_name_index := uri->FindLast('/');
+						if(src_file_name_index > -1) {
+							src_file_name_index += 1;
+							src_file_name := uri->SubString(src_file_name_index, uri->Size() - src_file_name_index);
 
-						use_code_action_json->Insert("title", "Create custom build file");
-						use_code_action_json->Insert("kind", "quickfix");
+							use_code_action_json->Insert("title", "Create build file and add 'use' statement to reslove '{$class_name}'");
+							use_code_action_json->Insert("kind", "quickfix");
 
-						# create build file
-						create_uri := "file:///";
-						create_uri += build_file->ToLower()->ReplaceAll('\\', '/');
+							# create build file
+							create_uri := "file:///" + build_file->ToLower();
+							if(System.IO.Filesystem.Directory->GetSlash() <> '/') {
+								create_uri := create_uri->ReplaceAll('\\', '/');
+							};
 
-						create_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						create_doc_json->Insert("kind", "create");
-						create_doc_json->Insert("uri", create_uri);
+							create_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							create_doc_json->Insert("kind", "create");
+							create_doc_json->Insert("uri", create_uri);
 
-						create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-						create_doc_array_json->Add(create_doc_json);
+							# apply changes to the file
+							files_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+							files_json->Add(src_file_name);
 
-						# TODO: add changes to the file
-						build_file_json := JsonElement->New(JsonElement->JsonType->OBJECT);						
+							lib_file_name := class_bundle_json->Get("file")->GetString();
+							libs_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+							libs_json->Add("gen_collect.obl");
+							libs_json->Add("net.obl");
+							libs_json->Add("misc.obl");
+							libs_json->Add(lib_file_name);
 
-						# add changes
-						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-						doc_changes_json->Insert("documentChanges", create_doc_array_json);
-												
-						use_code_action_json->Insert("edit", doc_changes_json);
+							build_file_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							build_file_json->Insert("files", files_json);
+							build_file_json->Insert("libs", libs_json);
+							build_file_json->Insert("flags", "");
+							build_file_text := JsonElement->Encode(build_file_json->ToString());
+
+							# add changes
+							create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+							create_doc_array_json->Add(create_doc_json);
+							create_doc_array_json->Add(MakeTextEdit(build_file_text, 0, 0, 0, 0, create_uri));
+
+							new_name : String;
+							bundle_name := class_bundle_json->Get("bundle")->GetString();
+							if(@analysis->HasUses()) {
+								new_name := "use {$bundle_name};\\r\\n";
+							}
+							else {
+								new_name := "use {$bundle_name};\\r\\n\\r\\n";
+							};
+							create_doc_array_json->Add(MakeTextEdit(new_name, 0, 0, 0, 0, uri));
+
+							doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							doc_changes_json->Insert("documentChanges", create_doc_array_json);
+													
+							use_code_action_json->Insert("edit", doc_changes_json);
+						};
 					};
 					
 					result_json->Add(use_code_action_json);
