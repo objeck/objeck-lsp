@@ -76,7 +76,7 @@ The server is functional but there is still work to do.
 
 ### Outstanding
 1. Auto include libraries based upon 'use' statements
-    1. In Beta for v6.9.0
+     1. In Beta for v6.9.0
 3. Linting
-    1.Dead code
+     1.Dead code
 4. Testing with Emacs
