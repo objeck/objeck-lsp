@@ -586,7 +586,7 @@ bundle LSP {
 
 				if(last > start) {
 					start += 1;
-					return proxy->CodeAction(@uri, start_range_line, start_range_char, message->SubString(start, last - start));
+					return proxy->CodeAction(@uri, start_range_line, start_range_char, message->SubString(start, last - start), build_file);
 				};
 			};
 

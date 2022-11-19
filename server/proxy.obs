@@ -434,7 +434,7 @@ bundle LSP {
 			};
 		}
 
-		method : public : CodeAction(uri : String, start_range_line : Int, start_range_char : Int, var_name : String)  ~ JsonElement {
+		method : public : CodeAction(uri : String, start_range_line : Int, start_range_char : Int, var_name : String, build_file : String)  ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};
@@ -450,65 +450,89 @@ bundle LSP {
 					# add use statement
 					#
 					use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					use_code_action_json->Insert("title", "Add 'use' statement for class resolution '{$class_name}'");
-					use_code_action_json->Insert("kind", "quickfix");
-									
-					doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
-					edits_builder := JsonBuilder->New();
-					edits_builder->PushArray();
+					if(System.IO.Filesystem.File->Exists(build_file)) {
+						use_code_action_json->Insert("title", "Add 'use' statement for class resolution '{$class_name}'");
+						use_code_action_json->Insert("kind", "quickfix");
+										
+						doc_changes_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 
-					start_line := end_line := 0;
-					start_index := end_index := 0;
+						edits_builder := JsonBuilder->New();
+						edits_builder->PushArray();
 
-					bundle_name := class_bundle_json->Get("bundle")->GetString();
-					file_name := class_bundle_json->Get("file")->GetString();
+						start_line := end_line := 0;
+						start_index := end_index := 0;
 
-"--- file_name='{$file_name}', bundle_name='{$bundle_name}' ---"->PrintLine();
+						bundle_name := class_bundle_json->Get("bundle")->GetString();
+						lib_file_name := class_bundle_json->Get("file")->GetString();
 
-					new_name : String;
-					if(@analysis->HasUses()) {
-						new_name := "use {$bundle_name};\\r\\n";
+"--- File exists: lib_file_name='{$lib_file_name}', bundle_name='{$bundle_name}' ---"->PrintLine();
+
+						new_name : String;
+						if(@analysis->HasUses()) {
+							new_name := "use {$bundle_name};\\r\\n";
+						}
+						else {
+							new_name := "use {$bundle_name};\\r\\n\\r\\n";
+						};
+						
+						edits_builder->PushObject();
+						edits_builder->Insert("newText", new_name);
+
+						edits_builder->PushObject("range");
+						obj := edits_builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+						edits_builder->Pop();
+
+						obj := edits_builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+
+						edits_builder->Pop();
+						edits_builder->Pop();
+						edits_builder->Pop();
+
+						text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						text_doc_json->Insert("uri", uri);
+						text_doc_json->Insert("version", Nil);
+
+						text_doc_edit_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						text_doc_edit_json->Insert("textDocument", text_doc_json);
+						text_doc_edit_json->Insert("edits", edits_builder->Pop());
+
+						text_doc_edit_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+						text_doc_edit_array_json->Add(text_doc_edit_json);
+
+						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						doc_changes_json->Insert("documentChanges", text_doc_edit_array_json);
+
+						doc_changes_array_json->Add(doc_changes_json);
+						
+						use_code_action_json->Insert("edit", doc_changes_json);
 					}
 					else {
-						new_name := "use {$bundle_name};\\r\\n\\r\\n";
+"--- New file: build_file='{$build_file}' ---"->PrintLine();
+
+						use_code_action_json->Insert("title", "Create custom build file");
+						use_code_action_json->Insert("kind", "quickfix");
+
+
+						create_file_uri := "file:///";
+						create_file_uri += build_file->ToLower()->ReplaceAll('\\', '/');
+
+						create_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						create_doc_json->Insert("kind", "create");
+						create_doc_json->Insert("uri", create_file_uri);
+
+						create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+						create_doc_array_json->Add(create_doc_json);
+
+						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						doc_changes_json->Insert("documentChanges", create_doc_array_json);
+												
+						use_code_action_json->Insert("edit", doc_changes_json);
 					};
-					
-					edits_builder->PushObject();
-					edits_builder->Insert("newText", new_name);
-
-					edits_builder->PushObject("range");
-					obj := edits_builder->PushObject("start");
-					obj->Insert("line", start_line);
-					obj->Insert("character", start_index);
-					edits_builder->Pop();
-
-					obj := edits_builder->PushObject("end");
-					obj->Insert("line", end_line);
-					obj->Insert("character", end_index);
-
-					edits_builder->Pop();
-					edits_builder->Pop();
-					edits_builder->Pop();
-
-					text_doc_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					text_doc_json->Insert("uri", uri);
-					text_doc_json->Insert("version", Nil);
-
-					text_doc_edit_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					text_doc_edit_json->Insert("textDocument", text_doc_json);
-					text_doc_edit_json->Insert("edits", edits_builder->Pop());
-
-					text_doc_edit_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-					text_doc_edit_array_json->Add(text_doc_edit_json);
-
-					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					doc_changes_json->Insert("documentChanges", text_doc_edit_array_json);
-
-					doc_changes_array_json->Add(doc_changes_json);
-					
-					use_code_action_json->Insert("edit", doc_changes_json);
-
 					
 					result_json->Add(use_code_action_json);
 					
