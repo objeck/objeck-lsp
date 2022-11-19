@@ -484,7 +484,7 @@ bundle LSP {
 							src_file_name_index += 1;
 							src_file_name := uri->SubString(src_file_name_index, uri->Size() - src_file_name_index);
 
-							use_code_action_json->Insert("title", "Create build file and add 'use' statement to reslove '{$class_name}'");
+							use_code_action_json->Insert("title", "Create build file and add 'use' statement to resolve '{$class_name}'");
 							use_code_action_json->Insert("kind", "quickfix");
 
 							# create build file
@@ -541,14 +541,17 @@ bundle LSP {
 					#
 					var_name := code_action->GetDescription();
 					qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					qualify_code_action_json->Insert("title", "Fully qualify the class reference to variable '{$var_name}'");
+					qualify_code_action_json->Insert("title", "Fully qualify variable reference '{$var_name}'");
 					qualify_code_action_json->Insert("kind", "quickfix");
 
 					edit_start_line := code_action->GetStartLine();
 					edit_start_pos := code_action->GetStartPosition();
 
+					bundle_name := class_bundle_json->Get("bundle")->GetString();
+					bundle_name += '.';
+					
 					create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-					create_doc_array_json->Add(MakeTextEdit("Foo.Bar.", edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+					create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
 
 					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					doc_changes_json->Insert("documentChanges", create_doc_array_json);
