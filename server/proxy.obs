@@ -490,11 +490,9 @@ bundle LSP {
 						edit_start_line := code_action->GetStartLine();
 						edit_start_pos := code_action->GetStartPosition();
 
-						bundle_name := class_bundle_json->Get("bundle")->GetString();
-						bundle_name += '.';
-						
+						bundle_name := class_bundle_json->Get("bundle")->GetString();						
 						create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-						create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+						create_doc_array_json->Add(MakeTextEdit("{$bundle_name}.", edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
 
 						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 						doc_changes_json->Insert("documentChanges", create_doc_array_json);
@@ -542,7 +540,7 @@ bundle LSP {
 							build_file_json->Insert("files", files_json);
 							build_file_json->Insert("libs", libs_json);
 							build_file_json->Insert("flags", "");
-							build_file_text := JsonElement->Encode(build_file_json->ToString());
+							build_file_text := JsonElement->Encode(build_file_json->ToFormattedString());
 
 							# add changes
 							create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
@@ -574,11 +572,10 @@ bundle LSP {
 							edit_start_line := code_action->GetStartLine();
 							edit_start_pos := code_action->GetStartPosition();
 							
-							bundle_name += '.';							
 							create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 							create_doc_array_json->Add(create_doc_json);
 							create_doc_array_json->Add(MakeTextEdit(build_file_text, 0, 0, 0, 0, create_uri));
-							create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+							create_doc_array_json->Add(MakeTextEdit("{$bundle_name}.", edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
 
 							doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 							doc_changes_json->Insert("documentChanges", create_doc_array_json);
