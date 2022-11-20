@@ -447,12 +447,13 @@ bundle LSP {
 				class_bundle_json := @klass_bundles_json->Get(class_name);
 				if(class_bundle_json <> Nil) {
 					#
-					# add use statement
-					#
-
 					# build file exists
+					#
 					use_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 					if(System.IO.Filesystem.File->Exists(build_file)) {
+						#
+						# add use statement
+						#
 						use_code_action_json->Insert("title", "Add 'use' statement to resolve '{$class_name}'");
 						use_code_action_json->Insert("kind", "quickfix");
 										
@@ -476,11 +477,40 @@ bundle LSP {
 						doc_changes_array_json->Add(doc_changes_json);
 						
 						use_code_action_json->Insert("edit", doc_changes_json);
+						result_json->Add(use_code_action_json);
+
+						#
+						# variable qualification
+						#
+						var_name := code_action->GetDescription();
+						qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						qualify_code_action_json->Insert("title", "Fully qualify variable reference '{$var_name}'");
+						qualify_code_action_json->Insert("kind", "quickfix");
+
+						edit_start_line := code_action->GetStartLine();
+						edit_start_pos := code_action->GetStartPosition();
+
+						bundle_name := class_bundle_json->Get("bundle")->GetString();
+						bundle_name += '.';
+						
+						create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+						create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+
+						doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						doc_changes_json->Insert("documentChanges", create_doc_array_json);
+						qualify_code_action_json->Insert("edit", doc_changes_json);
+
+						result_json->Add(qualify_code_action_json);
 					}
+					#
 					# no build file
+					#
 					else {
 						src_file_name_index := uri->FindLast('/');
 						if(src_file_name_index > -1) {
+							#
+							# add use statement
+							#
 							src_file_name_index += 1;
 							src_file_name := uri->SubString(src_file_name_index, uri->Size() - src_file_name_index);
 
@@ -531,33 +561,32 @@ bundle LSP {
 							doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
 							doc_changes_json->Insert("documentChanges", create_doc_array_json);
 							use_code_action_json->Insert("edit", doc_changes_json);
+							result_json->Add(use_code_action_json);
+
+							#
+							# variable qualification
+							#
+							var_name := code_action->GetDescription();
+							qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							qualify_code_action_json->Insert("title", "Fully qualify variable reference '{$var_name}'");
+							qualify_code_action_json->Insert("kind", "quickfix");
+
+							edit_start_line := code_action->GetStartLine();
+							edit_start_pos := code_action->GetStartPosition();
+							
+							bundle_name += '.';							
+							create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
+							create_doc_array_json->Add(create_doc_json);
+							create_doc_array_json->Add(MakeTextEdit(build_file_text, 0, 0, 0, 0, create_uri));
+							create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
+
+							doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+							doc_changes_json->Insert("documentChanges", create_doc_array_json);
+							qualify_code_action_json->Insert("edit", doc_changes_json);
+
+							result_json->Add(qualify_code_action_json);
 						};
 					};
-					
-					result_json->Add(use_code_action_json);
-					
-					#
-					# variable qualification
-					#
-					var_name := code_action->GetDescription();
-					qualify_code_action_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					qualify_code_action_json->Insert("title", "Fully qualify variable reference '{$var_name}'");
-					qualify_code_action_json->Insert("kind", "quickfix");
-
-					edit_start_line := code_action->GetStartLine();
-					edit_start_pos := code_action->GetStartPosition();
-
-					bundle_name := class_bundle_json->Get("bundle")->GetString();
-					bundle_name += '.';
-					
-					create_doc_array_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-					create_doc_array_json->Add(MakeTextEdit(bundle_name, edit_start_line, edit_start_pos, edit_start_line, edit_start_pos, uri));
-
-					doc_changes_json := JsonElement->New(JsonElement->JsonType->OBJECT);
-					doc_changes_json->Insert("documentChanges", create_doc_array_json);
-					qualify_code_action_json->Insert("edit", doc_changes_json);
-
-					result_json->Add(qualify_code_action_json);
 				};
 			};
 			
