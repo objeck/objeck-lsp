@@ -19,5 +19,5 @@ cp README.txt objeck-lsp
 # finished
 if [ ! -z "$1" ] && [ "$1" = "deploy" ]; then
 	rm -f objeck-lsp-*.zip
-	zip -r objeck-lsp-6.8.3.zip objeck-lsp
+	zip -r objeck-lsp-2023.1.0.zip objeck-lsp
 fi;
