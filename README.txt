@@ -1,8 +1,8 @@
-v1.1.5
+v2023.1.0
 ===
 
 What's new?
-* Updated API docs for Objec v6.3.6
+* Updated API docs for Objeck v2023.1.0
 
 Install
 ===
