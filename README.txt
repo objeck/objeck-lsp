@@ -28,7 +28,8 @@ Sublime
 			"enabled": false,
 			"command": [
 				"<objeck_path>/bin/obr.exe",
-				"<objeck_server_path>/objk_lang_server.obe",
+				"<objeck_server_path>/objeck_lsp.obe",
+				"<objeck_server_path>/objk_apis.json",
 				"6013",
 				"debug"
 			],
