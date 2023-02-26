@@ -1,4 +1,4 @@
-use Collection.Generic;
+use Collection;
 use System.IO.Net;
 use Data.JSON;
 
@@ -473,7 +473,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			is_parsed := BoolHolder->New();
+			is_parsed := BoolRef->New();
 			result := proxy->GetSymbols(is_parsed, uri, @workspace->GetLibs());
 
 			if(is_parsed->Get()) {
@@ -774,7 +774,7 @@ bundle LSP {
 			return @alt_text;
 		}
 
-		method : GetLineCharacterIndex(index : Int, line_pos : IntHolder, char_pos : IntHolder) ~ Nil {
+		method : GetLineCharacterIndex(index : Int, line_pos : IntRef, char_pos : IntRef) ~ Nil {
 			cur_line := 0;
 			cur_char := 0;
 

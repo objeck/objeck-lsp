@@ -4,7 +4,7 @@ Copyright (c) 2021 Randy Hollines
 ~#
 
 use System.IO.Filesystem;
-use Collection.Generic;
+use Collection;
 use Data.JSON;
 
 class JsonMaker {

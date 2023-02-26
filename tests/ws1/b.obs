@@ -10,7 +10,7 @@ enum Fie {
 	THREE
 }
 
-class ValueHolder {
+class ValueRef {
 	@value : Int;
 
 	New(value : Int) {
