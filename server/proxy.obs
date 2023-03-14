@@ -1,4 +1,4 @@
-use Collection.Generic;
+use Collection;
 use System.Diagnostics;
 use Data.JSON;
 
@@ -660,7 +660,7 @@ bundle LSP {
 			return Nil;
 		}
 
-		method : public : GetSymbols(is_parsed : BoolHolder, uri : String, sys_path : String) ~ JsonElement {
+		method : public : GetSymbols(is_parsed : BoolRef, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
 			};

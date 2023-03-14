@@ -1,12 +1,12 @@
 class Test {
-	@abc : ValueHolder;
+	@abc : ValueRef;
 	
 	New() {
-		@abc := ValueHolder->New(7);
+		@abc := ValueRef->New(7);
 	}
 
 	function : Main(args : String[]) ~ Nil {
-		vh : ValueHolder := ValueHolder->New(13);
+		vh : ValueRef := ValueRef->New(13);
 		vh->GetValue(5)->PrintLine();
 		
 		DoIt(7);

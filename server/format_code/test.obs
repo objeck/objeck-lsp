@@ -1,5 +1,5 @@
 use System.IO.File;
-use Collection.Generic;
+use Collection;
 
 class Test {
 	function : Main(args : String[]) ~ Nil {
