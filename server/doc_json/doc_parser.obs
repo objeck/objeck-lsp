@@ -925,7 +925,7 @@ class ClassSnippet from Snippet {
 		return start;
 	}
 
-	method : public : IsGeneric() ~ Bool {
+	method : public : IsCollection() ~ Bool {
 		return @is_generic;
 	}
 
