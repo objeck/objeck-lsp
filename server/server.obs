@@ -12,12 +12,16 @@ bundle LSP {
 
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 2) {
+				port := args[1]->Equals("std") ? -1 : args[1]->ToInt();
 				AstProxy->Init(args[0]);
-				LintServer->New(args[1]->ToInt(), false)->Listen();
+
+				LintServer->New(port, false)->Listen();
 			}
 			else if(args->Size() = 3 & args[2]->Equals("debug")) {
+				port := args[1]->Equals("std") ? -1 : args[1]->ToInt();
 				AstProxy->Init(args[0]);
-				LintServer->New(args[1]->ToInt(), true)->Listen();
+
+				LintServer->New(port, true)->Listen();
 			};
 		}
 
@@ -27,30 +31,38 @@ bundle LSP {
 		}
 
 		method : public : Listen() ~ Nil {
-			port := 6013;
-			"Objeck LSP Server on localhost:{$port}"->PrintLine();
-
-			if(@is_debug) {
-				dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
-				info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
-				error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
-
-				"----"->PrintLine();
-				"Logging diretory='{$dir}'"->PrintLine();
-				"\tInfo file='{$info}'"->PrintLine();
-				"\tError file='{$error}'"->PrintLine();
-				"----"->PrintLine();
-			};
-			
-			server := TCPSocketServer->New(port);
+			server : TCPSocketServer;
 			leaving {
-				server->Close();
+				if(server <> Nil) {
+					server->Close();
+				};
 			};
 
-			if(server->Listen(5)) {
-				while(true) {
-					LintService->New(server->Accept(), @is_debug)->Execute(Nil);
+			# use sockets
+			if(@port > -1) {
+				if(@is_debug) {
+					dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
+					info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
+					error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
+
+					"----"->PrintLine();
+					"Logging diretory='{$dir}'"->PrintLine();
+					"\tInfo file='{$info}'"->PrintLine();
+					"\tError file='{$error}'"->PrintLine();
+					"----"->PrintLine();
 				};
+
+				"Objeck LSP Server on localhost:{$@port}"->PrintLine();			
+				server := TCPSocketServer->New(@port);
+				if(server->Listen(5)) {
+					while(true) {
+						LintService->New(server->Accept(), @is_debug)->Execute(Nil);
+					};
+				};
+			}
+			# use std pipes
+			else {
+">>> Pipes <<<"->PrintLine();
 			};
 		}
 	}

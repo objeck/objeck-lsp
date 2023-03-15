@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 
-SET PORT=6013
+SET PORT=%1
 SET OBJECK_ROOT=..\..\objeck-lang
 
 SET PATH=%PATH%;%OBJECK_ROOT%\core\release\deploy64\bin
@@ -19,8 +19,9 @@ echo ---
 
 obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex -dest objeck_lsp.obe
 
-if [%1] NEQ [brun] goto end
+if "%PORT%" == "" goto end
 	echo ---
 	echo Running on port %PORT%...
 	obr objeck_lsp.obe objk_apis.json %PORT% debug
+	goto end
 :end
