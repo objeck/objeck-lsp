@@ -186,21 +186,29 @@ bundle LSP {
 				index += 2;
 				length := line->SubString(index, line->Size() - index)->ToInt();
 				# TODO: check length (buffer overflow)
-				buffer := Byte->New[length];
 				
 				if(@socket = Nil) {
+					buffer := Char->New[length];
 					Standard->ReadBuffer(0, buffer->Size(), buffer);
+
+					text := String->New(buffer);
+					if(@is_debug) {
+						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
+					};
+
+					return text;
 				}
 				else {
+					buffer := Byte->New[length];
 					@socket->ReadBuffer(0, buffer->Size(), buffer);
-				};
 
-				text := String->New(buffer->ToUnicode());
-				if(@is_debug) {
-					System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
-				};
+					text := String->New(buffer->ToUnicode());
+					if(@is_debug) {
+						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
+					};
 
-				return text;
+					return text;
+				};
 			};
 
 			return "";
