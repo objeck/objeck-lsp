@@ -63,6 +63,7 @@ bundle LSP {
 			# use std pipes
 			else {
 ">>> Pipes <<<"->PrintLine();
+				LintService->New(Nil, @is_debug)->Run(Nil);
 			};
 		}
 	}
