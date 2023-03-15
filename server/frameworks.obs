@@ -7,8 +7,6 @@ bundle LSP {
 	Abstract socket server worker
 	~#
 	class LspWorker from System.Concurrency.Thread {
-		@address : String;
-		@port : Int;
 		@quit : Bool;
 		@is_initialized : Bool;
 		@is_debug : Bool;
@@ -35,7 +33,9 @@ bundle LSP {
 				};
 			};
 
-			@socket->Close();
+			if(@socket <> Nil) {
+				@socket->Close();
+			};
 		}
 
 		method : public : IsDebug() ~ Bool {
@@ -171,8 +171,15 @@ bundle LSP {
 
 		# --- utilities ---
 		method : ReadString() ~ String {
-			line := @socket->ReadLine();
-			@socket->ReadLine();
+			line : String;
+			if(@socket = Nil) {
+				line := Standard->ReadLine();
+				Standard->ReadLine();
+			}
+			else {
+				line := @socket->ReadLine();
+				@socket->ReadLine();
+			};
 
 			index := line->Find(':');
 			if(index > 0) {
@@ -180,7 +187,13 @@ bundle LSP {
 				length := line->SubString(index, line->Size() - index)->ToInt();
 				# TODO: check length (buffer overflow)
 				buffer := Byte->New[length];
-				@socket->ReadBuffer(0, buffer->Size(), buffer);
+				
+				if(@socket = Nil) {
+					Standard->ReadBuffer(0, buffer->Size(), buffer);
+				}
+				else {
+					@socket->ReadBuffer(0, buffer->Size(), buffer);
+				};
 
 				text := String->New(buffer->ToUnicode());
 				if(@is_debug) {
@@ -198,7 +211,17 @@ bundle LSP {
 				System.IO.Filesystem.Logger->Instance()->Info("WRITE='{$text}'");
 			};		
 			length := text->Size();
-			@socket->WriteString("Content-Length: {$length}\r\n\r\n{$text}");
+
+			line := "Content-Length: {$length}\r\n\r\n{$text}";
+
+			# write to pipe
+			if(@socket = Nil) {
+				Standard->WriteString(line);
+			}
+			# write to socket
+			else {
+				@socket->WriteString(line);
+			};
 		}
 
 		method : ReadRpcRequest() ~ RpcRequest {
