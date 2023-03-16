@@ -485,14 +485,21 @@ bundle LSP {
 			@is_debug := is_debug;
 		}
 
-		method : public : GetDiagnosis() ~ JsonElement {
+		method : public : GetDiagnostics() ~ JsonElement {
 			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {
 				proxy->Release();
 			};
 
-			proxy->Build();
-			return proxy->GetDiagnosis(@uri, @workspace->GetLibs());
+			was_parsed := BoolRef->New();
+			result := proxy->GetDiagnostics(was_parsed, @uri, @workspace->GetLibs());
+			if(was_parsed->Get()) {
+				@alt_text := @text->Clone()->As(String);
+			};
+was_parsed->Get()->PrintLine();
+
+
+			return result;
 		}
 
 		method : public : GetSymbols(uri : String) ~ JsonElement {
@@ -505,12 +512,7 @@ bundle LSP {
 				return Nil;
 			};
 
-			is_parsed := BoolRef->New();
-			result := proxy->GetSymbols(is_parsed, uri, @workspace->GetLibs());
-
-			if(is_parsed->Get()) {
-				@alt_text := @text->Clone()->As(String);
-			};
+			result := proxy->GetSymbols(uri, @workspace->GetLibs());
 
 			return result;
 		}
