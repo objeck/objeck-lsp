@@ -42,7 +42,7 @@ bundle LSP {
 				dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
 				info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
 				error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
-#~
+
 				"----"->ErrorLine();
 				"Logging diretory='{$dir}'"->ErrorLine();
 				"\tInfo file='{$info}'"->ErrorLine();
@@ -50,7 +50,6 @@ bundle LSP {
 				"----"->ErrorLine();
 
 				"Objeck LSP Server on localhost:{$@port}"->ErrorLine();
-~#				
 			};
 						
 			
