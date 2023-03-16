@@ -12,13 +12,13 @@ bundle LSP {
 
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 2) {
-				port := args[1]->Equals("std") ? -1 : args[1]->ToInt();
+				port := args[1]->Equals("stdio") ? -1 : args[1]->ToInt();
 				AstProxy->Init(args[0]);
 
 				LintServer->New(port, false)->Listen();
 			}
 			else if(args->Size() = 3 & args[2]->Equals("debug")) {
-				port := args[1]->Equals("std") ? -1 : args[1]->ToInt();
+				port := args[1]->Equals("stdio") ? -1 : args[1]->ToInt();
 				AstProxy->Init(args[0]);
 
 				LintServer->New(port, true)->Listen();
@@ -38,21 +38,24 @@ bundle LSP {
 				};
 			};
 
+			if(@is_debug) {
+				dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
+				info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
+				error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
+#~
+				"----"->ErrorLine();
+				"Logging diretory='{$dir}'"->ErrorLine();
+				"\tInfo file='{$info}'"->ErrorLine();
+				"\tError file='{$error}'"->ErrorLine();
+				"----"->ErrorLine();
+
+				"Objeck LSP Server on localhost:{$@port}"->ErrorLine();
+~#				
+			};
+						
+			
 			# use sockets
 			if(@port > -1) {
-				if(@is_debug) {
-					dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
-					info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
-					error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
-
-					"----"->PrintLine();
-					"Logging diretory='{$dir}'"->PrintLine();
-					"\tInfo file='{$info}'"->PrintLine();
-					"\tError file='{$error}'"->PrintLine();
-					"----"->PrintLine();
-				};
-
-				"Objeck LSP Server on localhost:{$@port}"->PrintLine();			
 				server := TCPSocketServer->New(@port);
 				if(server->Listen(5)) {
 					while(true) {
@@ -62,7 +65,6 @@ bundle LSP {
 			}
 			# use std pipes
 			else {
-">>> Pipes <<<"->PrintLine();
 				LintService->New(Nil, @is_debug)->Run(Nil);
 			};
 		}
