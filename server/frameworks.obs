@@ -496,9 +496,7 @@ bundle LSP {
 			if(was_parsed->Get()) {
 				@alt_text := @text->Clone()->As(String);
 			};
-was_parsed->Get()->PrintLine();
-
-
+			
 			return result;
 		}
 
