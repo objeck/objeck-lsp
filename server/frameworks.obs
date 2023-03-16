@@ -496,7 +496,7 @@ bundle LSP {
 			if(was_parsed->Get()) {
 				@alt_text := @text->Clone()->As(String);
 			};
-			
+
 			return result;
 		}
 
@@ -506,13 +506,11 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			if(<>proxy->Build()) {
-				return Nil;
+			if(proxy->Build()) {
+				return proxy->GetSymbols(uri, @workspace->GetLibs());
 			};
 
-			result := proxy->GetSymbols(uri, @workspace->GetLibs());
-
-			return result;
+			return Nil;
 		}
 
 		method : public : FindReferences(line_pos : Int, char_pos : Int) ~ JsonElement {
