@@ -225,6 +225,7 @@ bundle LSP {
 			# write to pipe
 			if(@socket = Nil) {
 				Standard->WriteString(line);
+				Standard->Flush();
 			}
 			# write to socket
 			else {
