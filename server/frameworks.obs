@@ -225,7 +225,6 @@ bundle LSP {
 			# write to pipe
 			if(@socket = Nil) {
 				Standard->WriteString(line);
-				Standard->Flush();
 			}
 			# write to socket
 			else {
@@ -491,9 +490,9 @@ bundle LSP {
 				proxy->Release();
 			};
 
-			was_parsed := BoolRef->New();
-			result := proxy->GetDiagnostics(was_parsed, @uri, @workspace->GetLibs());
-			if(was_parsed->Get()) {
+			was_analyzed := BoolRef->New();
+			result := proxy->GetDiagnostics(was_analyzed, @uri, @workspace->GetLibs());
+			if(was_analyzed->Get()) {
 				@alt_text := @text->Clone()->As(String);
 			};
 

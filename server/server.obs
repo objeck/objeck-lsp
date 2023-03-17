@@ -42,17 +42,21 @@ bundle LSP {
 				dir := System.IO.Filesystem.Logger->Instance()->GetDirectory();
 				info := System.IO.Filesystem.Logger->Instance()->GetInfoFile();
 				error := System.IO.Filesystem.Logger->Instance()->GetErrorFile();
-
+				
 				"----"->ErrorLine();
 				"Logging diretory='{$dir}'"->ErrorLine();
 				"\tInfo file='{$info}'"->ErrorLine();
 				"\tError file='{$error}'"->ErrorLine();
 				"----"->ErrorLine();
 
-				"Objeck LSP Server on localhost:{$@port}"->ErrorLine();
+				if(@port > -1) {
+					"Objeck LSP server: port {$@port}"->ErrorLine();
+				}
+				else {
+					"Objeck LSP server: using stdio"->ErrorLine();	
+				};
 			};
 						
-			
 			# use sockets
 			if(@port > -1) {
 				server := TCPSocketServer->New(@port);
@@ -461,8 +465,7 @@ bundle LSP {
 				};
 			};
 		}
-
-
+		
 		method : NotifyDidChange(params : JsonElement) ~ Nil {
 			if(IsDebug()) {
 				System.IO.Filesystem.Logger->Instance()->Info("NotifyDidChange");
