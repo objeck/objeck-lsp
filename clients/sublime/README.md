@@ -15,8 +15,7 @@ Sublime TCP client shim.
 				"<objeck_path>/bin/obr.exe",
 				"<objeck_server_path>/objeck_lsp.obe",
 				"<objeck_server_path>/objk_apis.json",
-				"6013",
-				"debug"
+				"6013"
 			],
 			"env": {
 				"OBJECK_LIB_PATH": "<objeck_path>/lib"
