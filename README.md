@@ -2,9 +2,9 @@
 LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes a TCP socket interface. The backend handles client requests, formats responses and maintains the state of in-memory documents.
 
 ## Upcoming Updates
-Reviving this effort to provide the following:
-* ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
-* ~~STDIO support for Sublime and other text editors~~
+Reviving this effort to provide the following
+* *(Done)* ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
+* *(Done)* ~~STDIO support for Sublime and other text editors~~
 * Named pipe support for VSCode
 
 ![alt text](images/design.svg "Objeck LSP")

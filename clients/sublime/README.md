@@ -20,7 +20,8 @@ Standard I/O
 				"stdio"
 			],
 			"env": {
-				"OBJECK_LIB_PATH": "<objeck_path>/lib"
+				"OBJECK_LIB_PATH": "<objeck_path>/lib",
+				"OBJECK_STDIO": "binary"
 			},
 			"selector": "source.objeck-obs"
 		}

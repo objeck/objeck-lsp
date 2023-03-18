@@ -13,12 +13,20 @@ bundle LSP {
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 2) {
 				port := args[1]->Equals("stdio") ? -1 : args[1]->ToInt();
+				if(port < 0) {
+					Runtime->SetProperty("stdio", "binary");
+				};
+
 				AstProxy->Init(args[0]);
 
 				LintServer->New(port, false)->Listen();
 			}
 			else if(args->Size() = 3 & args[2]->Equals("debug")) {
 				port := args[1]->Equals("stdio") ? -1 : args[1]->ToInt();
+				if(port < 0) {
+					Runtime->SetProperty("stdio", "binary");
+				};
+				
 				AstProxy->Init(args[0]);
 
 				LintServer->New(port, true)->Listen();
@@ -53,7 +61,7 @@ bundle LSP {
 					"Objeck LSP server: port {$@port}"->ErrorLine();
 				}
 				else {
-					"Objeck LSP server: using stdio"->ErrorLine();	
+					"Objeck LSP server: using stdio"->ErrorLine();
 				};
 			};
 						
