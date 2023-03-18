@@ -24,15 +24,20 @@ bundle LSP {
 
 		method : public : Run(param : Base) ~ Nil {
 			while(<>@quit) {
+"--- 0 ---"->ErrorLine();				
 				request := ReadRpcRequest();
+"--- 1 ---"->ErrorLine();				
 				if(request <> Nil) {
 					ProcessResponse(request);
+"--- 2 ---"->ErrorLine();				
 				}	
 				else {
+"--- 3 ---"->ErrorLine();				
 					@quit := true;
 				};
 			};
 
+"--- 4 ---"->ErrorLine();
 			if(@socket <> Nil) {
 				@socket->Close();
 			};
@@ -171,16 +176,19 @@ bundle LSP {
 
 		# --- utilities ---
 		method : ReadString() ~ String {
+"--- 0.2 ---"->ErrorLine();
 			line : String;
 			if(@socket = Nil) {
+"--- 0.3 ---"->ErrorLine();				
 				line := Standard->ReadLine();
 				Standard->ReadLine();
+"--- 0.4 ---"->ErrorLine();				
 			}
 			else {
 				line := @socket->ReadLine();
 				@socket->ReadLine();
 			};
-
+"--- 0.5 ---"->ErrorLine();
 			index := line->Find(':');
 			if(index > 0) {
 				index += 2;
@@ -188,9 +196,10 @@ bundle LSP {
 				# TODO: check length (buffer overflow)
 				
 				if(@socket = Nil) {
+"--- 0.6 ---"->ErrorLine();
 					buffer := Char->New[length];
 					Standard->ReadBuffer(0, buffer->Size(), buffer);
-					
+"--- 0.7 ---"->ErrorLine();					
 					text := String->New(buffer);
 					if(@is_debug) {
 						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
@@ -234,6 +243,8 @@ bundle LSP {
 		}
 
 		method : ReadRpcRequest() ~ RpcRequest {
+"--- 0.1 ---"->ErrorLine();
+
 			text := ReadString();
 			if(<>text->IsEmpty()) {
 				json :=JsonParser->New(text);
