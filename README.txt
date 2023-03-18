@@ -1,27 +1,26 @@
-v2023.1.0
+2023.3.1
 ===
 
 What's new?
-* Updated API docs for Objeck v2023.1.0
+* Improved compatibility with non-VSCode IDEs
+* STDIO support
 
 Install
 ===
-Basic LSP support for Objeck in VSCode and Sublime.
+Support and tested with Sublime and VSCode
 
 Visual Studio Code
-1. Download and install Objeck >= 6.0.0 (https://github.com/objeck/objeck-lang)
-2. Download and install VSC (https://github.com/objeck/objeck-lang-server)
-3. Download the objeck-lsp extension and unzip
-4. Copy all files in <objeck_install_dir>/doc/syntax/vscode to <user_home>/.vscode/extensions/objeck-syntax
-5. Launch vscode
-6. Click on the extension button (bottom left hand side); drag and drop objeck-lsp-xxx.vsix to "installed"
-7. Goto the objeck-lsp directory and run "obr objeck_lsp.obe objk_apis.json 6013 debug" (remove "debug" once working)
-8. Open a *.obs file
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Follow the "how-to" to install VSC syntax highlighting (https://github.com/objeck/objeck-lang/blob/master/docs/syntax/howto.html)
+3. Download the unzip the VSC LSP plugin-in (https://github.com/objeck/objeck-lang-server)
+4. In VSC click the Extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
+5. Restart VSC
 
 Sublime
-1. Install syntax highlighting (https://github.com/objeck/objeck-lang/tree/master/docs/syntax/sublime)
-2. Install the Sublime LSP support
-3. Open Preferences > Package Settings > LSP > Settings and add the "objeck" client configuration to the "clients":
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Follow the "how-to" to install VSC syntax highlighting (https://github.com/objeck/objeck-lang/blob/master/docs/syntax/howto.html)
+3. Configure Sublime LSP support
+4. Open Preferences > Package Settings > LSP > Settings and add the "objeck" client configuration to the "clients":
 {
 	"clients": {
 		"objeck": {
@@ -30,18 +29,17 @@ Sublime
 				"<objeck_path>/bin/obr.exe",
 				"<objeck_server_path>/objeck_lsp.obe",
 				"<objeck_server_path>/objk_apis.json",
-				"6013",
-				"debug"
+				"stdio"
 			],
 			"env": {
-				"OBJECK_LIB_PATH": "<objeck_path>/lib"
+				"OBJECK_LIB_PATH": "<objeck_path>/lib",
+				"OBJECK_STDIO": "binary"
 			},
-			"selector": "source.objeck-obs",
-			"tcp_port": 6013
+			"selector": "source.objeck-obs"
 		}
 	}
 }
-4. Open Tools > LSP > Enable Language and select objeck
+4. Open Tools > LSP > "Enable Language Server Globally" and select "objeck"
 
 Projects
 ===
