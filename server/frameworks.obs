@@ -495,8 +495,7 @@ bundle LSP {
 					offset := "file://"->Size();
 					filename := @uri->SubString(offset, @uri->Size() - offset);
 				};
-				
-"--- filename='{$filename} ---"->ErrorLine();				
+								
 				text := System.IO.Filesystem.FileReader->ReadFile(filename);
 				if(<>text->IsEmpty()) {
 					@text := text;
