@@ -483,6 +483,17 @@ bundle LSP {
 			@is_debug := is_debug;
 		}
 
+		method : public : Reload() ~ Nil {
+			if(@uri->StartsWith("file:///")) {
+				offset := "file:///"->Size();
+				filename := @uri->SubString(offset, @uri->Size() - offset);
+				text := System.IO.Filesystem.FileReader->ReadFile(filename);
+				if(<>text->IsEmpty()) {
+					@text := text;
+				};
+			};
+		}
+		
 		method : public : GetDiagnostics() ~ JsonElement {
 			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
 			leaving {

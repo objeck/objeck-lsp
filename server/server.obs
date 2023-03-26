@@ -436,8 +436,9 @@ bundle LSP {
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {
-			document := @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());
+			document := @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());			
 			if(document <> Nil) {
+				document->Reload();
 				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnostics());
 			};
 		}
