@@ -484,9 +484,19 @@ bundle LSP {
 		}
 
 		method : public : Reload() ~ Nil {
-			if(@uri->StartsWith("file:///")) {
-				offset := "file:///"->Size();
-				filename := @uri->SubString(offset, @uri->Size() - offset);
+			if(@uri->StartsWith("file://")) {
+				filename : String;
+				if(System.IO.Filesystem.Directory->GetSlash() = '\\') {
+					offset := "file:///"->Size();
+					filename := @uri->SubString(offset, @uri->Size() - offset);
+					filename := filename->ReplaceAll('/', '\\');
+				}	
+				else {
+					offset := "file://"->Size();
+					filename := @uri->SubString(offset, @uri->Size() - offset);
+				};
+				
+"--- filename='{$filename} ---"->ErrorLine();				
 				text := System.IO.Filesystem.FileReader->ReadFile(filename);
 				if(<>text->IsEmpty()) {
 					@text := text;
