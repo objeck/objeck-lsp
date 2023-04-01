@@ -796,6 +796,14 @@ bundle LSP {
 			return <>(var_str->IsEmpty() & mthd_str->IsEmpty());
 		}
 
+		method : public : UpdateAll(text : String) ~ Nil {
+			if(@is_debug) {
+				System.IO.Filesystem.Logger->Instance()->Info("### UpdatAll: text='{$text}' ###");
+			};
+
+			@text := GetText(text);
+		}
+
 		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
 			if(@is_debug) {

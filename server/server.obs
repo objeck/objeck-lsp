@@ -432,7 +432,9 @@ bundle LSP {
 				System.IO.Filesystem.Logger->Instance()->Info("NotifyDidOpen: uri='{$uri}', text=\"{$text}\"");
 			};
 			
-			@workspace->AddDocument(uri, Document->New(uri, text, @workspace, IsDebug()));
+			document := Document->New(uri, text, @workspace, IsDebug());
+			@workspace->AddDocument(uri, document);
+			document->GetDiagnostics();
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {
@@ -486,18 +488,26 @@ bundle LSP {
 			if(document <> Nil & changes <> Nil) {
 				each(i : changes) {
 					change := changes->Get(i);
-
-					range_length := change->Get("rangeLength")->GetValue();
-					text := change->Get("text")->GetValue();
-
-					start_line := change->FindElements("range/start/line")->GetValue();
-					start_char := change->FindElements("range/start/character")->GetValue();
-
-					end_line := change->FindElements("range/end/line")->GetValue();
-					end_char := change->FindElements("range/end/character")->GetValue();
 					
-					if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
-						document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
+					if(change->Has("rangeLength")) {
+						range_length := change->Get("rangeLength")->GetValue();
+						text := change->Get("text")->GetValue();
+
+						start_line := change->FindElements("range/start/line")->GetValue();
+						start_char := change->FindElements("range/start/character")->GetValue();
+
+						end_line := change->FindElements("range/end/line")->GetValue();
+						end_char := change->FindElements("range/end/character")->GetValue();
+						
+						if(range_length <> Nil & text <> Nil & start_line <> Nil & start_char <> Nil  & end_line <> Nil & end_char <> Nil) {
+							document->Update(range_length->ToInt(), text, start_line->ToInt(), start_char->ToInt(),	end_line->ToInt(), end_char->ToInt());
+						};
+					}
+					else {
+						text := change->Get("text")->GetValue();
+						if(text <> Nil) {
+							document->UpdateAll(text);
+						};
 					};
 				};
 
