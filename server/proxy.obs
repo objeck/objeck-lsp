@@ -680,7 +680,7 @@ bundle LSP {
 					};
 				};
 			};
-			
+
 			return array;
 		}
 
@@ -693,12 +693,10 @@ bundle LSP {
 			end_line := symbol->GetEndLine();			
 			end_index := symbol->GetEndPosition();
 
-			name := symbol->GetName()->ToLower();
+			name := symbol->GetName();
 			desc := symbol->GetDescription();
 
-			query := query->ToLower();
-
-			if(query->Equals(name) & (desc = Nil | desc->Equals(uri))) {
+			if(query->EqualsIgnoreCase(name) & (desc = Nil | desc->Equals(uri))) {
 				obj := builder->PushObject();
 				obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
 				obj->Insert("name", name);
@@ -805,12 +803,12 @@ bundle LSP {
 						builder->Pop();
 
 				array->Add(builder->PopAll());
-
-				children := symbol->GetResults();
-				if(children <> Nil) {
-					each(i : children) {
-						GetSymbols(children[i], uri, array);
-					};
+			};
+			
+			children := symbol->GetResults();
+			if(children <> Nil) {
+				each(i : children) {
+					GetSymbols(children[i], uri, array);
 				};
 			};
 		}
