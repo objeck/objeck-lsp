@@ -21,7 +21,7 @@ bundle LSP {
 				@analysis := Analyzer->ParseText(workspace->GetTexts(uri, use_alt));
 			};
 		}
-
+		
 		function : Init(doc_path : String) ~ Nil {
 			@doc_path := doc_path;
 			@doc_json_cache := Cache->New(Cache->Type->LRU, 16)<String, JsonElement>;
@@ -658,6 +658,86 @@ bundle LSP {
 			};
 			
 			return Nil;
+		}
+
+		method : public : GetSymbol(query : String, uris : Vector<String>, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+			each(uri := uris) {
+				symbol := @analysis->GetSymbols(uri, sys_path);
+				if(symbol <> Nil) {
+					children := symbol->GetResults();
+
+					children := symbol->GetResults();
+					if(children <> Nil) {
+						each(child := children) {
+							GetSymbol(query, child, uri, array);
+						};
+					};
+				};
+			};
+			
+			return array;
+		}
+
+		method : GetSymbol(query : String, symbol : Result, uri : String, array : JsonElement) ~ Nil {
+			builder := JsonBuilder->New();
+			
+			start_line := symbol->GetStartLine();
+			start_index := symbol->GetStartPosition();	
+
+			end_line := symbol->GetEndLine();			
+			end_index := symbol->GetEndPosition();
+
+			name := symbol->GetName()->ToLower();
+			desc := symbol->GetDescription();
+
+			query := query->ToLower();
+
+			if(query->Equals(name) & (desc = Nil | desc->Equals(uri))) {
+				obj := builder->PushObject();
+				obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
+				obj->Insert("name", name);
+
+					builder->PushObject("location");
+
+						builder->PushObject("range");
+							obj := builder->PushObject("start");
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
+							builder->Pop();
+
+							obj := builder->PushObject("end");
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
+							builder->Pop();
+						builder->Pop();
+
+						builder->PushObject("selectionRange");
+							obj := builder->PushObject("start");
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
+							builder->Pop();
+
+							obj := builder->PushObject("end");
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
+							builder->Pop();
+						builder->Pop();
+
+				array->Add(builder->PopAll());
+			};
+
+			children := symbol->GetResults();
+			if(children <> Nil) {
+				each(i : children) {
+					GetSymbol(query, children[i], uri, array);
+				};
+			};
 		}
 
 		method : public : GetSymbols(uri : String, sys_path : String) ~ JsonElement {

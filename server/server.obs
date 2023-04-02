@@ -385,6 +385,12 @@ bundle LSP {
 			WriteRpcResponse(id, response);
 		}
 
+		method : CallbackWorkspaceSymbol(id : Int, params : JsonElement) ~ Nil {
+			query := params->FindElements("query")->GetValue();
+			response := @workspace->GetSymbol(query);
+			WriteRpcResponse(id, response);
+		}
+
 		method : CallbackResolve(id : Int, params : JsonElement) ~ Nil {
 			# write response
 	        WriteRpcResponse(id, params);

@@ -65,6 +65,7 @@ bundle LSP {
 		method : virtual : CallbackResolve(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackRename(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackWorkspaceSymbol(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackReferences(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDeclaration(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackDefinition(id : Int, params : JsonElement) ~ Nil;
@@ -139,6 +140,9 @@ bundle LSP {
 				}
 				else if(method_id->Equals("textDocument/documentSymbol")) {
 					CallbackDocumentSymbol(id, request->GetParams());
+				}
+				else if(method_id->Equals("workspace/symbol")) {
+					CallbackWorkspaceSymbol(id, request->GetParams());
 				}
 				else if(method_id->Equals("textDocument/references")) {
 					CallbackReferences(id, request->GetParams());
@@ -358,7 +362,7 @@ bundle LSP {
 				file_count := @file_strs->Size();
 				if(file_count > 0) {
 					@texts := String->New[file_count, 2];
-					
+
 					each(i : file_count) {
 						local_file_path := String->New(@local_path);
 						local_file_path += '/';
@@ -463,6 +467,25 @@ bundle LSP {
 			if(@documents->Remove(uri)) {
 				document->Release();
 			};
+		}
+
+		method : public : GetSymbol(query : String) ~ JsonElement {
+			uri : String;
+			uris := @documents->GetKeys()<String>;
+			if(uris->Size() = 1) {
+				uri := uris->Get(0);
+			};
+
+			proxy := AstProxy->New(@self, uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			if(proxy->Build()) {
+				return proxy->GetSymbol(query, uris, GetLibs());
+			};
+
+			return Nil;
 		}
 	}
 
