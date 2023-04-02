@@ -57,6 +57,7 @@ The server is functional but there is still work to do.
 1. Tested editors
     1. Visual Studio Code
     2. Sublime
+    3. Kate
 1. Platform support
     1. Windows (AMD64)
     2. Linux (AMD64 and ARM64)
