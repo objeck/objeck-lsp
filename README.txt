@@ -3,7 +3,7 @@
 
 What's new?
 * Support for 'workspace/symbol' search
-* Tested with Kate and Textadpt
+* Tested with Kate, Textadpt and ecode
 
 Install
 ===
