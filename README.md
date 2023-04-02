@@ -26,6 +26,7 @@ Reviving this effort to provide the following
 * Code completion `textDocument/completion`
 * Code resolution `completionItem/resolve`
 * Code symbol `textDocument/documentSymbol`
+* Find symbol in workspace `workspace/symbol`
 * Method/Function signature help `textDocument/signatureHelp`
 * Goto code references `textDocument/references`
 * Goto code definitions `textDocument/definition`
