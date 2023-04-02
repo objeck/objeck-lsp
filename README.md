@@ -18,15 +18,15 @@ Reviving this effort to provide the following
 * File Close `textDocument/didClose`
 * Workspaces
   * JSON configured workspaces to support multi-file projects
-  * Watched File Changed `workspace/didChangeWatchedFiles`
-  * Workspace Changed `workspace/didChangeWorkspaceFolders`
+  * Find symbol in workspace `workspace/symbol`
+  * Watch file changed `workspace/didChangeWatchedFiles`
+  * Watch workspace changed `workspace/didChangeWorkspaceFolders`
 
 #### Callbacks
 * Initialize `initialize`
 * Code completion `textDocument/completion`
 * Code resolution `completionItem/resolve`
 * Code symbol `textDocument/documentSymbol`
-* Find symbol in workspace `workspace/symbol`
 * Method/Function signature help `textDocument/signatureHelp`
 * Goto code references `textDocument/references`
 * Goto code definitions `textDocument/definition`
