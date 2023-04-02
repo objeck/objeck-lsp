@@ -16,11 +16,6 @@ Reviving this effort to provide the following
 * File Changed `textDocument/didChange`
 * File Save `textDocument/didSave`
 * File Close `textDocument/didClose`
-* Workspaces
-  * JSON configured workspaces to support multi-file projects
-  * Find symbol in workspace `workspace/symbol`
-  * Watch file changed `workspace/didChangeWatchedFiles`
-  * Watch workspace changed `workspace/didChangeWorkspaceFolders`
 
 #### Callbacks
 * Initialize `initialize`
@@ -35,6 +30,12 @@ Reviving this effort to provide the following
 * Format document `textDocument/formatting`
 * Format selection `textDocument/rangeFormatting`
 * Editor shutdown `shutdown`
+
+#### Workspaces
+  * JSON configured workspaces to support multi-file projects
+  * Find symbol in workspace `workspace/symbol`
+  * Watch file changed `workspace/didChangeWatchedFiles`
+  * Watch workspace changed `workspace/didChangeWorkspaceFolders`
 
 <figure>
 <figcaption>Fig.1 - Error checking</figcaption>
