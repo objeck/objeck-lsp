@@ -65,7 +65,7 @@ Create a new settings file with the content:
 Note: Kate doesn't support define environment variables like Sublime so the environment variables OBJECK_LIB_PATH and OBJECK_STDIO must be set on Windows.
 
 ===
-Projects
+Workspaces for VS Code
 ===
 1. To set up projects with multiple files, create a "build.json" file in the directory of the files you want to be scanned.
 2. The structure of the "build.json" file is as follows:
