@@ -827,12 +827,22 @@ bundle LSP {
 			@text := GetText(text);
 		}
 
-		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
+		method : public : Update(text : String, start_line : Int, start_char: Int, end_line : Int, end_char : Int) ~ Nil {
 			start := GetDocumentIndex(start_line, start_char);
+			end :=  GetDocumentIndex(end_line, end_char);
+			Update(start, end - start, text);
+		}
+
+		method : public : Update(range_length : Int, text : String, start_line : Int, start_char: Int) ~ Nil {
+			start := GetDocumentIndex(start_line, start_char);
+			Update(start, range_length, text);
+		}
+
+		method : Update(start : Int, range_length : Int, text : String) ~ Nil {
 			if(@is_debug) {
-				System.IO.Filesystem.Logger->Instance()->Info("### Update: start={$start}, range_length={$range_length}, text='{$text}'; start_line={$start_line}, start_char={$start_char}; end_line={$end_line}, end_char={$end_char} ###");
+				System.IO.Filesystem.Logger->Instance()->Info("### Update: start={$start}, range_length={$range_length}, text='{$text}'; ###");
 			};
-			
+
 			if(start > -1) {
 				if(range_length > 0) {
 					@text->Delete(start, range_length);
