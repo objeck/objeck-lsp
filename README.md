@@ -87,8 +87,4 @@ The server is functional but there is still work to do.
     2. Qualfied an unqualfied class
     
 ### Outstanding
-1. Auto include libraries based upon 'use' statements
-     1. In Beta for v6.9.0
-3. Linting
-     1.Dead code
-4. Testing with Emacs
+1. Testing with Emacs
