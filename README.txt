@@ -1,9 +1,9 @@
-2023.3.1
+2023.4.0
 ===
 
 What's new?
-* Improved compatibility with non-VSCode IDEs
-* STDIO support
+* Support for 'workspace/symbol' search
+* Tested with Kate and Textadpt
 
 Install
 ===
