@@ -3,9 +3,11 @@ LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated
 
 ## Upcoming Updates
 Reviving this effort to provide the following
+1. Clean up configuration options
+1. Project build support for non-VSCode clients 
 1. ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
-2. ~~STDIO support for Sublime and other text editors~~
-3. Named pipe support for VSCode
+1. ~~STDIO support for Sublime and other text editors~~
+1. Named pipe support for VSCode
 
 ![alt text](images/design.svg "Objeck LSP")
 
