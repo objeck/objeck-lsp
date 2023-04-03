@@ -1,7 +1,7 @@
 # Objeck LSP
 LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes a TCP socket interface. The backend handles client requests, formats responses and maintains the state of in-memory documents.
 
-## Upcoming Updates
+## Work in the Queue
 Reviving this effort to provide the following
 1. Clean up configuration options
 1. Project build support for non-VSCode clients 
