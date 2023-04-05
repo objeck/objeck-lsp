@@ -64,8 +64,41 @@ Create a new settings file with the content:
 }
 Note: Kate doesn't support define environment variables like Sublime so the environment variables OBJECK_LIB_PATH and OBJECK_STDIO must be set on Windows.
 
-Kate
+ecode
 ---
+1. Install the LSP plugin
+2. Edit the "%userprofile%\AppData\Roaming\ecode\plugins\lspclient.json" file and add the block under "servers" below
+
+{
+  "config": {
+    "hover_delay": "1s",
+    "semantic_highlighting": false,
+    "server_close_after_idle_time": "1m"
+  },
+  "keybindings": {
+    "lsp-go-to-declaration": "",
+    "lsp-go-to-definition": "f2",
+    "lsp-go-to-implementation": "",
+    "lsp-go-to-type-definition": "",
+    "lsp-memory-usage": "",
+    "lsp-rename-symbol-under-cursor": "ctrl+shift+r",
+    "lsp-switch-header-source": "",
+    "lsp-symbol-code-action": "alt+return",
+    "lsp-symbol-info": "f1",
+    "lsp-symbol-references": ""
+  },
+  "servers": [
+    {
+      "command": "obr <lsp_server_path>/objeck_lsp.obe <lsp_server_path>//objk_apis.json stdio debug",
+      "file_patterns": [
+        "%.obs"
+      ],
+      "language": "objeck",
+      "name": "objeck",
+      "url": "https://objeck.org/"
+    }
+  ]
+}
 
 [Workspaces]
 ===
