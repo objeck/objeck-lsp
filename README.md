@@ -91,4 +91,4 @@ The server is functional but there is still work to do.
     2. Qualfied an unqualfied class
     
 ### Outstanding
-1. Testing with Emacs
+1. Test with Emacs on Linux
