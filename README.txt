@@ -89,7 +89,7 @@ ecode
   },
   "servers": [
     {
-      "command": "obr <lsp_server_path>/objeck_lsp.obe <lsp_server_path>//objk_apis.json stdio debug",
+      "command": "obr <lsp_server_path>/objeck_lsp.obe <lsp_server_path>//objk_apis.json stdio",
       "file_patterns": [
         "%.obs"
       ],
