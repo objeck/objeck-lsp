@@ -268,8 +268,13 @@ bundle LSP {
 			workspace_folders->Insert("supported", true);
 			workspace_folders->Insert("changeNotifications", true);
 
+			documentSync := capabilities->AddChild("textDocumentSync");
+			documentSyncSave := documentSync->AddChild("save");
+			documentSyncSave->Insert("includeText", true);
+			documentSync->Insert("openClose", true);
+			documentSync->Insert("change", 2);
+			
 			capabilities->Insert("workspace", workspace);
-			capabilities->Insert("textDocumentSync", 2);
 			capabilities->Insert("documentSymbolProvider", true);
 			capabilities->Insert("codeActionProvider", true);
 			capabilities->Insert("referencesProvider", true);
@@ -444,9 +449,22 @@ bundle LSP {
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {
-			document := @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());			
+			uri := params->FindElements("textDocument/uri")->GetValue()
+			document := @workspace->GetDocument(uri);			
 			if(document <> Nil) {
-				document->Reload();
+				text_json := params->Get("text");
+				if(text_json = Nil) {
+					document->Reload();
+				}
+				else {
+					document->Refresh(text_json->GetValue());
+				};
+
+				if(IsDebug()) {
+					from_text := text_json <> Nil;
+					System.IO.Filesystem.Logger->Instance()->Info("NotifyDidOSav: uri='{$uri}', from_text={$from_text}");
+				};
+				
 				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnostics());
 			};
 		}

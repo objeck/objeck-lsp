@@ -506,6 +506,10 @@ bundle LSP {
 			@is_debug := is_debug;
 		}
 
+		method : public : Refresh(text : String) ~ Nil {
+			@text := GetText(text);
+		}
+		
 		method : public : Reload() ~ Nil {
 			if(@uri->StartsWith("file://")) {
 				filename : String;
@@ -520,7 +524,7 @@ bundle LSP {
 				};
 								
 				text := System.IO.Filesystem.FileReader->ReadFile(filename);
-				if(<>text->IsEmpty()) {
+				if(text <> Nil) {
 					@text := text;
 				};
 			};
