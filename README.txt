@@ -2,8 +2,8 @@
 ---
 
 What's new?
-* Support for 'workspace/symbol' search
-* Tested with Kate, Textadpt and ecode
+* Publish implicit 'textDocumentSync' server capabilities
+* Server requests the 'textDocument/didSave' message to include text. If not, content is refreshed from the filesystem
 
 [Installation]
 ===
