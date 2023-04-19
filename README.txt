@@ -34,6 +34,7 @@ Sublime
 	}
 }
 4. Open Tools > LSP > "Enable Language Server Globally" and select "objeck"
+5. Open the directory of the file you want to edit, then open the file. For projects, read below.
 
 VS Code
 --
