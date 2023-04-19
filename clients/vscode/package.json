@@ -3,7 +3,7 @@
 	"description": "Language server for Objeck",
 	"author": "Randy Hollines",
 	"license": "New BSD",
-	"version": "2023.4.1",
+	"version": "2023.4.2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/objeck/objeck-lang-server"
