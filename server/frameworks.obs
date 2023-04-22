@@ -366,11 +366,11 @@ bundle LSP {
 					each(i : file_count) {
 						local_file_path := String->New(@local_path);
 						local_file_path += '/';
-						local_file_path += String->New(@file_strs[i]);
+						local_file_path += @file_strs[i];
 
 						file_uri := String->New(@root);
 						file_uri += '/';
-						file_uri += String->New(@file_strs[i]);
+						file_uri += @file_strs[i];
 
 						text : String;
 						document := @documents->Find(file_uri);
