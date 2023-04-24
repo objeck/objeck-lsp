@@ -879,12 +879,13 @@ bundle LSP {
 				};
 
 				if(char = '\\') {
+					pos += 1;
+					
 					if(next_char = 'n') {
 							cur_line += 1;
 							cur_char := 0;
 					}
 					else if(next_char <> 'r') {
-						pos += 1;
 						cur_char += 1;
 					};
 				}
