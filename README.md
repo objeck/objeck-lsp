@@ -1,5 +1,5 @@
 # Objeck LSP
-LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes STDIO and TCP socket interfaces. The backend handles client requests, formats responses and maintains the state of in-memory documents.
+LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes STDIO and TCP interfaces. The backend handles client requests, formats responses and maintains the state of in-memory documents.
 
 Please refer to the installation [instructions](https://github.com/objeck/objeck-lsp/blob/main/README.txt) (and issues reports) for editor support.
 
