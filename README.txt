@@ -1,9 +1,6 @@
-2023.4.1
+v2023.7.1
 ---
-
-What's new?
-* Publish implicit 'textDocumentSync' server capabilities
-* Server requests the 'textDocument/didSave' message to include text. If not, content is refreshed from the filesystem
+* Fixed issues #8
 
 [Installation]
 ===
