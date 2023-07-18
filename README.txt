@@ -1,6 +1,6 @@
-v2023.7.1
+v2023.7.3
 ---
-* Fixed issues #8
+* Upgraded JavaScript packages
 
 [Installation]
 ===
