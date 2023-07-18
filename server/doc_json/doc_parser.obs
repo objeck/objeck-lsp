@@ -110,9 +110,11 @@ class SnippetParser {
 				label ')':
 				label '~':
 				label '#':
+				label '`':
 				label '\0': {
 					done := true;
-				}				
+				}		
+
 				other: {
 					ident->Append(@cur_char);
 					NextChar();
@@ -459,10 +461,11 @@ class Snippet {
 				label '#':
 				label '<':
 				label '>':
+				label '`':
 				label '\0': {
 					done := true;
 				}
-				
+
 				other: {
 					ident->Append(@cur_char);
 					NextChar();
@@ -494,9 +497,11 @@ class Snippet {
 				}
 				label '~':
 				label '@':
+				label '`':
 				label '\0': {
 					done := true;
-				}				
+				}
+
 				other: {
 					ident->Append(@cur_char);
 					NextChar();
@@ -934,6 +939,28 @@ class ClassSnippet from Snippet {
 			return false;
 		};
 		@desc := ParseDesc();
+
+		# skip code example
+		if(@cur_char = '`' & @nxt_char = '`') {
+			NextChar();	NextChar();
+			if(@cur_char = '`') {
+				NextChar();
+				while(@cur_char <> '\0' & <>(@cur_char = '`' & @nxt_char = '`')) {
+					NextChar();
+				};
+
+				if(@cur_char = '`') {
+					NextChar();	NextChar();	NextChar();
+				}
+				else {
+					return false;
+				};
+			}
+			else {
+				return false;
+			};
+		};
+
 		if(<>MatchCommentEnd()) {
 			return false;
 		};
@@ -1109,7 +1136,7 @@ class FuncSnippet from Snippet {
 		if(<>MatchCommentStart()) {
 			return false;
 		};
-		@desc := ParseDesc();	
+		@desc := ParseDesc();
 
 		# parse tags		
 		are_tags := true;
