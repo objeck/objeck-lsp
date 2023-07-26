@@ -1,6 +1,8 @@
-v2023.7.3
+v2023.7.5
 ---
-* Upgraded JavaScript packages
+* Upgraded JavaScript packages for VSCode
+  - semver to ~>7.5.2
+  - word-wrap to ~>1.2.4
 
 [Installation]
 ===
