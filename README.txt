@@ -1,4 +1,4 @@
-v2023.10.0
+v2023.11.0
 ---
 * Upgraded JavaScript packages for VSCode
   - semver to ~>7.5.2
