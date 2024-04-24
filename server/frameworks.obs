@@ -177,8 +177,8 @@ bundle LSP {
 		method : ReadString() ~ String {
 			line : String;
 			if(@socket = Nil) {
-				line := Standard->ReadLine();
-				Standard->ReadLine();
+				line := Console->ReadLine();
+				Console->ReadLine();
 			}
 			else {
 				line := @socket->ReadLine();
@@ -192,7 +192,7 @@ bundle LSP {
 				
 				if(@socket = Nil) {
 					buffer := Char->New[length];
-					Standard->ReadBuffer(0, buffer->Size(), buffer);
+					Console->ReadBuffer(0, buffer->Size(), buffer);
 					text := String->New(buffer);
 					if(@is_debug) {
 						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
@@ -226,8 +226,8 @@ bundle LSP {
 
 			# write to pipe
 			if(@socket = Nil) {
-				Standard->WriteString(line);
-				Standard->Flush();
+				Console->WriteString(line);
+				Console->Flush();
 			}
 			# write to socket
 			else {

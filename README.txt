@@ -1,3 +1,7 @@
+v2024.4.0
+---
+Latest release
+
 v2023.11.0
 ---
 * Upgraded JavaScript packages for VSCode
