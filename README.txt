@@ -1,4 +1,4 @@
-v2024.5.0
+v2024.6.0
 ---
 Latest release for compatibility, no feature updates
 

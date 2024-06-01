@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as net from 'net';
 
 import { workspace, ExtensionContext } from 'vscode';
@@ -6,8 +5,6 @@ import { workspace, ExtensionContext } from 'vscode';
 import {
 	LanguageClient,
 	LanguageClientOptions,
-	ServerOptions,
-	TransportKind,
 	StreamInfo
 } 
 from 'vscode-languageclient/node';
