@@ -1,16 +1,17 @@
-v2024.7.0
+v2024.8.1
 ---
 Latest release for compatibility, no new features
+
+
+v2024.8.0
+---
+* No new featrues
 
 v2024.7.0
 ---
 * Upgraded JavaScript packages for VSCode
   - braces moved to 3.0.3
 
-v2023.11.0
----
-* Upgraded JavaScript packages for VSCode
-  - semver moved to ~>7.5.2
 
 [Installation]
 ===
