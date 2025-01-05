@@ -1,9 +1,7 @@
 Latest release for compatibility, no new features
 ---
 
-v2024.9.1
-v2024.8.1
-v2024.8.0
+v2025.1.1
 ---
 * No new featrues
 
