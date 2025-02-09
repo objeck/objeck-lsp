@@ -1,7 +1,7 @@
 Latest release for compatibility, no new features
 ---
 
-v2025.1.1
+v2025.1.2
 ---
 * No new featrues
 

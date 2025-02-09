@@ -12,12 +12,12 @@ del /q %TEMP%\objk-*
 
 echo ---
 
-obc -src %OBJECK_ROOT%\core\compiler\lib_src\diags.obs -lib gen_collect -tar lib -dest %OBJECK_ROOT%\core\lib\diags.obl
+obc -src %OBJECK_ROOT%\core\compiler\lib_src\diags.obs -lib gen_collect,net,cipher -tar lib -dest %OBJECK_ROOT%\core\lib\diags.obl
 copy %OBJECK_ROOT%\core\lib\diags.obl %OBJECK_ROOT%\core\release\deploy-x64\lib\diags.obl
 
 echo ---
 
-obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex -dest objeck_lsp.obe
+obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex,cipher -dest objeck_lsp.obe
 
 if "%PORT%" == "" goto end
 	echo ---
