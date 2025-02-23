@@ -89,6 +89,7 @@ class CodeFormatter {
 			in_label := false;
 			in_for := false;
 			in_consts := false;
+			in_new := false;
 
 			@prev_token := Token->New(-1, Token->Type->OTHER, "other");
 
@@ -254,13 +255,20 @@ class CodeFormatter {
 								insert_tabs := true;
 							};
 						};
+
+						in_new := false;
 					}
 
 					label Token->Type->LESS {
 						AppendBuffer('<');
+						@skip_space := true;
 					}
 
 					label Token->Type->GTR {
+						if(in_new) {
+							PopBuffer();
+						};
+
 						AppendBuffer('>');
 					}
 
@@ -402,8 +410,9 @@ class CodeFormatter {
 					}
 
 					label Token->Type->NEW_ID {
-						@skip_space := true;
+						PopBuffer();
 						AppendBuffer("New");
+						@skip_space := in_new := true;
 					}
 
 					label Token->Type->AS_ID {

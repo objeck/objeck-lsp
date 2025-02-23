@@ -1,5 +1,4 @@
-use System.IO.File;
-use Collection;
+use System.IO.Filesystem, Collection;
 
 class Test {
 	function : Main(args : String[]) ~ Nil {
