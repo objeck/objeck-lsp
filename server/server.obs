@@ -386,8 +386,10 @@ bundle LSP {
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
-			response := @workspace->GetDocument(uri)->GetSymbols(uri);
-			WriteRpcResponse(id, response);
+			document := @workspace->GetDocument(uri);			
+			if(document <> Nil) {
+				WriteRpcResponse(id, document->GetSymbols(uri));
+			};
 		}
 
 		method : CallbackWorkspaceSymbol(id : Int, params : JsonElement) ~ Nil {

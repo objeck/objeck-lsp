@@ -533,6 +533,8 @@ bundle LSP {
 							libs_json := JsonElement->New(JsonElement->JsonType->ARRAY);
 							libs_json->Add("gen_collect.obl");
 							libs_json->Add("net.obl");
+							libs_json->Add("json.obl");
+							libs_json->Add("cipher.obl");
 							libs_json->Add("misc.obl");
 							libs_json->Add(lib_file_name);
 

@@ -22,7 +22,7 @@ obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code
 if "%PORT%" == "" goto end
 	echo ---
 	echo Running on port %PORT%...
-REM	obr objeck_lsp.obe objk_apis.json %PORT% debug
-	obr objeck_lsp.obe objk_apis.json stdio debug
+	obr objeck_lsp.obe objk_apis.json %PORT% debug
+REM	obr objeck_lsp.obe objk_apis.json stdio debug
 	goto end
 :end
