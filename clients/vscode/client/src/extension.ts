@@ -1,4 +1,5 @@
 import * as net from 'net';
+import * as path from 'path';
 
 import { workspace, ExtensionContext } from 'vscode';
 
@@ -13,15 +14,14 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
 	let connectionInfo = {
-		port: 6013,
-		host: "localhost"
+		path: "\\\\.\\pipe\\objk-pipe"
     };
  
 	let serverOptions = () => {
-        let socket = net.connect(connectionInfo);
+        let pipe = net.connect(connectionInfo);
         let result: StreamInfo = {
-            writer: socket,
-            reader: socket
+            writer: pipe,
+            reader: pipe
         };
 		
         return Promise.resolve(result);
