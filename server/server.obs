@@ -12,13 +12,24 @@ bundle LSP {
 
 		function : Main(args : String[]) ~ Nil {
 			if(args->Size() = 2) {
-				port := args[1]->Equals("stdio") ? -1 : args[1]->ToInt();
-				if(port < 0) {
+				port : Int;
+
+				if(args[1]->Equals("stdio")) {
+					port := -1;
+				}
+				else if(args[1]->Equals("ipc")) {
+"--- 0 ---"->PrintLine();					
+					port := -2;
+				}
+				else {
+					port := args[1]->ToInt();
+				};
+				
+				if(port = -1) {
 					Runtime->SetProperty("stdio", "binary");
 				};
 
 				AstProxy->Init(args[0]);
-
 				LintServer->New(port, false)->Listen();
 			}
 			else if(args->Size() = 3 & args[2]->Equals("debug")) {
@@ -39,7 +50,6 @@ bundle LSP {
 				};
 				
 				AstProxy->Init(args[0]);
-
 				LintServer->New(port, true)->Listen();
 			};
 		}
@@ -84,17 +94,18 @@ bundle LSP {
 				server := TCPSocketServer->New(@port);
 				if(server->Listen(5)) {
 					while(true) {
-						LintService->New(server->Accept(), @is_debug)->Execute(Nil);
+						LintService->New(Nil, server->Accept(), @is_debug)->Execute(Nil);
 					};
 				};
 			}
 			# use std pipes
 			else if(@port = -1) {
-				LintService->New(Nil, @is_debug)->Run(Nil);
+				LintService->New(Nil, Nil, @is_debug)->Run(Nil);
 			}
 			# use std pipes
 			else if(@port = -2) {
-				LintService->New(Nil, @is_debug)->Run(Nil);
+				pipe := Pipe->New("objk-pipe", Pipe->Mode->CREATE);
+				LintService->New(pipe, Nil, @is_debug)->Run(Nil);
 			};
 		}
 	}
@@ -106,8 +117,8 @@ bundle LSP {
 		@decoded_folder_uri : String;
 		@build_json_file : String;
 
-		New(socket : TCPSocket, is_debug : Bool) {
-			Parent(socket, is_debug);
+		New(pipe : Pipe, socket : TCPSocket, is_debug : Bool) {
+			Parent(pipe, socket, is_debug);
 		}
 
 		#

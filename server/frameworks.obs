@@ -13,12 +13,11 @@ bundle LSP {
 		@pipe : Pipe;
 		@cancel_id : Int;
 
-		New(socket : TCPSocket, is_debug : Bool) {
+		New(pipe : Pipe, socket : TCPSocket, is_debug : Bool) {
 			Parent();
 
-#			@socket := socket;
-			@pipe := Pipe->New("objk-pipe", Pipe->Mode->CREATE);
-"--- 0 ---"->PrintLine();
+			@socket := socket;
+			@pipe := pipe;
 
 			@is_debug := is_debug;
 			@cancel_id := -1;
@@ -90,34 +89,44 @@ bundle LSP {
 					System.IO.Filesystem.Logger->Instance()->Info("NOTIFICATION='{$method_id}'\n");
 				};
 
-				if(method_id->Equals("initialized")) {
-					NotifyInitialized(request->GetParams());
-				}
-				else if(method_id->Equals("$/cancelRequest")) {
-					NotifyCancel(request->GetParams());
-				}
-				else if(method_id->Equals("workspace/didChangeWatchedFiles")) {
-					NotifyDidChangeWatchedFiles(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didOpen")) {
-					NotifyDidOpen(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didChange")) {
-					NotifyDidChange(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didSave")) {
-					NotifyDidSave(request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/didClose")) {
-					NotifyDidClose(request->GetParams());
-				}
-				else if(method_id->Equals("workspace/didChangeWorkspaceFolders")) {
-					NotifyDidChangeWorkspace(request->GetParams());
-				}
-				else {
-					if(@is_debug) {
-						System.IO.Filesystem.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
-					};
+				select(method_id) {
+					label "initialized" {
+						NotifyInitialized(request->GetParams());
+					}
+					
+					label "$/cancelRequest" {
+						NotifyCancel(request->GetParams());
+					}
+					
+					label "workspace/didChangeWatchedFiles" {
+						NotifyDidChangeWatchedFiles(request->GetParams());
+					}
+					
+					label "textDocument/didOpen" {
+						NotifyDidOpen(request->GetParams());
+					}
+					
+					label "textDocument/didChange" {
+						NotifyDidChange(request->GetParams());
+					}
+					
+					label "textDocument/didSave" {
+						NotifyDidSave(request->GetParams());
+					}
+					
+					label "textDocument/didClose" {
+						NotifyDidClose(request->GetParams());
+					}
+					
+					label "workspace/didChangeWorkspaceFolders" {
+						NotifyDidChangeWorkspace(request->GetParams());
+					}
+
+					other {
+						if(@is_debug) {
+							System.IO.Filesystem.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
+						};
+					}
 				};
 			}
 			# callback
@@ -126,55 +135,73 @@ bundle LSP {
 					System.IO.Filesystem.Logger->Instance()->Info("METHOD='{$method_id}', id={$id}");
 				};
 
-				if(method_id->Equals("initialize")) {
-					CallbackInitialize(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/completion")) {
-					CallbackCompletion(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/hover")) {
-					CallbackHover(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/codeAction")) {
-					CallbackCodeAction(id, request->GetParams());
-				}
-				else if(method_id->Equals("completionItem/resolve")) {
-					CallbackResolve(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/rename")) {
-					CallbackRename(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/documentSymbol")) {
-					CallbackDocumentSymbol(id, request->GetParams());
-				}
-				else if(method_id->Equals("workspace/symbol")) {
-					CallbackWorkspaceSymbol(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/references")) {
-					CallbackReferences(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/declaration")) {
-					CallbackDeclaration(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/definition")) {
-					CallbackDefinition(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/signatureHelp")) {
-					CallbackSignatureHelp(id, request->GetParams());
-				}
-				else if(method_id->Equals("shutdown")) {
-					CallbackShutdown(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/formatting")) {
-					CallbackFormatDocument(id, request->GetParams());
-				}
-				else if(method_id->Equals("textDocument/rangeFormatting")) {
-					CallbackFormatRange(id, request->GetParams());
-				}
-				else {
-					if(@is_debug & <>method_id->Equals("<none>")) {
-						System.IO.Filesystem.Logger->Instance()->Error("*** Unknown method='{$method_id}' ***");
-					};
+				select(method_id) {
+					label "initialize" {
+						CallbackInitialize(id, request->GetParams());
+					}
+					
+					label "textDocument/completion" {
+						CallbackCompletion(id, request->GetParams());
+					}
+					
+					label "textDocument/hover" {
+						CallbackHover(id, request->GetParams());
+					}
+					
+					label "textDocument/codeAction" {
+						CallbackCodeAction(id, request->GetParams());
+					}
+					
+					label "completionItem/resolve" {
+						CallbackResolve(id, request->GetParams());
+					}
+					
+					label "textDocument/rename" {
+						CallbackRename(id, request->GetParams());
+					}
+					
+					label "textDocument/documentSymbol" {
+						CallbackDocumentSymbol(id, request->GetParams());
+					}
+					
+					label "workspace/symbol" {
+						CallbackWorkspaceSymbol(id, request->GetParams());
+					}
+					
+					label "textDocument/references" {
+						CallbackReferences(id, request->GetParams());
+					}
+					
+					label "textDocument/declaration" {
+						CallbackDeclaration(id, request->GetParams());
+					}
+					
+					label "textDocument/definition" {
+						CallbackDefinition(id, request->GetParams());
+					}
+					
+					label "textDocument/signatureHelp" {
+						CallbackSignatureHelp(id, request->GetParams());
+					}
+					
+					label "shutdown" {
+						CallbackShutdown(id, request->GetParams());
+					}
+					
+					label "textDocument/formatting" {
+						CallbackFormatDocument(id, request->GetParams());
+					}
+
+					
+					label "textDocument/rangeFormatting" {
+						CallbackFormatRange(id, request->GetParams());
+					}
+
+					other {
+						if(@is_debug & <>method_id->Equals("<none>")) {
+							System.IO.Filesystem.Logger->Instance()->Error("*** Unknown method='{$method_id}' ***");
+						};
+					}
 				};
 			};
 		}
@@ -188,7 +215,6 @@ bundle LSP {
 			}
 			else if(@pipe <> Nil) {
 				line := @pipe->ReadLine();
-				@pipe->ReadLine();
 			}
 			else {
 				line := Console->ReadLine();
@@ -216,8 +242,8 @@ bundle LSP {
 				else if(@pipe <> Nil) {
 					buffer := Byte->New[length];
 					@pipe->ReadBuffer(0, buffer->Size(), buffer);
-
 					text := String->New(buffer->ToUnicode());
+
 					if(@is_debug) {
 						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
 					};
