@@ -4,7 +4,32 @@ Visual Studio Code Objeck LSP client and syntax highlighter.
 
 ## Running client
 
-* Open a file or workspace
+* Open a \*.obs source file or a workspace containing \*.obs files and a build.json files (see below)
+
+## Workspaces
+
+Workspaces allow the LSP to build and scan all files within a project configuration. This feature supports solutions that span multiple files or require specific libraries to be built and inspected correctly.
+
+1. To set up projects with multiple files, create a "build.json" file in the directory of the files you want to be scanned.
+2. The structure of the "build.json" file is as follows:
+```
+{
+  "files": [
+    "file_1.obs",
+    "file_2.obs"
+  ],
+  "libs": [
+    "gen_collect.obl",
+    "regex.obl",
+    "net.obl",
+    "json.obl",
+    "misc.obl"
+  ],
+  "flags": ""
+}
+```
+3. To enable the project file, Close all open files and open the directory that contains the "build.json" file in either VS Code or Sublime
+
 
 ## Features
 

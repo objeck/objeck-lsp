@@ -11,7 +11,8 @@
 	},
 	"publisher": "objeck-lsp",
 	"categories": [
-		"Programming Languages"
+		"Programming Languages",
+		"Formatters"
 	],
 	"keywords": [
 		"multi-root ready"
