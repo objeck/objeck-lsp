@@ -18,7 +18,7 @@ export function activate(context: ExtensionContext) {
     };
  
 	let serverOptions = () => {
-        let pipe = net.connect(connectionInfo);
+	    let pipe = net.connect(connectionInfo);
         let result: StreamInfo = {
             writer: pipe,
             reader: pipe
