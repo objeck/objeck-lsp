@@ -1,13 +1,13 @@
 {
 	"name": "objeck-lsp",
 	"description": "Language server for Objeck",
-	"icon": "images/gear_wheel_256.png",
+	"icon": "images/gear_wheel_128.png",
 	"author": "Randy Hollines",
 	"license": "New BSD",
 	"version": "2025.2.2",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/objeck/objeck-lang-server"
+		"url": "https://github.com/objeck/objeck-lsp"
 	},
 	"publisher": "objeck-lsp",
 	"categories": [
@@ -26,7 +26,7 @@
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "LSP configuration",
 			"properties": {
 				"languageServerExample.maxNumberOfProblems": {
 					"scope": "resource",
