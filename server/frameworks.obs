@@ -1,6 +1,4 @@
-use Collection;
-use System.IO.Net;
-use Data.JSON;
+use Collection, System.IO.Net, System.IO, Data.JSON;
 
 bundle LSP {
 	#~
@@ -12,11 +10,16 @@ bundle LSP {
 		@is_debug : Bool;
 		@workspace : LspWorkspace;
 		@socket : TCPSocket;
+		@pipe : Pipe;
 		@cancel_id : Int;
 
 		New(socket : TCPSocket, is_debug : Bool) {
 			Parent();
-			@socket := socket;
+
+#			@socket := socket;
+			@pipe := Pipe->New("objk-pipe", Pipe->Mode->CREATE);
+"--- 0 ---"->PrintLine();
+
 			@is_debug := is_debug;
 			@cancel_id := -1;
 			@workspace := LspWorkspace->New(@is_debug);
@@ -35,6 +38,9 @@ bundle LSP {
 
 			if(@socket <> Nil) {
 				@socket->Close();
+			}
+			else if(@pipe <> Nil) {
+				@pipe->Close();
 			};
 		}
 
@@ -176,35 +182,53 @@ bundle LSP {
 		# --- utilities ---
 		method : ReadString() ~ String {
 			line : String;
-			if(@socket = Nil) {
-				line := Console->ReadLine();
-				Console->ReadLine();
-			}
-			else {
+			if(@socket <> Nil) {
 				line := @socket->ReadLine();
 				@socket->ReadLine();
+			}
+			else if(@pipe <> Nil) {
+				line := @pipe->ReadLine();
+				@pipe->ReadLine();
+			}
+			else {
+				line := Console->ReadLine();
+				Console->ReadLine();
 			};
+
 			index := line->Find(':');
 			if(index > 0) {
 				index += 2;
 				length := line->SubString(index, line->Size() - index)->ToInt();
-				# TODO: check length (buffer overflow)
 				
-				if(@socket = Nil) {
-					buffer := Char->New[length];
-					Console->ReadBuffer(0, buffer->Size(), buffer);
-					text := String->New(buffer);
+				# read from socket
+				if(@socket <> Nil) {
+					buffer := Byte->New[length];
+					@socket->ReadBuffer(0, buffer->Size(), buffer);
+
+					text := String->New(buffer->ToUnicode());
 					if(@is_debug) {
 						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
 					};
 
 					return text;
 				}
-				else {
+				# read from pipe
+				else if(@pipe <> Nil) {
 					buffer := Byte->New[length];
-					@socket->ReadBuffer(0, buffer->Size(), buffer);
+					@pipe->ReadBuffer(0, buffer->Size(), buffer);
 
 					text := String->New(buffer->ToUnicode());
+					if(@is_debug) {
+						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
+					};
+
+					return text;
+				}
+				# read from stdin
+				else {
+					buffer := Char->New[length];
+					Console->ReadBuffer(0, buffer->Size(), buffer);
+					text := String->New(buffer);
 					if(@is_debug) {
 						System.IO.Filesystem.Logger->Instance()->Info("====\nREAD='{$text}'");
 					};
@@ -224,14 +248,18 @@ bundle LSP {
 				System.IO.Filesystem.Logger->Instance()->Info("WRITE='{$line}'");
 			};
 
+			# write to socket
+			if(@socket <> Nil) {
+				@socket->WriteString(line);
+			}
 			# write to pipe
-			if(@socket = Nil) {
+			else if(@pipe <> Nil) {
+				@pipe->WriteString(line);
+			}
+			# write to stdout
+			else {
 				Console->WriteString(line);
 				Console->Flush();
-			}
-			# write to socket
-			else {
-				@socket->WriteString(line);
 			};
 		}
 
