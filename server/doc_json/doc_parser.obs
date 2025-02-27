@@ -497,8 +497,8 @@ class Snippet {
 					ident->Append(' ');
 				}
 				label '~':
-				label '@':
 				label '`':
+				label '@':
 				label '\0': {
 					done := true;
 				}
@@ -790,6 +790,7 @@ class ClassSnippet from Snippet {
 	@block_name : String;
 	@from_class : String;
 	@desc : String;
+	@code : String;
 	@funcs : Map<String, Vector<FuncSnippet> >;
 	@implemented : Vector<String>;
 	@is_inf : Bool;
@@ -854,6 +855,9 @@ class ClassSnippet from Snippet {
 		return @desc;
 	}
 
+	method : public : GetCode() ~ String {
+		return @code;
+	}
 	method : public : AddEnum(block : String) ~ Nil {
 	}
 
@@ -941,17 +945,21 @@ class ClassSnippet from Snippet {
 		};
 		@desc := ParseDesc();
 
-		# skip code example
 		if(@cur_char = '`' & @nxt_char = '`') {
 			NextChar();	NextChar();
 			if(@cur_char = '`') {
 				NextChar();
+				buffer := "";
 				while(@cur_char <> '\0' & <>(@cur_char = '`' & @nxt_char = '`')) {
+					if(@cur_char <> '\t') {
+						buffer->Append(@cur_char);
+					};
 					NextChar();
 				};
 
 				if(@cur_char = '`') {
 					NextChar();	NextChar();	NextChar();
+					@code := Data.XML.XmlElement->EncodeString(buffer->Trim());
 				}
 				else {
 					return false;
@@ -986,9 +994,10 @@ class ClassSnippet from Snippet {
 				return false;
 			};
 
-			if(MatchIdent("implements")) {
-				ParseInterfaces();
 			};
+		if(@is_generic) {
+			NextChar();
+			ident := ParseIdent(); 
 		};
 
 		if(ident->Equals("implements")) {
@@ -1009,7 +1018,6 @@ class FuncSnippet from Snippet {
 	@func_types : Vector<SnippetType>;
 	@is_func : Bool;
 	@is_private : Bool;
-	@is_public : Bool;
 	@is_native : Bool;
 	@is_virtual : Bool;
 	@is_new : Bool;
@@ -1024,6 +1032,7 @@ class FuncSnippet from Snippet {
 		@desc := "";
 		@tags := Map->New()<String, SnippetTag>;
 		@func_types := Vector->New()<SnippetType>;
+		@is_private := true;
 		@parsed := Parse();
 	}
 	
@@ -1061,11 +1070,13 @@ class FuncSnippet from Snippet {
 					@signature->Append("method : ");
 				};
 				
+				if(<>@is_func) {
 				if(@is_private) {
 					@signature->Append("private : ");
 				}
 				else {
 					@signature->Append("public : ");
+					};
 				};
 		
 				if(@is_native) {
@@ -1214,10 +1225,10 @@ class FuncSnippet from Snippet {
 				meta := ParseIdent();
 				if(meta->Size() > 0) {
 					if(meta->Equals("public")) {
-						@is_public := true;
+						@is_private := false;
 					}
 					else if(meta->Equals("private")) {
-						@is_public := false;
+						@is_private := true;
 					}
 					else if(meta->Equals("native")) {
 						@is_native := true;
@@ -1288,6 +1299,7 @@ class FuncSnippet from Snippet {
 	method : ParseName() ~ String {
 		start := ParseIdent();
 
+		tick := 1;
 		if(MatchChar('<')) {
 			start += "&lt;";
 			mid := ParseIdent();
@@ -1299,6 +1311,14 @@ class FuncSnippet from Snippet {
 					if(mid->Size() > 0) {
 						start += mid;
 					};
+				}
+				else if(MatchChar('<')) {
+					start += "&lt;";
+ 					mid := ParseIdent();
+					if(mid->Size() > 0) {
+						start += mid;
+						tick += 1;
+					};
 				};
 				start += ',';
 				mid := ParseIdent();
@@ -1306,7 +1326,9 @@ class FuncSnippet from Snippet {
 			start->Pop();
 			NextChar();
 
+			each(i : tick) {
 			start += "&gt;";
+			};
 		}
 		else if(MatchChar('>')) {
 			start += "&gt;";
@@ -1314,6 +1336,12 @@ class FuncSnippet from Snippet {
 		}
 		else if(MatchChar(':')) {
 			while(@cur_char <> ',' & @cur_char <> ')') {
+			 	NextChar();
+			 };
+		};
+		# TODO: hack, at some point the code doc system should be rewritten!
+		if(MatchChar('>')) {
+			while(@cur_char <> ')' & @cur_char <> '{') {
 			 	NextChar();
 			 };
 		};
