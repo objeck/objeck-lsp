@@ -3,6 +3,12 @@ SET ZIP_BIN="\Program Files\7-Zip"
 rmdir /s /q objeck-lsp
 mkdir objeck-lsp
 
+del /s /q clients\vscode\server
+mkdir clients\vscode\server
+copy /y server\objeck_lsp.obe clients\vscode\server
+copy /y server\objk_apis.json clients\vscode\server
+copy /y server\lsp_server.cmd clients\vscode\server
+
 cd clients\vscode
 call vsce package
 move /y *.vsix ..\..\objeck-lsp
