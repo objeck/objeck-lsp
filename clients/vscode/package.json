@@ -29,22 +29,15 @@
 			"type": "object",
 			"title": "LSP configuration",
 			"properties": {
-				"languageServerExample.maxNumberOfProblems": {
-					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				},
-				"languageServerExample.trace.server": {
-					"scope": "window",
+				"objk.win.install.dir": {
 					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
+					"default": "/program files/objeck",
+					"description": "Objeck Windows install directory"
+				},
+				"objk.posix.install.dir": {
+					"type": "string",
+					"default": "/opt/objeck",
+					"description": "Objeck Posix install directory"
 				}
 			}
 		},

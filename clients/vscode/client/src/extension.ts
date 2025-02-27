@@ -14,6 +14,9 @@ let client: LanguageClient;
 let serverProcess: child_process.ChildProcess;
 
 export function activate(context: ExtensionContext) {
+    // const config = workspace.getConfiguration();
+    // const pipeName = config.get('objeck.pipe.name');
+
     // Start the external pipe server
     startExternalServer(context);
 
