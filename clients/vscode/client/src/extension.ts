@@ -14,11 +14,17 @@ let client: LanguageClient;
 let serverProcess: child_process.ChildProcess;
 
 export function activate(context: ExtensionContext) {
-    // const config = workspace.getConfiguration();
-    // const pipeName = config.get('objeck.pipe.name');
+    let installDir;
+    const config = workspace.getConfiguration();    
+    if(process.platform === 'win32') {
+        installDir = config.get('objk.win.install.dir');
+    }
+    else {
+        installDir = config.get('objk.posix.install.dir');
+    }
 
     // Start the external pipe server
-    startExternalServer(context);
+    startExternalServer(context, installDir);
 
     const connectionInfo = {
         path: "\\\\.\\pipe\\objk-pipe"
@@ -49,9 +55,15 @@ export function activate(context: ExtensionContext) {
     client.start();
 }
 
-function startExternalServer(context: ExtensionContext) {
-    const serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
-    serverProcess = child_process.spawn(serverScript, [], { shell: true });
+function startExternalServer(context: ExtensionContext, installDir) {
+    let serverScript;
+    if(process.platform === 'win32') {
+        serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
+    }
+    else {
+        serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
+    }
+    serverProcess = child_process.spawn(serverScript, [`"${installDir}"`], { shell: true });
     
     serverProcess.stdout.on('data', (data) => {
         console.log(`Server stdout: ${data}`);
