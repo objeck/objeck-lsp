@@ -5,9 +5,9 @@ Please refer to the installation [instructions](https://github.com/objeck/objeck
 
 ## Work in the Queue
 Reviving this effort to provide the following
-1. ~~Improved VSCode support~~ (in 2025.2.2)
-1. ~~Named pipe support for VSCode~~ (in 2025.2.2)
-1. ~~Increased stability~~ (in 2025.2.2)
+1. Improved VSCode support (done)
+1. Named pipe support for VSCode (done)
+1. Increased stability (done)
 1. ~~Project/workspace build support for non-VSCode clients~~
 1. ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
 1. ~~STDIO support for Sublime and other text editors~~
