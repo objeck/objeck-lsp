@@ -31,7 +31,7 @@
 			"properties": {
 				"objk.win.install.dir": {
 					"type": "string",
-					"default": "\\Users\\objec\\Documents\\Code\\objeck-lang\\core\\release\\deploy-x64",
+					"default": "%HOMEPATH%\\Documents\\Code\\objeck-lang\\core\\release\\deploy-x64",
 					"description": "Objeck Windows install directory"
 				},
 				"objk.posix.install.dir": {
