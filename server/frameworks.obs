@@ -463,7 +463,7 @@ bundle LSP {
 			}
 			# non-workspace
 			else {
-				@libs_str := "gen_collect.obl";
+				@libs_str := "gen_collect.obl,gen_collect.obl,net.obl,json.obl,cipher.obl,misc.obl";
 
 				key_values := @documents->GetKeyValues()<Pair<String, Document>>;
 				@texts := String->New[1, 2];

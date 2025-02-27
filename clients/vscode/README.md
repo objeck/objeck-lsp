@@ -4,6 +4,7 @@ Visual Studio Code Objeck LSP client and syntax highlighter.
 
 ## Running client
 
+* Edit the 'lsp_server.cmd' file in the '%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-xxx' directory so it points to the Objeck install directory
 * Open a \*.obs source file or a workspace containing \*.obs files and a build.json files (see below)
 
 ## Workspaces

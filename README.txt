@@ -5,12 +5,6 @@ v2025.2.2
 ---
 * Included support for named pipes in VS Code.
 
-v2024.7.0
----
-* Upgraded JavaScript packages for VSCode
-  - braces moved to 3.0.3
-
-
 [Installation]
 ===
 Support and tested with Sublime, VSCode, Kate and ecode
@@ -45,10 +39,10 @@ Sublime
 VS Code
 --
 1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
-2. Download the unzip the VSC LSP plugin-in (https://github.com/objeck/objeck-lang-server)
-3. Start the LSP server 'obr objeck_lsp.obe objk_apis.json pipe'
-4. In vscode click the extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
-5. Restart VSC
+2. Download the unzip the VS Code LSP plugin-in (https://github.com/objeck/objeck-lsp)
+3. In VS Code click the extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
+4. Edit the 'lsp_server.cmd' file in the '%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-xxx' directory so it points to the Objeck install directory
+5. Restart VS Code
 
 Kate
 ---
