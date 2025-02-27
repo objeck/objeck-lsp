@@ -15,13 +15,13 @@ let serverProcess: child_process.ChildProcess;
 
 export function activate(context: ExtensionContext) {
     // Start the external pipe server
-    startExternalServer();
+    startExternalServer(context);
 
-    let connectionInfo = {
+    const connectionInfo = {
         path: "\\\\.\\pipe\\objk-pipe"
     };
 
-    let serverOptions = () => {
+    const serverOptions = () => {
         return new Promise<StreamInfo>((resolve, reject) => {
             // Wait for the server to be ready
             setTimeout(() => {
@@ -35,7 +35,7 @@ export function activate(context: ExtensionContext) {
         });
     };
 
-    let clientOptions: LanguageClientOptions = {
+    const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', pattern: "**/*.{obs}" }],
         synchronize: {
             fileEvents: workspace.createFileSystemWatcher('**/*.clientrc')
@@ -46,13 +46,10 @@ export function activate(context: ExtensionContext) {
     client.start();
 }
 
-function startExternalServer() {
-    // Replace 'path/to/your/server' with the actual path to your server executable
-    serverProcess = child_process.spawn(
-        'C:/Users/objec/.vscode/extensions/objeck-lsp.objeck-lsp-2025.2.2/server/lsp_server.cmd', 
-        [], 
-        { shell: true } );
-
+function startExternalServer(context: ExtensionContext) {
+    const serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
+    serverProcess = child_process.spawn(serverScript, [], { shell: true });
+    
     serverProcess.stdout.on('data', (data) => {
         console.log(`Server stdout: ${data}`);
     });
@@ -67,13 +64,13 @@ function startExternalServer() {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-    if (serverProcess) {
+    if(serverProcess) {
         serverProcess.kill();
     }
 
-    if (!client) {
+    if(!client) {
         return undefined;
     }
-
+    
     return client.stop();
 }
