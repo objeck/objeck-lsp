@@ -1,10 +1,10 @@
 # Objeck LSP
 
-Visual Studio Code Objeck LSP client and syntax highlighter.
+Visual Studio Code Objeck LSP client/server and syntax highlighter.
 
 ## Running client
 
-* Edit the 'lsp_server.cmd' file in the '%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-xxx' directory so it points to the Objeck install directory
+* Edit the 'package.json' file in the '%HOMEPATH%/.vscode/extensions/objeck-lsp.objeck-lsp-xxx/package.json' directory so it points to the Objeck install directory. Depending upon your platform edit the 'objk.win.install.dir' for Windows or 'objk.posix.install.dir' for macOS and Linux.
 * Open a \*.obs source file or a workspace containing \*.obs files and a build.json files (see below)
 
 ## Workspaces
