@@ -26,10 +26,18 @@ export function activate(context: ExtensionContext) {
     // Start the external pipe server
     startExternalServer(context, installDir);
 
-    const connectionInfo = {
-        path: "\\\\.\\pipe\\objk-pipe"
-    };
-
+    let connectionInfo;
+    if(process.platform === 'win32') {
+        connectionInfo = {
+            path: "\\\\.\\pipe\\objk-pipe"
+        };
+    }
+    else {
+        connectionInfo = {
+            path: "/tmp/objk-pipe"
+        };
+    }
+    
     const serverOptions = () => {
         return new Promise<StreamInfo>((resolve, reject) => {
             // Wait for the server to be ready

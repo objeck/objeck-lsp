@@ -36,7 +36,7 @@
 				},
 				"objk.posix.install.dir": {
 					"type": "string",
-					"default": "/opt/objeck",
+					"default": "/Users/randyhollines/Documents/Code/objeck-lang/core/release/deploy",
 					"description": "Objeck Posix install directory"
 				}
 			}
