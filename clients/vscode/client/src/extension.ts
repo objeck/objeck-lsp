@@ -14,17 +14,17 @@ let client: LanguageClient;
 let serverProcess: child_process.ChildProcess;
 
 export function activate(context: ExtensionContext) {
-    let installDir;
+    let objkInstallDir;
     const config = workspace.getConfiguration();    
     if(process.platform === 'win32') {
-        installDir = config.get('objk.win.install.dir');
+        objkInstallDir = config.get('objk.win.install.dir');
     }
     else {
-        installDir = config.get('objk.posix.install.dir');
+        objkInstallDir = config.get('objk.posix.install.dir');
     }
 
     // Start the external pipe server
-    startExternalServer(context, installDir);
+    startExternalServer(context, objkInstallDir);
 
     let connectionInfo;
     if(process.platform === 'win32') {
@@ -63,7 +63,7 @@ export function activate(context: ExtensionContext) {
     client.start();
 }
 
-function startExternalServer(context: ExtensionContext, installDir) {
+function startExternalServer(context: ExtensionContext, objkInstallDir) {
     let serverScript;
     if(process.platform === 'win32') {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
@@ -71,7 +71,11 @@ function startExternalServer(context: ExtensionContext, installDir) {
     else {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
     }
-    serverProcess = child_process.spawn(serverScript, [`"${installDir}"`], { shell: true });
+    const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.2.2'; // context.asAbsolutePath(path.join('server'));
+
+    serverProcess = child_process.spawn(serverScript, 
+        [`"${objkInstallDir}"`, `"${pluginDir}"`], 
+        { shell: true });
     
     serverProcess.stdout.on('data', (data) => {
         console.log(`Server stdout: ${data}`);
