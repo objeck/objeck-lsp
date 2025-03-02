@@ -215,12 +215,13 @@ bundle LSP {
 			}
 			else if(@pipe <> Nil) {
 				line := @pipe->ReadLine();
+				@pipe->ReadLine();
 			}
 			else {
 				line := Console->ReadLine();
 				Console->ReadLine();
 			};
-
+			
 			index := line->Find(':');
 			if(index > 0) {
 				index += 2;
