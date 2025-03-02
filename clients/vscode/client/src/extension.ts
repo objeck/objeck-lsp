@@ -71,7 +71,7 @@ function startExternalServer(context: ExtensionContext, objkInstallDir) {
     else {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
     }
-    const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.2.2'; // context.asAbsolutePath(path.join('server'));
+    const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0'; // context.asAbsolutePath(path.join('server'));
 
     serverProcess = child_process.spawn(serverScript, 
         [`"${objkInstallDir}"`, `"${pluginDir}"`], 
