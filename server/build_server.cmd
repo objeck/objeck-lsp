@@ -18,6 +18,7 @@ copy %OBJECK_ROOT%\core\lib\diags.obl %OBJECK_ROOT%\core\release\deploy-x64\lib\
 echo ---
 
 obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex,cipher -dest objeck_lsp.obe
+copy /y objeck_lsp.obe ..\clients\vscode\server
 
 if "%PORT%" == "" goto end
 	echo ---

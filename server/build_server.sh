@@ -14,6 +14,7 @@ obc -src $OBJECK_ROOT/core/compiler/lib_src/diags.obs -lib gen_collect -tar lib 
 cp $OBJECK_ROOT/core/lib/diags.obl $OBJECK_ROOT/core/release/deploy/lib/diags.obl
 
 obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs -lib diags,net,json,regex,cipher -dest objeck_lsp.obe
+cp objeck_lsp.obe ../clients/vscode/server
 
 if [ "$1" = "brun" ]; then
 	PORT=6013
