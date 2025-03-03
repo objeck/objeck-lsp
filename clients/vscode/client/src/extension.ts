@@ -2,7 +2,7 @@ import * as net from 'net';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-import { workspace, ExtensionContext } from 'vscode';
+import { workspace, env, ExtensionContext } from 'vscode';
 
 import {
     LanguageClient,
@@ -71,7 +71,8 @@ function startExternalServer(context: ExtensionContext, objkInstallDir) {
     else {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
     }
-    const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0'; // context.asAbsolutePath(path.join('server'));
+    const pluginDir = context.extensionPath; 
+    // '/Users/randy/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0';
 
     serverProcess = child_process.spawn(serverScript, 
         [`"${objkInstallDir}"`, `"${pluginDir}"`], 
