@@ -200,8 +200,11 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-			response := @workspace->GetDocument(uri)->Hover(line_pos->ToInt(), char_pos->ToInt());
-			WriteRpcResponse(id, response);
+			doc := @workspace->GetDocument(uri);
+			if(doc <> Nil) {
+				response := doc->Hover(line_pos->ToInt(), char_pos->ToInt());
+				WriteRpcResponse(id, response);
+			};
 		}
 
 		method : CallbackCodeAction(id : Int, params : JsonElement) ~ Nil {
@@ -406,10 +409,12 @@ bundle LSP {
 		}
 
 		method : CallbackDocumentSymbol(id : Int, params : JsonElement) ~ Nil {
-			uri := params->FindElements("textDocument/uri")->GetValue();
-			document := @workspace->GetDocument(uri);			
-			if(document <> Nil) {
-				WriteRpcResponse(id, document->GetSymbols(uri));
+			uri := params->FindElements("textDocument/uri");
+			if(uri <> Nil) {
+				url_str := uri->GetValue();
+
+				document := @workspace->GetDocument(url_str);			
+				WriteRpcResponse(id, document->GetSymbols(url_str));
 			};
 		}
 
