@@ -65,18 +65,20 @@ export function activate(context: ExtensionContext) {
 
 function startExternalServer(context: ExtensionContext, objkInstallDir) {
     let serverScript;
+    
     if(process.platform === 'win32') {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
     }
     else {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
     }
+    
+    // path to plugin install directory
     const pluginDir = context.extensionPath; 
-    // '/Users/randy/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0';
-
-    serverProcess = child_process.spawn(serverScript, 
-        [`"${objkInstallDir}"`, `"${pluginDir}"`], 
-        { shell: true });
+    // const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0';
+    // serverScript = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.3.0/server/lsp_server.sh'
+    
+    serverProcess = child_process.spawn(serverScript, [`"${objkInstallDir}"`, `"${pluginDir}"`], { shell: true });
     
     serverProcess.stdout.on('data', (data) => {
         console.log(`Server stdout: ${data}`);

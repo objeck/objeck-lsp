@@ -1,4 +1,3 @@
-
 rm -rf objeck-lsp
 mkdir objeck-lsp
 

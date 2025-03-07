@@ -3,6 +3,7 @@ Latest release for compatibility, no new features
 
 v2025.3.0
 * Pipe support for VS Code on macOS and Linux
+* Improved stability switch between source programs
 
 v2025.2.2
 * Included support for named pipes in VS Code on Windows.
