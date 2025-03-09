@@ -6,13 +6,6 @@ mkdir objeck-lsp
 rmdir /s /q objeck-lsp-debug
 mkdir objeck-lsp-debug
 
-del /s /q clients\vscode\server
-mkdir clients\vscode\server
-copy /y server\objeck_lsp.obe clients\vscode\server
-copy /y server\objk_apis.json clients\vscode\server
-copy /y server\lsp_server.cmd clients\vscode\server
-copy /y server\lsp_server.sh clients\vscode\server
-
 cd clients\vscode
 call vsce package
 copy /y *.vsix ..\..\objeck-lsp
