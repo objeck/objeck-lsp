@@ -44,7 +44,7 @@ VS Code
 1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
 2. Download the unzip the VS Code LSP plugin-in (https://github.com/objeck/objeck-lsp)
 3. In VS Code click the extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
-4. Edit the 'lsp_server.cmd' file in the '%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-xxx' directory so it points to the Objeck install directory
+4. Edit the 'objk.xxx.install.dir' property in the 'package.json' within the 'objeck-lsp.objeck-lsp-xxxx.x.x' directory so it points to the root Objeck install directory
 5. Restart VS Code
 
 Kate
