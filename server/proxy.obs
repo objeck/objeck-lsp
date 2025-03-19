@@ -238,13 +238,13 @@ bundle LSP {
 
 					builder->PushObject("range");
 						obj := builder->PushObject("start");
-						obj->Insert("line", start_line);
-						obj->Insert("character", start_index);
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
 						builder->Pop();
 
 						obj := builder->PushObject("end");
-						obj->Insert("line", end_line);
-						obj->Insert("character", end_index);
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
 						builder->Pop();
 					builder->Pop();
 
