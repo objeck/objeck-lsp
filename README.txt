@@ -1,6 +1,9 @@
 Latest release for compatibility, no new features
 ---
 
+v2025.3.1
+* TBD
+
 v2025.3.0
 * Pipe support for VS Code on macOS and Linux
 * Improved stability switch between source programs

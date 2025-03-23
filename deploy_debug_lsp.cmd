@@ -1,4 +1,4 @@
-SET OUTPUT_DIR=%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-2025.3.0
+SET OUTPUT_DIR=%HOMEPATH%\.vscode\extensions\objeck-lsp.objeck-lsp-2025.3.1
 
 call deploy_lsp.cmd 
 copy /y clients\vscode\client\out\* %OUTPUT_DIR%\client\out
