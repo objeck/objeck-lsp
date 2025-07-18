@@ -5,14 +5,61 @@ Please refer to the installation [instructions](https://github.com/objeck/objeck
 
 ## Work in the Queue
 Reviving this effort to provide the following
-1. Improved VSCode support (done in 2025.6.2)
-1. Named pipe support for VSCode (done in 2025.6.2)
-1. Increased stability (done in 2025.6.2)
+1. ~~Improved VSCode support~~
+1. ~~Named pipe support for VSCode~~
+1. ~~Increased stability~~
 1. ~~Project/workspace build support for non-VSCode clients~~
 1. ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
 1. ~~STDIO support for Sublime and other text editors~~
 
 ![alt text](images/design.svg "Objeck LSP")
+
+##  Environment Setup ## 
+These are the instructions to set up the environment to build and package the Objeck 
+
+LSP plugin
+
+1. To set up npm (Node Package Manager) for Windows and install the necessary packages to build VS Code plugins (extensions), follow these steps:
+
+**Step 1: Install Node.js and npm**
+- npm is bundled with Node.js, so installing Node.js will also install npm.
+1. Go to the Node.js download page (https://nodejs.org).
+2. Download the Windows installer (choose the LTS version for stability).
+3. Run the installer and follow the prompts, making sure npm is checked.
+4. After installation, open Command Prompt and run:
+   ```sh
+   node --version
+   npm --version
+   ```
+   to confirm they are installed successfully.
+
+**Step 2: Install Visual Studio Code Extension Generator**
+- Most VS Code extensions are built with the Yeoman generator for VS Code, along with supporting tools.
+1. Install Yeoman and VS Code Extension Generator globally:
+   ```sh
+   npm install -g yo generator-code
+   ```
+2. To scaffold a new extension, you can then run:
+   ```sh
+   yo code
+   ```
+
+**Step 3: Common Packages Needed for VS Code Plugins**
+While `yo` and `generator-code` set up a new extension, you might also need:
+- Typescript (many extensions are written in TypeScript):
+  ```sh
+  npm install -g typescript
+  ```
+- vsce (for packaging and publishing extensions):
+  ```sh
+  npm install -g @vscode/vsce
+  ```
+
+**Summary of npm commands:**
+```sh
+npm install -g yo generator-code typescript @vscode/vsce
+```
+## Supported LSP Events ##
 
 #### Notifications
 * Initialized `initialized`
