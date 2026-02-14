@@ -9,8 +9,6 @@ Code intelligence for 7 editors across Windows, Linux, and macOS
 <p align="center">
   <a href="https://github.com/objeck/objeck-lsp/actions/workflows/ci-build.yml"><img src="https://github.com/objeck/objeck-lsp/actions/workflows/ci-build.yml/badge.svg" alt="CI Build"></a>
   <a href="https://github.com/objeck/objeck-lsp/releases"><img src="https://img.shields.io/github/v/release/objeck/objeck-lsp?sort=semver" alt="Latest Release"></a>
-  <a href="https://github.com/objeck/objeck-lsp/issues"><img src="https://img.shields.io/github/issues/objeck/objeck-lsp" alt="Issues"></a>
-  <a href="https://github.com/objeck/objeck-lsp/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-blue" alt="License"></a>
 </p>
 
 The Objeck LSP server brings code intelligence to the [Objeck](https://github.com/objeck/objeck-lang) programming language &mdash; diagnostics, completion, hover docs, go-to-definition, rename, formatting, and more. It runs on **Windows**, **Linux**, and **macOS** (AMD64 and ARM64).
