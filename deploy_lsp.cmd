@@ -10,6 +10,7 @@ for /f "tokens=2 delims=:, " %%A in ('findstr /C:"\"version\"" clients\vscode\pa
 )
 
 SET ZIP_BIN="\Program Files\7-Zip"
+SET RELEASE_DIR=objeck-lsp-%VERSION%
 
 echo.
 echo ========================================
@@ -19,9 +20,9 @@ echo.
 
 REM --- clean ---
 echo [1/6] Cleaning...
-rmdir /s /q objeck-lsp 2>nul
+rmdir /s /q %RELEASE_DIR% 2>nul
 rmdir /s /q objeck-lsp-debug 2>nul
-mkdir objeck-lsp
+mkdir %RELEASE_DIR%
 mkdir objeck-lsp-debug
 
 REM --- generate API docs ---
@@ -59,22 +60,38 @@ if %ERRORLEVEL% NEQ 0 (
 	cd ..\..
 	goto fail
 )
-copy /y *.vsix ..\..\objeck-lsp >nul
-move /y *.vsix ..\..\objeck-lsp-debug >nul
 cd ..\..
 
 REM --- assemble release ---
 echo [5/6] Assembling release package...
-copy /y README.txt objeck-lsp >nul
-copy /y docs\install_guide.html objeck-lsp >nul
 
-for %%D in (neovim emacs helix sublime) do (
-	mkdir objeck-lsp\clients\%%D 2>nul
+REM server binaries
+mkdir %RELEASE_DIR%\server
+copy /y server\objeck_lsp.obe %RELEASE_DIR%\server >nul
+copy /y server\objk_apis.json %RELEASE_DIR%\server >nul
+copy /y server\lsp_server.cmd %RELEASE_DIR%\server >nul
+copy /y server\lsp_server.sh %RELEASE_DIR%\server >nul
+
+REM VS Code extension
+mkdir %RELEASE_DIR%\clients\vscode
+copy /y clients\vscode\*.vsix %RELEASE_DIR%\clients\vscode >nul
+
+REM editor configs
+for %%D in (sublime neovim emacs helix) do (
+	mkdir %RELEASE_DIR%\clients\%%D 2>nul
 )
-copy /y clients\neovim\objeck.lua objeck-lsp\clients\neovim >nul
-copy /y clients\emacs\objeck-mode.el objeck-lsp\clients\emacs >nul
-copy /y clients\helix\languages.toml objeck-lsp\clients\helix >nul
-copy /y clients\sublime\LSP.sublime-settings objeck-lsp\clients\sublime >nul
+copy /y clients\sublime\LSP.sublime-settings %RELEASE_DIR%\clients\sublime >nul
+copy /y clients\neovim\objeck.lua %RELEASE_DIR%\clients\neovim >nul
+copy /y clients\emacs\objeck-mode.el %RELEASE_DIR%\clients\emacs >nul
+copy /y clients\helix\languages.toml %RELEASE_DIR%\clients\helix >nul
+
+REM docs
+copy /y README.txt %RELEASE_DIR% >nul
+copy /y docs\install_guide.html %RELEASE_DIR% >nul
+copy /y build.json.example %RELEASE_DIR% >nul
+
+REM debug artifacts
+copy /y clients\vscode\*.vsix objeck-lsp-debug >nul
 
 REM --- zip ---
 echo [6/6] Creating release archive...
@@ -83,7 +100,7 @@ if [%1] NEQ [deploy] (
 	goto done
 )
 del /f objeck-lsp-*.zip 2>nul
-%ZIP_BIN%\7z.exe a -r -tzip "objeck-lsp-%VERSION%.zip" "objeck-lsp\*" >nul
+%ZIP_BIN%\7z.exe a -r -tzip "%RELEASE_DIR%.zip" "%RELEASE_DIR%\*" >nul
 if %ERRORLEVEL% NEQ 0 (
 	echo.
 	echo ERROR: 7-Zip failed
@@ -97,9 +114,9 @@ echo  Build successful
 echo ========================================
 echo.
 echo  Version:      %VERSION%
-echo  Release dir:  objeck-lsp\
+echo  Release dir:  %RELEASE_DIR%\
 echo  Debug dir:    objeck-lsp-debug\
-if [%1] == [deploy] echo  Archive:      objeck-lsp-%VERSION%.zip
+if [%1] == [deploy] echo  Archive:      %RELEASE_DIR%.zip
 echo.
 goto end
 
