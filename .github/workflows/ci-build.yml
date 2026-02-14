@@ -173,8 +173,10 @@ jobs:
     - name: Package VS Code extension
       working-directory: ./objeck-lsp/clients/vscode
       run: |
+        rm -f client/package-lock.json package-lock.json
         npm install
-        vsce package
+        cd client && npm install && cd ..
+        vsce package --skip-license
 
     - name: Assemble release
       working-directory: ./objeck-lsp
