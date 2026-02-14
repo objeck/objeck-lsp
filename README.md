@@ -12,44 +12,26 @@ Code intelligence for 7 editors across Windows, Linux, and macOS
   <a href="https://github.com/objeck/objeck-lsp/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-blue" alt="License"></a>
 </p>
 
-## Overview
+The Objeck LSP server brings code intelligence to the [Objeck](https://github.com/objeck/objeck-lang) programming language &mdash; diagnostics, completion, hover docs, go-to-definition, rename, formatting, and more. It runs on **Windows**, **Linux**, and **macOS** (AMD64 and ARM64).
 
-The Objeck LSP server provides code intelligence for the [Objeck](https://github.com/objeck/objeck-lang) programming language. Diagnostic functionality (compiling, symbol lookup, completion, etc.) is built into libraries that ship with the toolchain. The server is standalone, written in Objeck, and supports **STDIO**, **TCP**, and **named pipe** transports.
-
-## Features
-
-- **Diagnostics** &mdash; Real-time error and warning reporting
-- **Code Completion** &mdash; Variables, methods, and functions with trigger characters (`@`, `.`, `>`)
-- **Signature Help** &mdash; Method/function parameter hints
-- **Hover** &mdash; Bundle documentation on hover
-- **Go to Definition / Declaration** &mdash; Navigate to variables, classes, and methods
-- **Find References** &mdash; Locate all usages of a symbol
-- **Rename** &mdash; Project-wide variable and method renaming
-- **Document Symbols** &mdash; Classes, enums, and methods outline
-- **Workspace Symbols** &mdash; Search across all project files
-- **Code Actions** &mdash; Quick fixes (add `use` statements, qualify references)
-- **Formatting** &mdash; Document and range formatting
-- **Multi-root Workspaces** &mdash; JSON-configured project support via `build.json`
-
-## Supported Editors
-
-| Editor | Transport | Config Location |
-|--------|-----------|-----------------|
-| **VS Code** | Named pipe | Built-in ([`.vsix` extension](https://github.com/objeck/objeck-lsp/releases)) |
-| **Sublime Text** | STDIO | [`clients/sublime/`](clients/sublime/) |
-| **Kate** | STDIO | [LSP Client settings](README.txt) |
-| **ecode** | STDIO | [`lspclient.json`](README.txt) |
-| **Neovim** (0.11+) | STDIO | [`clients/neovim/`](clients/neovim/) |
-| **Emacs** (29+) | STDIO | [`clients/emacs/`](clients/emacs/) |
-| **Helix** | STDIO | [`clients/helix/`](clients/helix/) |
-
-## Platform Support
-
-| Platform | Architecture |
-|----------|--------------|
-| **Windows** | AMD64 |
-| **Linux** | AMD64, ARM64 |
-| **macOS** | AMD64, ARM64 |
+<table>
+<tr>
+<td width="50%">
+<strong>Error Checking</strong><br>
+<img src="images/checking.png" alt="Error checking" width="100%"/>
+</td>
+<td width="50%">
+<strong>Code Completion</strong><br>
+<img src="images/completion.png" alt="Code completion" width="100%"/>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<strong>Variable and Method Renaming</strong><br>
+<img src="images/rename.png" alt="Renaming" width="60%"/>
+</td>
+</tr>
+</table>
 
 ## Quick Start
 
@@ -61,9 +43,9 @@ export OBJECK_LIB_PATH=/usr/local/objeck/lib
 export OBJECK_STDIO=binary
 ```
 
-**3. Configure your editor** &mdash; see the [Install Guide](docs/install_guide.html) or [README.txt](README.txt) for step-by-step instructions.
+**3. Configure your editor** &mdash; pick your editor below, then see the [Install Guide](docs/install_guide.html) for step-by-step instructions.
 
-**4. Create a workspace** &mdash; add a `build.json` to your project root:
+**4. Create a workspace** &mdash; add a `build.json` to your project root for multi-file projects:
 ```json
 {
   "files": ["main.obs", "helper.obs"],
@@ -72,7 +54,33 @@ export OBJECK_STDIO=binary
 }
 ```
 
-Open the folder in your editor and the LSP server will handle the rest.
+Open the folder in your editor and the LSP server handles the rest.
+
+## Supported Editors
+
+| Editor | Transport | Setup |
+|--------|-----------|-------|
+| **VS Code** | Named pipe | Install the [`.vsix` extension](https://github.com/objeck/objeck-lsp/releases), set install path in settings |
+| **Sublime Text** | STDIO | Add config from [`clients/sublime/`](clients/sublime/) to LSP settings |
+| **Kate** | STDIO | Add server entry in LSP Client settings ([instructions](README.txt)) |
+| **ecode** | STDIO | Add server to [`lspclient.json`](README.txt) |
+| **Neovim** (0.11+) | STDIO | Copy [`clients/neovim/objeck.lua`](clients/neovim/) to `~/.config/nvim/lsp/` |
+| **Emacs** (29+) | STDIO | Copy [`clients/emacs/objeck-mode.el`](clients/emacs/) to your load-path |
+| **Helix** | STDIO | Merge [`clients/helix/languages.toml`](clients/helix/) into your config |
+
+## Features
+
+- **Diagnostics** &mdash; Real-time error and warning reporting
+- **Code Completion** &mdash; Variables, methods, and functions with trigger characters (`@`, `.`, `>`)
+- **Signature Help** &mdash; Method/function parameter hints
+- **Hover** &mdash; Bundle documentation on hover
+- **Go to Definition / Declaration** &mdash; Navigate to variables, classes, and methods
+- **Find References** &mdash; Locate all usages of a symbol
+- **Rename** &mdash; Project-wide variable and method renaming
+- **Document & Workspace Symbols** &mdash; Outline and cross-file search
+- **Code Actions** &mdash; Quick fixes (add `use` statements, qualify references)
+- **Formatting** &mdash; Document and range formatting
+- **Multi-root Workspaces** &mdash; JSON-configured project support via `build.json`
 
 ## Architecture
 
@@ -120,31 +128,10 @@ graph LR
     Socket --> Workspace
 ```
 
-## See It In Action
-
-<table>
-<tr>
-<td width="50%">
-<strong>Error Checking</strong><br>
-<img src="images/checking.png" alt="Error checking" width="100%"/>
-</td>
-<td width="50%">
-<strong>Code Completion</strong><br>
-<img src="images/completion.png" alt="Code completion" width="100%"/>
-</td>
-</tr>
-<tr>
-<td colspan="2" align="center">
-<strong>Variable and Method Renaming</strong><br>
-<img src="images/rename.png" alt="Renaming" width="60%"/>
-</td>
-</tr>
-</table>
-
-## LSP Protocol Coverage
-
 <details>
-<summary><strong>Notifications</strong></summary>
+<summary><strong>LSP Protocol Coverage</strong></summary>
+
+### Notifications
 
 | Event | Method |
 |-------|--------|
@@ -156,10 +143,7 @@ graph LR
 | File Close | `textDocument/didClose` |
 | Exit | `exit` |
 
-</details>
-
-<details>
-<summary><strong>Requests</strong></summary>
+### Requests
 
 | Feature | Method |
 |---------|--------|
@@ -178,10 +162,7 @@ graph LR
 | Format Document | `textDocument/formatting` |
 | Format Selection | `textDocument/rangeFormatting` |
 
-</details>
-
-<details>
-<summary><strong>Workspace</strong></summary>
+### Workspace
 
 | Feature | Method |
 |---------|--------|
