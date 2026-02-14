@@ -14,25 +14,6 @@ Code intelligence for 7 editors across Windows, Linux, and macOS
 
 The Objeck LSP server brings code intelligence to the [Objeck](https://github.com/objeck/objeck-lang) programming language &mdash; diagnostics, completion, hover docs, go-to-definition, rename, formatting, and more. It runs on **Windows**, **Linux**, and **macOS** (AMD64 and ARM64).
 
-<table>
-<tr>
-<td width="50%">
-<strong>Error Checking</strong><br>
-<img src="images/checking.png" alt="Error checking" width="100%"/>
-</td>
-<td width="50%">
-<strong>Code Completion</strong><br>
-<img src="images/completion.png" alt="Code completion" width="100%"/>
-</td>
-</tr>
-<tr>
-<td colspan="2" align="center">
-<strong>Variable and Method Renaming</strong><br>
-<img src="images/rename.png" alt="Renaming" width="60%"/>
-</td>
-</tr>
-</table>
-
 ## Quick Start
 
 **1. Install Objeck** from [github.com/objeck/objeck-lang](https://github.com/objeck/objeck-lang/releases/latest)
