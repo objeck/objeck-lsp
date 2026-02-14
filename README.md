@@ -9,7 +9,7 @@ Code intelligence for 7 editors across Windows, Linux, and macOS
 <p align="center">
   <a href="https://github.com/objeck/objeck-lsp/releases"><img src="https://img.shields.io/github/v/release/objeck/objeck-lsp?sort=semver" alt="Latest Release"></a>
   <a href="https://github.com/objeck/objeck-lsp/issues"><img src="https://img.shields.io/github/issues/objeck/objeck-lsp" alt="Issues"></a>
-  <a href="https://github.com/objeck/objeck-lsp/blob/main/LICENSE"><img src="https://img.shields.io/github/license/objeck/objeck-lsp" alt="License"></a>
+  <a href="https://github.com/objeck/objeck-lsp/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-blue" alt="License"></a>
 </p>
 
 ## Overview
