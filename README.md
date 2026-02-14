@@ -1,146 +1,171 @@
-# Objeck LSP
-LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes STDIO and TCP interfaces. The backend handles client requests, formats responses and maintains the state of in-memory documents.
+<p align="center">
+  <img src="images/design.svg" alt="Objeck LSP" height="140px"/>
+</p>
 
-Please refer to the installation [instructions](https://github.com/objeck/objeck-lsp/blob/main/README.txt) (and issues reports) for editor support. A detailed HTML install guide is also available in [docs/install_guide.html](docs/install_guide.html).
+<p align="center">
+<strong>Language Server Protocol support for <a href="https://github.com/objeck/objeck-lang">Objeck</a></strong><br>
+Code intelligence for 7 editors across Windows, Linux, and macOS
+</p>
 
-## Work in the Queue
-Reviving this effort to provide the following
-1. ~~Improved VSCode support~~
-1. ~~Named pipe support for VSCode~~
-1. ~~Increased stability~~
-1. ~~Project/workspace build support for non-VSCode clients~~
-1. ~~Better support for Sublime and other text editors (current implementation is based on message ordering from VSCode)~~
-1. ~~STDIO support for Sublime and other text editors~~
+<hr/>
 
-![alt text](images/design.svg "Objeck LSP")
+<p align="center">
+  <a href="https://github.com/objeck/objeck-lsp/releases"><img src="https://img.shields.io/github/v/release/objeck/objeck-lsp?sort=semver" alt="Latest Release"></a>
+  <a href="https://github.com/objeck/objeck-lsp/issues"><img src="https://img.shields.io/github/issues/objeck/objeck-lsp" alt="Issues"></a>
+  <a href="https://github.com/objeck/objeck-lsp/blob/main/LICENSE"><img src="https://img.shields.io/github/license/objeck/objeck-lsp" alt="License"></a>
+</p>
 
-##  Environment Setup ## 
-These are the instructions to set up the environment to build and package the Objeck 
+## Overview
 
-LSP plugin
+The Objeck LSP server provides code intelligence for the [Objeck](https://github.com/objeck/objeck-lang) programming language. Diagnostic functionality (compiling, symbol lookup, completion, etc.) is built into libraries that ship with the toolchain. The server is standalone, written in Objeck, and supports **STDIO**, **TCP**, and **named pipe** transports.
 
-1. To set up npm (Node Package Manager) for Windows and install the necessary packages to build VS Code plugins (extensions), follow these steps:
+## Features
 
-**Step 1: Install Node.js and npm**
-- npm is bundled with Node.js, so installing Node.js will also install npm.
-1. Go to the Node.js download page (https://nodejs.org).
-2. Download the Windows installer (choose the LTS version for stability).
-3. Run the installer and follow the prompts, making sure npm is checked.
-4. After installation, open Command Prompt and run:
-   ```sh
-   node --version
-   npm --version
-   ```
-   to confirm they are installed successfully.
+- **Diagnostics** &mdash; Real-time error and warning reporting
+- **Code Completion** &mdash; Variables, methods, and functions with trigger characters (`@`, `.`, `>`)
+- **Signature Help** &mdash; Method/function parameter hints
+- **Hover** &mdash; Bundle documentation on hover
+- **Go to Definition / Declaration** &mdash; Navigate to variables, classes, and methods
+- **Find References** &mdash; Locate all usages of a symbol
+- **Rename** &mdash; Project-wide variable and method renaming
+- **Document Symbols** &mdash; Classes, enums, and methods outline
+- **Workspace Symbols** &mdash; Search across all project files
+- **Code Actions** &mdash; Quick fixes (add `use` statements, qualify references)
+- **Formatting** &mdash; Document and range formatting
+- **Multi-root Workspaces** &mdash; JSON-configured project support via `build.json`
 
-**Step 2: Install Visual Studio Code Extension Generator**
-- Most VS Code extensions are built with the Yeoman generator for VS Code, along with supporting tools.
-1. Install Yeoman and VS Code Extension Generator globally:
-   ```sh
-   npm install -g yo generator-code
-   ```
-2. To scaffold a new extension, you can then run:
-   ```sh
-   yo code
-   ```
+## Supported Editors
 
-**Step 3: Common Packages Needed for VS Code Plugins**
-While `yo` and `generator-code` set up a new extension, you might also need:
-- Typescript (many extensions are written in TypeScript):
-  ```sh
-  npm install -g typescript
-  ```
-- vsce (for packaging and publishing extensions):
-  ```sh
-  npm install -g @vscode/vsce
-  ```
+| Editor | Transport | Config Location |
+|--------|-----------|-----------------|
+| **VS Code** | Named pipe | Built-in ([`.vsix` extension](https://github.com/objeck/objeck-lsp/releases)) |
+| **Sublime Text** | STDIO | [`clients/sublime/`](clients/sublime/) |
+| **Kate** | STDIO | [LSP Client settings](README.txt) |
+| **ecode** | STDIO | [`lspclient.json`](README.txt) |
+| **Neovim** (0.11+) | STDIO | [`clients/neovim/`](clients/neovim/) |
+| **Emacs** (29+) | STDIO | [`clients/emacs/`](clients/emacs/) |
+| **Helix** | STDIO | [`clients/helix/`](clients/helix/) |
 
-**Summary of npm commands:**
+## Platform Support
+
+| Platform | Architecture |
+|----------|--------------|
+| **Windows** | AMD64 |
+| **Linux** | AMD64, ARM64 |
+| **macOS** | AMD64, ARM64 |
+
+## Quick Start
+
+**1. Install Objeck** from [github.com/objeck/objeck-lang](https://github.com/objeck/objeck-lang/releases/latest)
+
+**2. Set environment variables** (required for STDIO transport):
+```sh
+export OBJECK_LIB_PATH=/usr/local/objeck/lib
+export OBJECK_STDIO=binary
+```
+
+**3. Configure your editor** &mdash; see the [Install Guide](docs/install_guide.html) or [README.txt](README.txt) for step-by-step instructions.
+
+**4. Create a workspace** &mdash; add a `build.json` to your project root:
+```json
+{
+  "files": ["main.obs", "helper.obs"],
+  "libs": ["gen_collect.obl", "net.obl", "json.obl"],
+  "flags": ""
+}
+```
+
+Open the folder in your editor and the LSP server will handle the rest.
+
+## See It In Action
+
+<table>
+<tr>
+<td width="50%">
+<strong>Error Checking</strong><br>
+<img src="images/checking.png" alt="Error checking" width="100%"/>
+</td>
+<td width="50%">
+<strong>Code Completion</strong><br>
+<img src="images/completion.png" alt="Code completion" width="100%"/>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<strong>Variable and Method Renaming</strong><br>
+<img src="images/rename.png" alt="Renaming" width="60%"/>
+</td>
+</tr>
+</table>
+
+## LSP Protocol Coverage
+
+<details>
+<summary><strong>Notifications</strong></summary>
+
+| Event | Method |
+|-------|--------|
+| Initialized | `initialized` |
+| Cancel Request | `$/cancelRequest` |
+| File Open | `textDocument/didOpen` |
+| File Changed | `textDocument/didChange` |
+| File Save | `textDocument/didSave` |
+| File Close | `textDocument/didClose` |
+| Exit | `exit` |
+
+</details>
+
+<details>
+<summary><strong>Requests</strong></summary>
+
+| Feature | Method |
+|---------|--------|
+| Initialize | `initialize` |
+| Shutdown | `shutdown` |
+| Completion | `textDocument/completion` |
+| Document Symbol | `textDocument/documentSymbol` |
+| Workspace Symbol | `workspace/symbol` |
+| Signature Help | `textDocument/signatureHelp` |
+| References | `textDocument/references` |
+| Definition | `textDocument/definition` |
+| Declaration | `textDocument/declaration` |
+| Rename | `textDocument/rename` |
+| Hover | `textDocument/hover` |
+| Code Action | `textDocument/codeAction` |
+| Format Document | `textDocument/formatting` |
+| Format Selection | `textDocument/rangeFormatting` |
+
+</details>
+
+<details>
+<summary><strong>Workspace</strong></summary>
+
+| Feature | Method |
+|---------|--------|
+| Watch File Changes | `workspace/didChangeWatchedFiles` |
+| Workspace Folder Changes | `workspace/didChangeWorkspaceFolders` |
+| Find Symbol | `workspace/symbol` |
+
+</details>
+
+## Development
+
+**Building the VS Code extension:**
 ```sh
 npm install -g yo generator-code typescript @vscode/vsce
+cd clients/vscode && npm run compile
 ```
-## Supported LSP Events ##
 
-#### Notifications
-* Initialized `initialized`
-* Cancel Request `$/cancelRequest`
-* File Open `textDocument/didOpen`
-* File Changed `textDocument/didChange`
-* File Save `textDocument/didSave`
-* File Close `textDocument/didClose`
+**Building the LSP server** (requires [Objeck](https://github.com/objeck/objeck-lang)):
+```sh
+cd server
+obc -src frameworks.obs,proxy.obs,server.obs,format_code/scanner.obs,format_code/formatter.obs \
+    -lib diags,net,json,regex,cipher -dest objeck_lsp.obe
+```
 
-#### Callbacks
-* Initialize `initialize`
-* Code completion `textDocument/completion`
-* Code resolution `completionItem/resolve`
-* Code symbol `textDocument/documentSymbol`
-* Method/Function signature help `textDocument/signatureHelp`
-* Goto code references `textDocument/references`
-* Goto code definitions `textDocument/definition`
-* Goto code declaration `textDocument/declaration`
-* Variable rename `textDocument/rename`
-* Format document `textDocument/formatting`
-* Format selection `textDocument/rangeFormatting`
-* Editor shutdown `shutdown`
+## Resources
 
-#### Workspaces
-  * JSON configured workspaces to support multi-file projects
-  * Find symbol in workspace `workspace/symbol`
-  * Watch file changed `workspace/didChangeWatchedFiles`
-  * Watch workspace changed `workspace/didChangeWorkspaceFolders`
-
-<figure>
-<figcaption>Fig.1 - Error checking</figcaption>
-<img src="images/checking.png" alt="Error checking" style="width:60%"/>
-</figure>
-
-<figure>
-<figcaption>Fig.2 - Code completion</figcaption>
-<img src="images/completion.png" alt="Code completion" style="width:60%"/>
-</figure>
-
-<figure>
-<figcaption>Fig.3 - Variable and method renaming</figcaption>
-<img src="images/rename.png" alt="Variable and method renaming" style="width:60%"/>
-</figure>
-
-## Project Status
-The server is functional but there is still work to do.
-
-### Functional
-1. Tested editors
-    1. Visual Studio Code
-    2. Sublime
-    3. Kate
-    4. ecode
-    5. Neovim
-    6. Emacs
-    7. Helix
-1. Platform support
-    1. Windows (AMD64)
-    2. Linux (AMD64 and ARM64)
-    3. macOS (AMD64 and ARM64)
-2. Multi-document support
-    1. Project workspaces
-4. Code symbols
-    1. Classes
-    2. Enums
-    3. Methods    
-5. Finding references
-    1. Variables
-6. Finding declarations
-    1. Variables
-    2. Methods and functions
-7. Finding definitions
-    1. Variables (done)
-    2. Classes and method (done)
-8. Keyword completion
-    1. Variables
-    2. Methods and functions
-9. Bundle documentation
-10. Quick Fixes
-    1. Add 'use' a statment for an unqualfied class
-    2. Qualfied an unqualfied class
-    
-### Outstanding
-1. Additional testing and feedback
+- [Install Guide](docs/install_guide.html) &mdash; detailed setup for all editors
+- [README.txt](README.txt) &mdash; quick-reference setup instructions
+- [Objeck Language](https://github.com/objeck/objeck-lang) &mdash; compiler, runtime, and documentation
+- [Issues](https://github.com/objeck/objeck-lsp/issues) &mdash; bug reports and feature requests
