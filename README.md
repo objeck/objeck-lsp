@@ -1,9 +1,6 @@
 <p align="center">
-  <img src="images/design.svg" alt="Objeck LSP" height="140px"/>
-</p>
-
-<p align="center">
-<strong>Language Server Protocol support for <a href="https://github.com/objeck/objeck-lang">Objeck</a></strong><br>
+<strong>Objeck LSP</strong><br>
+Language Server Protocol support for <a href="https://github.com/objeck/objeck-lang">Objeck</a><br>
 Code intelligence for 7 editors across Windows, Linux, and macOS
 </p>
 
@@ -76,6 +73,52 @@ export OBJECK_STDIO=binary
 ```
 
 Open the folder in your editor and the LSP server will handle the rest.
+
+## Architecture
+
+```mermaid
+graph LR
+    subgraph Editors
+        VSCode[VS Code]
+        Sublime[Sublime Text]
+        Kate[Kate]
+        ecode[ecode]
+        Neovim[Neovim]
+        Emacs[Emacs]
+        Helix[Helix]
+    end
+
+    subgraph Transport
+        STDIO[STDIO]
+        Pipe[Named Pipe]
+        Socket[TCP Socket]
+    end
+
+    subgraph Runtime["Objeck Runtime"]
+        Workspace[In-Memory\nWorkspace]
+        Compiler[Analysis\nCompiler]
+        Detection[Issue\nDetection]
+        Navigation[Code Navigation\n& Refactoring]
+        Docs[API\nDocumentation]
+
+        Workspace --> Compiler
+        Compiler --> Detection
+        Compiler --> Navigation
+        Compiler --> Docs
+    end
+
+    VSCode --> Pipe
+    Sublime --> STDIO
+    Kate --> STDIO
+    ecode --> STDIO
+    Neovim --> STDIO
+    Emacs --> STDIO
+    Helix --> STDIO
+
+    STDIO --> Workspace
+    Pipe --> Workspace
+    Socket --> Workspace
+```
 
 ## See It In Action
 

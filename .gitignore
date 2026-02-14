@@ -1,0 +1,19 @@
+# Objeck build artifacts
+*.obe
+*.obl
+
+# Objeck API docs
+server/objk_apis.json
+
+# Archive/package artifacts
+*.zip
+*.7z
+*.tgz
+*.tar.gz
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Debug/staging directories
+objeck-lsp-debug/
+objeck-lsp/
