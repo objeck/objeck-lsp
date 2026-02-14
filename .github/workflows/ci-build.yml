@@ -1,0 +1,219 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build LSP Server (Linux x64)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout objeck-lsp
+      uses: actions/checkout@v4
+      with:
+        path: objeck-lsp
+
+    - name: Checkout objeck-lang
+      uses: actions/checkout@v4
+      with:
+        repository: objeck/objeck-lang
+        path: objeck-lang
+
+    # ============================================
+    # Build Objeck Toolchain
+    # ============================================
+
+    - name: Cache APT packages
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/**') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libopencv-dev \
+          libmbedtls-dev \
+          unixodbc-dev \
+          libsdl2-dev \
+          libsdl2-image-dev \
+          libsdl2-ttf-dev \
+          libsdl2-mixer-dev \
+          libreadline-dev \
+          libeigen3-dev \
+          libmp3lame-dev \
+          ccache
+
+    - name: Cache ccache
+      uses: actions/cache@v4
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
+
+    - name: Setup ccache
+      run: |
+        ccache --max-size=500M
+        ccache --set-config=compression=true
+        ccache --zero-stats
+
+    - name: Build Objeck bootstrap
+      working-directory: ./objeck-lang/core/compiler
+      run: ./update_version.sh
+
+    - name: Build Objeck toolchain
+      working-directory: ./objeck-lang/core/release
+      env:
+        CC: ccache gcc
+        CXX: ccache g++
+      run: ./deploy_posix.sh x64
+
+    - name: Show ccache stats
+      run: ccache --show-stats
+
+    # ============================================
+    # Build LSP Server
+    # ============================================
+
+    - name: Read LSP version
+      id: version
+      working-directory: ./objeck-lsp
+      run: |
+        VERSION=$(grep '"version"' clients/vscode/package.json | head -1 | sed 's/.*"\([0-9][0-9.]*\)".*/\1/')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building Objeck LSP v${VERSION}"
+
+    - name: Generate API documentation
+      working-directory: ./objeck-lsp/server/doc_json
+      run: |
+        chmod +x gen_json.sh
+        ./gen_json.sh "${{ steps.version.outputs.version }}"
+
+    - name: Build LSP server
+      working-directory: ./objeck-lsp/server
+      run: |
+        chmod +x build_server.sh
+        ./build_server.sh
+
+    # ============================================
+    # Test
+    # ============================================
+
+    - name: Smoke test LSP server
+      working-directory: ./objeck-lsp/server
+      run: |
+        export OBJECK_LIB_PATH=../../objeck-lang/core/release/deploy/lib
+        export OBJECK_STDIO=binary
+        OBR=../../objeck-lang/core/release/deploy/bin/obr
+
+        # Send initialize + shutdown + exit, verify response
+        node -e "
+        const cp = require('child_process');
+        const p = cp.spawn('$OBR', ['objeck_lsp.obe', 'objk_apis.json', 'stdio'], {
+          env: { ...process.env, OBJECK_LIB_PATH: '$OBJECK_LIB_PATH', OBJECK_STDIO: 'binary' }
+        });
+        let buf = Buffer.alloc(0);
+        function send(obj) {
+          const body = JSON.stringify(obj);
+          p.stdin.write('Content-Length: ' + body.length + '\r\n\r\n' + body);
+        }
+        p.stdout.on('data', chunk => {
+          buf = Buffer.concat([buf, chunk]);
+          const str = buf.toString();
+          const hdr = str.indexOf('\r\n\r\n');
+          if (hdr === -1) return;
+          const match = str.match(/Content-Length:\s*(\d+)/);
+          if (!match) return;
+          const len = parseInt(match[1]);
+          if (buf.length < hdr + 4 + len) return;
+          const json = JSON.parse(buf.toString('utf8', hdr + 4, hdr + 4 + len));
+          buf = buf.slice(hdr + 4 + len);
+          if (json.id === 1) {
+            const caps = json.result && json.result.capabilities;
+            if (!caps) { console.error('No capabilities'); process.exit(1); }
+            console.log('Initialize: OK');
+            send({ jsonrpc: '2.0', id: 2, method: 'shutdown', params: null });
+          } else if (json.id === 2) {
+            console.log('Shutdown: OK');
+            send({ jsonrpc: '2.0', method: 'exit', params: null });
+          }
+        });
+        p.on('close', code => {
+          console.log('Exit code:', code);
+          process.exit(code === 0 ? 0 : 1);
+        });
+        p.on('error', err => { console.error(err); process.exit(1); });
+        send({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {
+          processId: 1, capabilities: { workspace: { configuration: false } }, rootUri: null
+        }});
+        setTimeout(() => { console.error('Timeout'); p.kill(); process.exit(1); }, 10000);
+        "
+
+    # ============================================
+    # Package
+    # ============================================
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+
+    - name: Package VS Code extension
+      working-directory: ./objeck-lsp/clients/vscode
+      run: |
+        npm install
+        vsce package
+
+    - name: Assemble release
+      working-directory: ./objeck-lsp
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+
+        rm -rf objeck-lsp-release
+        mkdir objeck-lsp-release
+
+        # VS Code extension
+        cp clients/vscode/*.vsix objeck-lsp-release/
+
+        # Documentation
+        cp README.txt objeck-lsp-release/
+        cp docs/install_guide.html objeck-lsp-release/
+
+        # Editor configs
+        for dir in neovim emacs helix sublime; do
+          mkdir -p "objeck-lsp-release/clients/${dir}"
+        done
+        cp clients/neovim/objeck.lua objeck-lsp-release/clients/neovim/
+        cp clients/emacs/objeck-mode.el objeck-lsp-release/clients/emacs/
+        cp clients/helix/languages.toml objeck-lsp-release/clients/helix/
+        cp clients/sublime/LSP.sublime-settings objeck-lsp-release/clients/sublime/
+
+        # Create archive
+        zip -r "objeck-lsp-${VERSION}.zip" objeck-lsp-release/
+        echo "Packaged: objeck-lsp-${VERSION}.zip"
+
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: objeck-lsp-${{ steps.version.outputs.version }}
+        path: objeck-lsp/objeck-lsp-${{ steps.version.outputs.version }}.zip
+        retention-days: 30
+
+    - name: Upload VS Code extension
+      uses: actions/upload-artifact@v4
+      with:
+        name: vscode-extension
+        path: objeck-lsp/clients/vscode/*.vsix
+        retention-days: 30
