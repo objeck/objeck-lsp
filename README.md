@@ -95,16 +95,11 @@ graph LR
     end
 
     subgraph Runtime["Objeck Runtime"]
-        Workspace["In-Memory
-        Workspace"]
-        Compiler["Analysis
-        Compiler"]
-        Detection["Issue
-        Detection"]
-        Navigation["Code Navigation
-        & Refactoring"]
-        Docs["API
-        Documentation"]
+        Workspace[In-Memory Workspace]
+        Compiler[Analysis Compiler]
+        Detection[Issue Detection]
+        Navigation[Code Navigation & Refactoring]
+        Docs[API Documentation]
 
         Workspace --> Compiler
         Compiler --> Detection
