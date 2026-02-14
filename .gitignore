@@ -2,8 +2,12 @@
 *.obe
 *.obl
 
-# Objeck API docs
-server/objk_apis.json
+# Shipped server binaries (override *.obe)
+!server/objeck_lsp.obe
+!clients/vscode/server/objeck_lsp.obe
+
+# Shipped API docs
+!server/objk_apis.json
 
 # Archive/package artifacts
 *.zip
