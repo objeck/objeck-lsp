@@ -55,8 +55,16 @@ bundle LSP {
 						
 						# end
 						end := JsonElement->New(JsonElement->JsonType->OBJECT);
-						end->Insert("line", result->GetStartLine() - 1);
-						end->Insert("character", result->GetStartPosition() + 2);
+						end_line := result->GetEndLine();
+						end_pos := result->GetEndPosition();
+						if(end_line > 0 & end_pos > 0) {
+							end->Insert("line", end_line - 1);
+							end->Insert("character", end_pos);
+						}
+						else {
+							end->Insert("line", result->GetStartLine() - 1);
+							end->Insert("character", result->GetStartPosition() + 2);
+						};
 						range->Insert("end", end);
 
 						diagnostic->Insert("range", range);
@@ -704,20 +712,9 @@ bundle LSP {
 				obj->Insert("name", name);
 
 					builder->PushObject("location");
+						builder->Insert("uri", uri);
 
 						builder->PushObject("range");
-							obj := builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-							builder->Pop();
-						builder->Pop();
-
-						builder->PushObject("selectionRange");
 							obj := builder->PushObject("start");
 							obj->Insert("line", start_line);
 							obj->Insert("character", start_index);
@@ -779,20 +776,9 @@ bundle LSP {
 				obj->Insert("name", symbol->GetName());
 
 					builder->PushObject("location");
+						builder->Insert("uri", uri);
 
 						builder->PushObject("range");
-							obj := builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-							builder->Pop();
-						builder->Pop();
-
-						builder->PushObject("selectionRange");
 							obj := builder->PushObject("start");
 							obj->Insert("line", start_line);
 							obj->Insert("character", start_index);

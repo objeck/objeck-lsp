@@ -15,7 +15,7 @@ let serverProcess: child_process.ChildProcess;
 
 export function activate(context: ExtensionContext) {
     let objkInstallDir;
-    const config = workspace.getConfiguration();    
+    const config = workspace.getConfiguration();
     if(process.platform === 'win32') {
         objkInstallDir = config.get('objk.win.install.dir');
     }
@@ -37,25 +37,43 @@ export function activate(context: ExtensionContext) {
             path: "/tmp/objk-pipe"
         };
     }
-    
+
     const serverOptions = () => {
         return new Promise<StreamInfo>((resolve, reject) => {
-            // Wait for the server to be ready
-            setTimeout(() => {
+            let attempts = 0;
+            const maxAttempts = 10;
+            const retryDelay = 500;
+
+            function tryConnect() {
+                attempts++;
                 let pipe = net.connect(connectionInfo);
-                let result: StreamInfo = {
-                    writer: pipe,
-                    reader: pipe
-                };
-                resolve(result);
-            }, 1000); // Adjust this delay as needed
+
+                pipe.on('connect', () => {
+                    let result: StreamInfo = {
+                        writer: pipe,
+                        reader: pipe
+                    };
+                    resolve(result);
+                });
+
+                pipe.on('error', (err) => {
+                    if(attempts < maxAttempts) {
+                        setTimeout(tryConnect, retryDelay);
+                    }
+                    else {
+                        reject(new Error(`Failed to connect to Objeck LSP server after ${maxAttempts} attempts: ${err.message}`));
+                    }
+                });
+            }
+
+            tryConnect();
         });
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', pattern: "**/*.{obs}" }],
+        documentSelector: [{ scheme: 'file', language: 'objeck' }],
         synchronize: {
-            fileEvents: workspace.createFileSystemWatcher('**/*.clientrc')
+            fileEvents: workspace.createFileSystemWatcher('**/build.json')
         }
     };
 
@@ -65,21 +83,19 @@ export function activate(context: ExtensionContext) {
 
 function startExternalServer(context: ExtensionContext, objkInstallDir) {
     let serverScript;
-    
+
     if(process.platform === 'win32') {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.cmd'));
     }
     else {
         serverScript = context.asAbsolutePath(path.join('server', 'lsp_server.sh'));
     }
-    
+
     // path to plugin install directory
-    const pluginDir = context.extensionPath; 
-    // const pluginDir = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.7.0';
-    // serverScript = '/Users/randyhollines/.vscode/extensions/objeck-lsp.objeck-lsp-2025.7.0/server/lsp_server.sh'
-    
+    const pluginDir = context.extensionPath;
+
     serverProcess = child_process.spawn(serverScript, [`"${objkInstallDir}"`, `"${pluginDir}"`], { shell: true });
-    
+
     serverProcess.stdout.on('data', (data) => {
         console.log(`Server stdout: ${data}`);
     });
@@ -94,13 +110,16 @@ function startExternalServer(context: ExtensionContext, objkInstallDir) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-    if(serverProcess) {
-        serverProcess.kill();
-    }
-
     if(!client) {
+        if(serverProcess) {
+            serverProcess.kill();
+        }
         return undefined;
     }
-    
-    return client.stop();
+
+    return client.stop().then(() => {
+        if(serverProcess) {
+            serverProcess.kill();
+        }
+    });
 }

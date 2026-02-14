@@ -3,7 +3,7 @@ Latest release for compatibility, no new features
 
 v2025.7.0
 * Bumped to support latest version
-  
+
 v2025.3.0
 * Pipe support for VS Code on macOS and Linux
 * Improved stability switch between source programs
@@ -13,7 +13,8 @@ v2025.2.2
 
 [Installation]
 ===
-Support and tested with Sublime, VSCode, Kate and ecode
+Support and tested with VS Code, Sublime, Kate, ecode, Neovim, Emacs and Helix.
+See docs/install_guide.html for detailed instructions with screenshots.
 
 Sublime
 ---
@@ -107,6 +108,39 @@ ecode
     }
   ]
 }
+
+Neovim
+---
+Requires Neovim 0.11+ with built-in LSP support.
+
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Set environment variables: OBJECK_LIB_PATH and OBJECK_STDIO=binary
+3. Copy clients/neovim/objeck.lua to ~/.config/nvim/lsp/objeck.lua
+4. Edit the cmd paths in the file to point to your Objeck installation
+5. Add to your init.lua:
+   vim.lsp.enable('objeck')
+6. Open a .obs file to activate the language server
+
+Emacs
+---
+Requires Emacs 29+ with built-in Eglot.
+
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Set environment variables: OBJECK_LIB_PATH and OBJECK_STDIO=binary
+3. Copy clients/emacs/objeck-mode.el to your load-path (e.g. ~/.emacs.d/lisp/)
+4. Edit the server command paths in the file to point to your Objeck installation
+5. Add to your init.el:
+   (add-to-list 'load-path "~/.emacs.d/lisp")
+   (require 'objeck-mode)
+6. Open a .obs file and run M-x eglot to start the LSP server
+
+Helix
+---
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Set environment variables: OBJECK_LIB_PATH and OBJECK_STDIO=binary
+3. Merge the contents of clients/helix/languages.toml into ~/.config/helix/languages.toml
+4. Edit the args paths to point to your Objeck installation
+5. Open a .obs file - Helix will start the language server automatically
 
 [Workspaces]
 ===

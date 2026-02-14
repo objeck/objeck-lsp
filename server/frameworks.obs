@@ -122,6 +122,10 @@ bundle LSP {
 						NotifyDidChangeWorkspace(request->GetParams());
 					}
 
+					label "exit" {
+						Runtime->Exit(0);
+					}
+
 					other {
 						if(@is_debug) {
 							System.IO.Filesystem.Logger->Instance()->Error("*** Unknown notification='{$method_id}' ***");
@@ -814,7 +818,7 @@ bundle LSP {
 		method : public : GetVariableMethodStrings(index : Int, var_str : String, mthd_str : String, offset : Bool := true) ~ Bool {
 			start_pos := index;
 
-			while(@text->Get(index)->IsChar() | @text->Get(index) = '_'  | @text->Get(index) = '@' | @text->Get(index) = '(' | @text->Get(index) = ')') {
+			while(index >= 0 & (@text->Get(index)->IsChar() | @text->Get(index) = '_'  | @text->Get(index) = '@' | @text->Get(index) = '(' | @text->Get(index) = ')')) {
 				index -= 1;
 			};
 			end_pos := index;
@@ -828,17 +832,17 @@ bundle LSP {
 				mthd_str += @text->SubString(end_pos + 1, length);
 			};
 
-			while(@text->Get(index) = ' ' | 
-					(@text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
-					(@text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
-					(@text->Get(index) = 't' & @text->Get(index - 1) = '\\')) {
+			while(index >= 0 & (@text->Get(index) = ' ' | 
+					(index >= 1 & @text->Get(index) = 'n' & @text->Get(index - 1) = '\\') |
+					(index >= 1 & @text->Get(index) = 'r' & @text->Get(index - 1) = '\\') |
+					(index >= 1 & @text->Get(index) = 't' & @text->Get(index - 1) = '\\'))) {
 				index -= 1;
-				if(@text->Get(index - 1) = '\\') {
+				if(index >= 1 & @text->Get(index - 1) = '\\') {
 					index -= 1;
 				};
 			};
 
-			has_var := @text->Get(index) = '>' & @text->Get(index - 1) = '-';
+			has_var := index >= 1 & @text->Get(index) = '>' & @text->Get(index - 1) = '-';
 			if(has_var) {
 				index -= 2;
 				
@@ -846,14 +850,14 @@ bundle LSP {
 
 				# variable
 				if(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
-					while(@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@') {
+					while(index >= 0 & (@text->Get(index)->IsChar() | @text->Get(index) = '_' |  @text->Get(index) = '@')) {
 						index -= 1;
 					};
 				}
 				# character
 				else if(@text->Get(index) = '\'') {
 					index -= 1;
-					while(@text->Get(index) <> '\'' & @text->Get(index - 1) <> '\\') {
+					while(index >= 1 & @text->Get(index) <> '\'' & @text->Get(index - 1) <> '\\') {
 						index -= 1;
 					};
 					index -= 1;
@@ -861,7 +865,7 @@ bundle LSP {
 				# string
 				else if(@text->Get(index) = '"') {
 					index -= 1;
-					while(@text->Get(index) <> '"' & @text->Get(index - 1) <> '\\') {
+					while(index >= 1 & @text->Get(index) <> '"' & @text->Get(index - 1) <> '\\') {
 						index -= 1;
 					};
 					index -= 1;

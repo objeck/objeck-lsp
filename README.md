@@ -1,7 +1,7 @@
 # Objeck LSP
 LSP support for [Objeck](https://github.com/objeck/objeck-lang) was incorporated into v6.0 (and futher releases). Diagnostic functionality (i.e. compiling code, finding symbols, code completion, etc.) is built in libraries that ship with the tool chain. The [LSP](https://microsoft.github.io/language-server-protocol/specification) server is standalone, written in Objeck and exposes STDIO and TCP interfaces. The backend handles client requests, formats responses and maintains the state of in-memory documents.
 
-Please refer to the installation [instructions](https://github.com/objeck/objeck-lsp/blob/main/README.txt) (and issues reports) for editor support.
+Please refer to the installation [instructions](https://github.com/objeck/objeck-lsp/blob/main/README.txt) (and issues reports) for editor support. A detailed HTML install guide is also available in [docs/install_guide.html](docs/install_guide.html).
 
 ## Work in the Queue
 Reviving this effort to provide the following
@@ -112,6 +112,10 @@ The server is functional but there is still work to do.
     1. Visual Studio Code
     2. Sublime
     3. Kate
+    4. ecode
+    5. Neovim
+    6. Emacs
+    7. Helix
 1. Platform support
     1. Windows (AMD64)
     2. Linux (AMD64 and ARM64)
@@ -139,4 +143,4 @@ The server is functional but there is still work to do.
     2. Qualfied an unqualfied class
     
 ### Outstanding
-1. Emacs and VIM testing
+1. Additional testing and feedback

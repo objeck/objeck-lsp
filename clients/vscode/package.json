@@ -18,10 +18,10 @@
 		"multi-root ready"
 	],
 	"engines": {
-		"vscode": "^1.7.4"
+		"vscode": "^1.75.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:objeck"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
@@ -31,12 +31,12 @@
 			"properties": {
 				"objk.win.install.dir": {
 					"type": "string",
-					"default": "%HOMEPATH%\\Documents\\Code\\objeck-lang\\core\\release\\deploy-x64",
+					"default": "C:\\Program Files\\Objeck",
 					"description": "Objeck Windows install directory"
 				},
 				"objk.posix.install.dir": {
 					"type": "string",
-					"default": "/Users/randyhollines/Documents/Code/objeck-lang/core/release/deploy",
+					"default": "/usr/local/objeck",
 					"description": "Objeck Posix install directory"
 				}
 			}

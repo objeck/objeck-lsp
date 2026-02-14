@@ -122,10 +122,13 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos:= params->FindElements("position/character")->GetValue();
 
-			document := @workspace->GetDocument(uri);			
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->FindReferences(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -139,10 +142,13 @@ bundle LSP {
 				System.IO.Filesystem.Logger->Instance()->Info("=> CallbackRename: new_name={$new_name}, uri={$uri}, line_pos={$line_pos}, char_pos={$char_pos}");
 			};
 
-			document := @workspace->GetDocument(uri);			
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->CodeRename(new_name, line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -151,10 +157,13 @@ bundle LSP {
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
 
-			document := @workspace->GetDocument(uri);			
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
-				response := document->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());		
+				response := document->FindDeclaration(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -166,23 +175,29 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
-			
-			document := @workspace->GetDocument(uri);			
+
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->FindDefinition(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
 			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
 		}
 
 		method : CallbackSignatureHelp(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
-			
-			document := @workspace->GetDocument(uri);			
+
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->SignatureHelp(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -190,11 +205,14 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			tab_size := params->FindElements("options/tabSize")->GetValue();
 			insert_spaces := params->FindElements("options/insertSpaces")->GetValue();
-			
-			document := @workspace->GetDocument(uri);			
+
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->FormatDocument(tab_size->ToInt(), insert_spaces->Equals("true"));
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -209,10 +227,13 @@ bundle LSP {
 			end_line := params->FindElements("range/end/line")->GetValue();
 			end_char := params->FindElements("range/end/character")->GetValue();
 
-			document := @workspace->GetDocument(uri);			
+			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->FormatRange(tab_size->ToInt(), insert_spaces->Equals("true"), start_line->ToInt(), start_char->ToInt(), end_line->ToInt(), end_char->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -225,6 +246,9 @@ bundle LSP {
 			if(doc <> Nil) {
 				response := doc->Hover(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -264,11 +288,14 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
 			char_pos := params->FindElements("position/character")->GetValue();
-			
+
 			document := @workspace->GetDocument(uri);
 			if(document <> Nil) {
 				response := document->Completion(line_pos->ToInt(), char_pos->ToInt());
 				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -284,7 +311,7 @@ bundle LSP {
 						folder_name_obj := workspace_folder->Get("name");
 						folder_uri_obj := workspace_folder->Get("uri");
 						if(folder_name_obj <> Nil & folder_uri_obj <> Nil) {
-							folder_name := folder_uri_obj->GetValue();
+							folder_name := folder_name_obj->GetValue();
 							folder_uri := folder_uri_obj->GetValue();
 
 							if(@is_debug) {
@@ -301,9 +328,11 @@ bundle LSP {
 
 			capabilities := response->AddChild("capabilities");
 			completionProvider := capabilities->AddChild("completionProvider");
-			completionProvider->Insert("resolveProvider", true);
+			completionProvider->Insert("resolveProvider", false);
 			triggerCharacters := JsonElement->New(JsonElement->JsonType->ARRAY);
 			triggerCharacters->Add("@");
+			triggerCharacters->Add(".");
+			triggerCharacters->Add(">");
 			completionProvider->Insert("triggerCharacters", triggerCharacters);
 
 			signatureHelpProvider := capabilities->AddChild("signatureHelpProvider");
@@ -333,6 +362,7 @@ bundle LSP {
 			capabilities->Insert("hoverProvider", true);
 			capabilities->Insert("documentFormattingProvider", true);
 			capabilities->Insert("documentRangeFormattingProvider", true);
+			capabilities->Insert("workspaceSymbolProvider", true);
 
 			WriteRpcResponse(id, response);
 
@@ -430,6 +460,7 @@ bundle LSP {
 				System.IO.Filesystem.Logger->Instance()->Info("=> CallbackShutdown");
 			};
 
+			WriteRpcResponse(id, Nil);
 			@quit := true;
 		}
 
@@ -437,10 +468,16 @@ bundle LSP {
 			uri := params->FindElements("textDocument/uri");
 			if(uri <> Nil) {
 				url_str := uri->GetValue();
-				document := @workspace->GetDocument(url_str);	
+				document := @workspace->GetDocument(url_str);
 				if(document <> Nil & url_str <> Nil) {
 					WriteRpcResponse(id, document->GetSymbols(url_str));
+				}
+				else {
+					WriteRpcResponse(id, Nil);
 				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
 			};
 		}
 
@@ -499,7 +536,7 @@ bundle LSP {
 			
 			document := Document->New(uri, text, @workspace, IsDebug());
 			@workspace->AddDocument(uri, document);
-			document->GetDiagnostics();
+			WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnostics());
 		}
 
 		method : NotifyDidSave(params : JsonElement) ~ Nil {
@@ -516,7 +553,7 @@ bundle LSP {
 
 				if(IsDebug()) {
 					from_text := text_json <> Nil;
-					System.IO.Filesystem.Logger->Instance()->Info("NotifyDidOSav: uri='{$uri}', from_text={$from_text}");
+					System.IO.Filesystem.Logger->Instance()->Info("NotifyDidSave: uri='{$uri}', from_text={$from_text}");
 				};
 				
 				WriteRpcRequest("textDocument/publishDiagnostics", document->GetDiagnostics());
@@ -528,6 +565,11 @@ bundle LSP {
 			document:= @workspace->GetDocument(params->FindElements("textDocument/uri")->GetValue());
 			if(document <> Nil) {
 				@workspace->RemoveDocument(uri, document);
+
+				empty_diagnostics := JsonElement->New(JsonElement->JsonType->OBJECT);
+				empty_diagnostics->Insert("uri", uri);
+				empty_diagnostics->Insert("diagnostics", JsonElement->New(JsonElement->JsonType->ARRAY));
+				WriteRpcRequest("textDocument/publishDiagnostics", empty_diagnostics);
 			};
 		}
 
