@@ -137,12 +137,46 @@
   <li><strong>Verify installation</strong> &mdash; run <code>obr --version</code> in a terminal. If the command is not found, add the Objeck <code>bin</code> directory to your <code>PATH</code>.</li>
 </ol>
 
+<div class="note">
+  <strong>Self-Contained Deployment:</strong> The install scripts create a self-contained LSP deployment at <code>~/.objeck-lsp/</code> that includes a copy of the Objeck runtime (<code>bin/</code>, <code>lib/</code>) and server files. This isolates the LSP server from Objeck rebuilds so your editor stays stable while you update the compiler.
+</div>
+
+<!-- ===== Automated Install ===== -->
+<h2 id="automated-install">Automated Install</h2>
+<p>The install scripts set up the self-contained deployment and configure your editor automatically. Run from the extracted release directory:</p>
+
+<h3>Windows</h3>
+<pre><code># User install (no admin required)
+scripts\install.cmd C:\Users\you\objeck vscode
+
+# System-wide install
+scripts\install.cmd "C:\Program Files\Objeck" all</code></pre>
+
+<h3>Linux / macOS</h3>
+<pre><code>chmod +x scripts/install.sh
+
+# User install
+./scripts/install.sh ~/objeck sublime
+
+# System-wide install
+./scripts/install.sh /usr/local/objeck all</code></pre>
+
+<p>Supported editors: <code>vscode</code>, <code>sublime</code>, <code>neovim</code>, <code>emacs</code>, <code>all</code></p>
+<p>The first argument is the path to your Objeck installation &mdash; it can be any directory, whether user-local or system-wide. The LSP deployment itself always goes to <code>~/.objeck-lsp/</code> (per-user, no admin required).</p>
+
+<p>To update the runtime and server after rebuilding Objeck, use the update scripts:</p>
+<pre><code># Windows
+scripts\update_lsp.cmd C:\Users\you\objeck
+
+# Linux / macOS
+./scripts/update_lsp.sh ~/objeck</code></pre>
+
 <h3>Platform-specific paths</h3>
 <table>
-  <tr><th>Platform</th><th>Typical install path</th></tr>
-  <tr><td>Windows</td><td><code>C:\Program Files\Objeck</code></td></tr>
-  <tr><td>Linux</td><td><code>/usr/local/objeck</code></td></tr>
-  <tr><td>macOS</td><td><code>/usr/local/objeck</code></td></tr>
+  <tr><th>Platform</th><th>User install</th><th>System-wide install</th></tr>
+  <tr><td>Windows</td><td><code>C:\Users\you\objeck</code></td><td><code>C:\Program Files\Objeck</code></td></tr>
+  <tr><td>Linux</td><td><code>~/objeck</code></td><td><code>/usr/local/objeck</code></td></tr>
+  <tr><td>macOS</td><td><code>~/objeck</code></td><td><code>/usr/local/objeck</code></td></tr>
 </table>
 
 <!-- ===== Workspace ===== -->
@@ -189,19 +223,20 @@
     "objeck": {
       "enabled": true,
       "command": [
-        "&lt;objeck_path&gt;/bin/obr.exe",
-        "&lt;objeck_server_path&gt;/objeck_lsp.obe",
-        "&lt;objeck_server_path&gt;/objk_apis.json",
+        "&lt;objeck_lsp_path&gt;/bin/obr.exe",
+        "&lt;objeck_lsp_path&gt;/objeck_lsp.obe",
+        "&lt;objeck_lsp_path&gt;/objk_apis.json",
         "stdio"
       ],
       "env": {
-        "OBJECK_LIB_PATH": "&lt;objeck_path&gt;/lib",
+        "OBJECK_LIB_PATH": "&lt;objeck_lsp_path&gt;/lib",
         "OBJECK_STDIO": "binary"
       },
       "selector": "source.objeck-obs"
     }
   }
 }</code></pre>
+<div class="note">Replace <code>&lt;objeck_lsp_path&gt;</code> with your self-contained deployment path (e.g. <code>~/.objeck-lsp</code>). The install script sets this automatically.</div>
 <ol start="4">
   <li>Open <em>Tools &gt; LSP &gt; Enable Language Server Globally</em> and select <strong>objeck</strong>.</li>
 </ol>
@@ -216,9 +251,9 @@
   "servers": {
     "objeck": {
       "command": [
-        "&lt;objeck_path&gt;/bin/obr.exe",
-        "&lt;objeck_server_path&gt;/objeck_lsp.obe",
-        "&lt;objeck_server_path&gt;/objk_apis.json",
+        "&lt;objeck_lsp_path&gt;/bin/obr.exe",
+        "&lt;objeck_lsp_path&gt;/objeck_lsp.obe",
+        "&lt;objeck_lsp_path&gt;/objk_apis.json",
         "stdio"
       ],
       "url": "https://github.com/objeck/objeck-lsp",
@@ -252,25 +287,44 @@
 <h2 id="neovim">Neovim</h2>
 <p>Requires <strong>Neovim 0.11+</strong> (built-in <code>vim.lsp.config</code> / <code>vim.lsp.enable</code>).</p>
 <ol>
-  <li>Copy <code>clients/neovim/objeck.lua</code> to <code>~/.config/nvim/lsp/objeck.lua</code>.</li>
-  <li>Edit the <code>cmd</code> paths inside the file to point to your Objeck installation.</li>
+  <li>Copy <code>clients/neovim/objeck.lua</code> to your LSP config directory:
+    <ul>
+      <li>Windows: <code>%LOCALAPPDATA%\nvim\lsp\objeck.lua</code></li>
+      <li>Linux / macOS: <code>~/.config/nvim/lsp/objeck.lua</code></li>
+    </ul>
+  </li>
+  <li>Copy <code>clients/neovim/objeck.vim</code> to your syntax directory:
+    <ul>
+      <li>Windows: <code>%LOCALAPPDATA%\nvim\syntax\objeck.vim</code></li>
+      <li>Linux / macOS: <code>~/.config/nvim/syntax/objeck.vim</code></li>
+    </ul>
+  </li>
+  <li>Edit the <code>cmd</code> and <code>cmd_env</code> paths in <code>objeck.lua</code> to point to your installation.</li>
   <li>Add to your <code>init.lua</code>:</li>
 </ol>
-<pre><code>vim.lsp.enable('objeck')</code></pre>
-<p>The config registers <code>.obs</code> files as the <code>objeck</code> filetype and uses <code>build.json</code> as the workspace root marker.</p>
+<pre><code>vim.filetype.add({ extension = { obs = 'objeck' } })
+vim.lsp.enable('objeck')</code></pre>
+<p>The LSP config uses <code>build.json</code> as the workspace root marker. The syntax file provides highlighting independent of the LSP server.</p>
 
 <!-- ===== Emacs ===== -->
 <h2 id="emacs">Emacs</h2>
 <p>Requires <strong>Emacs 29+</strong> (built-in Eglot).</p>
 <ol>
-  <li>Copy <code>clients/emacs/objeck-mode.el</code> to your load-path (e.g.&nbsp;<code>~/.emacs.d/lisp/</code>).</li>
-  <li>Edit the server command paths inside the file.</li>
+  <li>Copy <code>clients/emacs/objeck-mode.el</code> to your load-path:
+    <ul>
+      <li>Windows: <code>%APPDATA%\.emacs.d\lisp\</code></li>
+      <li>Linux / macOS: <code>~/.emacs.d/lisp/</code></li>
+    </ul>
+  </li>
+  <li>Edit the server command paths and <code>OBJECK_LIB_PATH</code> inside the file.</li>
   <li>Add to your <code>init.el</code>:</li>
 </ol>
-<pre><code>(add-to-list 'load-path "~/.emacs.d/lisp")
-(require 'objeck-mode)</code></pre>
+<pre><code>(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(require 'objeck-mode)
+(add-hook 'objeck-mode-hook 'eglot-ensure)</code></pre>
+<div class="note">The <code>eglot-ensure</code> hook automatically starts the LSP server when opening <code>.obs</code> files. The mode includes built-in syntax highlighting (font-lock) for Objeck keywords, types, and builtins.</div>
 <ol start="4">
-  <li>Open any <code>.obs</code> file and run <kbd>M-x eglot</kbd> to start the LSP server.</li>
+  <li>Open any <code>.obs</code> file &mdash; Eglot will start the LSP server automatically.</li>
 </ol>
 
 <!-- ===== Helix ===== -->

@@ -81,9 +81,18 @@ for %%D in (sublime neovim emacs helix) do (
 	mkdir %RELEASE_DIR%\clients\%%D 2>nul
 )
 copy /y clients\sublime\LSP.sublime-settings %RELEASE_DIR%\clients\sublime >nul
+copy /y clients\sublime\objeck.sublime-syntax %RELEASE_DIR%\clients\sublime >nul
 copy /y clients\neovim\objeck.lua %RELEASE_DIR%\clients\neovim >nul
+copy /y clients\neovim\objeck.vim %RELEASE_DIR%\clients\neovim >nul
 copy /y clients\emacs\objeck-mode.el %RELEASE_DIR%\clients\emacs >nul
 copy /y clients\helix\languages.toml %RELEASE_DIR%\clients\helix >nul
+
+REM install scripts
+mkdir %RELEASE_DIR%\scripts 2>nul
+copy /y scripts\install.cmd %RELEASE_DIR%\scripts >nul
+copy /y scripts\install.sh %RELEASE_DIR%\scripts >nul
+copy /y scripts\update_lsp.cmd %RELEASE_DIR%\scripts >nul
+copy /y scripts\update_lsp.sh %RELEASE_DIR%\scripts >nul
 
 REM docs
 copy /y README.txt %RELEASE_DIR% >nul

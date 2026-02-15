@@ -58,9 +58,19 @@ for dir in sublime neovim emacs helix; do
 	mkdir -p "$RELEASE_DIR/clients/${dir}"
 done
 cp clients/sublime/LSP.sublime-settings "$RELEASE_DIR/clients/sublime/"
+cp clients/sublime/objeck.sublime-syntax "$RELEASE_DIR/clients/sublime/"
 cp clients/neovim/objeck.lua "$RELEASE_DIR/clients/neovim/"
+cp clients/neovim/objeck.vim "$RELEASE_DIR/clients/neovim/"
 cp clients/emacs/objeck-mode.el "$RELEASE_DIR/clients/emacs/"
 cp clients/helix/languages.toml "$RELEASE_DIR/clients/helix/"
+
+# install scripts
+mkdir -p "$RELEASE_DIR/scripts"
+cp scripts/install.cmd "$RELEASE_DIR/scripts/"
+cp scripts/install.sh "$RELEASE_DIR/scripts/"
+cp scripts/update_lsp.cmd "$RELEASE_DIR/scripts/"
+cp scripts/update_lsp.sh "$RELEASE_DIR/scripts/"
+chmod +x "$RELEASE_DIR/scripts/install.sh" "$RELEASE_DIR/scripts/update_lsp.sh"
 
 # docs
 cp README.txt "$RELEASE_DIR/"

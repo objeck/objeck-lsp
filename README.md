@@ -17,13 +17,27 @@ The Objeck LSP server brings code intelligence to the [Objeck](https://github.co
 
 **1. Install Objeck** from [github.com/objeck/objeck-lang](https://github.com/objeck/objeck-lang/releases/latest)
 
-**2. Set environment variables** (required for STDIO transport):
+**2. Run the install script** from the extracted release directory:
 ```sh
-export OBJECK_LIB_PATH=/usr/local/objeck/lib
+# Windows - user install (no admin required)
+scripts\install.cmd C:\Users\you\objeck vscode
+
+# Windows - system-wide install
+scripts\install.cmd "C:\Program Files\Objeck" vscode
+
+# Linux / macOS - user install
+./scripts/install.sh ~/objeck vscode
+
+# Linux / macOS - system-wide install
+./scripts/install.sh /usr/local/objeck vscode
+```
+This creates a self-contained deployment at `~/.objeck-lsp/` and configures your editor. Replace `vscode` with `sublime`, `neovim`, `emacs`, or `all`. The first argument is wherever you installed Objeck.
+
+**3. Or configure manually** &mdash; pick your editor below, then see the [Install Guide](docs/install_guide.html) for step-by-step instructions. Set environment variables (required for STDIO transport):
+```sh
+export OBJECK_LIB_PATH=<objeck_install_dir>/lib
 export OBJECK_STDIO=binary
 ```
-
-**3. Configure your editor** &mdash; pick your editor below, then see the [Install Guide](docs/install_guide.html) for step-by-step instructions.
 
 **4. Create a workspace** &mdash; add a `build.json` to your project root for multi-file projects:
 ```json
@@ -44,9 +58,11 @@ Open the folder in your editor and the LSP server handles the rest.
 | **Sublime Text** | STDIO | Add config from [`clients/sublime/`](clients/sublime/) to LSP settings |
 | **Kate** | STDIO | Add server entry in LSP Client settings ([instructions](README.txt)) |
 | **ecode** | STDIO | Add server to [`lspclient.json`](README.txt) |
-| **Neovim** (0.11+) | STDIO | Copy [`clients/neovim/objeck.lua`](clients/neovim/) to `~/.config/nvim/lsp/` |
-| **Emacs** (29+) | STDIO | Copy [`clients/emacs/objeck-mode.el`](clients/emacs/) to your load-path |
+| **Neovim** (0.11+) | STDIO | Copy [`objeck.lua`](clients/neovim/) + [`objeck.vim`](clients/neovim/) to nvim config |
+| **Emacs** (29+) | STDIO | Copy [`objeck-mode.el`](clients/emacs/) to your load-path (includes syntax highlighting) |
 | **Helix** | STDIO | Merge [`clients/helix/languages.toml`](clients/helix/) into your config |
+
+Install scripts (`scripts/install.cmd` and `scripts/install.sh`) automate setup for VS Code, Sublime, Neovim, and Emacs. Use `scripts/update_lsp` to refresh the runtime after rebuilding Objeck.
 
 ## Features
 

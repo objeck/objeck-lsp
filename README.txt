@@ -16,41 +16,60 @@ v2025.2.2
 Support and tested with VS Code, Sublime, Kate, ecode, Neovim, Emacs and Helix.
 See docs/install_guide.html for detailed instructions with screenshots.
 
+The install scripts create a self-contained deployment at ~/.objeck-lsp/ with
+the Objeck runtime and LSP server. Environment variables and paths are configured
+automatically. No admin rights required for user installs.
+
+VS Code
+--
+Automated: scripts/install.cmd <objeck_install_dir> vscode  (Windows)
+           scripts/install.sh <objeck_install_dir> vscode    (Linux/macOS)
+
+  User install:    scripts/install.cmd C:\Users\you\objeck vscode
+  System install:  scripts/install.cmd "C:\Program Files\Objeck" vscode
+
+Manual:
+1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
+2. Download and unzip the VS Code LSP plugin (https://github.com/objeck/objeck-lsp)
+3. In VS Code click the extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
+4. Edit the 'objk.xxx.install.dir' property in VS Code Settings to point to the root Objeck install directory
+  4a. For macOS and Linux ensure the '<user-root>/.vscode/extensions/objeck-lsp.objeck-lsp-xxxx.x.x/server/lsp_server.sh' file is Unix formatted and has '+x' permission
+5. Restart VS Code
+
 Sublime
 ---
+Automated: scripts/install.cmd <objeck_install_dir> sublime  (Windows)
+           scripts/install.sh <objeck_install_dir> sublime    (Linux/macOS)
+
+  User install:    scripts/install.cmd C:\Users\you\objeck sublime
+  System install:  scripts/install.cmd "C:\Program Files\Objeck" sublime
+
+Manual:
 1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
-2. Follow the "how-to" to install VSC syntax highlighting (https://github.com/objeck/objeck-lang/blob/master/docs/syntax/howto.html)
-3. Configure Sublime LSP support
-4. Open Preferences > Package Settings > LSP > Settings and add the "objeck" client configuration to the "clients":
+2. Copy clients/sublime/objeck.sublime-syntax to your Packages/Objeck/ directory
+3. Install the LSP package via Package Control
+4. Open Preferences > Package Settings > LSP > Settings and add the "objeck" client configuration:
 {
 	"clients": {
 		"objeck": {
-			"enabled": false,
+			"enabled": true,
 			"command": [
-				"<objeck_path>/bin/obr.exe",
-				"<objeck_server_path>/objeck_lsp.obe",
-				"<objeck_server_path>/objk_apis.json",
+				"<objeck_lsp_path>/bin/obr.exe",
+				"<objeck_lsp_path>/objeck_lsp.obe",
+				"<objeck_lsp_path>/objk_apis.json",
 				"stdio"
 			],
 			"env": {
-				"OBJECK_LIB_PATH": "<objeck_path>/lib",
+				"OBJECK_LIB_PATH": "<objeck_lsp_path>/lib",
 				"OBJECK_STDIO": "binary"
 			},
 			"selector": "source.objeck-obs"
 		}
 	}
 }
-4. Open Tools > LSP > "Enable Language Server Globally" and select "objeck"
-5. Open the directory of the file you want to edit, then open the file. For projects, read below.
-
-VS Code
---
-1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
-2. Download the unzip the VS Code LSP plugin-in (https://github.com/objeck/objeck-lsp)
-3. In VS Code click the extensions button (or Ctrl+Shift+X) and drag-and-drop "objeck-lsp-xxx.vsix" file
-4. Edit the 'objk.xxx.install.dir' property in the 'package.json' within the '<user-root>/.vscode/extensions/objeck-lsp.objeck-lsp-xxxx.x.x' directory so it points to the root Objeck install directory
-  4a. For macOS and Linux ensure the '<user-root>/.vscode/extensions/objeck-lsp.objeck-lsp-xxxx.x.x/server/lsp_server.sh' file is Unix formatted and has '+x' permission
-5. Restart VS Code
+Replace <objeck_lsp_path> with your deployment path (e.g. ~/.objeck-lsp).
+5. Open Tools > LSP > "Enable Language Server Globally" and select "objeck"
+6. Open the directory of the file you want to edit, then open the file. For projects, read below.
 
 Kate
 ---
@@ -61,9 +80,9 @@ Create a new settings file with the content:
     "servers": {
         "objeck": {
             "command": [
-                "<objeck_path>/obr.exe",
-                "<objeck_server_path>/objeck_lsp.obe",
-                "<objeck_server_path>/objk_apis.json",
+                "<objeck_lsp_path>/bin/obr.exe",
+                "<objeck_lsp_path>/objeck_lsp.obe",
+                "<objeck_lsp_path>/objk_apis.json",
                 "stdio"
             ],
             "url": "https://github.com/objeck/objeck-lsp",
@@ -71,7 +90,8 @@ Create a new settings file with the content:
         }
     }
 }
-Note: Kate doesn't support define environment variables like Sublime so the environment variables OBJECK_LIB_PATH and OBJECK_STDIO must be set on Windows.
+Note: Kate doesn't support per-server environment variables. Set OBJECK_LIB_PATH
+and OBJECK_STDIO system-wide on Windows, or in your shell profile on Linux / macOS.
 
 ecode
 ---
@@ -98,7 +118,7 @@ ecode
   },
   "servers": [
     {
-      "command": "obr <lsp_server_path>/objeck_lsp.obe <lsp_server_path>//objk_apis.json stdio",
+      "command": "obr <lsp_server_path>/objeck_lsp.obe <lsp_server_path>/objk_apis.json stdio",
       "file_patterns": [
         "%.obs"
       ],
@@ -111,28 +131,56 @@ ecode
 
 Neovim
 ---
+Automated: scripts/install.cmd <objeck_install_dir> neovim  (Windows)
+           scripts/install.sh <objeck_install_dir> neovim    (Linux/macOS)
+
+  User install:    scripts/install.cmd C:\Users\you\objeck neovim
+  System install:  scripts/install.cmd "C:\Program Files\Objeck" neovim
+
+The install script copies the LSP config and syntax highlighting file. It also
+sets the full path to obr and configures environment variables automatically.
+
+Manual:
 Requires Neovim 0.11+ with built-in LSP support.
 
 1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
-2. Set environment variables: OBJECK_LIB_PATH and OBJECK_STDIO=binary
-3. Copy clients/neovim/objeck.lua to ~/.config/nvim/lsp/objeck.lua
-4. Edit the cmd paths in the file to point to your Objeck installation
+2. Copy clients/neovim/objeck.lua to your Neovim LSP config directory:
+   Windows:    %LOCALAPPDATA%\nvim\lsp\objeck.lua
+   Linux/macOS: ~/.config/nvim/lsp/objeck.lua
+3. Copy clients/neovim/objeck.vim to your Neovim syntax directory:
+   Windows:    %LOCALAPPDATA%\nvim\syntax\objeck.vim
+   Linux/macOS: ~/.config/nvim/syntax/objeck.vim
+4. Edit the cmd and cmd_env paths in objeck.lua to point to your installation
 5. Add to your init.lua:
+   vim.filetype.add({ extension = { obs = 'objeck' } })
    vim.lsp.enable('objeck')
 6. Open a .obs file to activate the language server
 
 Emacs
 ---
+Automated: scripts/install.cmd <objeck_install_dir> emacs  (Windows)
+           scripts/install.sh <objeck_install_dir> emacs    (Linux/macOS)
+
+  User install:    scripts/install.cmd C:\Users\you\objeck emacs
+  System install:  scripts/install.cmd "C:\Program Files\Objeck" emacs
+
+The install script copies objeck-mode.el with patched paths, sets environment
+variables, and creates init.el if needed. Includes syntax highlighting and
+Eglot LSP integration.
+
+Manual:
 Requires Emacs 29+ with built-in Eglot.
 
 1. Download and install the latest version of Objeck (https://github.com/objeck/objeck-lang)
-2. Set environment variables: OBJECK_LIB_PATH and OBJECK_STDIO=binary
-3. Copy clients/emacs/objeck-mode.el to your load-path (e.g. ~/.emacs.d/lisp/)
-4. Edit the server command paths in the file to point to your Objeck installation
-5. Add to your init.el:
-   (add-to-list 'load-path "~/.emacs.d/lisp")
+2. Copy clients/emacs/objeck-mode.el to your Emacs load-path:
+   Windows:    %APPDATA%\.emacs.d\lisp\
+   Linux/macOS: ~/.emacs.d/lisp/
+3. Edit the server command paths and OBJECK_LIB_PATH in the file
+4. Add to your init.el:
+   (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
    (require 'objeck-mode)
-6. Open a .obs file and run M-x eglot to start the LSP server
+   (add-hook 'objeck-mode-hook 'eglot-ensure)
+5. Open a .obs file - Eglot will start the LSP server automatically
 
 Helix
 ---
@@ -163,3 +211,17 @@ Workspaces enable the LSP server to compile and examine all files in a project w
 	"flags": ""
 }
 3. To enable the project file, Close all open files and open the directory that contains the "build.json" file in either VS Code or Sublime
+
+[Updating the LSP Server]
+===
+After rebuilding Objeck or updating the LSP server, refresh the self-contained deployment:
+
+User install:
+  Windows:  scripts\update_lsp.cmd C:\Users\you\objeck
+  Linux:    scripts/update_lsp.sh ~/objeck
+
+System-wide install:
+  Windows:  scripts\update_lsp.cmd "C:\Program Files\Objeck"
+  Linux:    scripts/update_lsp.sh /usr/local/objeck
+
+This copies the latest runtime and server files to ~/.objeck-lsp/ without changing editor configs.
