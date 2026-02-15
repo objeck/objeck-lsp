@@ -21,3 +21,6 @@
 # Debug/staging directories
 objeck-lsp-debug/
 objeck-lsp/
+
+# Claude Code
+.claude/
