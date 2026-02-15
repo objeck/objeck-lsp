@@ -28,7 +28,7 @@ mkdir objeck-lsp-debug
 REM --- generate API docs ---
 echo [2/6] Generating API documentation...
 cd server\doc_json
-call gen_json.cmd %VERSION%
+call .\gen_json.cmd %VERSION%
 if %ERRORLEVEL% NEQ 0 (
 	echo.
 	echo ERROR: API doc generation failed
@@ -39,7 +39,7 @@ cd ..
 
 REM --- build server ---
 echo [3/6] Building LSP server...
-call build_server.cmd
+call .\build_server.cmd
 if %ERRORLEVEL% NEQ 0 (
 	echo.
 	echo ERROR: Server build failed
