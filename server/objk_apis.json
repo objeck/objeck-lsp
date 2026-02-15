@@ -1,5 +1,25 @@
 {
 	"class-details": {
+		"API.Google.Gemini.AudioPart": {
+			"description": "Audio message part (Gemini 2.0+) Supports audio input and output for multimodal interactions",
+			"functions": {
+				"GetBase64Data": {
+					"descriptions": ["**Get Base64 encoding audio string**\n\n```method : public : GetBase64Data() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetData": {
+					"descriptions": ["**Get raw audio data**\n\n```method : public : GetData() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"GetMimeType": {
+					"descriptions": ["**Get MIME type**\n\n```method : public : GetMimeType() ~ String```\n\n\n\nreturn: String"]
+				},
+				"New": {
+					"descriptions": ["**Constructor for audio input\/output**\n\n```New(data:Byte[], mime_type:String)```\n\n\n\ndata: Byte[]\n\nmime_type: String"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation of the object**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
 		"API.Google.Gemini.BinaryPart": {
 			"description": "Binary message part",
 			"functions": {
@@ -90,6 +110,15 @@
 				},
 				"EmbedContent": {
 					"descriptions": ["**Generates an embedding from the model given an input Content**\n\n```function : EmbedContent(content:Content, key:String) ~ Float[]```\n\n\n\ncontent: Content\n\nkey: String\n\nreturn: Float[]", "**Generates an embedding from the model given an input Content**\n\n```function : EmbedContent(content:Content, title:String, type:Model-&gt;TaskType, key:String) ~ Float[]```\n\n\n\ncontent: Content\n\ntitle: String\n\ntype: Model-&gt;TaskType\n\nkey: String\n\nreturn: Float[]"]
+				},
+				"GEMINI_1_5_FLASH": {
+					"descriptions": ["**Model name constants for Gemini 1.5 models**\n\n```function : native : GEMINI_1_5_FLASH() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GEMINI_2_0_FLASH_EXP": {
+					"descriptions": ["**Model name constants for Gemini 2.0\/2.5 models**\n\n```function : native : GEMINI_2_0_FLASH_EXP() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GEMINI_PRO": {
+					"descriptions": ["**Model name constants for legacy models**\n\n```function : native : GEMINI_PRO() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GenerateContent": {
 					"descriptions": ["**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, resp_schema:Pair&lt;String,ParameterType&gt;, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nresp_schema: Pair&lt;String,ParameterType&gt;\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, contents:Vector&lt;Content&gt;, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontents: Vector&lt;Content&gt;\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;"]
@@ -531,6 +560,250 @@
 				}
 			}
 		},
+		"API.Onnx.DeepLabClassification": {
+			"description": "DeepLab classification result",
+			"functions": {
+				"GetConfidence": {
+					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetId": {
+					"descriptions": ["**Get classification ID**\n\n```method : public : GetId() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetName": {
+					"descriptions": ["**Get classification name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetPolygons": {
+					"descriptions": ["**Get identified polygons**\n\n```method : public : GetPolygons() ~ Collection.Tuple.Pair[]&lt;IntRef,IntRef&gt;```\n\n\n\nreturn: Collection.Tuple.Pair[]&lt;IntRef,IntRef&gt;"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.DeepLabResult": {
+			"description": "DeepLab results",
+			"functions": {
+				"GetClassifications": {
+					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ DeepLabClassification[]```\n\n\n\nreturn: DeepLabClassification[]"]
+				},
+				"GetMaskedDimensions": {
+					"descriptions": ["**Gets the masked image dimensions**\n\n```method : public : GetMaskedDimensions() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"GetMaskedImage": {
+					"descriptions": ["**Gets the masked image**\n\n```method : public : GetMaskedImage() ~ API.OpenCV.Image```\n\n\n\nreturn: API.OpenCV.Image"]
+				},
+				"GetOverlayDimensions": {
+					"descriptions": ["**Gets the overlay image dimensions**\n\n```method : public : GetOverlayDimensions() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"GetOverlayImage": {
+					"descriptions": ["**Gets the overlay image**\n\n```method : public : GetOverlayImage() ~ API.OpenCV.Image```\n\n\n\nreturn: API.OpenCV.Image"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.DeepLabSession": {
+			"description": "Deeplab inference session",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Inference": {
+					"descriptions": ["**DeepLab image inference**\n\n```method : public : Inference(image:Byte[], labels:String[]) ~ API.Onnx.DeepLabResult```\n\n\n\nimage: Byte[]\n\nlabels: String[]\n\nreturn: API.Onnx.DeepLabResult"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(model:String)```\n\n\n\nmodel: String", "**Constructor.**\n\n```New(model:String, config:Map&lt;String,String&gt;)```\n\n\n\nmodel: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
+		"API.Onnx.OpenPoseClassification": {
+			"description": "OpenPose classification result",
+			"functions": {
+				"GetConfidence": {
+					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetId": {
+					"descriptions": ["**Get classification ID**\n\n```method : public : GetId() ~ OpenPoseClassification-&gt;Type```\n\n\n\nreturn: OpenPoseClassification-&gt;Type"]
+				},
+				"GetName": {
+					"descriptions": ["**Get classification name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetNormalizedX": {
+					"descriptions": ["**Get normalized X-coordinate**\n\n```method : public : GetNormalizedX() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetNormalizedY": {
+					"descriptions": ["**Get normalized y-coordinate**\n\n```method : public : GetNormalizedY() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.OpenPoseResult": {
+			"description": "OpenPose results",
+			"functions": {
+				"GetClassifications": {
+					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ OpenPoseClassification[]```\n\n\n\nreturn: OpenPoseClassification[]"]
+				},
+				"GetMaskedDimensions": {
+					"descriptions": ["**Gets the masked image dimensions**\n\n```method : public : GetMaskedDimensions() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"GetMaskedImage": {
+					"descriptions": ["**Gets the masked image**\n\n```method : public : GetMaskedImage() ~ API.OpenCV.Image```\n\n\n\nreturn: API.OpenCV.Image"]
+				},
+				"GetNormalizedHeight": {
+					"descriptions": ["**Get normalized height**\n\n```method : public : GetNormalizedHeight() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetNormalizedWidth": {
+					"descriptions": ["**Get normalized width**\n\n```method : public : GetNormalizedWidth() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetNormalizedX": {
+					"descriptions": ["**Get normalized X-coordinate**\n\n```method : public : GetNormalizedX() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetNormalizedY": {
+					"descriptions": ["**Get normalized y-coordinate**\n\n```method : public : GetNormalizedY() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.OpenPoseSession": {
+			"description": "OpenPose inference session",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Inference": {
+					"descriptions": ["**OpenPose image inference**\n\n```method : public : Inference(image:Byte[], ) ~ API.Onnx.OpenPoseResult```\n\n\n\nimage: Byte[]\n\nlabels: String[]\n\nreturn: API.Onnx.OpenPoseResult"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(model:String)```\n\n\n\nmodel: String", "**Constructor.**\n\n```New(model:String, config:Map&lt;String,String&gt;)```\n\n\n\nmodel: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
+		"API.Onnx.ResNetResult": {
+			"description": "ResNet results",
+			"functions": {
+				"GeConfidences": {
+					"descriptions": ["**Gets the confidences results**\n\n```method : public : GeConfidences() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"GetConfidence": {
+					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetId": {
+					"descriptions": ["**Get classification ID**\n\n```method : public : GetId() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetName": {
+					"descriptions": ["**Get classification name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.ResNetSession": {
+			"description": "ResNet inference session",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Inference": {
+					"descriptions": ["**ResNet image inference**\n\n```method : public : Inference(image:Byte[], height:Int, labels:String[]) ~ API.Onnx.ResNetResult```\n\n\n\nimage: Byte[]\n\nheight: Int\n\nwidth: Int\n\nlabels: String[]\n\nreturn: API.Onnx.ResNetResult"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(model:String)```\n\n\n\nmodel: String", "**Constructor.**\n\n```New(model:String, config:Map&lt;String,String&gt;)```\n\n\n\nmodel: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
+		"API.Onnx.Runtime": {
+			"description": "Yolo runtime",
+			"functions": {
+
+			}
+		},
+		"API.Onnx.YoloClassification": {
+			"description": "Yolo classification result",
+			"functions": {
+				"GetBounds": {
+					"descriptions": ["**Get classification bounds**\n\n```method : public : GetBounds() ~ Rect```\n\n\n\nreturn: Rect"]
+				},
+				"GetConfidence": {
+					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetId": {
+					"descriptions": ["**Get classification ID**\n\n```method : public : GetId() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetName": {
+					"descriptions": ["**Get classification name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.YoloResult": {
+			"description": "Yolo inference result",
+			"functions": {
+				"GetClassifications": {
+					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ YoloClassification[]```\n\n\n\nreturn: YoloClassification[]"]
+				},
+				"GetDimensions": {
+					"descriptions": ["**Gets the image dimensions**\n\n```method : public : GetDimensions() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"GetImages": {
+					"descriptions": ["**Gets image byte**\n\n```method : public : GetImages() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"GetLabels": {
+					"descriptions": ["**Gets the labels**\n\n```method : public : GetLabels() ~ String[]```\n\n\n\nreturn: String[]"]
+				},
+				"GetOutput": {
+					"descriptions": ["**Gets the confidences results**\n\n```method : public : GetOutput() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"GetShape": {
+					"descriptions": ["**Gets the confidences shape**\n\n```method : public : GetShape() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.YoloSession": {
+			"description": "Yolo inference session",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Inference": {
+					"descriptions": ["**Yolo image inference, support for models v8 and above**\n\n```method : public : Inference(image:Byte[], height:Int, conf_threshold:Float, labels:String[]) ~ API.Onnx.YoloResult```\n\n\n\nimage: Byte[]\n\nheight: Int\n\nwidth: Int\n\nconf_threshold: Float\n\nlabels: String[]\n\nreturn: API.Onnx.YoloResult"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(model:String)```\n\n\n\nmodel: String", "**Constructor.**\n\n```New(model:String, config:Map&lt;String,String&gt;)```\n\n\n\nmodel: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
 		"API.OpenAI.Assistant": {
 			"description": "Builds assistants that can call models and use tools to perform tasks",
 			"functions": {
@@ -757,6 +1030,14 @@
 				},
 				"ToString": {
 					"descriptions": ["**String representation of the object**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.OpenAI.Realtime": {
+			"description": "Realtime API support",
+			"functions": {
+				"Respond": {
+					"descriptions": ["**Query with text input and respond with text and audio outputs**\n\n```function : Respond(audio:Byte[], model:String, token:String) ~ Pair&lt;String,ByteArrayRef&gt;```\n\n\n\naudio: Byte[]\n\nmodel: String\n\ntoken: String\n\nreturn: Pair&lt;String,ByteArrayRef&gt;", "**Query with text input and respond with text and audio outputs**\n\n```function : Respond(audio:Byte[], model:String, voice:String, token:String) ~ Pair&lt;String,ByteArrayRef&gt;```\n\n\n\naudio: Byte[]\n\nmodel: String\n\nvoice: String\n\ntoken: String\n\nreturn: Pair&lt;String,ByteArrayRef&gt;", "**Query with text input and respond with text and audio outputs**\n\n```function : Respond(text:String, model:String, token:String) ~ Pair&lt;String,ByteArrayRef&gt;```\n\n\n\ntext: String\n\nmodel: String\n\ntoken: String\n\nreturn: Pair&lt;String,ByteArrayRef&gt;", "**Query with text input and respond with text and audio outputs**\n\n```function : Respond(text:String, model:String, voice:String, token:String) ~ Pair&lt;String,ByteArrayRef&gt;```\n\n\n\ntext: String\n\nmodel: String\n\nvoice: String\n\ntoken: String\n\nreturn: Pair&lt;String,ByteArrayRef&gt;"]
 				}
 			}
 		},
@@ -1017,6 +1298,9 @@
 				"GetStatus": {
 					"descriptions": ["**Get finish reason**\n\n```method : public : GetStatus() ~ String```\n\n\n\nreturn: String"]
 				},
+				"GetSummaries": {
+					"descriptions": ["**Get summaries**\n\n```method : public : GetSummaries() ~ Vector&lt;Pair&lt;String,String&gt;&gt;```\n\n\n\nreturn: Vector&lt;Pair&lt;String,String&gt;&gt;"]
+				},
 				"GetType": {
 					"descriptions": ["**Get type**\n\n```method : public : GetType() ~ String```\n\n\n\nreturn: String"]
 				},
@@ -1047,10 +1331,21 @@
 					"descriptions": ["**Get response text**\n\n```method : public : GetText() ~ String```\n\n\n\nreturn: String"]
 				},
 				"Respond": {
-					"descriptions": ["**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, max_tokens:Int, temperature:Float, top_p:Float, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, max_tokens:Int, temperature:Float, top_p:Float, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,String&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,String&gt;&gt;\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,String&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,String&gt;&gt;\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, max_tokens:Int, temperature:Float, top_p:Float, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, max_tokens:Int, temperature:Float, top_p:Float, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, messages:Vector&lt;FileQuery&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;FileQuery&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, messages:Vector&lt;FileQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;FileQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;\n\nreturn: Response"]
+					"descriptions": ["**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, reasoning_effort:ReasoningEffort, verbosity:Verbosity, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, schema:ParameterType, reasoning_effort:ReasoningEffort, verbosity:Verbosity, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nschema: ParameterType\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, message:Pair&lt;String,String&gt;, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, schema:ParameterType, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,String&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\nschema: ParameterType\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,String&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,String&gt;&gt;\n\nreturn: Response", "**Model response for the given query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,String&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,String&gt;&gt;\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, schema:ParameterType, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\nschema: ParameterType\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, message:API.OpenAI.FileQuery, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: API.OpenAI.FileQuery\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, messages:Vector&lt;FileQuery&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;FileQuery&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given file and query**\n\n```function : Respond(model:String, messages:Vector&lt;FileQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, schema:ParameterType, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;FileQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\nschema: ParameterType\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, schema:ParameterType, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nschema: ParameterType\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, schema:ParameterType, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\nschema: ParameterType\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, message:Pair&lt;String,API.OpenAI.ImageQuery&gt;, max_tokens:Int, temperature:Float, top_p:Float, reasoning_effort:ReasoningEffort, verbosity:Verbosity, tools:Vector&lt;Tool&gt;, token:String) ~ Response```\n\n\n\nmodel: String\n\nmessage: Pair&lt;String,API.OpenAI.ImageQuery&gt;\n\nmax_tokens: Int\n\ntemperature: Float\n\ntop_p: Float\n\nreasoning_effort: ReasoningEffort\n\nverbosity: Verbosity\n\ntools: Vector&lt;Tool&gt;\n\ntoken: String\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;\n\nreturn: Response", "**Model response for the given image and query**\n\n```function : Respond(model:String, messages:Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;) ~ Response```\n\n\n\nmodel: String\n\nmessages: Vector&lt;Pair&lt;String,API.OpenAI.ImageQuery&gt;&gt;\n\nreturn: Response"]
 				},
 				"ToString": {
 					"descriptions": ["**String representation of the object**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.OpenAI.Responses.Tool": {
+			"description": "Tool like remote MCP servers or web search to extend the model's capabilities",
+			"functions": {
+				"GetName": {
+					"descriptions": ["**Get name of tool**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(tool_name:String)```\n\n\n\ntool_name: String", "**Constructor**\n\n```New(vector_store_ids:Vector&lt;String&gt;)```\n\n\n\nvector_store_ids: Vector&lt;String&gt;", "**Constructor**\n\n```New(func_name:String, func_desc:String, func_params:ParameterType)```\n\n\n\nfunc_name: String\n\nfunc_desc: String\n\nfunc_params: ParameterType", "**Constructor**\n\n```New(server_label:String, server_url:Url)```\n\n\n\nserver_label: String\n\nserver_url: Url"]
 				}
 			}
 		},
@@ -1147,6 +1442,123 @@
 				}
 			}
 		},
+		"API.OpenCV.Image": {
+			"description": "OpenCV image",
+			"functions": {
+				"Bytes": {
+					"descriptions": ["**Gets image bytes**\n\n```method : public : Bytes() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"Columns": {
+					"descriptions": ["**Gets image columns**\n\n```method : public : Columns() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"Convert": {
+					"descriptions": ["**Convert an image to a given byte format**\n\n```method : public : Convert(format:Image-&gt;Format) ~ Byte[]```\n\n\n\nformat: Image-&gt;Format\n\nreturn: Byte[]"]
+				},
+				"DrawCircle": {
+					"descriptions": ["**Draws a bounding circle**\n\n```method : public : DrawCircle(pt:Point, radius:Int, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\npt: Point\n\nradius: Int\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
+				},
+				"DrawRectangle": {
+					"descriptions": ["**Draws a bounding rectangle**\n\n```method : public : DrawRectangle(rect:Rect, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\nrect: Rect\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
+				},
+				"DrawText": {
+					"descriptions": ["**Draws text on an image**\n\n```method : public : DrawText(text:String, font:Font, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\ntext: String\n\npt: Point\n\nfont: Font\n\nscale: Float\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
+				},
+				"IsEmpty": {
+					"descriptions": ["**Determines if an image is empty**\n\n```method : public : IsEmpty() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"Load": {
+					"descriptions": ["**Load image from file**\n\n```function : Load(image_path:String) ~ API.OpenCV.Image```\n\n\n\nimage_path: String\n\nreturn: API.OpenCV.Image", "**Load image from bytes**\n\n```function : Load() ~ API.OpenCV.Image```\n\n\n\nimage_bytes: Byte[]\n\nreturn: API.OpenCV.Image"]
+				},
+				"Resize": {
+					"descriptions": ["**Resizes an image**\n\n```method : public : Resize(sz:Size, fx:Float, fy:Float, interpolation:InterpolationFlags) ~ API.OpenCV.Image```\n\n\n\nsz: Size\n\nfx: Float\n\nfy: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image", "**Resizes an image**\n\n```method : public : Resize(fx:Float, fy:Float, interpolation:InterpolationFlags) ~ API.OpenCV.Image```\n\n\n\nfx: Float\n\nfy: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image", "**Resizes an image**\n\n```method : public : Resize(f:Float, ) ~ API.OpenCV.Image```\n\n\n\nf: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image"]
+				},
+				"Rows": {
+					"descriptions": ["**Gets image rows**\n\n```method : public : Rows() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"Show": {
+					"descriptions": ["**Shows an image**\n\n```method : public : Show(title:String) ~ Nil```\n\n\n\ntitle: String\n\nreturn: Nil", "**Shows an image**\n\n```method : public : Show(title:String, scale:Float) ~ Nil```\n\n\n\ntitle: String\n\nscale: Float\n\nreturn: Nil", "**Shows an image**\n\n```method : public : Show(title:String, scale:Float, ) ~ Nil```\n\n\n\ntitle: String\n\nscale: Float\n\nms_wait: Int\n\nreturn: Nil"]
+				},
+				"Size": {
+					"descriptions": ["**Gets image size**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"Type": {
+					"descriptions": ["**Gets image type**\n\n```method : public : Type() ~ Int```\n\n\n\nreturn: Int"]
+				}
+			}
+		},
+		"API.OpenCV.Point": {
+			"description": "OpenCV point",
+			"functions": {
+				"GetX": {
+					"descriptions": ["**Get X position**\n\n```method : public : GetX() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetY": {
+					"descriptions": ["**Get Y position**\n\n```method : public : GetY() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(x:Int, y:Int)```\n\n\n\nx: Int\n\ny: Int"]
+				}
+			}
+		},
+		"API.OpenCV.Rect": {
+			"description": "OpenCV rectangle",
+			"functions": {
+				"GetHeight": {
+					"descriptions": ["**Get height**\n\n```method : public : GetHeight() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetWidth": {
+					"descriptions": ["**Get width**\n\n```method : public : GetWidth() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(x:Int, y:Int, width:Int, height:Int)```\n\n\n\nx: Int\n\ny: Int\n\nwidth: Int\n\nheight: Int"]
+				},
+				"ToJson": {
+					"descriptions": ["**JSON representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"API.OpenCV.Scalar": {
+			"description": "OpenCV scalar",
+			"functions": {
+				"GetV0": {
+					"descriptions": ["**Get value 0**\n\n```method : public : GetV0() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetV1": {
+					"descriptions": ["**Get value 1**\n\n```method : public : GetV1() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetV2": {
+					"descriptions": ["**Get value 2**\n\n```method : public : GetV2() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetV3": {
+					"descriptions": ["**Get value 3**\n\n```method : public : GetV3() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(v0:Float, v1:Float, v2:Float, v3:Float)```\n\n\n\nv0: Float\n\nv1: Float\n\nv2: Float\n\nv3: Float"]
+				}
+			}
+		},
+		"API.OpenCV.Size": {
+			"description": "OpenCV size",
+			"functions": {
+				"GetHeight": {
+					"descriptions": ["**Get height**\n\n```method : public : GetHeight() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetWidth": {
+					"descriptions": ["**Get width**\n\n```method : public : GetWidth() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(width:Int, height:Int)```\n\n\n\nwidth: Int\n\nheight: Int"]
+				}
+			}
+		},
+		"API.OpenCV.VideoCapture": {
+			"description": "OpenCV VideoCapture",
+			"functions": {
+				"Open": {
+					"descriptions": ["**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(id:Int) ~ Bool```\n\n\n\nid: Int\n\nreturn: Bool", "**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(id:Int, pref:Api) ~ Bool```\n\n\n\nid: Int\n\npref: Api\n\nreturn: Bool", "**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				}
+			}
+		},
 		"Cipher.Decrypt": {
 			"description": "Decrypts data",
 			"functions": {
@@ -1213,7 +1625,7 @@
 					"descriptions": ["**Clears the cache**\n\n```method : public : Empty() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
 				"Find": {
-					"descriptions": ["**Searches for a value in cache**\n\n```method : public : Find(key:K) ~ S```\n\n\n\nkey: K\n\nreturn: S"]
+					"descriptions": ["**Searches for a value in cache and updates access priority for LRU\/MRU**\n\n```method : public : Find(key:K) ~ S```\n\n\n\nkey: K\n\nreturn: S"]
 				},
 				"GetKeyValues": {
 					"descriptions": ["**Gets a collection of key\/value pairs**\n\n```method : public : GetKeyValues() ~ Vector&lt;Pair&lt;K,S&gt;&gt;```\n\n\n\nreturn: Vector&lt;Pair&lt;K,S&gt;&gt;"]
@@ -1382,11 +1794,23 @@
 				"AddBack": {
 					"descriptions": ["**Adds a value to the end**\n\n```method : public : AddBack(value:H) ~ Nil```\n\n\n\nvalue: H\n\nreturn: Nil"]
 				},
+				"All": {
+					"descriptions": ["**Checks if all elements match the predicate**\n\n```method : public : All(f:(H)~Bool) ~ Bool```\n\n\n\nf: (H)~Bool\n\nreturn: Bool"]
+				},
+				"Any": {
+					"descriptions": ["**Checks if any element matches the predicate**\n\n```method : public : Any(f:(H)~Bool) ~ Bool```\n\n\n\nf: (H)~Bool\n\nreturn: Bool"]
+				},
 				"BinarySearch": {
 					"descriptions": ["**Performs a binary search O(log n)**\n\n```method : public : native : BinarySearch(value:H) ~ Int```\n\n\n\nvalue: H\n\nreturn: Int"]
 				},
 				"Compress": {
 					"descriptions": ["**Compresses the Vector freeing unused memory**\n\n```method : public : Compress() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Count": {
+					"descriptions": ["**Counts elements matching the predicate**\n\n```method : public : Count(f:(H)~Bool) ~ Int```\n\n\n\nf: (H)~Bool\n\nreturn: Int"]
+				},
+				"Distinct": {
+					"descriptions": ["**Returns a new vector with duplicate elements removed**\n\n```method : public : Distinct() ~ CompareVector&lt;H&gt;```\n\n\n\nreturn: CompareVector&lt;H&gt;"]
 				},
 				"Each": {
 					"descriptions": ["**Function called for each element**\n\n```method : public : Each(f:(H)~Nil) ~ CompareVector&lt;H&gt;```\n\n\n\nf: (H)~Nil\n\nreturn: CompareVector&lt;H&gt;"]
@@ -1399,6 +1823,12 @@
 				},
 				"Find": {
 					"descriptions": ["**Finds a given value in the vector via linear search**\n\n```method : public : Find(value:H) ~ Int```\n\n\n\nvalue: H\n\nreturn: Int"]
+				},
+				"FindFirst": {
+					"descriptions": ["**Finds the first element matching the predicate**\n\n```method : public : FindFirst(f:(H)~Bool) ~ H```\n\n\n\nf: (H)~Bool\n\nreturn: H"]
+				},
+				"FindIndex": {
+					"descriptions": ["**Finds the index of the first element matching the predicate**\n\n```method : public : FindIndex(f:(H)~Bool) ~ Int```\n\n\n\nf: (H)~Bool\n\nreturn: Int"]
 				},
 				"First": {
 					"descriptions": ["**Gets the first value**\n\n```method : public : First() ~ H```\n\n\n\nreturn: H"]
@@ -1526,6 +1956,41 @@
 				},
 				"ToString": {
 					"descriptions": ["**Formats the collection into a string. If an element implements the 'Stringify' interface, it's 'ToString()' is called.**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"Collection.HashSet": {
+			"description": "Hash-based set for O(1) membership testing without storing values",
+			"functions": {
+				"Add": {
+					"descriptions": ["**Adds a value to the set**\n\n```method : public : Add(value:H) ~ Bool```\n\n\n\nvalue: H\n\nreturn: Bool"]
+				},
+				"Empty": {
+					"descriptions": ["**Clears the set**\n\n```method : public : Empty() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Has": {
+					"descriptions": ["**Checks if a value exists in the set**\n\n```method : public : Has(value:H) ~ Bool```\n\n\n\nvalue: H\n\nreturn: Bool"]
+				},
+				"IsEmpty": {
+					"descriptions": ["**Checks if set is empty**\n\n```method : public : IsEmpty() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Default constructor**\n\n```New()```\n\n"]
+				},
+				"Remove": {
+					"descriptions": ["**Removes a value from the set**\n\n```method : public : Remove(value:H) ~ Bool```\n\n\n\nvalue: H\n\nreturn: Bool"]
+				},
+				"Size": {
+					"descriptions": ["**Size of set**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"ToArray": {
+					"descriptions": ["**Gets all values as an array**\n\n```method : public : ToArray() ~ H[]```\n\n\n\nreturn: H[]"]
+				},
+				"ToString": {
+					"descriptions": ["**Formats the set into a string**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				},
+				"ToVector": {
+					"descriptions": ["**Gets all values as a vector**\n\n```method : public : ToVector() ~ Vector&lt;H&gt;```\n\n\n\nreturn: Vector&lt;H&gt;"]
 				}
 			}
 		},
@@ -1760,7 +2225,7 @@
 			}
 		},
 		"Collection.Pair": {
-			"description": "Collection pair",
+			"description": "Collection pair that implements Compare interface for use in sorted collections",
 			"functions": {
 				"Compare": {
 					"descriptions": ["**Compares two objects based upon first value**\n\n```method : public : Compare(first:System.Compare) ~ Int```\n\n\n\nfirst: System.Compare\n\nreturn: Int"]
@@ -1823,6 +2288,9 @@
 				},
 				"ToArray": {
 					"descriptions": ["**Converts the queue into an object array**\n\n```method : public : ToArray() ~ H[]```\n\n\n\nreturn: H[]"]
+				},
+				"ToString": {
+					"descriptions": ["**Formats the collection into a string. If an element implements the 'Stringify' interface, it's 'ToString()' is called.**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
 				}
 			}
 		},
@@ -1883,7 +2351,7 @@
 					"descriptions": ["**Removes a key from the set**\n\n```method : public : Remove(key:K) ~ Bool```\n\n\n\nkey: K\n\nreturn: Bool"]
 				},
 				"Size": {
-					"descriptions": ["**Size of map**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
+					"descriptions": ["**Size of set**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
 				},
 				"ToString": {
 					"descriptions": ["**Formats the collection into a string. If an element implements the 'Stringify' interface, it's 'ToString()' is called.**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
@@ -1891,10 +2359,10 @@
 			}
 		},
 		"Collection.Stack": {
-			"description": "Growable stack of generics",
+			"description": "Growable stack of generics (LIFO)",
 			"functions": {
 				"Empty": {
-					"descriptions": ["**Clears the vector**\n\n```method : public : Empty() ~ Nil```\n\n\n\nreturn: Nil"]
+					"descriptions": ["**Clears the stack**\n\n```method : public : Empty() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
 				"IsEmpty": {
 					"descriptions": ["**Checks to see if the stack is empty**\n\n```method : public : IsEmpty() ~ Bool```\n\n\n\nreturn: Bool"]
@@ -1914,6 +2382,9 @@
 				"ToArray": {
 					"descriptions": ["**Converts the stack into an object array**\n\n```method : public : native : ToArray() ~ H[]```\n\n\n\nreturn: H[]"]
 				},
+				"ToString": {
+					"descriptions": ["**Formats the collection into a string. If an element implements the 'Stringify' interface, it's 'ToString()' is called.**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				},
 				"Top": {
 					"descriptions": ["**Check the top of the stack**\n\n```method : public : Top() ~ H```\n\n\n\nreturn: H"]
 				}
@@ -1925,14 +2396,32 @@
 				"AddBack": {
 					"descriptions": ["**Adds a value to the end**\n\n```method : public : AddBack(value:H) ~ Nil```\n\n\n\nvalue: H\n\nreturn: Nil"]
 				},
+				"All": {
+					"descriptions": ["**Checks if all elements match the predicate**\n\n```method : public : All(f:(H)~Bool) ~ Bool```\n\n\n\nf: (H)~Bool\n\nreturn: Bool"]
+				},
+				"Any": {
+					"descriptions": ["**Checks if any element matches the predicate**\n\n```method : public : Any(f:(H)~Bool) ~ Bool```\n\n\n\nf: (H)~Bool\n\nreturn: Bool"]
+				},
 				"Compress": {
 					"descriptions": ["**Compresses the Vector freeing unused memory**\n\n```method : public : Compress() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Count": {
+					"descriptions": ["**Counts elements matching the predicate**\n\n```method : public : Count(f:(H)~Bool) ~ Int```\n\n\n\nf: (H)~Bool\n\nreturn: Int"]
 				},
 				"Each": {
 					"descriptions": ["**Function called for each element**\n\n```method : public : Each(f:(H)~Nil) ~ Vector&lt;H&gt;```\n\n\n\nf: (H)~Nil\n\nreturn: Vector&lt;H&gt;"]
 				},
 				"Empty": {
 					"descriptions": ["**Clears the vector**\n\n```method : public : Empty() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Filter": {
+					"descriptions": ["**Uses the given function to filter out values**\n\n```method : public : Filter(f:(H)~Bool) ~ Vector&lt;H&gt;```\n\n\n\nf: (H)~Bool\n\nreturn: Vector&lt;H&gt;"]
+				},
+				"FindFirst": {
+					"descriptions": ["**Finds the first element matching the predicate**\n\n```method : public : FindFirst(f:(H)~Bool) ~ H```\n\n\n\nf: (H)~Bool\n\nreturn: H"]
+				},
+				"FindIndex": {
+					"descriptions": ["**Finds the index of the first element matching the predicate**\n\n```method : public : FindIndex(f:(H)~Bool) ~ Int```\n\n\n\nf: (H)~Bool\n\nreturn: Int"]
 				},
 				"First": {
 					"descriptions": ["**Gets the first value**\n\n```method : public : First() ~ H```\n\n\n\nreturn: H"]
@@ -1954,6 +2443,9 @@
 				},
 				"New": {
 					"descriptions": ["**Default constructor**\n\n```New()```\n\n", "**Copy constructor**\n\n```New(values:H[])```\n\n\n\nvalues: H[]", "**Copy constructor**\n\n```New(values:Vector&lt;H&gt;)```\n\n\n\nvalues: Vector&lt;H&gt;"]
+				},
+				"Reduce": {
+					"descriptions": ["**Uses the given function to reduce the values**\n\n```method : public : Reduce(a:H, f:(H,H)~H) ~ H```\n\n\n\na: H\n\nf: (H,H)~H\n\nreturn: H"]
 				},
 				"Remove": {
 					"descriptions": ["**Removes an indexed value**\n\n```method : public : Remove(i:Int) ~ H```\n\n\n\ni: Int\n\nreturn: H"]
@@ -2007,8 +2499,8 @@
 				"GetFirst": {
 					"descriptions": ["**Returns the first value**\n\n```method : public : GetFirst() ~ A```\n\n\n\nreturn: A"]
 				},
-				"GetForth": {
-					"descriptions": ["**Returns the forth value**\n\n```method : public : GetForth() ~ D```\n\n\n\nreturn: D"]
+				"GetFourth": {
+					"descriptions": ["**Returns the fourth value**\n\n```method : public : GetFourth() ~ D```\n\n\n\nreturn: D"]
 				},
 				"GetSecond": {
 					"descriptions": ["**Returns the second value**\n\n```method : public : GetSecond() ~ B```\n\n\n\nreturn: B"]
@@ -2027,14 +2519,14 @@
 		"Collection.Tuple.Quintet": {
 			"description": "Quintet class that supports 5 values",
 			"functions": {
+				"GetFifth": {
+					"descriptions": ["**Returns the fifth value**\n\n```method : public : GetFifth() ~ E```\n\n\n\nreturn: E"]
+				},
 				"GetFirst": {
 					"descriptions": ["**Returns the first value**\n\n```method : public : GetFirst() ~ A```\n\n\n\nreturn: A"]
 				},
-				"GetFith": {
-					"descriptions": ["**Returns the fith value**\n\n```method : public : GetFith() ~ E```\n\n\n\nreturn: E"]
-				},
-				"GetForth": {
-					"descriptions": ["**Returns the forth value**\n\n```method : public : GetForth() ~ D```\n\n\n\nreturn: D"]
+				"GetFourth": {
+					"descriptions": ["**Returns the fourth value**\n\n```method : public : GetFourth() ~ D```\n\n\n\nreturn: D"]
 				},
 				"GetSecond": {
 					"descriptions": ["**Returns the second value**\n\n```method : public : GetSecond() ~ B```\n\n\n\nreturn: B"]
@@ -2350,11 +2842,14 @@
 				"GetRequiredParams": {
 					"descriptions": ["**Get the required function parameters**\n\n```method : public : GetRequiredParams() ~ String[]```\n\n\n\nreturn: String[]"]
 				},
+				"GetTitle": {
+					"descriptions": ["**Get the function title**\n\n```method : public : GetTitle() ~ String```\n\n\n\nreturn: String"]
+				},
 				"HashID": {
 					"descriptions": ["**Returns a hash ID for the given class**\n\n```method : public : HashID() ~ Int```\n\n\n\nreturn: Int"]
 				},
 				"New": {
-					"descriptions": ["**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, req_params:String[])```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\nreq_params: String[]", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, desc:String)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\ndesc: String", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, req_params:String[], desc:String)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\nreq_params: String[]\n\ndesc: String"]
+					"descriptions": ["**Constructor**\n\n```New(func_type_json:JsonElement)```\n\n\n\nfunc_type_json: JsonElement", "**Constructor**\n\n```New(func_type_json:JsonElement, params_header:String)```\n\n\n\nfunc_type_json: JsonElement\n\nparams_header: String", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, req_params:String[])```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\nreq_params: String[]", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, desc:String)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\ndesc: String", "**Constructor**\n\n```New(name:String, params:Map&lt;String,ParameterType&gt;, req_params:String[], desc:String)```\n\n\n\nname: String\n\nparams: Map&lt;String,ParameterType&gt;\n\nreq_params: String[]\n\ndesc: String", "**Constructor**\n\n```New(name:String, title:String, params:Map&lt;String,ParameterType&gt;, req_params:String[], desc:String)```\n\n\n\nname: String\n\ntitle: String\n\nparams: Map&lt;String,ParameterType&gt;\n\nreq_params: String[]\n\ndesc: String"]
 				},
 				"ToJson": {
 					"descriptions": ["**JSON element representation**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
@@ -2370,14 +2865,8 @@
 				"AddProp": {
 					"descriptions": ["**Set properties**\n\n```method : public : AddProp() ~ Nil```\n\n\n\nprop_name: String\n\nprop: ParameterType\n\nreturn: Nil"]
 				},
-				"Compare": {
-					"descriptions": ["**Compares two objects**\n\n```method : public : Compare(rhs:System.Compare) ~ Int```\n\n\n\nrhs: System.Compare\n\nreturn: Int"]
-				},
 				"GetDesc": {
 					"descriptions": ["**Get the function description**\n\n```method : public : GetDesc() ~ String```\n\n\n\nreturn: String"]
-				},
-				"GetName": {
-					"descriptions": ["**Get the function name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GetProps": {
 					"descriptions": ["**Get parameter properties object descriptions**\n\n```method : public : GetProps() ~ Map&lt;String,ParameterType&gt;```\n\n\n\nreturn: Map&lt;String,ParameterType&gt;"]
@@ -2392,7 +2881,7 @@
 					"descriptions": ["**Returns rather the schema specifies an array of entities**\n\n```method : public : IsArray() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
 				"New": {
-					"descriptions": ["**Constructor**\n\n```New(type:ParameterType-&gt;Type, )```\n\n\n\ntype: ParameterType-&gt;Type\n\nis_array: Bool", "**+Constructor**\n\n```New(type:ParameterType-&gt;Type, desc:String)```\n\n\n\ntype: ParameterType-&gt;Type\n\nis_array: Bool\n\ndesc: String", "**Constructor**\n\n```New(req_params:String[], )```\n\n\n\nreq_params: String[]\n\nis_array: Bool", "**Constructor**\n\n```New(type:ParameterType-&gt;Type)```\n\n\n\ntype: ParameterType-&gt;Type", "**Constructor**\n\n```New(type:ParameterType-&gt;Type, desc:String)```\n\n\n\ntype: ParameterType-&gt;Type\n\ndesc: String", "**Constructor**\n\n```New(req_params:String[])```\n\n\n\nreq_params: String[]", "**Constructor**\n\n```New(req_params:String[], desc:String)```\n\n\n\nreq_params: String[]\n\ndesc: String"]
+					"descriptions": ["**Constructor**\n\n```New(type:ParameterType-&gt;Type, is_array:Bool)```\n\n\n\ntype: ParameterType-&gt;Type\n\nis_array: Bool", "**Constructor**\n\n```New(type:ParameterType-&gt;Type, is_array:Bool, desc:String)```\n\n\n\ntype: ParameterType-&gt;Type\n\nis_array: Bool\n\ndesc: String", "**Constructor**\n\n```New(req_params:String[], is_array:Bool)```\n\n\n\nreq_params: String[]\n\nis_array: Bool", "**Constructor**\n\n```New(type:ParameterType-&gt;Type)```\n\n\n\ntype: ParameterType-&gt;Type", "**Constructor**\n\n```New(type:ParameterType-&gt;Type, desc:String)```\n\n\n\ntype: ParameterType-&gt;Type\n\ndesc: String", "**Constructor**\n\n```New(req_params:String[])```\n\n\n\nreq_params: String[]", "**Constructor**\n\n```New(req_params:String[], desc:String)```\n\n\n\nreq_params: String[]\n\ndesc: String"]
 				},
 				"SetArray": {
 					"descriptions": ["**Set schema to be an array of entities**\n\n```method : public : SetArray(is_array:Bool) ~ Nil```\n\n\n\nis_array: Bool\n\nreturn: Nil"]
@@ -4104,6 +4593,12 @@
 		"Game.SDL2.Mixer": {
 			"description": "Portable sound mixing library",
 			"functions": {
+				"Close": {
+					"descriptions": ["**Shuts down SDL_mixer\u0x2019s higher-level audio system**\n\n```function : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"CloseAudio": {
+					"descriptions": ["**Closes a low-level audio device and stops playback\/capture**\n\n```function : CloseAudio() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
 				"FadeOutChannel": {
 					"descriptions": ["**Gradually fade out which channel over ms milliseconds starting from now.**\n\n```function : FadeOutChannel(which:Int, ms:Int) ~ Int```\n\n\n\nwhich: Int\n\nms: Int\n\nreturn: Int"]
 				},
@@ -4113,14 +4608,26 @@
 				"HaltChannel": {
 					"descriptions": ["**Halt channel playback, or all channels**\n\n```function : HaltChannel(channel:Int) ~ Int```\n\n\n\nchannel: Int\n\nreturn: Int"]
 				},
+				"Init": {
+					"descriptions": ["**Initialize the audio mixer**\n\n```function : Init(flags:Int) ~ Int```\n\n\n\nflags: Int\n\nreturn: Int"]
+				},
+				"ListRecordingDevices": {
+					"descriptions": ["**List available recording devices**\n\n```function : ListRecordingDevices() ~ String[]```\n\n\n\nreturn: String[]"]
+				},
 				"OpenAudio": {
 					"descriptions": ["**Initialize the mixer API**\n\n```function : OpenAudio(frequency:Int, format:Int, channels:Int, chunksize:Int) ~ Bool```\n\n\n\nfrequency: Int\n\nformat: Int\n\nchannels: Int\n\nchunksize: Int\n\nreturn: Bool"]
+				},
+				"PlayPcm": {
+					"descriptions": ["**Play a PCM audio file**\n\n```function : PlayPcm(bytes:Byte[], sample_rate:Int, audio_format:Int, channels:Int) ~ Bool```\n\n\n\nbytes: Byte[]\n\nsample_rate: Int\n\naudio_format: Int\n\nchannels: Int\n\nreturn: Bool"]
 				},
 				"Playing": {
 					"descriptions": ["**Tells you if music is actively playing, or not**\n\n```function : Playing(channel:Int) ~ Bool```\n\n\n\nchannel: Int\n\nreturn: Bool"]
 				},
 				"Quit": {
 					"descriptions": ["**Shutdown and cleanup the mixer API**\n\n```function : Quit() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"RecordPcm": {
+					"descriptions": ["**Records a PCM audio stream**\n\n```function : RecordPcm(dev_id:Int, sample_rate:Int, audio_format:Int, channels:Int, time_secs:Int) ~ Byte[]```\n\n\n\ndev_id: Int\n\nsample_rate: Int\n\naudio_format: Int\n\nchannels: Int\n\ntime_secs: Int\n\nreturn: Byte[]", "**Play a PCM audio file**\n\n```function : RecordPcm(sample_rate:Int, audio_format:Int, channels:Int, time_secs:Int) ~ Byte[]```\n\n\n\nsample_rate: Int\n\naudio_format: Int\n\nchannels: Int\n\ntime_secs: Int\n\nreturn: Byte[]"]
 				},
 				"Volume": {
 					"descriptions": ["**Sets the current volume**\n\n```function : Volume(channel:Int, volume:Int) ~ Int```\n\n\n\nchannel: Int\n\nvolume: Int\n\nreturn: Int"]
@@ -4918,6 +5425,14 @@
 				}
 			}
 		},
+		"Game.SDL2.Aux.Lame": {
+			"description": "Converts a PCM audio stream to MP3 audio stream",
+			"functions": {
+				"PcmToMp3": {
+					"descriptions": ["**Converts a PCM audio stream to MP3 audio stream**\n\n```function : PcmToMp3() ~ Byte[]```\n\n\n\nstream_in: Byte[]\n\nreturn: Byte[]"]
+				}
+			}
+		},
 		"Query.RegEx.RegEx": {
 			"description": "Regular expression engine. <p>Support for following patterns:<p> <ul> <li>any &#8208; .<\/li> <li>optional &#8208; ?<\/li> <li>zero or more repetitions &#8208; *<\/li> <li>one or more repetitions &#8208; +<\/li> <li>first single match &#8208; ^<\/li> <li>last single match &#8208; $<\/li> <li> (one|two|three) &#8208; group<\/li> <li>[start-end] &#8208; range<\/li> <\/ul> <p>Support for following special groups:<p> <ul> <li>word &#8208; \\w<\/li> <li>not word &#8208; \\W<\/li> <li>digit &#8208; \\d<\/li> <li>not digit &#8208; \\D<\/li> <li>white space &#8208; \\s<\/li> <li>not white space &#8208; \\S<\/li> <li>repeat &#8208; {least, most} <\/ul>",
 			"functions": {
@@ -5074,6 +5589,12 @@
 				},
 				"New": {
 					"descriptions": ["**Default constructor**\n\n```New()```\n\n"]
+				},
+				"Otherwise": {
+					"descriptions": ["**Compiler intrinsic: returns the receiver if non-Nil, otherwise returns the default value.**\n\n```method : public : Otherwise(default:Base) ~ Base```\n\n\n\ndefault: Base\n\nreturn: Base"]
+				},
+				"Try": {
+					"descriptions": ["**Compiler intrinsic: wraps subsequent chain calls in error recovery. Returns Nil if the following method call raises an error.**\n\n```method : public : Try() ~ Base```\n\n\n\nreturn: Base"]
 				}
 			}
 		},
@@ -6068,6 +6589,9 @@
 				"GetInstallDir": {
 					"descriptions": ["**Returns the installation directory**\n\n```function : GetInstallDir() ~ String```\n\n\n\nreturn: String"]
 				},
+				"GetLibraryDir": {
+					"descriptions": ["**Returns the library directory**\n\n```function : GetLibraryDir() ~ String```\n\n\n\nreturn: String"]
+				},
 				"GetPlatform": {
 					"descriptions": ["**Returns an OS platform string**\n\n```function : GetPlatform() ~ String```\n\n\n\nreturn: String"]
 				},
@@ -6082,6 +6606,9 @@
 				},
 				"GetUserDir": {
 					"descriptions": ["**Returns the current user's working directory**\n\n```function : GetUserDir() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetUuid": {
+					"descriptions": ["**Generates a RFC 4122 version-4 UUID string**\n\n```function : GetUuid() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GetVersion": {
 					"descriptions": ["**Returns the package version string**\n\n```function : GetVersion() ~ String```\n\n\n\nreturn: String"]
@@ -6130,11 +6657,14 @@
 				"Compress": {
 					"descriptions": ["**Compresses a string removing unused space.**\n\n```method : public : Compress() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
+				"Contains": {
+					"descriptions": ["**Checks if string contains a substring**\n\n```method : public : Contains(find:String) ~ Bool```\n\n\n\nfind: String\n\nreturn: Bool"]
+				},
 				"Copy": {
 					"descriptions": ["**Creates a new instance of the string**\n\n```method : public : Copy() ~ String```\n\n\n\nreturn: String"]
 				},
 				"Count": {
-					"descriptions": ["**Counts the occurrence of a character**\n\n```method : public : Count(char:Char) ~ Int```\n\n\n\nchar: Char\n\nreturn: Int", "**Counts the occurrence of a character**\n\n```method : public : native : Count(offset:Int, char:Char) ~ Int```\n\n\n\noffset: Int\n\nchar: Char\n\nreturn: Int"]
+					"descriptions": ["**Counts the occurrence of a character**\n\n```method : public : Count(char:Char) ~ Int```\n\n\n\nchar: Char\n\nreturn: Int", "**Counts the occurrence of a character**\n\n```method : public : native : Count(offset:Int, char:Char) ~ Int```\n\n\n\noffset: Int\n\nchar: Char\n\nreturn: Int", "**Counts occurrences of a substring**\n\n```method : public : Count(find:String) ~ Int```\n\n\n\nfind: String\n\nreturn: Int"]
 				},
 				"Delete": {
 					"descriptions": ["**Deletes the character at the given index**\n\n```method : public : Delete(offset:Int) ~ Bool```\n\n\n\noffset: Int\n\nreturn: Bool", "**Deletes the characters at the given range**\n\n```method : public : Delete(offset:Int, length:Int) ~ Bool```\n\n\n\noffset: Int\n\nlength: Int\n\nreturn: Bool"]
@@ -6178,6 +6708,12 @@
 				"Insert": {
 					"descriptions": ["**Insert inserts a character**\n\n```method : public : Insert(index:Int, char:Char) ~ Bool```\n\n\n\nindex: Int\n\nchar: Char\n\nreturn: Bool", "**Insert inserts a string**\n\n```method : public : Insert(index:Int, string:String) ~ Bool```\n\n\n\nindex: Int\n\nstring: String\n\nreturn: Bool", "**Insert inserts a string**\n\n```method : public : Insert(index:Int, buffer:Char[]) ~ Bool```\n\n\n\nindex: Int\n\nbuffer: Char[]\n\nreturn: Bool"]
 				},
+				"IsAlpha": {
+					"descriptions": ["**Checks if string contains only alphabetic characters (a-z, A-Z)**\n\n```method : public : IsAlpha() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"IsAlphaNumeric": {
+					"descriptions": ["**Checks if string contains only alphanumeric characters (a-z, A-Z, 0-9)**\n\n```method : public : IsAlphaNumeric() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
 				"IsEmpty": {
 					"descriptions": ["**Returns rather the string is empty**\n\n```method : public : IsEmpty() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
@@ -6186,6 +6722,9 @@
 				},
 				"IsInt": {
 					"descriptions": ["**Checks to see if the string can be represented as an interger**\n\n```method : public : native : IsInt() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"IsNumeric": {
+					"descriptions": ["**Checks if string contains only numeric characters (0-9)**\n\n```method : public : IsNumeric() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
 				"Justify": {
 					"descriptions": ["**Justify if word length is then width**\n\n```method : public : Justify(width:Int, is_left:Bool) ~ String```\n\n\n\nwidth: Int\n\nis_left: Bool\n\nreturn: String"]
@@ -6212,7 +6751,7 @@
 					"descriptions": ["**Prints values**\n\n```function : PrintLine(v:String[]) ~ Nil```\n\n\n\nv: String[]\n\nreturn: Nil", "**Print a string with a newline**\n\n```method : public : PrintLine() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
 				"Remove": {
-					"descriptions": ["**Removes the first occurrence the search string**\n\n```method : public : Remove(find:String) ~ String```\n\n\n\nfind: String\n\nreturn: String", "**Removes all matching characters from a string**\n\n```method : public : Remove(char:Char) ~ String```\n\n\n\nchar: Char\n\nreturn: String"]
+					"descriptions": ["**Removes the first occurrence the search string**\n\n```method : public : Remove(find:String) ~ String```\n\n\n\nfind: String\n\nreturn: String", "**Removes the first occurrence of a character from a string**\n\n```method : public : Remove(char:Char) ~ String```\n\n\n\nchar: Char\n\nreturn: String"]
 				},
 				"RemoveAll": {
 					"descriptions": ["**Removes all occurrences the search string**\n\n```method : public : RemoveAll(find:String) ~ String```\n\n\n\nfind: String\n\nreturn: String", "**Removes all occurrences the search character**\n\n```method : public : RemoveAll(find:Char) ~ String```\n\n\n\nfind: Char\n\nreturn: String"]
@@ -6242,7 +6781,7 @@
 					"descriptions": ["**Return the size of the string**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
 				},
 				"Split": {
-					"descriptions": ["**Splits a string based upon delimiter**\n\n```method : public : native : Split(delim:String) ~ String[]```\n\n\n\ndelim: String\n\nreturn: String[]", "**Splits a string based upon delimiter**\n\n```method : public : native : Split(delim:Char) ~ String[]```\n\n\n\ndelim: Char\n\nreturn: String[]"]
+					"descriptions": ["**Splits a string based upon delimiter**\n\n```method : public : Split(delim:String) ~ String[]```\n\n\n\ndelim: String\n\nreturn: String[]", "**Splits a string based upon delimiter**\n\n```method : public : Split(delim:Char) ~ String[]```\n\n\n\ndelim: Char\n\nreturn: String[]"]
 				},
 				"StartsWith": {
 					"descriptions": ["**Checks if the string starts with the given character**\n\n```method : public : StartsWith(char:Char) ~ Bool```\n\n\n\nchar: Char\n\nreturn: Bool", "**Checks if the string starts with the given string**\n\n```method : public : StartsWith(string:String) ~ Bool```\n\n\n\nstring: String\n\nreturn: Bool"]
@@ -6941,6 +7480,9 @@
 				"ReadLine": {
 					"descriptions": ["**Reads a string until a newline or character return is detected**\n\n```method : public : native : ReadLine() ~ System.String```\n\n\n\nreturn: System.String"]
 				},
+				"Select": {
+					"descriptions": ["**Checks if read\/write data is available**\n\n```method : public : Select(is_write:Bool) ~ Int```\n\n\n\nis_write: Bool\n\nreturn: Int"]
+				},
 				"WriteBuffer": {
 					"descriptions": ["**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Byte[]) ~ Int```\n\n\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes characters from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Char[]) ~ Int```\n\n\n\nbuffer: Char[]\n\nreturn: Int", "**Writes characters from a character buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Char[]\n\nreturn: Int"]
 				},
@@ -7016,6 +7558,9 @@
 				},
 				"Resolve": {
 					"descriptions": ["**List of resolved IP addresses**\n\n```function : Resolve(n:System.String) ~ System.String[]```\n\n\n\nn: System.String\n\nreturn: System.String[]"]
+				},
+				"Select": {
+					"descriptions": ["**Checks if read\/write data is available**\n\n```method : public : Select(is_write:Bool) ~ Int```\n\n\n\nis_write: Bool\n\nreturn: Int"]
 				},
 				"WriteBuffer": {
 					"descriptions": ["**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Byte[]) ~ Int```\n\n\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes characters from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Char[]) ~ Int```\n\n\n\nbuffer: Char[]\n\nreturn: Int", "**Writes characters from a character buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Char[]\n\nreturn: Int"]
@@ -7130,6 +7675,49 @@
 				}
 			}
 		},
+		"System.IO.Net.OAuth.OAuthClient": {
+			"description": "OAuth client",
+			"functions": {
+				"GetToken": {
+					"descriptions": ["**Get an OAuth token**\n\n```method : public : GetToken() ~ OAuthToken```\n\n\n\nreturn: OAuthToken"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(filename:String, scopes:String[])```\n\n\n\nfilename: String\n\nscopes: String[]"]
+				}
+			}
+		},
+		"System.IO.Net.OAuth.OAuthToken": {
+			"description": "OAuth token",
+			"functions": {
+				"FormatNewToken": {
+					"descriptions": ["**Formats a new token**\n\n```function : FormatNewToken(access_token:String, expires_in:Int) ~ String```\n\n\n\naccess_token: String\n\nexpires_in: Int\n\nreturn: String"]
+				},
+				"GetAccessToken": {
+					"descriptions": ["**Get access token**\n\n```method : public : GetAccessToken() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetExpiresIn": {
+					"descriptions": ["**Get expiration time**\n\n```method : public : GetExpiresIn() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetRefreshToken": {
+					"descriptions": ["**Get refresh token**\n\n```method : public : GetRefreshToken() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetScope": {
+					"descriptions": ["**Get scope**\n\n```method : public : GetScope() ~ String```\n\n\n\nreturn: String"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(access_token:String, refresh_token:String, expires_in:Int, scope:String)```\n\n\n\naccess_token: String\n\nrefresh_token: String\n\nexpires_in: Int\n\nscope: String"]
+				},
+				"ReadTokenFormat": {
+					"descriptions": ["**Reads and validates token format**\n\n```function : ReadTokenFormat(secret_str:String) ~ String```\n\n\n\nsecret_str: String\n\nreturn: String"]
+				},
+				"Set": {
+					"descriptions": ["**Sets the token values**\n\n```method : public : Set(access_token:String, expires_in:Int, scope:String) ~ Nil```\n\n\n\naccess_token: String\n\nexpires_in: Int\n\nscope: String\n\nreturn: Nil"]
+				},
+				"ToString": {
+					"descriptions": ["**Get token as string**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
 		"System.Introspection.Class": {
 			"description": "Represents a runtime class",
 			"functions": {
@@ -7241,6 +7829,17 @@
 				}
 			}
 		},
+		"System.ML.CrossValidation": {
+			"description": "Cross-validation utilities for model evaluation",
+			"functions": {
+				"KFold": {
+					"descriptions": ["**Splits data into K folds for cross-validation**\n\n```function : native : KFold(data:Float[,], k:Int) ~ Vector[]&lt;IntRef&gt;```\n\n\n\ndata: Float[,]\n\nk: Int\n\nreturn: Vector[]&lt;IntRef&gt;"]
+				},
+				"TrainTestSplit": {
+					"descriptions": ["**Splits data into training and test sets**\n\n```function : native : TrainTestSplit(data:Float[,], test_ratio:Float) ~ FloatMatrixRef[]```\n\n\n\ndata: Float[,]\n\ntest_ratio: Float\n\nreturn: FloatMatrixRef[]"]
+				}
+			}
+		},
 		"System.ML.DecisionTree": {
 			"description": "Binary decision tree algorithm",
 			"functions": {
@@ -7264,6 +7863,20 @@
 				},
 				"Train": {
 					"descriptions": ["**Calculates a list of decision splits**\n\n```function : native : Train(input:Bool[,]) ~ Vector&lt;Split&gt;```\n\n\n\ninput: Bool[,]\n\nreturn: Vector&lt;Split&gt;"]
+				}
+			}
+		},
+		"System.ML.FeatureScaler": {
+			"description": "Feature scaling and normalization utilities",
+			"functions": {
+				"MinMaxScaler": {
+					"descriptions": ["**Scales features to a [0, 1] range (Min-Max normalization)**\n\n```function : native : MinMaxScaler(data:Float[,]) ~ Float[,]```\n\n\n\ndata: Float[,]\n\nreturn: Float[,]"]
+				},
+				"Normalize": {
+					"descriptions": ["**Normalizes each row to unit norm (L2 normalization)**\n\n```function : native : Normalize(data:Float[,]) ~ Float[,]```\n\n\n\ndata: Float[,]\n\nreturn: Float[,]"]
+				},
+				"StandardScaler": {
+					"descriptions": ["**Standardizes features by removing mean and scaling to unit variance (Z-score normalization)**\n\n```function : native : StandardScaler(data:Float[,]) ~ Float[,]```\n\n\n\ndata: Float[,]\n\nreturn: Float[,]"]
 				}
 			}
 		},
@@ -7460,6 +8073,9 @@
 				"Inverse": {
 					"descriptions": ["**Inverse of matrix**\n\n```function : native : Inverse(a:Float[,]) ~ Float[,]```\n\n\n\na: Float[,]\n\nreturn: Float[,]"]
 				},
+				"LeakyReLU": {
+					"descriptions": ["**Leaky ReLU activation function**\n\n```function : native : LeakyReLU(x:Float, alpha:Float) ~ Float```\n\n\n\nx: Float\n\nalpha: Float\n\nreturn: Float", "**Applies the Leaky ReLU function to all elements**\n\n```function : native : LeakyReLU(b:Float[,], alpha:Float) ~ Float[,]```\n\n\n\nb: Float[,]\n\nalpha: Float\n\nreturn: Float[,]"]
+				},
 				"Multiple": {
 					"descriptions": ["**Multiplies a constant by a matrix**\n\n```function : native : Multiple(c:Float, m:Float[,]) ~ Float[,]```\n\n\n\nc: Float\n\nm: Float[,]\n\nreturn: Float[,]", "**Multiplies a constant by a matrix**\n\n```function : native : Multiple(m:Float[,], c:Float) ~ Float[,]```\n\n\n\nm: Float[,]\n\nc: Float\n\nreturn: Float[,]"]
 				},
@@ -7469,8 +8085,14 @@
 				"RandomNormal": {
 					"descriptions": ["**Generates a random normal distribution of values**\n\n```function : RandomNormal(mean:Float, variance:Float, rows:Int, cols:Int) ~ Float[,]```\n\n\n\nmean: Float\n\nvariance: Float\n\nrows: Int\n\ncols: Int\n\nreturn: Float[,]", "**Generates a random normal value**\n\n```function : RandomNormal(mean:Float, variance:Float) ~ Float```\n\n\n\nmean: Float\n\nvariance: Float\n\nreturn: Float"]
 				},
+				"ReLU": {
+					"descriptions": ["**ReLU (Rectified Linear Unit) activation function**\n\n```function : native : ReLU(x:Float) ~ Float```\n\n\n\nx: Float\n\nreturn: Float", "**Applies the ReLU function to all elements**\n\n```function : native : ReLU(b:Float[,]) ~ Float[,]```\n\n\n\nb: Float[,]\n\nreturn: Float[,]"]
+				},
 				"Sigmoid": {
 					"descriptions": ["**Sigmoid 'S' function**\n\n```function : native : Sigmoid(x:Float) ~ Float```\n\n\n\nx: Float\n\nreturn: Float", "**Applies the Sigmoid function to all elements**\n\n```function : native : Sigmoid(b:Float[,]) ~ Float[,]```\n\n\n\nb: Float[,]\n\nreturn: Float[,]"]
+				},
+				"Softmax": {
+					"descriptions": ["**Softmax activation function for classification**\n\n```function : native : Softmax(b:Float[,]) ~ Float[,]```\n\n\n\nb: Float[,]\n\nreturn: Float[,]"]
 				},
 				"Solve": {
 					"descriptions": ["**Solves a unit of equations**\n\n```function : native : Solve(m1:Float[,], m2:Float[,]) ~ Float[]```\n\n\n\nm1: Float[,]\n\nm2: Float[,]\n\nreturn: Float[]"]
@@ -7486,6 +8108,9 @@
 				},
 				"SumRow": {
 					"descriptions": ["**Sum of the given row**\n\n```function : native : SumRow(r:Int, matrix:Float[,]) ~ Float```\n\n\n\nr: Int\n\nmatrix: Float[,]\n\nreturn: Float"]
+				},
+				"Tanh": {
+					"descriptions": ["**Tanh (Hyperbolic Tangent) activation function**\n\n```function : native : Tanh(x:Float) ~ Float```\n\n\n\nx: Float\n\nreturn: Float", "**Applies the Tanh function to all elements**\n\n```function : native : Tanh(b:Float[,]) ~ Float[,]```\n\n\n\nb: Float[,]\n\nreturn: Float[,]"]
 				},
 				"ToBool": {
 					"descriptions": ["**Parsers a boolean value**\n\n```function : ToBool(m:Float[,]) ~ Bool```\n\n\n\nm: Float[,]\n\nreturn: Bool"]
@@ -7509,6 +8134,32 @@
 				},
 				"LoadSplitMatrices": {
 					"descriptions": ["**Load input and output data into split matrices for training and testing**\n\n```function : LoadSplitMatrices(filename:String, target_offset:Int, training_perc:Float, line_ending:String) ~ Vector[]&lt;FloatMatrixRef&gt;```\n\n\n\nfilename: String\n\ntarget_offset: Int\n\ntraining_perc: Float\n\nline_ending: String\n\nreturn: Vector[]&lt;FloatMatrixRef&gt;"]
+				}
+			}
+		},
+		"System.ML.Metrics": {
+			"description": "Model evaluation metrics for classification tasks",
+			"functions": {
+				"Accuracy": {
+					"descriptions": ["**Calculates accuracy: (TP + TN) \/ Total**\n\n```function : native : Accuracy(predictions:Bool[], actuals:Bool[]) ~ Float```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Float"]
+				},
+				"ConfusionMatrix": {
+					"descriptions": ["**Creates a confusion matrix**\n\n```function : native : ConfusionMatrix(predictions:Bool[], actuals:Bool[]) ~ Int[,]```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Int[,]"]
+				},
+				"F1Score": {
+					"descriptions": ["**Calculates F1 score: 2 * (Precision * Recall) \/ (Precision + Recall)**\n\n```function : native : F1Score(predictions:Bool[], actuals:Bool[]) ~ Float```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Float"]
+				},
+				"MCC": {
+					"descriptions": ["**Calculates Matthews Correlation Coefficient (MCC)**\n\n```function : native : MCC(predictions:Bool[], actuals:Bool[]) ~ Float```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Float"]
+				},
+				"Precision": {
+					"descriptions": ["**Calculates precision: TP \/ (TP + FP)**\n\n```function : native : Precision(predictions:Bool[], actuals:Bool[]) ~ Float```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Float"]
+				},
+				"PrintConfusionMatrix": {
+					"descriptions": ["**Prints a formatted confusion matrix**\n\n```function : native : PrintConfusionMatrix(matrix:Int[,]) ~ Nil```\n\n\n\nmatrix: Int[,]\n\nreturn: Nil"]
+				},
+				"Recall": {
+					"descriptions": ["**Calculates recall (sensitivity): TP \/ (TP + FN)**\n\n```function : native : Recall(predictions:Bool[], actuals:Bool[]) ~ Float```\n\n\n\npredictions: Bool[]\n\nactuals: Bool[]\n\nreturn: Float"]
 				}
 			}
 		},
@@ -7563,6 +8214,117 @@
 				},
 				"Train": {
 					"descriptions": ["**Calculates a list of decision splits**\n\n```method : public : native : Train(split_perc:Float, input:BoolMatrixRef) ~ Nil```\n\n\n\nsplit_perc: Float\n\ninput: BoolMatrixRef\n\nreturn: Nil", "**Calculates a list of decision splits**\n\n```method : public : native : Train(split_perc:Float, input:Bool[,]) ~ Nil```\n\n\n\nsplit_perc: Float\n\ninput: Bool[,]\n\nreturn: Nil"]
+				}
+			}
+		},
+		"System.NLP.SentimentAnalyzer": {
+			"description": "Basic lexicon-based sentiment analysis",
+			"functions": {
+				"Analyze": {
+					"descriptions": ["**Analyzes sentiment of text and returns a sentiment score**\n\n```function : Analyze(text:String) ~ Int```\n\n\n\ntext: String\n\nreturn: Int"]
+				},
+				"AnalyzeDetailed": {
+					"descriptions": ["**Gets detailed sentiment analysis with scores**\n\n```function : AnalyzeDetailed(text:String) ~ SentimentResult```\n\n\n\ntext: String\n\nreturn: SentimentResult"]
+				},
+				"Classify": {
+					"descriptions": ["**Classifies text sentiment as positive, negative, or neutral**\n\n```function : Classify(text:String) ~ String```\n\n\n\ntext: String\n\nreturn: String"]
+				},
+				"Init": {
+					"descriptions": ["**Initializes sentiment lexicons with common positive and negative words**\n\n```function : Init() ~ Nil```\n\n\n\nreturn: Nil"]
+				}
+			}
+		},
+		"System.NLP.SentimentResult": {
+			"description": "Sentiment analysis result",
+			"functions": {
+				"GetClassification": {
+					"descriptions": ["**Gets the classification label**\n\n```method : public : GetClassification() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetScore": {
+					"descriptions": ["**Gets the sentiment score**\n\n```method : public : GetScore() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(score:Int, classification:String)```\n\n\n\nscore: Int\n\nclassification: String"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"System.NLP.TF_IDF": {
+			"description": "Term Frequency-Inverse Document Frequency (TF-IDF) vectorizer for document analysis",
+			"functions": {
+				"Fit": {
+					"descriptions": ["**Fits the TF-IDF model on a corpus of documents**\n\n```method : public : Fit(documents:String[]) ~ Nil```\n\n\n\ndocuments: String[]\n\nreturn: Nil"]
+				},
+				"GetVocabulary": {
+					"descriptions": ["**Gets the vocabulary (word to index mapping)**\n\n```method : public : GetVocabulary() ~ Hash&lt;String,IntRef&gt;```\n\n\n\nreturn: Hash&lt;String,IntRef&gt;"]
+				},
+				"GetVocabularySize": {
+					"descriptions": ["**Gets the size of the vocabulary**\n\n```method : public : GetVocabularySize() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"Transform": {
+					"descriptions": ["**Transforms a document into a TF-IDF vector**\n\n```method : public : Transform(document:String) ~ Float[]```\n\n\n\ndocument: String\n\nreturn: Float[]"]
+				}
+			}
+		},
+		"System.NLP.TextPreprocessor": {
+			"description": "Text preprocessing utilities for cleaning and normalizing text",
+			"functions": {
+				"Init": {
+					"descriptions": ["**Initializes common English stopwords**\n\n```function : Init() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Lowercase": {
+					"descriptions": ["**Converts text to lowercase**\n\n```function : Lowercase(text:String) ~ String```\n\n\n\ntext: String\n\nreturn: String"]
+				},
+				"RemovePunctuation": {
+					"descriptions": ["**Removes punctuation from text**\n\n```function : RemovePunctuation(text:String) ~ String```\n\n\n\ntext: String\n\nreturn: String"]
+				},
+				"RemoveStopwords": {
+					"descriptions": ["**Removes common English stopwords from token array**\n\n```function : RemoveStopwords(tokens:String[]) ~ String[]```\n\n\n\ntokens: String[]\n\nreturn: String[]"]
+				},
+				"Stem": {
+					"descriptions": ["**Basic Porter stemmer - reduces words to their root form**\n\n```function : Stem(word:String) ~ String```\n\n\n\nword: String\n\nreturn: String"]
+				},
+				"StemAll": {
+					"descriptions": ["**Applies stemming to all tokens in array**\n\n```function : StemAll(tokens:String[]) ~ String[]```\n\n\n\ntokens: String[]\n\nreturn: String[]"]
+				}
+			}
+		},
+		"System.NLP.TextSimilarity": {
+			"description": "Text similarity metrics for comparing documents and strings",
+			"functions": {
+				"CosineSimilarity": {
+					"descriptions": ["**Calculates cosine similarity between two vectors**\n\n```function : CosineSimilarity(vec1:Float[], vec2:Float[]) ~ Float```\n\n\n\nvec1: Float[]\n\nvec2: Float[]\n\nreturn: Float"]
+				},
+				"JaccardSimilarity": {
+					"descriptions": ["**Calculates Jaccard similarity between two sets of tokens**\n\n```function : JaccardSimilarity(tokens1:String[], tokens2:String[]) ~ Float```\n\n\n\ntokens1: String[]\n\ntokens2: String[]\n\nreturn: Float"]
+				},
+				"LevenshteinDistance": {
+					"descriptions": ["**Calculates Levenshtein distance (edit distance) between two strings**\n\n```function : LevenshteinDistance(str1:String, str2:String) ~ Int```\n\n\n\nstr1: String\n\nstr2: String\n\nreturn: Int"]
+				},
+				"NormalizedEditDistance": {
+					"descriptions": ["**Calculates normalized edit distance (0.0 = identical, 1.0 = completely different)**\n\n```function : NormalizedEditDistance(str1:String, str2:String) ~ Float```\n\n\n\nstr1: String\n\nstr2: String\n\nreturn: Float"]
+				}
+			}
+		},
+		"System.NLP.Tokenizer": {
+			"description": "Text tokenization utilities for breaking text into words, sentences, and n-grams",
+			"functions": {
+				"CharNGrams": {
+					"descriptions": ["**Generates character-level n-grams from text**\n\n```function : CharNGrams(text:String, n:Int) ~ String[]```\n\n\n\ntext: String\n\nn: Int\n\nreturn: String[]"]
+				},
+				"SentenceTokenize": {
+					"descriptions": ["**Tokenizes text into sentences using common sentence delimiters**\n\n```function : SentenceTokenize(text:String) ~ String[]```\n\n\n\ntext: String\n\nreturn: String[]"]
+				},
+				"WordNGrams": {
+					"descriptions": ["**Generates word-level n-grams from tokenized text**\n\n```function : WordNGrams(tokens:String[], n:Int) ~ String[]```\n\n\n\ntokens: String[]\n\nn: Int\n\nreturn: String[]"]
+				},
+				"WordTokenize": {
+					"descriptions": ["**Tokenizes text into words using whitespace and punctuation as delimiters**\n\n```function : WordTokenize(text:String) ~ String[]```\n\n\n\ntext: String\n\nreturn: String[]"]
 				}
 			}
 		},
@@ -7667,7 +8429,7 @@
 			}
 		},
 		"System.Time.DateUtility": {
-			"description": "Utilities for handling dates.",
+			"description": "Utilities for handling dates",
 			"functions": {
 				"Format": {
 					"descriptions": ["**Formats date into a string**\n\n```function : Format(date:System.Time.Date, format:String) ~ String```\n\n\n\ndate: System.Time.Date\n\nformat: String\n\nreturn: String"]
@@ -7687,7 +8449,7 @@
 					"descriptions": ["**Ends the timer**\n\n```method : public : End() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
 				"GetElapsedTime": {
-					"descriptions": ["**Gets the elapsed time in seconds**\n\n```method : public : GetElapsedTime() ~ Float```\n\n\n\nreturn: Float"]
+					"descriptions": ["**Number of clock ticks per\/second**\n\n```method : public : GetElapsedTime() ~ Float```\n\n\n\nreturn: Float"]
 				},
 				"New": {
 					"descriptions": ["**Constructor**\n\n```New(start:Bool)```\n\n\n\nstart: Bool"]
@@ -8073,6 +8835,586 @@
 				}
 			}
 		},
+		"Web.HTTP.Server.HttpRequestHandler": {
+			"description": "Request handler for HTTP GET and POST requests",
+			"functions": {
+				"GetHeaders": {
+					"descriptions": ["**Get HTTP headers**\n\n```method : public : GetHeaders() ~ Map&lt;String,String&gt;```\n\n\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"ProcessGet": {
+					"descriptions": ["**Callback for GET requests**\n\n```method : private : virutal : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPost": {
+					"descriptions": ["**Callback for POST requests**\n\n```method : private : virutal : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessResponse": {
+					"descriptions": ["**Processes the HTTP response**\n\n```method : private : ProcessResponse(response:Response, is_head:Bool) ~ Nil```\n\n\n\nresponse: Response\n\nis_head: Bool\n\nreturn: Nil"]
+				},
+				"Run": {
+					"descriptions": ["**Executes the request handler thread**\n\n```method : public : Run(param:Base) ~ Nil```\n\n\n\nparam: Base\n\nreturn: Nil"]
+				},
+				"SetConfig": {
+					"descriptions": ["**Sets the server configuration**\n\n```method : public : SetConfig(server_config:WebServerConfig, is_debug:Bool) ~ Nil```\n\n\n\nserver_config: WebServerConfig\n\nis_debug: Bool\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.HttpsRequestHandler": {
+			"description": "Request handler for HTTPS GET and POST requests. <p>Sample <a href=\"https:\/\/github.com\/objeck\/objeck-web-server\/blob\/master\/config\/simple_config.json\" target=\"_blank\">configuration<\/a> file<.\/p>",
+			"functions": {
+				"GetHeaders": {
+					"descriptions": ["**Get HTTP headers**\n\n```method : public : GetHeaders() ~ Map&lt;String,String&gt;```\n\n\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"ProcessGet": {
+					"descriptions": ["**Callback for GET requests**\n\n```method : private : virutal : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPost": {
+					"descriptions": ["**Callback for POST requests**\n\n```method : private : virutal : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessResponse": {
+					"descriptions": ["**Processes the HTTPS response**\n\n```method : private : ProcessResponse(response:Response, is_head:Bool) ~ Nil```\n\n\n\nresponse: Response\n\nis_head: Bool\n\nreturn: Nil"]
+				},
+				"Run": {
+					"descriptions": ["**Executes the request handler thread**\n\n```method : public : Run(param:Base) ~ Nil```\n\n\n\nparam: Base\n\nreturn: Nil"]
+				},
+				"SetConfig": {
+					"descriptions": ["**Sets the server configuration**\n\n```method : public : SetConfig(server_config:WebServerConfig, is_debug:Bool) ~ Nil```\n\n\n\nserver_config: WebServerConfig\n\nis_debug: Bool\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MultipartContent": {
+			"description": "Multipart content",
+			"functions": {
+				"GetContent": {
+					"descriptions": ["**Get MIME content**\n\n```method : public : GetContent() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"GetHeader": {
+					"descriptions": ["**Get MIME content header**\n\n```method : public : GetHeader(name:String) ~ String```\n\n\n\nname: String\n\nreturn: String"]
+				},
+				"GetHeaderNames": {
+					"descriptions": ["**Get MIME content header names**\n\n```method : public : GetHeaderNames() ~ Vector&lt;String&gt;```\n\n\n\nreturn: Vector&lt;String&gt;"]
+				},
+				"GetHeaders": {
+					"descriptions": ["**Get MIME content headers**\n\n```method : public : GetHeaders() ~ Map&lt;String,String&gt;```\n\n\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"HasContent": {
+					"descriptions": ["**Checks for request body content**\n\n```method : public : HasContent() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(headers:Map&lt;String,String&gt;, content:Byte[])```\n\n\n\nheaders: Map&lt;String,String&gt;\n\ncontent: Byte[]"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MultipartDecoder": {
+			"description": "Multipart decoder",
+			"functions": {
+				"New": {
+					"descriptions": ["**Parses multipart encoding**\n\n```New(encoded:Byte[])```\n\n\n\nencoded: Byte[]"]
+				},
+				"Parse": {
+					"descriptions": ["**Parses multipart encoding**\n\n```method : public : native : Parse() ~ Vector&lt;MultipartContent&gt;```\n\n\n\nreturn: Vector&lt;MultipartContent&gt;"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MultipartEncoder": {
+			"description": "Multipart encoder",
+			"functions": {
+				"Add": {
+					"descriptions": ["**Add a multipart encoding content part**\n\n```method : public : Add(part:MultipartContent) ~ Nil```\n\n\n\npart: MultipartContent\n\nreturn: Nil"]
+				},
+				"GetBoundary": {
+					"descriptions": ["**Get boundary marker**\n\n```method : public : GetBoundary() ~ String```\n\n\n\nreturn: String"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"ToByteArray": {
+					"descriptions": ["**Formats content into multi-parts bytes**\n\n```method : public : ToByteArray() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				}
+			}
+		},
+		"Web.HTTP.Server.Request": {
+			"description": "Web server request",
+			"functions": {
+				"GetContent": {
+					"descriptions": ["**Gets the request body content**\n\n```method : public : GetContent() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetContentBytes": {
+					"descriptions": ["**Gets the request body content as bytes**\n\n```method : public : GetContentBytes() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"GetCookie": {
+					"descriptions": ["**Gets a cookie value**\n\n```method : public : GetCookie(name:String) ~ Cookie```\n\n\n\nname: String\n\nreturn: Cookie"]
+				},
+				"GetCookies": {
+					"descriptions": ["**Gets cookies**\n\n```method : public : GetCookies() ~ Vector&lt;Cookie&gt;```\n\n\n\nreturn: Vector&lt;Cookie&gt;"]
+				},
+				"GetHeader": {
+					"descriptions": ["**Gets a request header**\n\n```method : public : GetHeader(name:String) ~ String```\n\n\n\nname: String\n\nreturn: String"]
+				},
+				"GetParam": {
+					"descriptions": ["**Gets a parameter value**\n\n```method : public : GetParam(name:String) ~ String```\n\n\n\nname: String\n\nreturn: String"]
+				},
+				"GetParams": {
+					"descriptions": ["**Gets parameters**\n\n```method : public : GetParams() ~ Map&lt;String,String&gt;```\n\n\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"GetPath": {
+					"descriptions": ["**Gets the request path**\n\n```method : public : GetPath() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetQuery": {
+					"descriptions": ["**Gets the request query**\n\n```method : public : GetQuery() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetRequestLine": {
+					"descriptions": ["**Gets the request line**\n\n```method : public : GetRequestLine() ~ String```\n\n\n\nreturn: String"]
+				},
+				"HasContent": {
+					"descriptions": ["**Checks for request body content**\n\n```method : public : HasContent() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"HasCookie": {
+					"descriptions": ["**Checks for a cookie**\n\n```method : public : HasCookie(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				},
+				"HasParam": {
+					"descriptions": ["**Checks for a parameter**\n\n```method : public : HasParam(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(request_line:String, request_headers:Map&lt;String,String&gt;)```\n\n\n\nrequest_line: String\n\nrequest_headers: Map&lt;String,String&gt;", "**Constructor**\n\n```New(request_line:String, request_headers:Map&lt;String,String&gt;, content:Byte[])```\n\n\n\nrequest_line: String\n\nrequest_headers: Map&lt;String,String&gt;\n\ncontent: Byte[]"]
+				},
+				"ParseAttribs": {
+					"descriptions": ["**Parses an attribute string**\n\n```function : ParseAttribs(attrib_str:String) ~ Map&lt;String,String&gt;```\n\n\n\nattrib_str: String\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"ParseCookies": {
+					"descriptions": ["**Parses cookies from request headers**\n\n```method : private : ParseCookies() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"ParseParams": {
+					"descriptions": ["**Parses request parameters from content**\n\n```method : private : ParseParams() ~ Nil```\n\n\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.RequestPageHandler": {
+			"description": "Interface for HTTP page requests",
+			"functions": {
+				"ProcessGet": {
+					"descriptions": ["**Callback for GET requests**\n\n```method : public : virutal : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPost": {
+					"descriptions": ["**Callback for POST requests**\n\n```method : public : virutal : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				}
+			}
+		},
+		"Web.HTTP.Server.Response": {
+			"description": "Web server response",
+			"functions": {
+				"AddCookie": {
+					"descriptions": ["**Adds a cookie**\n\n```method : public : AddCookie(cookie:Cookie) ~ Nil```\n\n\n\ncookie: Cookie\n\nreturn: Nil"]
+				},
+				"GetCode": {
+					"descriptions": ["**Get the response code**\n\n```method : public : GetCode() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetContent": {
+					"descriptions": ["**Get the response content**\n\n```method : public : GetContent() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"GetCookie": {
+					"descriptions": ["**Updates a cookie**\n\n```method : public : GetCookie(name:String) ~ Cookie```\n\n\n\nname: String\n\nreturn: Cookie"]
+				},
+				"GetCookies": {
+					"descriptions": ["**Gets all cookies**\n\n```method : public : GetCookies() ~ Vector&lt;Cookie&gt;```\n\n\n\nreturn: Vector&lt;Cookie&gt;"]
+				},
+				"GetForwardAlias": {
+					"descriptions": ["**Gets the forward page alias**\n\n```method : public : GetForwardAlias() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetHeader": {
+					"descriptions": ["**Gets a response header**\n\n```method : public : GetHeader(name:String) ~ String```\n\n\n\nname: String\n\nreturn: String"]
+				},
+				"GetHeaders": {
+					"descriptions": ["**Gets response headers**\n\n```method : public : GetHeaders() ~ Map&lt;String,String&gt;```\n\n\n\nreturn: Map&lt;String,String&gt;"]
+				},
+				"GetReason": {
+					"descriptions": ["**Get the reason string**\n\n```method : public : GetReason() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetStringContent": {
+					"descriptions": ["**Get the response content as string**\n\n```method : public : GetStringContent() ~ String```\n\n\n\nreturn: String"]
+				},
+				"HasContent": {
+					"descriptions": ["**Checks for request body content**\n\n```method : public : HasContent() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"HasForwardAlias": {
+					"descriptions": ["**Checks the forward page alias**\n\n```method : public : HasForwardAlias() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"HasHeader": {
+					"descriptions": ["**Check for a response header**\n\n```method : public : HasHeader(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				},
+				"HasStaticHandler": {
+					"descriptions": ["**Check to see if the response has configured handler**\n\n```method : public : HasStaticHandler() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(server_config:WebServerConfig, request_path:String)```\n\n\n\nserver_config: WebServerConfig\n\nrequest_path: String"]
+				},
+				"RemoveCookie": {
+					"descriptions": ["**Removes a cookie**\n\n```method : public : RemoveCookie(name:String) ~ Nil```\n\n\n\nname: String\n\nreturn: Nil"]
+				},
+				"RemoveHeader": {
+					"descriptions": ["**Removed a response header**\n\n```method : public : RemoveHeader(name:String) ~ Nil```\n\n\n\nname: String\n\nreturn: Nil"]
+				},
+				"SetCode": {
+					"descriptions": ["**Set response code**\n\n```method : public : SetCode(code:Int) ~ Nil```\n\n\n\ncode: Int\n\nreturn: Nil"]
+				},
+				"SetCodeContent": {
+					"descriptions": ["**Set response code and content**\n\n```method : public : SetCodeContent(code:Int, content:Byte[]) ~ Nil```\n\n\n\ncode: Int\n\ncontent: Byte[]\n\nreturn: Nil", "**Set response code and content**\n\n```method : public : SetCodeContent(code:Int, content:String) ~ Nil```\n\n\n\ncode: Int\n\ncontent: String\n\nreturn: Nil"]
+				},
+				"SetCodeContentCompression": {
+					"descriptions": ["**Set response code, content and compression type**\n\n```method : public : SetCodeContentCompression(code:Int, content:String, compression:Compression) ~ Nil```\n\n\n\ncode: Int\n\ncontent: String\n\ncompression: Compression\n\nreturn: Nil", "**Set response code, content and compression type**\n\n```method : public : SetCodeContentCompression(code:Int, content:Byte[], compression:Compression) ~ Nil```\n\n\n\ncode: Int\n\ncontent: Byte[]\n\ncompression: Compression\n\nreturn: Nil"]
+				},
+				"SetCodeType": {
+					"descriptions": ["**Set response code and type**\n\n```method : public : SetCodeType(code:Int, type:String) ~ Nil```\n\n\n\ncode: Int\n\ntype: String\n\nreturn: Nil"]
+				},
+				"SetCodeTypeContent": {
+					"descriptions": ["**Set response code, type and content**\n\n```method : public : SetCodeTypeContent(code:Int, type:String, content:Byte[]) ~ Nil```\n\n\n\ncode: Int\n\ntype: String\n\ncontent: Byte[]\n\nreturn: Nil", "**Set response code and content**\n\n```method : public : SetCodeTypeContent(code:Int, type:String, content:String) ~ Nil```\n\n\n\ncode: Int\n\ntype: String\n\ncontent: String\n\nreturn: Nil"]
+				},
+				"SetCompression": {
+					"descriptions": ["**Set the response compression, should be called after the content is set**\n\n```method : public : SetCompression(compression:Compression) ~ Nil```\n\n\n\ncompression: Compression\n\nreturn: Nil"]
+				},
+				"SetContent": {
+					"descriptions": ["**Set response content**\n\n```method : public : SetContent(content:Byte[]) ~ Nil```\n\n\n\ncontent: Byte[]\n\nreturn: Nil", "**Set response code**\n\n```method : public : SetContent(content:String) ~ Nil```\n\n\n\ncontent: String\n\nreturn: Nil"]
+				},
+				"SetContentCompression": {
+					"descriptions": ["**Set content and compression type**\n\n```method : public : SetContentCompression(content:String, compression:Compression) ~ Nil```\n\n\n\ncontent: String\n\ncompression: Compression\n\nreturn: Nil", "**Set content and compression type**\n\n```method : public : SetContentCompression(content:Byte[], compression:Compression) ~ Nil```\n\n\n\ncontent: Byte[]\n\ncompression: Compression\n\nreturn: Nil"]
+				},
+				"SetContentType": {
+					"descriptions": ["**Sets the content type**\n\n```method : public : SetContentType(type:String) ~ Nil```\n\n\n\ntype: String\n\nreturn: Nil"]
+				},
+				"SetForwardAlias": {
+					"descriptions": ["**Set the forward page alias**\n\n```method : public : SetForwardAlias(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				},
+				"SetHeader": {
+					"descriptions": ["**Sets a response header**\n\n```method : public : SetHeader(name:String, value:String) ~ Nil```\n\n\n\nname: String\n\nvalue: String\n\nreturn: Nil"]
+				},
+				"SetReason": {
+					"descriptions": ["**Set response reason**\n\n```method : public : SetReason(reason:String) ~ Nil```\n\n\n\nreason: String\n\nreturn: Nil"]
+				},
+				"ToString": {
+					"descriptions": ["**Get the reason string**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"Web.HTTP.Server.WebServer": {
+			"description": "HTTP and HTTP web server",
+			"functions": {
+				"Serve": {
+					"descriptions": ["**Starts a HTTP server that listens for requests**\n\n```function : Serve(filename:String) ~ Nil```\n\n\n\nfilename: String\n\nreturn: Nil", "**Starts a HTTP server that listens for requests**\n\n```function : Serve(callback:Class, port:Int) ~ Nil```\n\n\n\ncallback: Class\n\nport: Int\n\nreturn: Nil", "**Starts a HTTP server that listens for requests**\n\n```function : Serve(callback:Class, port:Int, is_debug:Bool) ~ Nil```\n\n\n\ncallback: Class\n\nport: Int\n\nis_debug: Bool\n\nreturn: Nil"]
+				},
+				"ServeSecure": {
+					"descriptions": ["**Starts a HTTPS server that listens for requests**\n\n```function : ServeSecure(filename:String) ~ Nil```\n\n\n\nfilename: String\n\nreturn: Nil", "**Starts a HTTPS server that listens for requests**\n\n```function : ServeSecure(callback:Class, port:Int, cert:String, cert_key:String, cert_key_passwd:String) ~ Nil```\n\n\n\ncallback: Class\n\nport: Int\n\ncert: String\n\ncert_key: String\n\ncert_key_passwd: String\n\nreturn: Nil", "**Starts a HTTPS server that listens for requests**\n\n```function : ServeSecure(callback:Class, port:Int, cert:String, cert_key:String, cert_key_passwd:String, is_debug:Bool) ~ Nil```\n\n\n\ncallback: Class\n\nport: Int\n\ncert: String\n\ncert_key: String\n\ncert_key_passwd: String\n\nis_debug: Bool\n\nreturn: Nil"]
+				},
+				"Stop": {
+					"descriptions": ["**Stops the server**\n\n```function : Stop() ~ Nil```\n\n\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.WebServerConfig": {
+			"description": "Web server configuration manager",
+			"functions": {
+				"AddFiles": {
+					"descriptions": ["**Adds files to a group**\n\n```method : private : AddFiles(group:String, mimi:String, item_json:JsonElement) ~ Bool```\n\n\n\ngroup: String\n\nmimi: String\n\nitem_json: JsonElement\n\nreturn: Bool"]
+				},
+				"AddHandler": {
+					"descriptions": ["**Adds a file handler to a group**\n\n```method : private : AddHandler(group:String, mimi:String, item_json:JsonElement) ~ Bool```\n\n\n\ngroup: String\n\nmimi: String\n\nitem_json: JsonElement\n\nreturn: Bool"]
+				},
+				"GetCertKeyPath": {
+					"descriptions": ["**Gets the SSL certificate key path**\n\n```method : public : GetCertKeyPath() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetCertPassword": {
+					"descriptions": ["**Gets the SSL certificate password**\n\n```method : public : GetCertPassword() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetCertPath": {
+					"descriptions": ["**Gets the SSL certificate path**\n\n```method : public : GetCertPath() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetClass": {
+					"descriptions": ["**Gets the request handler class**\n\n```method : public : GetClass() ~ Class```\n\n\n\nreturn: Class"]
+				},
+				"GetFilename": {
+					"descriptions": ["**Gets the configuration filename**\n\n```method : public : GetFilename() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetPort": {
+					"descriptions": ["**Gets the server port**\n\n```method : public : GetPort() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"HasStaticHandler": {
+					"descriptions": ["**Checks if a static handler exists for the given name**\n\n```method : public : HasStaticHandler(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				},
+				"IsDebug": {
+					"descriptions": ["**Checks if debug mode is enabled**\n\n```method : public : IsDebug() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"IsHandlingFiles": {
+					"descriptions": ["**Checks if file handling is enabled**\n\n```method : public : IsHandlingFiles() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"Load": {
+					"descriptions": ["**Loads the configuration from file**\n\n```method : public : Load() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(filename:String)```\n\n\n\nfilename: String"]
+				},
+				"Process": {
+					"descriptions": ["**Processes HTTP request and response**\n\n```method : private : Process(request:Request, response:Response) ~ Bool```\n\n\n\nrequest: Request\n\nresponse: Response\n\nreturn: Bool", "**Processes a file handler request**\n\n```method : private : Process(file_handler:FileHandler, response:Response) ~ Bool```\n\n\n\nfile_handler: FileHandler\n\nresponse: Response\n\nreturn: Bool"]
+				},
+				"ProcessGet": {
+					"descriptions": ["**Callback for GET requests**\n\n```method : public : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPost": {
+					"descriptions": ["**Callback for POST requests**\n\n```method : public : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ToString": {
+					"descriptions": ["**Gets the string representation of the configuration**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.McpRequestHandler": {
+			"description": "MCP request handler",
+			"functions": {
+				"CallPrompt": {
+					"descriptions": ["**Calls a prompt**\n\n```method : private : virutal : CallPrompt(name:String, arguments:JsonElement) ~ Vector&lt;PromptMessage&gt;```\n\n\n\nname: String\n\narguments: JsonElement\n\nreturn: Vector&lt;PromptMessage&gt;"]
+				},
+				"CallTool": {
+					"descriptions": ["**Calls a tool**\n\n```method : private : virutal : CallTool(name:String, arguments:JsonElement) ~ Vector&lt;ToolContent&gt;```\n\n\n\nname: String\n\narguments: JsonElement\n\nreturn: Vector&lt;ToolContent&gt;"]
+				},
+				"CheckCache": {
+					"descriptions": ["**Checks and clears expired sessions from cache**\n\n```function : CheckCache() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"GetResource": {
+					"descriptions": ["**Gets a resource by URI**\n\n```method : private : virutal : GetResource(uri:Url) ~ Vector&lt;ResourceContent&gt;```\n\n\n\nuri: Url\n\nreturn: Vector&lt;ResourceContent&gt;"]
+				},
+				"Initialize": {
+					"descriptions": ["**Initializes the MCP request handler**\n\n```function : Initialize(config:JsonElement) ~ Bool```\n\n\n\nconfig: JsonElement\n\nreturn: Bool"]
+				},
+				"ListPrompts": {
+					"descriptions": ["**Lists available prompts**\n\n```method : private : virutal : ListPrompts() ~ Vector&lt;PromptItem&gt;```\n\n\n\nreturn: Vector&lt;PromptItem&gt;"]
+				},
+				"ListResources": {
+					"descriptions": ["**Lists resources**\n\n```method : private : virutal : ListResources() ~ Vector&lt;ResourceItem&gt;```\n\n\n\nreturn: Vector&lt;ResourceItem&gt;"]
+				},
+				"ListTemplates": {
+					"descriptions": ["**Lists resource templates**\n\n```method : private : virutal : ListTemplates() ~ Vector&lt;ResourceTemplate&gt;```\n\n\n\nreturn: Vector&lt;ResourceTemplate&gt;"]
+				},
+				"ListTools": {
+					"descriptions": ["**Lists available tools**\n\n```method : private : virutal : ListTools() ~ Vector&lt;ToolItem&gt;```\n\n\n\nreturn: Vector&lt;ToolItem&gt;"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"ProcessGet": {
+					"descriptions": ["**Processes GET requests**\n\n```method : private : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPost": {
+					"descriptions": ["**Processes POST requests**\n\n```method : private : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ShowPayload": {
+					"descriptions": ["**Displays payload for debugging**\n\n```function : ShowPayload(payload:String) ~ Nil```\n\n\n\npayload: String\n\nreturn: Nil"]
+				},
+				"WriteResponse": {
+					"descriptions": ["**Writes a JSON-RPC response**\n\n```method : private : WriteResponse(message:JsonElement, id:Int, response:Web.HTTP.Server.Response, code:Int) ~ Nil```\n\n\n\nmessage: JsonElement\n\nid: Int\n\nresponse: Web.HTTP.Server.Response\n\ncode: Int\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.McpServer": {
+			"description": "MCP server",
+			"functions": {
+				"Foo": {
+					"descriptions": ["**Virtual placeholder method**\n\n```function : virutal : Foo() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"IsDebug": {
+					"descriptions": ["**Returns rather the server is in debug mode**\n\n```function : IsDebug() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"Serve": {
+					"descriptions": ["**Initializes the MCP server**\n\n```function : Serve(config:JsonElement, ) ~ Nil```\n\n\n\nconfig: JsonElement\n\nhandler: McpRequestHandler\n\nreturn: Nil"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.PromptArgument": {
+			"description": "MCP prompt argument",
+			"functions": {
+				"GetCode": {
+					"descriptions": ["**Gets the argument code**\n\n```method : public : GetCode() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetDescription": {
+					"descriptions": ["**Gets the argument description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetName": {
+					"descriptions": ["**Gets the argument name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"IsRequired": {
+					"descriptions": ["**Checks if argument is required**\n\n```method : public : IsRequired() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(name:String, description:String, required:Bool)```\n\n\n\nname: String\n\ndescription: String\n\nrequired: Bool", "**Constructor**\n\n```New(name:String, description:String, code:String, required:Bool)```\n\n\n\nname: String\n\ndescription: String\n\ncode: String\n\nrequired: Bool"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.PromptItem": {
+			"description": "MCP prompt item",
+			"functions": {
+				"GeTitle": {
+					"descriptions": ["**Gets the prompt title**\n\n```method : public : GeTitle() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetArguments": {
+					"descriptions": ["**Gets the prompt arguments**\n\n```method : public : GetArguments() ~ Vector&lt;PromptArgument&gt;```\n\n\n\nreturn: Vector&lt;PromptArgument&gt;"]
+				},
+				"GetDescription": {
+					"descriptions": ["**Gets the prompt description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetName": {
+					"descriptions": ["**Gets the prompt name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetUri": {
+					"descriptions": ["**Gets the prompt URI**\n\n```method : public : GetUri() ~ Url```\n\n\n\nreturn: Url"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(name:String, uri:Url, title:String, description:String, arguments:Vector&lt;PromptArgument&gt;)```\n\n\n\nname: String\n\nuri: Url\n\ntitle: String\n\ndescription: String\n\narguments: Vector&lt;PromptArgument&gt;", "**Constructor**\n\n```New(name:String, description:String, arguments:Vector&lt;PromptArgument&gt;)```\n\n\n\nname: String\n\ndescription: String\n\narguments: Vector&lt;PromptArgument&gt;", "**Constructor**\n\n```New(name:String, title:String, description:String, arguments:Vector&lt;PromptArgument&gt;)```\n\n\n\nname: String\n\ntitle: String\n\ndescription: String\n\narguments: Vector&lt;PromptArgument&gt;", "**Constructor**\n\n```New(name:String)```\n\n\n\nname: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.PromptMessage": {
+			"description": "MCP prompt message",
+			"functions": {
+				"GetResource": {
+					"descriptions": ["**Gets the resource content**\n\n```method : public : GetResource() ~ ResourceContent```\n\n\n\nreturn: ResourceContent"]
+				},
+				"GetRole": {
+					"descriptions": ["**Gets the message role**\n\n```method : public : GetRole() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetText": {
+					"descriptions": ["**Gets the message text**\n\n```method : public : GetText() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetType": {
+					"descriptions": ["**Gets the message type**\n\n```method : public : GetType() ~ String```\n\n\n\nreturn: String"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(role:String, type:String, resource:ResourceContent)```\n\n\n\nrole: String\n\ntype: String\n\nresource: ResourceContent", "**Constructor**\n\n```New(role:String, type:String, text:String)```\n\n\n\nrole: String\n\ntype: String\n\ntext: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.ResourceContent": {
+			"description": "MCP resource content",
+			"functions": {
+				"GetText": {
+					"descriptions": ["**Gets the text content**\n\n```method : public : GetText() ~ String```\n\n\n\nreturn: String"]
+				},
+				"IsBlob": {
+					"descriptions": ["**Checks if content is blob data**\n\n```method : public : IsBlob() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(uri:Url, name:String, title:String, description:String, mime_type:String, text:String, is_blob:Bool)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\ndescription: String\n\nmime_type: String\n\ntext: String\n\nis_blob: Bool", "**Constructor**\n\n```New(uri:Url, name:String, title:String, mime_type:String, text:String, is_blob:Bool)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\nmime_type: String\n\ntext: String\n\nis_blob: Bool", "**Constructor**\n\n```New(uri:Url, name:String, mime_type:String, text:String, is_blob:Bool)```\n\n\n\nuri: Url\n\nname: String\n\nmime_type: String\n\ntext: String\n\nis_blob: Bool"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.ResourceItem": {
+			"description": "MCP resource item",
+			"functions": {
+				"GetDescription": {
+					"descriptions": ["**Gets the resource description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetMimeType": {
+					"descriptions": ["**Gets the MIME type**\n\n```method : public : GetMimeType() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetName": {
+					"descriptions": ["**Gets the resource name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetSize": {
+					"descriptions": ["**Gets the resource size**\n\n```method : public : GetSize() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetTitle": {
+					"descriptions": ["**Gets the resource title**\n\n```method : public : GetTitle() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetUri": {
+					"descriptions": ["**Gets the resource URI**\n\n```method : public : GetUri() ~ Url```\n\n\n\nreturn: Url"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(uri:Url, name:String, title:String, description:String, mime_type:String, size:Int)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\ndescription: String\n\nmime_type: String\n\nsize: Int", "**Constructor**\n\n```New(uri:Url, name:String, title:String, description:String, mime_type:String)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\ndescription: String\n\nmime_type: String", "**Constructor**\n\n```New(uri:Url, name:String, title:String, mime_type:String)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\nmime_type: String", "**Constructor**\n\n```New(uri:Url, name:String, mime_type:String)```\n\n\n\nuri: Url\n\nname: String\n\nmime_type: String", "**Constructor**\n\n```New(uri:Url, name:String)```\n\n\n\nuri: Url\n\nname: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.ResourceTemplate": {
+			"description": "MCP resource template",
+			"functions": {
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(uri:Url, name:String, title:String, description:String, mime_type:String)```\n\n\n\nuri: Url\n\nname: String\n\ntitle: String\n\ndescription: String\n\nmime_type: String"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.ToolContent": {
+			"description": "MCP tool content",
+			"functions": {
+				"GetDescription": {
+					"descriptions": ["**Gets the content description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetMimeType": {
+					"descriptions": ["**Gets the MIME type**\n\n```method : public : GetMimeType() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetText": {
+					"descriptions": ["**Gets the text content**\n\n```method : public : GetText() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetTitle": {
+					"descriptions": ["**Gets the content title**\n\n```method : public : GetTitle() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetType": {
+					"descriptions": ["**Gets the content type**\n\n```method : public : GetType() ~ String```\n\n\n\nreturn: String"]
+				},
+				"IsBlob": {
+					"descriptions": ["**Checks if content is blob data**\n\n```method : public : IsBlob() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(type:String, text:String, is_blob:Bool)```\n\n\n\ntype: String\n\ntext: String\n\nis_blob: Bool", "**Constructor**\n\n```New(type:String, mime_type:String, text:String, is_blob:Bool)```\n\n\n\ntype: String\n\nmime_type: String\n\ntext: String\n\nis_blob: Bool", "**Constructor**\n\n```New(type:String, mime_type:String, description:String, text:String, is_blob:Bool)```\n\n\n\ntype: String\n\nmime_type: String\n\ndescription: String\n\ntext: String\n\nis_blob: Bool", "**Constructor**\n\n```New(type:String, mime_type:String, title:String, description:String, text:String, is_blob:Bool)```\n\n\n\ntype: String\n\nmime_type: String\n\ntitle: String\n\ndescription: String\n\ntext: String\n\nis_blob: Bool"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"Web.HTTP.Server.MCP.ToolItem": {
+			"description": "MCP tool item",
+			"functions": {
+				"GeTitle": {
+					"descriptions": ["**Gets the tool title**\n\n```method : public : GeTitle() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetDescription": {
+					"descriptions": ["**Gets the tool description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetInputSchema": {
+					"descriptions": ["**Gets the input schema**\n\n```method : public : GetInputSchema() ~ FunctionType```\n\n\n\nreturn: FunctionType"]
+				},
+				"GetName": {
+					"descriptions": ["**Gets the tool name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetOutputSchema": {
+					"descriptions": ["**Gets the output schema**\n\n```method : public : GetOutputSchema() ~ FunctionType```\n\n\n\nreturn: FunctionType"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(name:String, title:String, description:String, input_schema:FunctionType, output_schema:FunctionType)```\n\n\n\nname: String\n\ntitle: String\n\ndescription: String\n\ninput_schema: FunctionType\n\noutput_schema: FunctionType", "**Constructor**\n\n```New(name:String, description:String, input_schema:FunctionType, output_schema:FunctionType)```\n\n\n\nname: String\n\ndescription: String\n\ninput_schema: FunctionType\n\noutput_schema: FunctionType", "**Constructor**\n\n```New(name:String, description:String, input_schema:FunctionType)```\n\n\n\nname: String\n\ndescription: String\n\ninput_schema: FunctionType", "**Constructor**\n\n```New(name:String, input_schema:FunctionType, output_schema:FunctionType)```\n\n\n\nname: String\n\ninput_schema: FunctionType\n\noutput_schema: FunctionType"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts to JSON element**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
 		"Web.RSS.RSSChannel": {
 			"description": "RSS channel meta data",
 			"functions": {
@@ -8123,6 +9465,10 @@
 		}
 	},
 	"class-bundle-names": {
+		"AudioPart": {
+			"bundle": "API.Google.Gemini"
+,			"file": "gemini.obl"
+ 		},
 		"BinaryPart": {
 			"bundle": "API.Google.Gemini"
 ,			"file": "gemini.obl"
@@ -8223,6 +9569,54 @@
 			"bundle": "API.Ollama"
 ,			"file": "ollama.obl"
  		},
+		"DeepLabClassification": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"DeepLabResult": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"DeepLabSession": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"OpenPoseClassification": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"OpenPoseResult": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"OpenPoseSession": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"ResNetResult": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"ResNetSession": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"Runtime": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"YoloClassification": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"YoloResult": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
+		"YoloSession": {
+			"bundle": "API.Onnx"
+,			"file": "onnx.obl"
+ 		},
 		"Assistant": {
 			"bundle": "API.OpenAI"
 ,			"file": "openai.obl"
@@ -8252,6 +9646,10 @@
 ,			"file": "openai.obl"
  		},
 		"Message": {
+			"bundle": "API.OpenAI"
+,			"file": "openai.obl"
+ 		},
+		"Realtime": {
 			"bundle": "API.OpenAI"
 ,			"file": "openai.obl"
  		},
@@ -8303,6 +9701,10 @@
 			"bundle": "API.OpenAI.Responses"
 ,			"file": "openai.obl"
  		},
+		"Tool": {
+			"bundle": "API.OpenAI.Responses"
+,			"file": "openai.obl"
+ 		},
 		"Checkpoint": {
 			"bundle": "API.OpenAI.Tuning"
 ,			"file": "openai.obl"
@@ -8314,6 +9716,30 @@
 		"Tuner": {
 			"bundle": "API.OpenAI.Tuning"
 ,			"file": "openai.obl"
+ 		},
+		"Image": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
+ 		},
+		"Point": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
+ 		},
+		"Rect": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
+ 		},
+		"Scalar": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
+ 		},
+		"Size": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
+ 		},
+		"VideoCapture": {
+			"bundle": "API.OpenCV"
+,			"file": "opencv.obl"
  		},
 		"Decrypt": {
 			"bundle": "Cipher"
@@ -8356,6 +9782,10 @@
 ,			"file": "gen_collect.obl"
  		},
 		"Hash": {
+			"bundle": "Collection"
+,			"file": "gen_collect.obl"
+ 		},
+		"HashSet": {
 			"bundle": "Collection"
 ,			"file": "gen_collect.obl"
  		},
@@ -8699,6 +10129,10 @@
 			"bundle": "Game.SDL2"
 ,			"file": "sdl2.obl"
  		},
+		"Lame": {
+			"bundle": "Game.SDL2.Aux"
+,			"file": "lame.obl"
+ 		},
 		"RegEx": {
 			"bundle": "Query.RegEx"
 ,			"file": "regex.obl"
@@ -8971,6 +10405,14 @@
 			"bundle": "System.IO.Net"
 ,			"file": "lang.obl"
  		},
+		"OAuthClient": {
+			"bundle": "System.IO.Net.OAuth"
+,			"file": "net_server.obl"
+ 		},
+		"OAuthToken": {
+			"bundle": "System.IO.Net.OAuth"
+,			"file": "net_server.obl"
+ 		},
 		"Class": {
 			"bundle": "System.Introspection"
 ,			"file": "lang.obl"
@@ -8995,7 +10437,15 @@
 			"bundle": "System.ML"
 ,			"file": "ml.obl"
  		},
+		"CrossValidation": {
+			"bundle": "System.ML"
+,			"file": "ml.obl"
+ 		},
 		"DecisionTree": {
+			"bundle": "System.ML"
+,			"file": "ml.obl"
+ 		},
+		"FeatureScaler": {
 			"bundle": "System.ML"
 ,			"file": "ml.obl"
  		},
@@ -9039,6 +10489,10 @@
 			"bundle": "System.ML"
 ,			"file": "ml.obl"
  		},
+		"Metrics": {
+			"bundle": "System.ML"
+,			"file": "ml.obl"
+ 		},
 		"NaiveBayes": {
 			"bundle": "System.ML"
 ,			"file": "ml.obl"
@@ -9050,6 +10504,30 @@
 		"RandomForest": {
 			"bundle": "System.ML"
 ,			"file": "ml.obl"
+ 		},
+		"SentimentAnalyzer": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
+ 		},
+		"SentimentResult": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
+ 		},
+		"TF_IDF": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
+ 		},
+		"TextPreprocessor": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
+ 		},
+		"TextSimilarity": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
+ 		},
+		"Tokenizer": {
+			"bundle": "System.NLP"
+,			"file": "nlp.obl"
  		},
 		"Alarm": {
 			"bundle": "System.Time"
@@ -9110,6 +10588,86 @@
 		"WebSocket": {
 			"bundle": "Web.HTTP"
 ,			"file": "net_common.obl"
+ 		},
+		"HttpRequestHandler": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"HttpsRequestHandler": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"MultipartContent": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"MultipartDecoder": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"MultipartEncoder": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"Request": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"RequestPageHandler": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"Response": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"WebServer": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"WebServerConfig": {
+			"bundle": "Web.HTTP.Server"
+,			"file": "net_server.obl"
+ 		},
+		"McpRequestHandler": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"McpServer": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"PromptArgument": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"PromptItem": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"PromptMessage": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"ResourceContent": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"ResourceItem": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"ResourceTemplate": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"ToolContent": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
+ 		},
+		"ToolItem": {
+			"bundle": "Web.HTTP.Server.MCP"
+,			"file": "net_server.obl"
  		},
 		"RSSChannel": {
 			"bundle": "Web.RSS"
