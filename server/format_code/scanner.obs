@@ -64,6 +64,7 @@ class Scanner {
 		@keywords->Insert("Byte", Token->New(@line_num, Token->Type->BYTE_ID, "byte_id"));
 		@keywords->Insert("Nil", Token->New(@line_num, Token->Type->NIL_ID, "nil_id"));
 		@keywords->Insert("other", Token->New(@line_num, Token->Type->OTHER_ID, "other_id"));
+		@keywords->Insert("otherwise", Token->New(@line_num, Token->Type->OTHERWISE_ID, "otherwise_id"));
 	}
 
 	method : NextChar() ~ Nil {
@@ -502,6 +503,7 @@ class Token {
 		SELECT_ID,
 		LABEL_ID,
 		OTHER_ID,
+		OTHERWISE_ID,
 		ASGN,
 		CHAR,
 		STR,

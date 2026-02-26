@@ -221,6 +221,13 @@ class CodeFormatter {
 						@skip_space := false;
 					}
 
+					label Token->Type->OTHERWISE_ID {
+						VerticalSpace(@prev_token, tab_space, @ident_space);
+						AppendBuffer("otherwise");
+						in_label := true;
+						@skip_space := false;
+					}
+
 					label Token->Type->ASGN {
 						AppendBuffer(":=");
 					}
