@@ -12,7 +12,8 @@
 	"publisher": "objeck-lsp",
 	"categories": [
 		"Programming Languages",
-		"Formatters"
+		"Formatters",
+		"Debuggers"
 	],
 	"keywords": [
 		"multi-root ready"
@@ -51,7 +52,54 @@
             "language": "objeck",
             "scopeName": "source.objeck",
             "path": "./syntaxes/objeck.tmLanguage.json"
-        }]
+        }],
+		"breakpoints": [
+			{ "language": "objeck" }
+		],
+		"debuggers": [{
+			"type": "objeck",
+			"label": "Objeck Debug",
+			"languages": ["objeck"],
+			"configurationAttributes": {
+				"launch": {
+					"required": ["program"],
+					"properties": {
+						"program": {
+							"type": "string",
+							"description": "Path to the compiled Objeck binary (.obe file)"
+						},
+						"sourceDir": {
+							"type": "string",
+							"description": "Path to the source files directory",
+							"default": "${workspaceFolder}"
+						},
+						"args": {
+							"type": "string",
+							"description": "Program arguments",
+							"default": ""
+						}
+					}
+				}
+			},
+			"initialConfigurations": [{
+				"type": "objeck",
+				"request": "launch",
+				"name": "Debug Objeck Program",
+				"program": "${workspaceFolder}/${fileBasenameNoExtension}.obe",
+				"sourceDir": "${workspaceFolder}"
+			}],
+			"configurationSnippets": [{
+				"label": "Objeck: Launch",
+				"description": "Launch and debug an Objeck program",
+				"body": {
+					"type": "objeck",
+					"request": "launch",
+					"name": "Debug ${1:program}",
+					"program": "^\"\\${workspaceFolder}/${2:app}.obe\"",
+					"sourceDir": "^\"\\${workspaceFolder}\""
+				}
+			}]
+		}]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

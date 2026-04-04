@@ -2,7 +2,7 @@ import * as net from 'net';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-import { workspace, env, ExtensionContext } from 'vscode';
+import { workspace, env, ExtensionContext, debug, DebugAdapterDescriptorFactory, DebugSession, DebugAdapterDescriptor, DebugAdapterExecutable, ProviderResult } from 'vscode';
 
 import {
     LanguageClient,
@@ -79,6 +79,10 @@ export function activate(context: ExtensionContext) {
 
     client = new LanguageClient('objeck_lsp', 'Objeck Language Server', serverOptions, clientOptions);
     client.start();
+
+    // Register debug adapter
+    const debugAdapterFactory = new ObjeckDebugAdapterFactory();
+    context.subscriptions.push(debug.registerDebugAdapterDescriptorFactory('objeck', debugAdapterFactory));
 }
 
 function startExternalServer(context: ExtensionContext, objkInstallDir) {
@@ -107,6 +111,24 @@ function startExternalServer(context: ExtensionContext, objkInstallDir) {
     serverProcess.on('close', (code) => {
         console.log(`Server process exited with code ${code}`);
     });
+}
+
+class ObjeckDebugAdapterFactory implements DebugAdapterDescriptorFactory {
+    createDebugAdapterDescriptor(session: DebugSession): ProviderResult<DebugAdapterDescriptor> {
+        const config = workspace.getConfiguration();
+        let obdPath: string;
+
+        if(process.platform === 'win32') {
+            const installDir = config.get<string>('objk.win.install.dir', 'C:\\Program Files\\Objeck');
+            obdPath = path.join(installDir, 'bin', 'obd.exe');
+        }
+        else {
+            const installDir = config.get<string>('objk.posix.install.dir', '/usr/local/objeck');
+            obdPath = path.join(installDir, 'bin', 'obd');
+        }
+
+        return new DebugAdapterExecutable(obdPath, ['--dap']);
+    }
 }
 
 export function deactivate(): Thenable<void> | undefined {
