@@ -1,4 +1,7 @@
-Latest release for compatibility, no new features
+v2026.4.2
+* DAP (Debug Adapter Protocol) support for VS Code debugging
+* Breakpoints, stepping, variable inspection, conditional breakpoints
+* Bumped to support Objeck v2026.4.2
 ---
 
 v2025.7.0
