@@ -22,7 +22,8 @@
 		"vscode": "^1.75.0"
 	},
 	"activationEvents": [
-		"onLanguage:objeck"
+		"onLanguage:objeck",
+		"onDebug:objeck"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
