@@ -67,6 +67,10 @@ setup_lsp_home() {
     # copy runtime
     cp "$OBJECK_DIR/bin/obr" "$LSP_HOME/bin/"
     chmod +x "$LSP_HOME/bin/obr"
+    if [ -f "$OBJECK_DIR/bin/obd" ]; then
+        cp "$OBJECK_DIR/bin/obd" "$LSP_HOME/bin/"
+        chmod +x "$LSP_HOME/bin/obd"
+    fi
     cp "$OBJECK_DIR"/lib/* "$LSP_HOME/lib/"
 
     # copy LSP server files

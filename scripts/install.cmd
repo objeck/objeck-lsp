@@ -49,6 +49,7 @@ mkdir "%LSP_HOME%" 2>nul
 mkdir "%LSP_HOME%\bin" 2>nul
 mkdir "%LSP_HOME%\lib" 2>nul
 copy /y "%OBJECK_DIR%\bin\obr.exe" "%LSP_HOME%\bin\" >nul
+if exist "%OBJECK_DIR%\bin\obd.exe" copy /y "%OBJECK_DIR%\bin\obd.exe" "%LSP_HOME%\bin\" >nul
 xcopy /y /q "%OBJECK_DIR%\lib\*" "%LSP_HOME%\lib\" >nul
 copy /y "%RELEASE_DIR%\server\objeck_lsp.obe" "%LSP_HOME%\" >nul
 copy /y "%RELEASE_DIR%\server\objk_apis.json" "%LSP_HOME%\" >nul
