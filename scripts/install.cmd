@@ -88,12 +88,33 @@ if !ERRORLEVEL! NEQ 0 (
 code --install-extension "!VSIX_FILE!" --force
 echo    Extension installed.
 
+REM Copy rebuilt server to the installed extension to avoid version mismatch
+for /d %%D in ("%USERPROFILE%\.vscode\extensions\objeck-lsp.objeck-lsp-*") do (
+    if exist "%%D\server" (
+        copy /y "%LSP_HOME%\objeck_lsp.obe" "%%D\server\objeck_lsp.obe" >nul 2>nul
+        copy /y "%LSP_HOME%\objk_apis.json" "%%D\server\objk_apis.json" >nul 2>nul
+    )
+)
+echo    Server synchronized.
+
+REM Auto-configure VS Code settings
 SET VSCODE_SETTINGS=%APPDATA%\Code\User\settings.json
-echo.
-echo    NOTE: Set the Objeck install path in VS Code settings:
-echo      "objk.win.install.dir": "%OBJECK_DIR:\=\\%"
-echo.
-echo    Settings file: %VSCODE_SETTINGS%
+SET ESC_DIR=%LSP_HOME:\=\\%
+if exist "%VSCODE_SETTINGS%" (
+    REM Check if already configured
+    findstr /C:"objk.win.install.dir" "%VSCODE_SETTINGS%" >nul 2>&1
+    if !ERRORLEVEL! NEQ 0 (
+        echo    NOTE: Add to VS Code settings (%VSCODE_SETTINGS%):
+        echo      "objk.win.install.dir": "%ESC_DIR%"
+    ) else (
+        echo    VS Code settings already configured.
+    )
+) else (
+    echo { > "%VSCODE_SETTINGS%"
+    echo   "objk.win.install.dir": "%ESC_DIR%" >> "%VSCODE_SETTINGS%"
+    echo } >> "%VSCODE_SETTINGS%"
+    echo    VS Code settings created.
+)
 goto done
 
 REM ============================================================
