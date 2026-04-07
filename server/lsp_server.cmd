@@ -1,9 +1,7 @@
 set OBJECK_INSTALL_DIR=%~1
 
 set OBJECK_LIB_PATH=%OBJECK_INSTALL_DIR%\lib
-set OBJECK_STDIO=binary
 set OBJECK_JIT_THRESHOLD=999999999
 set PATH=%PATH%;%OBJECK_INSTALL_DIR%\bin
 
-REM obr %~dp0objeck_lsp.obe %~dp0\objk_apis.json pipe debug
-obr %~dp0objeck_lsp.obe %~dp0\objk_apis.json pipe
+"%OBJECK_INSTALL_DIR%\bin\obr" "%~dp0objeck_lsp.obe" "%~dp0objk_apis.json" pipe
