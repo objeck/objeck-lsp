@@ -5,7 +5,7 @@ set -e
 #  Objeck LSP - Install Script (Linux / macOS)
 #
 #  Usage: ./install.sh <objeck_install_dir> <editor>
-#    editor: vscode | sublime | neovim | emacs | all
+#    editor: vscode | sublime | neovim | emacs | helix | all
 #
 #  Run from the extracted release directory (objeck-lsp-VERSION/)
 # ============================================================
@@ -16,7 +16,7 @@ usage() {
     echo ""
     echo "  Arguments:"
     echo "    objeck_install_dir  Path to Objeck installation (e.g. /usr/local/objeck)"
-    echo "    editor              One of: vscode, sublime, neovim, emacs, all"
+    echo "    editor              One of: vscode, sublime, neovim, emacs, helix, all"
     echo ""
     echo "  Examples:"
     echo "    User install:    ./install.sh ~/objeck vscode"
@@ -71,11 +71,15 @@ setup_lsp_home() {
         cp "$OBJECK_DIR/bin/obd" "$LSP_HOME/bin/"
         chmod +x "$LSP_HOME/bin/obd"
     fi
-    cp "$OBJECK_DIR"/lib/* "$LSP_HOME/lib/"
+    # copy lib recursively (includes native/ subdir)
+    cp -r "$OBJECK_DIR"/lib/* "$LSP_HOME/lib/"
 
     # copy LSP server files
     cp "$RELEASE_DIR/server/objeck_lsp.obe" "$LSP_HOME/"
     cp "$RELEASE_DIR/server/objk_apis.json" "$LSP_HOME/"
+    cp "$RELEASE_DIR/server/lsp_server.cmd" "$LSP_HOME/" 2>/dev/null || true
+    cp "$RELEASE_DIR/server/lsp_server.sh"  "$LSP_HOME/" 2>/dev/null || true
+    chmod +x "$LSP_HOME/lsp_server.sh" 2>/dev/null || true
 
     echo "   Done: $LSP_HOME"
 }
@@ -99,6 +103,18 @@ install_vscode() {
 
     code --install-extension "$VSIX_FILE" --force
     echo "   Extension installed."
+
+    # Sync rebuilt server files into deployed extension to avoid version mismatch
+    for ext_dir in "$HOME/.vscode/extensions"/objeck-lsp.objeck-lsp-*; do
+        if [ -d "$ext_dir/server" ]; then
+            cp "$RELEASE_DIR/server/objeck_lsp.obe"               "$ext_dir/server/objeck_lsp.obe"
+            cp "$RELEASE_DIR/server/objk_apis.json"               "$ext_dir/server/objk_apis.json"
+            cp "$RELEASE_DIR/clients/vscode/server/lsp_server.cmd" "$ext_dir/server/lsp_server.cmd"
+            cp "$RELEASE_DIR/clients/vscode/server/lsp_server.sh"  "$ext_dir/server/lsp_server.sh"
+            chmod +x "$ext_dir/server/lsp_server.sh"
+            echo "   Server synchronized: $ext_dir/server"
+        fi
+    done
 
     echo ""
     echo "   NOTE: Set the Objeck install path in VS Code settings:"
@@ -193,6 +209,31 @@ install_neovim() {
     echo "     vim.lsp.enable('objeck')"
 }
 
+# --- Helix ---
+install_helix() {
+    echo ""
+    echo "[Helix] Installing..."
+
+    HELIX_DIR="$HOME/.config/helix"
+    mkdir -p "$HELIX_DIR"
+    HELIX_LANGS="$HELIX_DIR/languages.toml"
+
+    if [ ! -f "$RELEASE_DIR/clients/helix/languages.toml" ]; then
+        echo "   WARNING: clients/helix/languages.toml not found in release."
+        return
+    fi
+
+    if [ -f "$HELIX_LANGS" ]; then
+        echo "   NOTE: $HELIX_LANGS already exists."
+        echo "   Merge contents of clients/helix/languages.toml manually,"
+        echo "   replacing <objeck_server_path> with $LSP_HOME"
+    else
+        sed "s|<objeck_server_path>|$LSP_HOME|g" \
+            "$RELEASE_DIR/clients/helix/languages.toml" > "$HELIX_LANGS"
+        echo "   Installed: $HELIX_LANGS"
+    fi
+}
+
 # --- Emacs ---
 install_emacs() {
     echo ""
@@ -223,11 +264,13 @@ case "$EDITOR" in
     sublime) install_sublime ;;
     neovim)  install_neovim ;;
     emacs)   install_emacs ;;
+    helix)   install_helix ;;
     all)
         install_vscode
         install_sublime
         install_neovim
         install_emacs
+        install_helix
         ;;
     *)
         echo "ERROR: Unknown editor \"$EDITOR\""

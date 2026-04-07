@@ -1,7 +1,8 @@
-export OBJECK_INSTALL_DIR=$1
+#!/bin/bash
+export OBJECK_INSTALL_DIR="$1"
 
-export OBJECK_LIB_PATH=$OBJECK_INSTALL_DIR/lib
-export PATH=$PATH:$OBJECK_INSTALL_DIR/bin
+export OBJECK_LIB_PATH="$OBJECK_INSTALL_DIR/lib"
+export PATH="$PATH:$OBJECK_INSTALL_DIR/bin"
 
-# obr $2/objeck_lsp.obe $2/objk_apis.json pipe debug
-obr $2/server/objeck_lsp.obe $2/server/objk_apis.json pipe
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+exec obr "$SCRIPT_DIR/objeck_lsp.obe" "$SCRIPT_DIR/objk_apis.json" pipe

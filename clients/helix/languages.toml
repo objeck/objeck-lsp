@@ -1,12 +1,14 @@
 # Objeck language server configuration for Helix
 #
 # Installation:
-#   Merge this into your ~/.config/helix/languages.toml
+#   The install script writes this file to ~/.config/helix/languages.toml
+#   with <objeck_server_path> replaced by the self-contained LSP deployment
+#   (typically ~/.objeck-lsp/). To install manually, copy this file and
+#   replace <objeck_server_path> with your deployment directory.
 #
 # Prerequisites:
-#   - Objeck installed with OBJECK_LIB_PATH set
-#   - OBJECK_STDIO=binary environment variable set
-#   - obr and objeck_lsp.obe available on PATH or configured below
+#   - Self-contained LSP deployment at <objeck_server_path>
+#     (created by scripts/install.sh or scripts/install.cmd)
 
 [[language]]
 name = "objeck"
@@ -18,5 +20,13 @@ block-comment-tokens = { start = "#~", end = "~#" }
 language-servers = ["objeck-lsp"]
 
 [language-server.objeck-lsp]
-command = "obr"
-args = ["<objeck_server_path>/objeck_lsp.obe", "<objeck_server_path>/objk_apis.json", "stdio"]
+command = "<objeck_server_path>/bin/obr"
+args = [
+    "<objeck_server_path>/objeck_lsp.obe",
+    "<objeck_server_path>/objk_apis.json",
+    "stdio",
+]
+
+[language-server.objeck-lsp.environment]
+OBJECK_LIB_PATH = "<objeck_server_path>/lib"
+OBJECK_STDIO    = "binary"

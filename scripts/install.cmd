@@ -5,7 +5,7 @@ REM ============================================================
 REM  Objeck LSP - Install Script (Windows)
 REM
 REM  Usage: install.cmd <objeck_install_dir> <editor>
-REM    editor: vscode | sublime | neovim | emacs | all
+REM    editor: vscode | sublime | neovim | emacs | helix | all
 REM
 REM  Run from the extracted release directory (objeck-lsp-VERSION/)
 REM ============================================================
@@ -62,6 +62,7 @@ if /i "%EDITOR%"=="vscode" goto install_vscode
 if /i "%EDITOR%"=="sublime" goto install_sublime
 if /i "%EDITOR%"=="neovim" goto install_neovim
 if /i "%EDITOR%"=="emacs" goto install_emacs
+if /i "%EDITOR%"=="helix" goto install_helix
 if /i "%EDITOR%"=="all" goto install_all
 echo ERROR: Unknown editor "%EDITOR%"
 goto usage
@@ -87,14 +88,17 @@ if !ERRORLEVEL! NEQ 0 (
     goto done
 )
 
-code --install-extension "!VSIX_FILE!" --force
+call code --install-extension "!VSIX_FILE!" --force
 echo    Extension installed.
 
 REM Copy rebuilt server to the installed extension to avoid version mismatch
+REM (sync objeck_lsp.obe, objk_apis.json, and the launcher scripts)
 for /d %%D in ("%USERPROFILE%\.vscode\extensions\objeck-lsp.objeck-lsp-*") do (
     if exist "%%D\server" (
-        copy /y "%LSP_HOME%\objeck_lsp.obe" "%%D\server\objeck_lsp.obe" >nul 2>nul
-        copy /y "%LSP_HOME%\objk_apis.json" "%%D\server\objk_apis.json" >nul 2>nul
+        copy /y "%RELEASE_DIR%\server\objeck_lsp.obe" "%%D\server\objeck_lsp.obe" >nul 2>nul
+        copy /y "%RELEASE_DIR%\server\objk_apis.json" "%%D\server\objk_apis.json" >nul 2>nul
+        copy /y "%RELEASE_DIR%\clients\vscode\server\lsp_server.cmd" "%%D\server\lsp_server.cmd" >nul 2>nul
+        copy /y "%RELEASE_DIR%\clients\vscode\server\lsp_server.sh" "%%D\server\lsp_server.sh" >nul 2>nul
     )
 )
 echo    Server synchronized.
@@ -102,21 +106,20 @@ echo    Server synchronized.
 REM Auto-configure VS Code settings
 SET VSCODE_SETTINGS=%APPDATA%\Code\User\settings.json
 SET ESC_DIR=%LSP_HOME:\=\\%
-if exist "%VSCODE_SETTINGS%" (
-    REM Check if already configured
-    findstr /C:"objk.win.install.dir" "%VSCODE_SETTINGS%" >nul 2>&1
-    if !ERRORLEVEL! NEQ 0 (
-        echo    NOTE: Add to VS Code settings (%VSCODE_SETTINGS%):
-        echo      "objk.win.install.dir": "%ESC_DIR%"
-    ) else (
-        echo    VS Code settings already configured.
-    )
+if not exist "%VSCODE_SETTINGS%" goto create_settings
+findstr /C:"objk.win.install.dir" "%VSCODE_SETTINGS%" >nul 2>&1
+if errorlevel 1 (
+    echo    NOTE: Add to VS Code settings ^(%VSCODE_SETTINGS%^):
+    echo      "objk.win.install.dir": "%ESC_DIR%"
 ) else (
-    echo { > "%VSCODE_SETTINGS%"
-    echo   "objk.win.install.dir": "%ESC_DIR%" >> "%VSCODE_SETTINGS%"
-    echo } >> "%VSCODE_SETTINGS%"
-    echo    VS Code settings created.
+    echo    VS Code settings already configured.
 )
+goto done
+:create_settings
+echo { > "%VSCODE_SETTINGS%"
+echo   "objk.win.install.dir": "%ESC_DIR%" >> "%VSCODE_SETTINGS%"
+echo } >> "%VSCODE_SETTINGS%"
+echo    VS Code settings created.
 goto done
 
 REM ============================================================
@@ -229,6 +232,32 @@ if not exist "%EMACS_INIT%" (
 goto done
 
 REM ============================================================
+:install_helix
+REM ============================================================
+echo.
+echo [Helix] Installing...
+
+REM Helix on Windows uses %APPDATA%\helix\
+SET HELIX_DIR=%APPDATA%\helix
+if not exist "%HELIX_DIR%" mkdir "%HELIX_DIR%" 2>nul
+
+SET LSP_PATH=%LSP_HOME:\=/%
+SET HELIX_LANGS=%HELIX_DIR%\languages.toml
+if exist "%RELEASE_DIR%\clients\helix\languages.toml" (
+    if exist "%HELIX_LANGS%" (
+        echo    NOTE: %HELIX_LANGS% already exists.
+        echo    Merge the contents of clients\helix\languages.toml manually,
+        echo    replacing ^<objeck_server_path^> with %LSP_PATH%
+    ) else (
+        powershell -NoProfile -Command "(Get-Content '%RELEASE_DIR%\clients\helix\languages.toml') -replace '<objeck_server_path>', '%LSP_PATH%' | Set-Content '%HELIX_LANGS%'"
+        echo    Installed: %HELIX_LANGS%
+    )
+) else (
+    echo    WARNING: clients\helix\languages.toml not found in release.
+)
+goto done
+
+REM ============================================================
 :install_all
 REM ============================================================
 
@@ -242,8 +271,18 @@ if defined VSIX_FILE (
     if !ERRORLEVEL! NEQ 0 (
         echo    WARNING: 'code' command not found. Install the extension manually.
     ) else (
-        code --install-extension "!VSIX_FILE!" --force
+        call code --install-extension "!VSIX_FILE!" --force
         echo    Extension installed.
+        REM Sync rebuilt server files into deployed extension
+        for /d %%D in ("%USERPROFILE%\.vscode\extensions\objeck-lsp.objeck-lsp-*") do (
+            if exist "%%D\server" (
+                copy /y "%RELEASE_DIR%\server\objeck_lsp.obe" "%%D\server\objeck_lsp.obe" >nul 2>nul
+                copy /y "%RELEASE_DIR%\server\objk_apis.json" "%%D\server\objk_apis.json" >nul 2>nul
+                copy /y "%RELEASE_DIR%\clients\vscode\server\lsp_server.cmd" "%%D\server\lsp_server.cmd" >nul 2>nul
+                copy /y "%RELEASE_DIR%\clients\vscode\server\lsp_server.sh" "%%D\server\lsp_server.sh" >nul 2>nul
+            )
+        )
+        echo    Server synchronized.
     )
 ) else (
     echo    WARNING: No .vsix file found in clients\vscode\
@@ -317,11 +356,27 @@ if not exist "%EMACS_INIT%" (
     echo (require 'objeck-mode^)>> "%EMACS_INIT%"
 )
 
+REM Helix (uses %APPDATA%\helix\ on Windows)
+echo.
+echo [Helix] Installing...
+SET HELIX_DIR=%APPDATA%\helix
+if not exist "%HELIX_DIR%" mkdir "%HELIX_DIR%" 2>nul
+SET HELIX_LANGS=%HELIX_DIR%\languages.toml
+if exist "%RELEASE_DIR%\clients\helix\languages.toml" (
+    if exist "%HELIX_LANGS%" (
+        echo    NOTE: %HELIX_LANGS% already exists. Merge clients\helix\languages.toml manually.
+    ) else (
+        powershell -NoProfile -Command "(Get-Content '%RELEASE_DIR%\clients\helix\languages.toml') -replace '<objeck_server_path>', '%LSP_PATH%' | Set-Content '%HELIX_LANGS%'"
+        echo    Installed: %HELIX_LANGS%
+    )
+)
+
 echo.
 echo    NOTE: Set VS Code setting "objk.win.install.dir" to your Objeck path.
 echo    NOTE: In Sublime, enable the "objeck" language server globally.
 echo    NOTE: Add vim.lsp.enable('objeck') to your Neovim init.lua.
 echo    NOTE: Add (require 'objeck-mode) to your Emacs init.el.
+echo    NOTE: Helix picks up languages.toml automatically.
 goto done
 
 REM ============================================================
@@ -340,7 +395,7 @@ echo  Usage: install.cmd ^<objeck_install_dir^> ^<editor^>
 echo.
 echo  Arguments:
 echo    objeck_install_dir  Path to Objeck installation
-echo    editor              One of: vscode, sublime, neovim, emacs, all
+echo    editor              One of: vscode, sublime, neovim, emacs, helix, all
 echo.
 echo  Examples:
 echo    User install:    install.cmd C:\Users\you\objeck vscode
