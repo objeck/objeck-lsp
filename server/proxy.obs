@@ -374,7 +374,7 @@ bundle LSP {
 						}
 						else {
 							docs_json := JsonElement->New(JsonElement->JsonType->ARRAY);
-							
+
 							each(i : content) {
 								docs_json->Add(content->Get(i)->GetValue());
 							};
@@ -385,6 +385,19 @@ bundle LSP {
 							return content_json;
 
 						};
+					}
+					# Fallback for user-defined classes (no entry in objk_apis.json):
+					# return a minimal hover from the name (type) and desc (method).
+					else {
+						fallback := name;
+						if(desc <> Nil) {
+							fallback += "::";
+							fallback += desc;
+						};
+
+						content_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+						content_json->Insert("contents", JsonElement->Encode(fallback));
+						return content_json;
 					};
 				};
 			};
