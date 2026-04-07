@@ -2,7 +2,7 @@ import * as net from 'net';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-import { workspace, env, ExtensionContext, debug, DebugAdapterDescriptorFactory, DebugSession, DebugAdapterDescriptor, DebugAdapterExecutable, ProviderResult } from 'vscode';
+import { workspace, env, ExtensionContext, debug, DebugAdapterDescriptorFactory, DebugSession, DebugAdapterDescriptor, DebugAdapterExecutable, DebugAdapterExecutableOptions, ProviderResult } from 'vscode';
 
 import {
     LanguageClient,
@@ -117,17 +117,26 @@ class ObjeckDebugAdapterFactory implements DebugAdapterDescriptorFactory {
     createDebugAdapterDescriptor(session: DebugSession): ProviderResult<DebugAdapterDescriptor> {
         const config = workspace.getConfiguration();
         let obdPath: string;
+        let installDir: string;
 
         if(process.platform === 'win32') {
-            const installDir = config.get<string>('objk.win.install.dir', 'C:\\Program Files\\Objeck');
+            installDir = config.get<string>('objk.win.install.dir', 'C:\\Program Files\\Objeck');
             obdPath = path.join(installDir, 'bin', 'obd.exe');
         }
         else {
-            const installDir = config.get<string>('objk.posix.install.dir', '/usr/local/objeck');
+            installDir = config.get<string>('objk.posix.install.dir', '/usr/local/objeck');
             obdPath = path.join(installDir, 'bin', 'obd');
         }
 
-        return new DebugAdapterExecutable(obdPath, ['--dap']);
+        const libPath = path.join(installDir, 'lib');
+        const options: DebugAdapterExecutableOptions = {
+            env: {
+                ...process.env,
+                OBJECK_LIB_PATH: libPath
+            }
+        };
+
+        return new DebugAdapterExecutable(obdPath, ['--dap'], options);
     }
 }
 
