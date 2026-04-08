@@ -5,7 +5,7 @@ set -e
 #  Objeck LSP - Install Script (Linux / macOS)
 #
 #  Usage: ./install.sh <objeck_install_dir> <editor>
-#    editor: vscode | sublime | neovim | emacs | helix | all
+#    editor: vscode | sublime | neovim | emacs | helix | vim | all
 #
 #  Run from the extracted release directory (objeck-lsp-VERSION/)
 # ============================================================
@@ -16,7 +16,7 @@ usage() {
     echo ""
     echo "  Arguments:"
     echo "    objeck_install_dir  Path to Objeck installation (e.g. /usr/local/objeck)"
-    echo "    editor              One of: vscode, sublime, neovim, emacs, helix, all"
+    echo "    editor              One of: vscode, sublime, neovim, emacs, helix, vim, all"
     echo ""
     echo "  Examples:"
     echo "    User install:    ./install.sh ~/objeck vscode"
@@ -282,6 +282,77 @@ install_emacs() {
     echo "     (require 'objeck-mode)"
 }
 
+# --- Vim / gvim ---
+install_vim() {
+    echo ""
+    echo "[Vim/gvim] Installing..."
+
+    # POSIX vim runtime dir is ~/.vim
+    VIM_DIR="$HOME/.vim"
+    mkdir -p "$VIM_DIR/syntax" "$VIM_DIR/ftdetect" \
+             "$VIM_DIR/plugin" "$VIM_DIR/pack/objeck/start"
+
+    # Locate the syntax files. Prefer the bundled clients/vim/ copy if
+    # the release ships it, otherwise fall back to the objeck-lang docs
+    # tree if the user is running from a source checkout.
+    SYNTAX_DIR=""
+    if [ -f "$RELEASE_DIR/clients/vim/syntax/objeck.vim" ]; then
+        SYNTAX_DIR="$RELEASE_DIR/clients/vim"
+    elif [ -f "$RELEASE_DIR/../objeck-lang/docs/syntax/vim/objeck.vim" ]; then
+        SYNTAX_DIR="$RELEASE_DIR/../objeck-lang/docs/syntax/vim"
+    fi
+
+    if [ -n "$SYNTAX_DIR" ]; then
+        cp "$SYNTAX_DIR/objeck.vim" "$VIM_DIR/syntax/" 2>/dev/null || true
+        cp "$SYNTAX_DIR/ftdetect/objeck.vim" "$VIM_DIR/ftdetect/" 2>/dev/null || true
+        echo "   Syntax + ftdetect installed."
+    else
+        echo "   WARNING: vim syntax files not found in release."
+    fi
+
+    # Clone yegappan/lsp and vimspector if not already present
+    LSP_PLUGIN="$VIM_DIR/pack/objeck/start/lsp"
+    if [ ! -d "$LSP_PLUGIN" ]; then
+        if command -v git &>/dev/null; then
+            git clone --depth 1 https://github.com/yegappan/lsp "$LSP_PLUGIN" >/dev/null 2>&1
+            echo "   Installed: yegappan/lsp"
+        else
+            echo "   NOTE: git not found, skipping yegappan/lsp clone"
+        fi
+    fi
+
+    VS_PLUGIN="$VIM_DIR/pack/objeck/start/vimspector"
+    if [ ! -d "$VS_PLUGIN" ]; then
+        if command -v git &>/dev/null; then
+            git clone --depth 1 https://github.com/puremourning/vimspector "$VS_PLUGIN" >/dev/null 2>&1
+            echo "   Installed: puremourning/vimspector"
+        else
+            echo "   NOTE: git not found, skipping vimspector clone"
+        fi
+    fi
+
+    # Drop the Objeck vim config into the auto-loaded plugin dir.
+    if [ -f "$RELEASE_DIR/clients/vim/objeck_vimrc.vim" ]; then
+        cp "$RELEASE_DIR/clients/vim/objeck_vimrc.vim" "$VIM_DIR/plugin/objeck.vim"
+        echo "   Installed: $VIM_DIR/plugin/objeck.vim"
+    fi
+
+    # Install the vimspector adapter file. Use ~/.vimspector.json (the
+    # standard path vimspector reads on startup).
+    if [ -f "$RELEASE_DIR/clients/vim/vimspector.json" ]; then
+        if [ -f "$HOME/.vimspector.json" ]; then
+            echo "   NOTE: $HOME/.vimspector.json already exists, leaving it."
+        else
+            cp "$RELEASE_DIR/clients/vim/vimspector.json" "$HOME/.vimspector.json"
+            echo "   Installed: $HOME/.vimspector.json"
+        fi
+    fi
+
+    echo ""
+    echo "   Next: open a .obs file in gvim, set a breakpoint with <F9>,"
+    echo "         start debugging with <F5>. See clients/vim/README.md."
+}
+
 # --- main ---
 setup_lsp_home
 
@@ -291,12 +362,14 @@ case "$EDITOR" in
     neovim)  install_neovim ;;
     emacs)   install_emacs ;;
     helix)   install_helix ;;
+    vim)     install_vim ;;
     all)
         install_vscode
         install_sublime
         install_neovim
         install_emacs
         install_helix
+        install_vim
         ;;
     *)
         echo "ERROR: Unknown editor \"$EDITOR\""

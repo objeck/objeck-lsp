@@ -63,6 +63,7 @@ if /i "%EDITOR%"=="sublime" goto install_sublime
 if /i "%EDITOR%"=="neovim" goto install_neovim
 if /i "%EDITOR%"=="emacs" goto install_emacs
 if /i "%EDITOR%"=="helix" goto install_helix
+if /i "%EDITOR%"=="vim" goto install_vim
 if /i "%EDITOR%"=="all" goto install_all
 echo ERROR: Unknown editor "%EDITOR%"
 goto usage
@@ -281,6 +282,77 @@ if exist "%RELEASE_DIR%\clients\helix\languages.toml" (
 goto done
 
 REM ============================================================
+:install_vim
+REM ============================================================
+echo.
+echo [Vim/gvim] Installing...
+
+REM Windows gvim runtime dir is %USERPROFILE%\vimfiles
+SET VIM_DIR=%USERPROFILE%\vimfiles
+if not exist "%VIM_DIR%\syntax" mkdir "%VIM_DIR%\syntax" 2>nul
+if not exist "%VIM_DIR%\ftdetect" mkdir "%VIM_DIR%\ftdetect" 2>nul
+if not exist "%VIM_DIR%\plugin" mkdir "%VIM_DIR%\plugin" 2>nul
+if not exist "%VIM_DIR%\pack\objeck\start" mkdir "%VIM_DIR%\pack\objeck\start" 2>nul
+
+REM Syntax + ftdetect from clients/vim/ if shipped, else fall back to a
+REM sibling objeck-lang source checkout.
+SET VIM_SYNTAX_SRC=
+if exist "%RELEASE_DIR%\clients\vim\syntax\objeck.vim" SET VIM_SYNTAX_SRC=%RELEASE_DIR%\clients\vim
+if not defined VIM_SYNTAX_SRC if exist "%RELEASE_DIR%\..\objeck-lang\docs\syntax\vim\objeck.vim" SET VIM_SYNTAX_SRC=%RELEASE_DIR%\..\objeck-lang\docs\syntax\vim
+if defined VIM_SYNTAX_SRC (
+    copy /y "%VIM_SYNTAX_SRC%\objeck.vim" "%VIM_DIR%\syntax\" >nul 2>nul
+    copy /y "%VIM_SYNTAX_SRC%\ftdetect\objeck.vim" "%VIM_DIR%\ftdetect\" >nul 2>nul
+    echo    Syntax + ftdetect installed.
+) else (
+    echo    WARNING: vim syntax files not found.
+)
+
+REM yegappan/lsp via git clone
+SET LSP_PLUGIN=%VIM_DIR%\pack\objeck\start\lsp
+if not exist "%LSP_PLUGIN%" (
+    where git >nul 2>&1
+    if !ERRORLEVEL! EQU 0 (
+        git clone --depth 1 https://github.com/yegappan/lsp "%LSP_PLUGIN%" >nul 2>&1
+        echo    Installed: yegappan/lsp
+    ) else (
+        echo    NOTE: git not found, skipping yegappan/lsp clone
+    )
+)
+
+REM vimspector via git clone
+SET VS_PLUGIN=%VIM_DIR%\pack\objeck\start\vimspector
+if not exist "%VS_PLUGIN%" (
+    where git >nul 2>&1
+    if !ERRORLEVEL! EQU 0 (
+        git clone --depth 1 https://github.com/puremourning/vimspector "%VS_PLUGIN%" >nul 2>&1
+        echo    Installed: puremourning/vimspector
+    ) else (
+        echo    NOTE: git not found, skipping vimspector clone
+    )
+)
+
+REM Drop the Objeck vim config into auto-loaded plugin dir
+if exist "%RELEASE_DIR%\clients\vim\objeck_vimrc.vim" (
+    copy /y "%RELEASE_DIR%\clients\vim\objeck_vimrc.vim" "%VIM_DIR%\plugin\objeck.vim" >nul
+    echo    Installed: %VIM_DIR%\plugin\objeck.vim
+)
+
+REM Vimspector adapter (~/.vimspector.json)
+if exist "%RELEASE_DIR%\clients\vim\vimspector.json" (
+    if exist "%USERPROFILE%\.vimspector.json" (
+        echo    NOTE: %USERPROFILE%\.vimspector.json already exists, leaving it.
+    ) else (
+        copy /y "%RELEASE_DIR%\clients\vim\vimspector.json" "%USERPROFILE%\.vimspector.json" >nul
+        echo    Installed: %USERPROFILE%\.vimspector.json
+    )
+)
+
+echo.
+echo    Next: open a .obs file in gvim, set a breakpoint with ^<F9^>,
+echo          start debugging with ^<F5^>. See clients\vim\README.md.
+goto done
+
+REM ============================================================
 :install_all
 REM ============================================================
 
@@ -411,12 +483,40 @@ if exist "%RELEASE_DIR%\clients\helix\languages.toml" (
     )
 )
 
+REM Vim / gvim
+echo.
+echo [Vim/gvim] Installing...
+SET VIM_DIR=%USERPROFILE%\vimfiles
+if not exist "%VIM_DIR%\syntax" mkdir "%VIM_DIR%\syntax" 2>nul
+if not exist "%VIM_DIR%\ftdetect" mkdir "%VIM_DIR%\ftdetect" 2>nul
+if not exist "%VIM_DIR%\plugin" mkdir "%VIM_DIR%\plugin" 2>nul
+if not exist "%VIM_DIR%\pack\objeck\start" mkdir "%VIM_DIR%\pack\objeck\start" 2>nul
+SET VIM_SYNTAX_SRC=
+if exist "%RELEASE_DIR%\clients\vim\syntax\objeck.vim" SET VIM_SYNTAX_SRC=%RELEASE_DIR%\clients\vim
+if not defined VIM_SYNTAX_SRC if exist "%RELEASE_DIR%\..\objeck-lang\docs\syntax\vim\objeck.vim" SET VIM_SYNTAX_SRC=%RELEASE_DIR%\..\objeck-lang\docs\syntax\vim
+if defined VIM_SYNTAX_SRC (
+    copy /y "%VIM_SYNTAX_SRC%\objeck.vim" "%VIM_DIR%\syntax\" >nul 2>nul
+    copy /y "%VIM_SYNTAX_SRC%\ftdetect\objeck.vim" "%VIM_DIR%\ftdetect\" >nul 2>nul
+)
+where git >nul 2>&1
+if !ERRORLEVEL! EQU 0 (
+    if not exist "%VIM_DIR%\pack\objeck\start\lsp" git clone --depth 1 https://github.com/yegappan/lsp "%VIM_DIR%\pack\objeck\start\lsp" >nul 2>&1
+    if not exist "%VIM_DIR%\pack\objeck\start\vimspector" git clone --depth 1 https://github.com/puremourning/vimspector "%VIM_DIR%\pack\objeck\start\vimspector" >nul 2>&1
+)
+if exist "%RELEASE_DIR%\clients\vim\objeck_vimrc.vim" (
+    copy /y "%RELEASE_DIR%\clients\vim\objeck_vimrc.vim" "%VIM_DIR%\plugin\objeck.vim" >nul
+)
+if exist "%RELEASE_DIR%\clients\vim\vimspector.json" (
+    if not exist "%USERPROFILE%\.vimspector.json" copy /y "%RELEASE_DIR%\clients\vim\vimspector.json" "%USERPROFILE%\.vimspector.json" >nul
+)
+
 echo.
 echo    NOTE: Set VS Code setting "objk.win.install.dir" to your Objeck path.
 echo    NOTE: In Sublime, enable the "objeck" language server globally.
 echo    NOTE: Add vim.lsp.enable('objeck') to your Neovim init.lua.
 echo    NOTE: Add (require 'objeck-mode) to your Emacs init.el.
 echo    NOTE: Helix picks up languages.toml automatically.
+echo    NOTE: gvim picks up the Objeck plugin automatically.
 goto done
 
 REM ============================================================
@@ -435,7 +535,7 @@ echo  Usage: install.cmd ^<objeck_install_dir^> ^<editor^>
 echo.
 echo  Arguments:
 echo    objeck_install_dir  Path to Objeck installation
-echo    editor              One of: vscode, sublime, neovim, emacs, helix, all
+echo    editor              One of: vscode, sublime, neovim, emacs, helix, vim, all
 echo.
 echo  Examples:
 echo    User install:    install.cmd C:\Users\you\objeck vscode
