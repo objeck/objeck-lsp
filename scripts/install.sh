@@ -141,6 +141,11 @@ install_sublime() {
         echo "   Syntax file installed."
     fi
 
+    # opt the package into Python 3.8 (required by the Debugger package)
+    if [ -f "$RELEASE_DIR/clients/sublime/.python-version" ]; then
+        cp "$RELEASE_DIR/clients/sublime/.python-version" "$SUBLIME_OBJECK/"
+    fi
+
     # install LSP package if not present
     SUBLIME_LSP="$SUBLIME_PKG/LSP"
     if [ ! -d "$SUBLIME_LSP" ]; then
@@ -177,8 +182,29 @@ install_sublime() {
 }
 EOLSP
     echo "   LSP settings written to $LSP_SETTINGS"
+
+    # install DAP adapter (for the "Debugger" Sublime package)
+    if [ -f "$RELEASE_DIR/clients/sublime/dap/objeck_dap_adapter.py" ]; then
+        cp "$RELEASE_DIR/clients/sublime/dap/objeck_dap_adapter.py" "$SUBLIME_OBJECK/"
+        echo "   DAP adapter installed: $SUBLIME_OBJECK/objeck_dap_adapter.py"
+
+        # write Objeck.sublime-settings with obd path so the adapter can
+        # find the debugger binary on launch
+        OBJK_SETTINGS="$SUBLIME_PKG/User/Objeck.sublime-settings"
+        cat > "$OBJK_SETTINGS" << EOOBJK
+{
+    "obd_path": "$OBJECK_DIR/bin/obd",
+    "objeck_lib_path": "$OBJECK_DIR/lib"
+}
+EOOBJK
+        echo "   Objeck settings written to $OBJK_SETTINGS"
+    fi
+
     echo ""
-    echo "   Next: Open Sublime, go to Tools > LSP > Enable Language Server Globally > select \"objeck\""
+    echo "   Next steps:"
+    echo "     1. Tools > LSP > Enable Language Server Globally > objeck"
+    echo "     2. (For debugging) install the \"Debugger\" package via Package Control"
+    echo "     3. See clients/sublime/dap/objeck.sublime-project.example"
 }
 
 # --- Neovim ---

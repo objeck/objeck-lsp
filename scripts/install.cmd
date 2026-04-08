@@ -137,6 +137,9 @@ if exist "%RELEASE_DIR%\clients\sublime\objeck.sublime-syntax" (
     copy /y "%RELEASE_DIR%\clients\sublime\objeck.sublime-syntax" "!SUBLIME_OBJECK!\" >nul
     echo    Syntax file installed.
 )
+if exist "%RELEASE_DIR%\clients\sublime\.python-version" (
+    copy /y "%RELEASE_DIR%\clients\sublime\.python-version" "!SUBLIME_OBJECK!\" >nul
+)
 
 REM write LSP settings
 SET LSP_SETTINGS=!SUBLIME_PKG!\User\LSP.sublime-settings
@@ -163,8 +166,28 @@ echo    Writing LSP settings...
     echo }
 ) > "!LSP_SETTINGS!"
 echo    LSP settings written to !LSP_SETTINGS!
+
+REM install DAP adapter for the "Debugger" Sublime package
+if exist "%RELEASE_DIR%\clients\sublime\dap\objeck_dap_adapter.py" (
+    copy /y "%RELEASE_DIR%\clients\sublime\dap\objeck_dap_adapter.py" "!SUBLIME_OBJECK!\" >nul
+    echo    DAP adapter installed: !SUBLIME_OBJECK!\objeck_dap_adapter.py
+
+    SET OBJK_SETTINGS=!SUBLIME_PKG!\User\Objeck.sublime-settings
+    SET OBJK_DIR_FWD=%OBJECK_DIR:\=/%
+    (
+        echo {
+        echo     "obd_path": "!OBJK_DIR_FWD!/bin/obd.exe",
+        echo     "objeck_lib_path": "!OBJK_DIR_FWD!/lib"
+        echo }
+    ) > "!OBJK_SETTINGS!"
+    echo    Objeck settings written to !OBJK_SETTINGS!
+)
+
 echo.
-echo    Next: Open Sublime, go to Tools ^> LSP ^> Enable Language Server Globally ^> select "objeck"
+echo    Next steps:
+echo      1. Tools ^> LSP ^> Enable Language Server Globally ^> objeck
+echo      2. ^(For debugging^) install the "Debugger" package via Package Control
+echo      3. See clients\sublime\dap\objeck.sublime-project.example
 goto done
 
 REM ============================================================
@@ -298,6 +321,9 @@ if exist "%RELEASE_DIR%\clients\sublime\objeck.sublime-syntax" (
     copy /y "%RELEASE_DIR%\clients\sublime\objeck.sublime-syntax" "!SUBLIME_OBJECK!\" >nul
     echo    Syntax file installed.
 )
+if exist "%RELEASE_DIR%\clients\sublime\.python-version" (
+    copy /y "%RELEASE_DIR%\clients\sublime\.python-version" "!SUBLIME_OBJECK!\" >nul
+)
 SET LSP_SETTINGS=!SUBLIME_PKG!\User\LSP.sublime-settings
 SET LSP_PATH=%LSP_HOME:\=/%
 echo    Writing LSP settings...
@@ -322,6 +348,20 @@ echo    Writing LSP settings...
     echo }
 ) > "!LSP_SETTINGS!"
 echo    LSP settings written.
+
+REM install Sublime DAP adapter for the "Debugger" package
+if exist "%RELEASE_DIR%\clients\sublime\dap\objeck_dap_adapter.py" (
+    copy /y "%RELEASE_DIR%\clients\sublime\dap\objeck_dap_adapter.py" "!SUBLIME_OBJECK!\" >nul
+    echo    DAP adapter installed.
+    SET OBJK_SETTINGS=!SUBLIME_PKG!\User\Objeck.sublime-settings
+    SET OBJK_DIR_FWD=%OBJECK_DIR:\=/%
+    (
+        echo {
+        echo     "obd_path": "!OBJK_DIR_FWD!/bin/obd.exe",
+        echo     "objeck_lib_path": "!OBJK_DIR_FWD!/lib"
+        echo }
+    ) > "!OBJK_SETTINGS!"
+)
 
 REM Neovim (uses %LOCALAPPDATA%\nvim\ on Windows)
 echo.

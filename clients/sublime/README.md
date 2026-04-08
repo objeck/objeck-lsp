@@ -54,3 +54,21 @@ TCP sockets
 ## Running client
 
 * Open Tools > LSP > Enable Language and select objeck
+
+## Debugging (DAP)
+
+Sublime debugging uses the [Debugger](https://packagecontrol.io/packages/Debugger) package by Dave Leroy. After installing it via Package Control:
+
+1. Copy `dap/objeck_dap_adapter.py` into your `Packages/Objeck/` directory (the `install.sh` / `install.cmd` script does this for you).
+2. Create `Packages/User/Objeck.sublime-settings` pointing at your `obd` binary:
+   ```json
+   {
+       "obd_path": "C:\\Program Files\\Objeck\\bin\\obd.exe",
+       "objeck_lib_path": "C:\\Program Files\\Objeck\\lib"
+   }
+   ```
+3. Compile your source with debug symbols: `obc -src myprog.obs -debug`.
+4. Add a launch configuration to your `.sublime-project` — see `dap/objeck.sublime-project.example`.
+5. Open the project, then **Debugger > Start**.
+
+The adapter is registered on Sublime startup and runs `obd --dap` over stdio with `OBJECK_LIB_PATH` set per `Objeck.sublime-settings`.
