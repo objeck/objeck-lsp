@@ -1,3 +1,10 @@
+v2026.4.3
+* DAP debugger hover with instance field display
+* Editor setup refresh for VSCode, Sublime, and gvim (Win/Linux/macOS)
+* LSP crash fixes and null guards
+* Bumped to support Objeck v2026.4.3
+---
+
 v2026.4.2
 * DAP (Debug Adapter Protocol) support for VS Code debugging
 * Breakpoints, stepping, variable inspection, conditional breakpoints
