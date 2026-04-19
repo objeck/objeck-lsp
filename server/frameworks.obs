@@ -77,6 +77,16 @@ bundle LSP {
 		method : virtual : CallbackSignatureHelp(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackFormatDocument(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackFormatRange(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackDocumentHighlight(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackFoldingRange(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackSelectionRange(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackTypeDefinition(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackImplementation(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackPrepareCallHierarchy(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackIncomingCalls(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackOutgoingCalls(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackInlayHint(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackSemanticTokensFull(id : Int, params : JsonElement) ~ Nil;
 
 		# --- process requests ---
 		method : ProcessResponse(request : RpcRequest) ~ Nil {
@@ -199,6 +209,46 @@ bundle LSP {
 					
 					label "textDocument/rangeFormatting" {
 						CallbackFormatRange(id, request->GetParams());
+					}
+
+					label "textDocument/documentHighlight" {
+						CallbackDocumentHighlight(id, request->GetParams());
+					}
+
+					label "textDocument/foldingRange" {
+						CallbackFoldingRange(id, request->GetParams());
+					}
+
+					label "textDocument/selectionRange" {
+						CallbackSelectionRange(id, request->GetParams());
+					}
+
+					label "textDocument/typeDefinition" {
+						CallbackTypeDefinition(id, request->GetParams());
+					}
+
+					label "textDocument/implementation" {
+						CallbackImplementation(id, request->GetParams());
+					}
+
+					label "textDocument/prepareCallHierarchy" {
+						CallbackPrepareCallHierarchy(id, request->GetParams());
+					}
+
+					label "callHierarchy/incomingCalls" {
+						CallbackIncomingCalls(id, request->GetParams());
+					}
+
+					label "callHierarchy/outgoingCalls" {
+						CallbackOutgoingCalls(id, request->GetParams());
+					}
+
+					label "textDocument/inlayHint" {
+						CallbackInlayHint(id, request->GetParams());
+					}
+
+					label "textDocument/semanticTokens/full" {
+						CallbackSemanticTokensFull(id, request->GetParams());
 					}
 
 					other {
@@ -741,6 +791,369 @@ bundle LSP {
 			};
 
 			return Nil;
+		}
+
+		method : public : FindTypeDefinition(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->FindTypeDefinition(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : FindImplementation(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->FindImplementation(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : PrepareCallHierarchy(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->PrepareCallHierarchy(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : IncomingCalls(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->IncomingCalls(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : OutgoingCalls(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->OutgoingCalls(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : InlayHint(start_line : Int, end_line : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->InlayHints(start_line, end_line, @uri, @workspace->GetLibs());
+		}
+
+		method : public : SemanticTokensFull() ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->SemanticTokens(@uri, @workspace->GetLibs());
+		}
+
+		method : public : DocumentHighlight(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->DocumentHighlight(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : FoldingRange() ~ JsonElement {
+			if(@text = Nil) {
+				return Nil;
+			};
+
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+			# stack for brace line tracking
+			brace_lines := Int->New[256];
+			brace_top := 0;
+
+			cur_line := 0;
+			in_string := false;
+			in_char := false;
+			in_line_comment := false;
+			in_multi_comment := false;
+			multi_comment_start := -1;
+
+			for(i := 0; i < @text->Size(); i += 1;) {
+				c := @text->Get(i);
+				next_c := '\0';
+				if(i + 1 < @text->Size()) {
+					next_c := @text->Get(i + 1);
+				};
+
+				if(c = '\n') {
+					cur_line += 1;
+					in_line_comment := false;
+				};
+
+				if(in_line_comment) {
+					# skip
+				}
+				else if(in_multi_comment) {
+					if(c = '~' & next_c = '#') {
+						range := JsonElement->New(JsonElement->JsonType->OBJECT);
+						range->Insert("startLine", multi_comment_start);
+						range->Insert("endLine", cur_line);
+						range->Insert("kind", "comment");
+						array->Add(range);
+						in_multi_comment := false;
+						i += 1;
+					};
+				}
+				else if(in_string) {
+					if(c = '\\') {
+						i += 1;
+					}
+					else if(c = '"') {
+						in_string := false;
+					};
+				}
+				else if(in_char) {
+					if(c = '\\') {
+						i += 1;
+					}
+					else if(c = '\'') {
+						in_char := false;
+					};
+				}
+				else {
+					if(c = '#') {
+						if(next_c = '~') {
+							in_multi_comment := true;
+							multi_comment_start := cur_line;
+							i += 1;
+						}
+						else {
+							in_line_comment := true;
+						};
+					}
+					else if(c = '"') {
+						in_string := true;
+					}
+					else if(c = '\'') {
+						in_char := true;
+					}
+					else if(c = '{') {
+						if(brace_top < 256) {
+							brace_lines[brace_top] := cur_line;
+							brace_top += 1;
+						};
+					}
+					else if(c = '}') {
+						if(brace_top > 0) {
+							brace_top -= 1;
+							start_line := brace_lines[brace_top];
+							if(cur_line > start_line) {
+								range := JsonElement->New(JsonElement->JsonType->OBJECT);
+								range->Insert("startLine", start_line);
+								range->Insert("endLine", cur_line);
+								array->Add(range);
+							};
+						};
+					};
+				};
+			};
+
+			return array;
+		}
+
+		method : public : SelectionRange(positions : JsonElement) ~ JsonElement {
+			if(@text = Nil | positions = Nil) {
+				return Nil;
+			};
+
+			# collect all brace pairs with char positions
+			open_lines := Int->New[256];
+			open_chars := Int->New[256];
+			close_lines := Int->New[256];
+			close_chars := Int->New[256];
+			pair_count := 0;
+
+			brace_stack_lines := Int->New[256];
+			brace_stack_chars := Int->New[256];
+			brace_top := 0;
+
+			cur_line := 0;
+			cur_char := 0;
+			in_string := false;
+			in_char := false;
+			in_line_comment := false;
+			in_multi_comment := false;
+
+			for(i := 0; i < @text->Size(); i += 1;) {
+				c := @text->Get(i);
+				next_c := '\0';
+				if(i + 1 < @text->Size()) {
+					next_c := @text->Get(i + 1);
+				};
+
+				if(c = '\n') {
+					cur_line += 1;
+					cur_char := 0;
+					in_line_comment := false;
+				}
+				else {
+					if(in_line_comment) {
+						# skip
+					}
+					else if(in_multi_comment) {
+						if(c = '~' & next_c = '#') {
+							in_multi_comment := false;
+							i += 1;
+							cur_char += 1;
+						};
+					}
+					else if(in_string) {
+						if(c = '\\') {
+							i += 1;
+							cur_char += 1;
+						}
+						else if(c = '"') {
+							in_string := false;
+						};
+					}
+					else if(in_char) {
+						if(c = '\\') {
+							i += 1;
+							cur_char += 1;
+						}
+						else if(c = '\'') {
+							in_char := false;
+						};
+					}
+					else {
+						if(c = '#') {
+							if(next_c = '~') {
+								in_multi_comment := true;
+								i += 1;
+								cur_char += 1;
+							}
+							else {
+								in_line_comment := true;
+							};
+						}
+						else if(c = '"') {
+							in_string := true;
+						}
+						else if(c = '\'') {
+							in_char := true;
+						}
+						else if(c = '{') {
+							if(brace_top < 256) {
+								brace_stack_lines[brace_top] := cur_line;
+								brace_stack_chars[brace_top] := cur_char;
+								brace_top += 1;
+							};
+						}
+						else if(c = '}') {
+							if(brace_top > 0 & pair_count < 256) {
+								brace_top -= 1;
+								open_lines[pair_count] := brace_stack_lines[brace_top];
+								open_chars[pair_count] := brace_stack_chars[brace_top];
+								close_lines[pair_count] := cur_line;
+								close_chars[pair_count] := cur_char;
+								pair_count += 1;
+							};
+						};
+					};
+
+					cur_char += 1;
+				};
+			};
+
+			# build response for each position
+			result := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+			each(p : positions) {
+				pos := positions->Get(p);
+				pos_line := pos->FindElements("line")->GetInt();
+				pos_char := pos->FindElements("character")->GetInt();
+
+				# find containing blocks sorted by size (innermost first)
+				# simple bubble sort by span size
+				containing_indices := Int->New[pair_count];
+				containing_count := 0;
+
+				for(j := 0; j < pair_count; j += 1;) {
+					if(pos_line > open_lines[j] | (pos_line = open_lines[j] & pos_char >= open_chars[j])) {
+						if(pos_line < close_lines[j] | (pos_line = close_lines[j] & pos_char <= close_chars[j])) {
+							containing_indices[containing_count] := j;
+							containing_count += 1;
+						};
+					};
+				};
+
+				# sort by span size ascending (innermost first)
+				for(a := 0; a < containing_count - 1; a += 1;) {
+					for(b := a + 1; b < containing_count; b += 1;) {
+						idx_a := containing_indices[a];
+						idx_b := containing_indices[b];
+						span_a := (close_lines[idx_a] - open_lines[idx_a]) * 10000 + (close_chars[idx_a] - open_chars[idx_a]);
+						span_b := (close_lines[idx_b] - open_lines[idx_b]) * 10000 + (close_chars[idx_b] - open_chars[idx_b]);
+						if(span_a > span_b) {
+							tmp := containing_indices[a];
+							containing_indices[a] := containing_indices[b];
+							containing_indices[b] := tmp;
+						};
+					};
+				};
+
+				# build nested selection range from outermost to innermost
+				selection : JsonElement;
+
+				for(k := containing_count - 1; k >= 0; k -= 1;) {
+					idx := containing_indices[k];
+
+					range_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					start_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					start_json->Insert("line", open_lines[idx]);
+					start_json->Insert("character", open_chars[idx]);
+					end_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					end_json->Insert("line", close_lines[idx]);
+					end_json->Insert("character", close_chars[idx] + 1);
+					range_json->Insert("start", start_json);
+					range_json->Insert("end", end_json);
+
+					node := JsonElement->New(JsonElement->JsonType->OBJECT);
+					node->Insert("range", range_json);
+					if(selection <> Nil) {
+						node->Insert("parent", selection);
+					};
+					selection := node;
+				};
+
+				if(selection <> Nil) {
+					result->Add(selection);
+				}
+				else {
+					# fallback: whole document range
+					doc_end := GetDocumentEnd();
+					range_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					start_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					start_json->Insert("line", 0);
+					start_json->Insert("character", 0);
+					end_json := JsonElement->New(JsonElement->JsonType->OBJECT);
+					end_json->Insert("line", doc_end[0]);
+					end_json->Insert("character", doc_end[1]);
+					range_json->Insert("start", start_json);
+					range_json->Insert("end", end_json);
+
+					node := JsonElement->New(JsonElement->JsonType->OBJECT);
+					node->Insert("range", range_json);
+					result->Add(node);
+				};
+			};
+
+			return result;
 		}
 
 		method : public : FormatRange(tab_spaces : Int, insert_spaces : Bool, start_range_line : Int, start_range_char : Int, end_range_line : Int, end_range_char : Int) ~  JsonElement {

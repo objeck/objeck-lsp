@@ -237,6 +237,168 @@ bundle LSP {
 			};
 		}
 
+		method : CallbackTypeDefinition(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->FindTypeDefinition(line_pos->ToInt(), char_pos->ToInt());
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackImplementation(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->FindImplementation(line_pos->ToInt(), char_pos->ToInt());
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackPrepareCallHierarchy(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				item := document->PrepareCallHierarchy(line_pos->ToInt(), char_pos->ToInt());
+				if(item <> Nil) {
+					array := JsonElement->New(JsonElement->JsonType->ARRAY);
+					array->Add(item);
+					WriteRpcResponse(id, array);
+				}
+				else {
+					WriteRpcResponse(id, Nil);
+				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackIncomingCalls(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("item/uri")->GetValue();
+			line_pos := params->FindElements("item/range/start/line");
+			char_pos := params->FindElements("item/range/start/character");
+
+			if(uri <> Nil & line_pos <> Nil & char_pos <> Nil) {
+				document := @workspace->GetDocument(uri);
+				if(document <> Nil) {
+					response := document->IncomingCalls(line_pos->GetInt(), char_pos->GetInt());
+					WriteRpcResponse(id, response);
+				}
+				else {
+					WriteRpcResponse(id, Nil);
+				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackOutgoingCalls(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("item/uri")->GetValue();
+			line_pos := params->FindElements("item/range/start/line");
+			char_pos := params->FindElements("item/range/start/character");
+
+			if(uri <> Nil & line_pos <> Nil & char_pos <> Nil) {
+				document := @workspace->GetDocument(uri);
+				if(document <> Nil) {
+					response := document->OutgoingCalls(line_pos->GetInt(), char_pos->GetInt());
+					WriteRpcResponse(id, response);
+				}
+				else {
+					WriteRpcResponse(id, Nil);
+				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackInlayHint(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			start_line := params->FindElements("range/start/line");
+			end_line := params->FindElements("range/end/line");
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil & start_line <> Nil & end_line <> Nil) {
+				response := document->InlayHint(start_line->GetInt(), end_line->GetInt());
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackSemanticTokensFull(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->SemanticTokensFull();
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackDocumentHighlight(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->DocumentHighlight(line_pos->ToInt(), char_pos->ToInt());
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackFoldingRange(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->FoldingRange();
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackSelectionRange(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			positions := params->FindElements("positions");
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->SelectionRange(positions);
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
 		method : CallbackHover(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			line_pos := params->FindElements("position/line")->GetValue();
@@ -363,6 +525,40 @@ bundle LSP {
 			capabilities->Insert("documentFormattingProvider", true);
 			capabilities->Insert("documentRangeFormattingProvider", true);
 			capabilities->Insert("workspaceSymbolProvider", true);
+			capabilities->Insert("documentHighlightProvider", true);
+			capabilities->Insert("foldingRangeProvider", true);
+			capabilities->Insert("selectionRangeProvider", true);
+			capabilities->Insert("typeDefinitionProvider", true);
+			capabilities->Insert("implementationProvider", true);
+			capabilities->Insert("inlayHintProvider", true);
+
+			callHierarchyProvider := capabilities->AddChild("callHierarchyProvider");
+			callHierarchyProvider->Insert("id", "objeck-call-hierarchy");
+
+			semanticTokensLegend := JsonElement->New(JsonElement->JsonType->OBJECT);
+			tokenTypes := JsonElement->New(JsonElement->JsonType->ARRAY);
+			tokenTypes->Add("namespace");
+			tokenTypes->Add("type");
+			tokenTypes->Add("class");
+			tokenTypes->Add("enum");
+			tokenTypes->Add("interface");
+			tokenTypes->Add("function");
+			tokenTypes->Add("method");
+			tokenTypes->Add("property");
+			tokenTypes->Add("variable");
+			tokenTypes->Add("parameter");
+			tokenTypes->Add("enumMember");
+			semanticTokensLegend->Insert("tokenTypes", tokenTypes);
+
+			tokenModifiers := JsonElement->New(JsonElement->JsonType->ARRAY);
+			tokenModifiers->Add("declaration");
+			tokenModifiers->Add("static");
+			tokenModifiers->Add("readonly");
+			semanticTokensLegend->Insert("tokenModifiers", tokenModifiers);
+
+			semanticTokensProvider := capabilities->AddChild("semanticTokensProvider");
+			semanticTokensProvider->Insert("legend", semanticTokensLegend);
+			semanticTokensProvider->Insert("full", true);
 
 			WriteRpcResponse(id, response);
 

@@ -57,6 +57,9 @@
 				"SendPart": {
 					"descriptions": ["**Send chart part**\n\n```method : public : SendPart(part:Part, role:String) ~ Candidate```\n\n\n\npart: Part\n\nrole: String\n\nreturn: Candidate"]
 				},
+				"SetSystemInstruction": {
+					"descriptions": ["**Sets a system instruction for this chat session.**\n\n```method : public : SetSystemInstruction(instruction:Content) ~ Nil```\n\n\n\ninstruction: Content\n\nreturn: Nil"]
+				},
 				"ToString": {
 					"descriptions": ["**String representation of the object**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
 				}
@@ -114,14 +117,17 @@
 				"GEMINI_1_5_FLASH": {
 					"descriptions": ["**Model name constants for Gemini 1.5 models**\n\n```function : native : GEMINI_1_5_FLASH() ~ String```\n\n\n\nreturn: String"]
 				},
-				"GEMINI_2_0_FLASH_EXP": {
-					"descriptions": ["**Model name constants for Gemini 2.0\/2.5 models**\n\n```function : native : GEMINI_2_0_FLASH_EXP() ~ String```\n\n\n\nreturn: String"]
+				"GEMINI_2_0_FLASH": {
+					"descriptions": ["**Model name constants for Gemini 2.0 models**\n\n```function : native : GEMINI_2_0_FLASH() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GEMINI_2_5_PRO": {
+					"descriptions": ["**Model name constants for Gemini 2.5 models**\n\n```function : native : GEMINI_2_5_PRO() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GEMINI_PRO": {
 					"descriptions": ["**Model name constants for legacy models**\n\n```function : native : GEMINI_PRO() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GenerateContent": {
-					"descriptions": ["**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, resp_schema:Pair&lt;String,ParameterType&gt;, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nresp_schema: Pair&lt;String,ParameterType&gt;\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, contents:Vector&lt;Content&gt;, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontents: Vector&lt;Content&gt;\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;"]
+					"descriptions": ["**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input with system instruction**\n\n```function : GenerateContent(model_name:String, content:Content, system_instruction:Content, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nsystem_instruction: Content\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, resp_schema:Pair&lt;String,ParameterType&gt;, key:String) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nresp_schema: Pair&lt;String,ParameterType&gt;\n\nkey: String\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, content:Content, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontent: Content\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;", "**Generates a response from the model given an input**\n\n```function : GenerateContent(model_name:String, contents:Vector&lt;Content&gt;, funcs:Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;) ~ Vector&lt;Candidate&gt;```\n\n\n\nmodel_name: String\n\ncontents: Vector&lt;Content&gt;\n\nfuncs: Map&lt;String,Pair&lt;FunctionType,Func2Ref&lt;JsonElement,JsonElement&gt;&gt;&gt;\n\nreturn: Vector&lt;Candidate&gt;"]
 				},
 				"Get": {
 					"descriptions": ["**Gets a model by name**\n\n```function : Get(model_name:String, key:String) ~ Model```\n\n\n\nmodel_name: String\n\nkey: String\n\nreturn: Model"]
@@ -451,7 +457,7 @@
 					"descriptions": ["**Constructor**\n\n```New(model:String)```\n\n\n\nmodel: String"]
 				},
 				"Send": {
-					"descriptions": ["**Chat response from the model given an input**\n\n```method : public : Send(message:String) ~ String```\n\n\n\nmessage: String\n\nreturn: String", "**Chat response from the model given an input**\n\n```method : public : Send(message:String, image:File) ~ String```\n\n\n\nmessage: String\n\nimage: File\n\nreturn: String", "**Chat response from the model given an input**\n\n```method : public : Send(message:String, images:File[]) ~ String```\n\n\n\nmessage: String\n\nimages: File[]\n\nreturn: String"]
+					"descriptions": ["**Chat response from the model given an input**\n\n```method : public : Send(message:String) ~ String```\n\n\n\nmessage: String\n\nreturn: String", "**Chat response with options**\n\n```method : public : Send(message:String, options:Options) ~ String```\n\n\n\nmessage: String\n\noptions: Options\n\nreturn: String", "**Chat response with format and options**\n\n```method : public : Send(message:String, format:String, options:Options, tools:Vector&lt;Tool&gt;) ~ String```\n\n\n\nmessage: String\n\nformat: String\n\noptions: Options\n\ntools: Vector&lt;Tool&gt;\n\nreturn: String", "**Chat response from the model given an input**\n\n```method : public : Send(message:String, image:File) ~ String```\n\n\n\nmessage: String\n\nimage: File\n\nreturn: String", "**Chat response from the model given an input**\n\n```method : public : Send(message:String, images:File[]) ~ String```\n\n\n\nmessage: String\n\nimages: File[]\n\nreturn: String"]
 				}
 			}
 		},
@@ -459,15 +465,21 @@
 			"description": "Ollama model interactions",
 			"functions": {
 				"Generate": {
-					"descriptions": ["**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, format:String) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nformat: String\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, image:File) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nimage: File\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, images:File[]) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nimages: File[]\n\nreturn: String"]
+					"descriptions": ["**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nreturn: String", "**Generates a response from the model given an input with options**\n\n```function : Generate(model:String, prompt:String, options:Options) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\noptions: Options\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, format:String) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nformat: String\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, format:String, options:Options) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nformat: String\n\noptions: Options\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, image:File) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nimage: File\n\nreturn: String", "**Generates a response from the model given an input**\n\n```function : Generate(model:String, prompt:String, images:File[]) ~ String```\n\n\n\nmodel: String\n\nprompt: String\n\nimages: File[]\n\nreturn: String"]
 				}
 			}
 		},
 		"API.Ollama.EndPoint": {
 			"description": "Ollama enabled endpoint class",
 			"functions": {
+				"GetHost": {
+					"descriptions": ["**Gets the Ollama server host URL. Defaults to http:\/\/localhost:11434.**\n\n```function : GetHost() ~ String```\n\n\n\nreturn: String"]
+				},
 				"GetLastError": {
 					"descriptions": ["**Get the last error**\n\n```function : GetLastError() ~ String```\n\n\n\nreturn: String"]
+				},
+				"SetHost": {
+					"descriptions": ["**Sets the Ollama server host URL (e.g. \"http:\/\/myserver:11434\")**\n\n```function : SetHost(host:String) ~ Nil```\n\n\n\nhost: String\n\nreturn: Nil"]
 				}
 			}
 		},
@@ -560,8 +572,36 @@
 				}
 			}
 		},
+		"API.Ollama.Options": {
+			"description": "Generation options for controlling model behavior.",
+			"functions": {
+				"SetTemperature": {
+					"descriptions": ["**Sets the temperature (0.0 to 2.0). Lower is more deterministic.**\n\n```method : public : SetTemperature(t:Float) ~ Options```\n\n\n\nt: Float\n\nreturn: Options"]
+				},
+				"SetTopK": {
+					"descriptions": ["**Sets the top-k sampling value.**\n\n```method : public : SetTopK(k:Int) ~ Options```\n\n\n\nk: Int\n\nreturn: Options"]
+				},
+				"SetTopP": {
+					"descriptions": ["**Sets the top-p (nucleus sampling) value.**\n\n```method : public : SetTopP(p:Float) ~ Options```\n\n\n\np: Float\n\nreturn: Options"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts options to JSON for the request.**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
+		"API.Ollama.Tool": {
+			"description": "Tool definition for function calling in chat.",
+			"functions": {
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(name:String, description:String, parameters:JsonElement)```\n\n\n\nname: String\n\ndescription: String\n\nparameters: JsonElement"]
+				},
+				"ToJson": {
+					"descriptions": ["**Converts tool to JSON for the request.**\n\n```method : public : ToJson() ~ JsonElement```\n\n\n\nreturn: JsonElement"]
+				}
+			}
+		},
 		"API.Onnx.DeepLabClassification": {
-			"description": "DeepLab classification result",
+			"description": "DeepLab classification result for a single segmented class with coverage and polygons",
 			"functions": {
 				"GetConfidence": {
 					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
@@ -584,7 +624,7 @@
 			}
 		},
 		"API.Onnx.DeepLabResult": {
-			"description": "DeepLab results",
+			"description": "DeepLab segmentation results containing masked\/overlay images and per-class classifications",
 			"functions": {
 				"GetClassifications": {
 					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ DeepLabClassification[]```\n\n\n\nreturn: DeepLabClassification[]"]
@@ -610,7 +650,7 @@
 			}
 		},
 		"API.Onnx.DeepLabSession": {
-			"description": "Deeplab inference session",
+			"description": "DeepLab inference session for semantic segmentation. Auto-detects model input dimensions and supports both NCHW and NHWC layouts. Returns per-class coverage percentages and polygon boundaries. <b>Example<\/b> <code> labels := [\"background\", \"person\", \"bicycle\", \"car\"]; session := DeepLabSession->New(\"deeplabv3.onnx\"); result := session->Inference(image_bytes, labels); each(cls in result->GetClassifications()) { \"{cls->GetName()}: {cls->GetConfidence()}%\"->PrintLine(); }; session->Close(); <\/code>",
 			"functions": {
 				"Close": {
 					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
@@ -623,8 +663,16 @@
 				}
 			}
 		},
+		"API.Onnx.OnnxRuntime": {
+			"description": "ONNX runtime utilities for querying execution providers. <b>Example<\/b> <code> providers := OnnxRuntime->GetProviders(); each(p in providers) { p->PrintLine(); }; <\/code>",
+			"functions": {
+				"GetProviders": {
+					"descriptions": ["**Gets available ONNX execution providers (e.g., \"DML\", \"CUDA\", \"CPU\")**\n\n```function : GetProviders() ~ String[]```\n\n\n\nreturn: String[]"]
+				}
+			}
+		},
 		"API.Onnx.OpenPoseClassification": {
-			"description": "OpenPose classification result",
+			"description": "OpenPose keypoint result with normalized coordinates and confidence. Undetected keypoints have normalized coordinates of -1.",
 			"functions": {
 				"GetConfidence": {
 					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
@@ -650,7 +698,7 @@
 			}
 		},
 		"API.Onnx.OpenPoseResult": {
-			"description": "OpenPose results",
+			"description": "OpenPose results containing a visualization image, normalized bounding box, and keypoint classifications",
 			"functions": {
 				"GetClassifications": {
 					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ OpenPoseClassification[]```\n\n\n\nreturn: OpenPoseClassification[]"]
@@ -682,7 +730,7 @@
 			}
 		},
 		"API.Onnx.OpenPoseSession": {
-			"description": "OpenPose inference session",
+			"description": "OpenPose inference session for human pose estimation (17-keypoint COCO skeleton). Uses letterbox preprocessing with inverse keypoint mapping for accurate coordinates. Supports 18\/19\/25\/26\/57-channel output configurations. <b>Example<\/b> <code> labels := [\"nose\", \"left_eye\", \"right_eye\", \"left_ear\", \"right_ear\", \"left_shoulder\", \"right_shoulder\", \"left_elbow\", \"right_elbow\", \"left_wrist\", \"right_wrist\", \"left_hip\", \"right_hip\", \"left_knee\", \"right_knee\", \"left_ankle\", \"right_ankle\"]; session := OpenPoseSession->New(\"openpose.onnx\"); result := session->Inference(image_bytes, labels); each(kp in result->GetClassifications()) { if(kp->GetConfidence() > 0) { \"{kp->GetName()}: [{kp->GetNormalizedX()}, {kp->GetNormalizedY()}]\"->PrintLine(); }; }; session->Close(); <\/code>",
 			"functions": {
 				"Close": {
 					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
@@ -695,14 +743,79 @@
 				}
 			}
 		},
-		"API.Onnx.ResNetResult": {
-			"description": "ResNet results",
+		"API.Onnx.Phi3Result": {
+			"description": "Phi-3 \/ SLM generation result containing output token IDs",
 			"functions": {
-				"GeConfidences": {
-					"descriptions": ["**Gets the confidences results**\n\n```method : public : GeConfidences() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				"GetTokenCount": {
+					"descriptions": ["**Gets the number of generated tokens**\n\n```method : public : GetTokenCount() ~ Int```\n\n\n\nreturn: Int"]
 				},
+				"GetTokens": {
+					"descriptions": ["**Gets the generated token IDs (excluding prompt tokens)**\n\n```method : public : GetTokens() ~ Int[]```\n\n\n\nreturn: Int[]"]
+				},
+				"ToString": {
+					"descriptions": ["**Get string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.Phi3Session": {
+			"description": "Phi-3 \/ SLM inference session for text generation. Supports autoregressive generation with KV-cache management, temperature-based sampling, and configurable EOS tokens. <b>Example<\/b> <code> session := Phi3Session->New(\"phi3-mini\/model.onnx\"); token_ids := [1, 3148, 1001, 29901, 825, 338, 29871, 29906, 718, 29871, 29906, 29973]; eos_tokens := [2, 32007]; result := session->Generate(token_ids, 128, 0.7, eos_tokens); each(token in result->GetTokens()) { token->PrintLine(); }; session->Close(); <\/code>",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Generate": {
+					"descriptions": ["**Generate text tokens from input token IDs**\n\n```method : public : Generate(token_ids:Int[], max_tokens:Int, temperature:Float, eos_tokens:Int[]) ~ API.Onnx.Phi3Result```\n\n\n\ntoken_ids: Int[]\n\nmax_tokens: Int\n\ntemperature: Float\n\neos_tokens: Int[]\n\nreturn: API.Onnx.Phi3Result"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(model:String)```\n\n\n\nmodel: String", "**Constructor.**\n\n```New(model:String, config:Map&lt;String,String&gt;)```\n\n\n\nmodel: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
+		"API.Onnx.Phi3Tokenizer": {
+			"description": "Phi-3 tokenizer for encoding text to token IDs and decoding token IDs back to text. Loads a HuggingFace tokenizer.json file and supports BPE encoding\/decoding. <b>Example<\/b> <code> tokenizer := Phi3Tokenizer->New(\"phi3-mini\/tokenizer.json\"); ids := tokenizer->Encode(\"What is 2+2?\"); text := tokenizer->Decode(ids); text->PrintLine(); <\/code>",
+			"functions": {
+				"Decode": {
+					"descriptions": ["**Decode token IDs to human-readable text**\n\n```method : public : Decode(token_ids:Int[]) ~ String```\n\n\n\ntoken_ids: Int[]\n\nreturn: String"]
+				},
+				"Encode": {
+					"descriptions": ["**Encode text to token IDs using BPE with special token handling. Added\/special tokens are matched as whole strings before BPE is applied.**\n\n```method : public : Encode(text:String) ~ Int[]```\n\n\n\ntext: String\n\nreturn: Int[]"]
+				},
+				"EncodeBPE": {
+					"descriptions": ["**Encode text to token IDs using BPE (no special token handling)**\n\n```method : private : EncodeBPE(text:String) ~ Int[]```\n\n\n\ntext: String\n\nreturn: Int[]"]
+				},
+				"GetVocabSize": {
+					"descriptions": ["**Gets the vocabulary size**\n\n```method : public : GetVocabSize() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"IsLoaded": {
+					"descriptions": ["**Checks if the tokenizer was loaded successfully**\n\n```method : public : IsLoaded() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(tokenizer_path:String)```\n\n\n\ntokenizer_path: String"]
+				}
+			}
+		},
+		"API.Onnx.Phi3VisionSession": {
+			"description": "Phi-3 Vision multimodal session for image understanding and generation. Uses three separate ONNX models: vision encoder, text embedding, and text decoder. Accepts raw image bytes (JPEG\/PNG) and pre-tokenized prompt tokens split into prefix (before image placeholder) and suffix (after image placeholder) segments. <b>Example<\/b> <code> model_dir := \"phi3v-directml\/\"; session := Phi3VisionSession->New( model_dir + \"phi-3-v-128k-instruct-vision.onnx\", model_dir + \"phi-3-v-128k-instruct-text-embedding.onnx\", model_dir + \"model.onnx\"); image_bytes := System.IO.File.FileReader->ReadBinaryFile(\"photo.jpg\"); prefix := [32010, 29871]; suffix := [32007, 32001]; eos := [32000, 32007]; result := session->Generate(image_bytes, prefix, suffix, 256, 0.0, eos); each(token in result->GetTokens()) { token->PrintLine(); }; session->Close(); <\/code>",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes all three sessions (vision, embedding, decoder)**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Generate": {
+					"descriptions": ["**Generate text tokens from an image and prompt tokens. The prompt is split into prefix tokens (before the image) and suffix tokens (after the image).**\n\n```method : public : Generate(image_bytes:Byte[], prefix_tokens:Int[], suffix_tokens:Int[], max_tokens:Int, temperature:Float, eos_tokens:Int[]) ~ API.Onnx.Phi3Result```\n\n\n\nimage_bytes: Byte[]\n\nprefix_tokens: Int[]\n\nsuffix_tokens: Int[]\n\nmax_tokens: Int\n\ntemperature: Float\n\neos_tokens: Int[]\n\nreturn: API.Onnx.Phi3Result"]
+				},
+				"New": {
+					"descriptions": ["**Constructor.**\n\n```New(vision_model:String, embed_model:String, decoder_model:String)```\n\n\n\nvision_model: String\n\nembed_model: String\n\ndecoder_model: String", "**Constructor with configuration.**\n\n```New(vision_model:String, embed_model:String, decoder_model:String, config:Map&lt;String,String&gt;)```\n\n\n\nvision_model: String\n\nembed_model: String\n\ndecoder_model: String\n\nconfig: Map&lt;String,String&gt;"]
+				}
+			}
+		},
+		"API.Onnx.ResNetResult": {
+			"description": "ResNet classification results containing per-class confidences and top-1 prediction",
+			"functions": {
 				"GetConfidence": {
 					"descriptions": ["**Get classification confidence**\n\n```method : public : GetConfidence() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"GetConfidences": {
+					"descriptions": ["**Gets the confidences results**\n\n```method : public : GetConfidences() ~ Float[]```\n\n\n\nreturn: Float[]"]
 				},
 				"GetId": {
 					"descriptions": ["**Get classification ID**\n\n```method : public : GetId() ~ Int```\n\n\n\nreturn: Int"]
@@ -719,7 +832,7 @@
 			}
 		},
 		"API.Onnx.ResNetSession": {
-			"description": "ResNet inference session",
+			"description": "ResNet inference session for image classification. Performs ImageNet-style classification with softmax probability normalization. <b>Example<\/b> <code> labels := [\"tabby cat\", \"golden retriever\", \"sports car\"]; session := ResNetSession->New(\"resnet50.onnx\"); result := session->Inference(image_bytes, 224, 224, labels); \"Top: {result->GetName()} ({result->GetConfidence()})\"->PrintLine(); session->Close(); <\/code>",
 			"functions": {
 				"Close": {
 					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
@@ -732,14 +845,8 @@
 				}
 			}
 		},
-		"API.Onnx.Runtime": {
-			"description": "Yolo runtime",
-			"functions": {
-
-			}
-		},
 		"API.Onnx.YoloClassification": {
-			"description": "Yolo classification result",
+			"description": "YOLO classification result for a single detected object",
 			"functions": {
 				"GetBounds": {
 					"descriptions": ["**Get classification bounds**\n\n```method : public : GetBounds() ~ Rect```\n\n\n\nreturn: Rect"]
@@ -762,7 +869,7 @@
 			}
 		},
 		"API.Onnx.YoloResult": {
-			"description": "Yolo inference result",
+			"description": "YOLO inference result containing raw output, shape, dimensions and classifications",
 			"functions": {
 				"GetClassifications": {
 					"descriptions": ["**Gets an array of classifications**\n\n```method : public : GetClassifications() ~ YoloClassification[]```\n\n\n\nreturn: YoloClassification[]"]
@@ -791,7 +898,7 @@
 			}
 		},
 		"API.Onnx.YoloSession": {
-			"description": "Yolo inference session",
+			"description": "YOLO inference session for object detection (v8 and above). Supports YOLO11\/YOLO12 with fused head, letterbox preprocessing, and automatic FP16\/FP32 input handling. <b>Example<\/b> <code> labels := [\"person\", \"bicycle\", \"car\"]; session := YoloSession->New(\"yolo11n.onnx\"); result := session->Inference(image_bytes, 640, 640, 0.5, labels); each(cls in result->GetClassifications()) { \"{cls->GetName()}: {cls->GetConfidence()}\"->PrintLine(); }; session->Close(); <\/code>",
 			"functions": {
 				"Close": {
 					"descriptions": ["**Closes the session**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
@@ -865,6 +972,14 @@
 				},
 				"Size": {
 					"descriptions": ["**Gets the size of contents**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
+				}
+			}
+		},
+		"API.OpenAI.Embedding": {
+			"description": "OpenAI text embeddings API.",
+			"functions": {
+				"Create": {
+					"descriptions": ["**Creates an embedding for a single input string.**\n\n```function : Create(input:String, model:String, token:String) ~ Float[]```\n\n\n\ninput: String\n\nmodel: String\n\ntoken: String\n\nreturn: Float[]", "**Creates an embedding with custom dimensions.**\n\n```function : Create(input:String, model:String, dimensions:Int, token:String) ~ Float[]```\n\n\n\ninput: String\n\nmodel: String\n\ndimensions: Int\n\ntoken: String\n\nreturn: Float[]"]
 				}
 			}
 		},
@@ -1031,6 +1146,12 @@
 				"ToString": {
 					"descriptions": ["**String representation of the object**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
 				}
+			}
+		},
+		"API.OpenAI.Models": {
+			"description": "OpenAI model name constants",
+			"functions": {
+
 			}
 		},
 		"API.OpenAI.Realtime": {
@@ -1445,17 +1566,47 @@
 		"API.OpenCV.Image": {
 			"description": "OpenCV image",
 			"functions": {
+				"AdaptiveThreshold": {
+					"descriptions": ["**Applies an adaptive threshold to an array**\n\n```method : public : AdaptiveThreshold(maxval:Float, adaptive_method:Int, threshold_type:Int, block_size:Int, C:Float) ~ Image```\n\n\n\nmaxval: Float\n\nadaptive_method: Int\n\nthreshold_type: Int\n\nblock_size: Int\n\nC: Float\n\nreturn: Image"]
+				},
+				"BilateralFilter": {
+					"descriptions": ["**Applies bilateral filter to the image**\n\n```method : public : BilateralFilter(d:Int, sigmaColor:Float, sigmaSpace:Float) ~ Image```\n\n\n\nd: Int\n\nsigmaColor: Float\n\nsigmaSpace: Float\n\nreturn: Image"]
+				},
+				"BoundingRect": {
+					"descriptions": ["**Computes the bounding rectangle for a single contour.**\n\n```function : BoundingRect(contours:Int[], index:Int) ~ Rect```\n\n\n\ncontours: Int[]\n\nindex: Int\n\nreturn: Rect"]
+				},
 				"Bytes": {
 					"descriptions": ["**Gets image bytes**\n\n```method : public : Bytes() ~ Byte[]```\n\n\n\nreturn: Byte[]"]
+				},
+				"Canny": {
+					"descriptions": ["**Applies Canny edge detection**\n\n```method : public : Canny(threshold1:Float, threshold2:Float) ~ Image```\n\n\n\nthreshold1: Float\n\nthreshold2: Float\n\nreturn: Image"]
+				},
+				"Clone": {
+					"descriptions": ["**Creates a deep copy of the image**\n\n```method : public : Clone() ~ Image```\n\n\n\nreturn: Image"]
 				},
 				"Columns": {
 					"descriptions": ["**Gets image columns**\n\n```method : public : Columns() ~ Int```\n\n\n\nreturn: Int"]
 				},
+				"ContourArea": {
+					"descriptions": ["**Computes the area of a single contour.**\n\n```function : ContourArea(contours:Int[], index:Int) ~ Float```\n\n\n\ncontours: Int[]\n\nindex: Int\n\nreturn: Float"]
+				},
 				"Convert": {
 					"descriptions": ["**Convert an image to a given byte format**\n\n```method : public : Convert(format:Image-&gt;Format) ~ Byte[]```\n\n\n\nformat: Image-&gt;Format\n\nreturn: Byte[]"]
 				},
+				"Crop": {
+					"descriptions": ["**Crops an image using a rectangle region of interest**\n\n```method : public : Crop(rect:Rect) ~ Image```\n\n\n\nrect: Rect\n\nreturn: Image"]
+				},
+				"CvtColor": {
+					"descriptions": ["**Converts image color space**\n\n```method : public : CvtColor(code:Int) ~ Image```\n\n\n\ncode: Int\n\nreturn: Image"]
+				},
+				"Dilate": {
+					"descriptions": ["**Dilates an image using a structuring element**\n\n```method : public : Dilate(shape:Int, ksize_w:Int, ksize_h:Int) ~ Image```\n\n\n\nshape: Int\n\nksize_w: Int\n\nksize_h: Int\n\nreturn: Image"]
+				},
 				"DrawCircle": {
 					"descriptions": ["**Draws a bounding circle**\n\n```method : public : DrawCircle(pt:Point, radius:Int, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\npt: Point\n\nradius: Int\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
+				},
+				"DrawContours": {
+					"descriptions": ["**Draws contours on the image.**\n\n```method : public : DrawContours(contours:Int[], contourIdx:Int, color:Scalar, thickness:Int) ~ Image```\n\n\n\ncontours: Int[]\n\ncontourIdx: Int\n\ncolor: Scalar\n\nthickness: Int\n\nreturn: Image"]
 				},
 				"DrawRectangle": {
 					"descriptions": ["**Draws a bounding rectangle**\n\n```method : public : DrawRectangle(rect:Rect, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\nrect: Rect\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
@@ -1463,11 +1614,35 @@
 				"DrawText": {
 					"descriptions": ["**Draws text on an image**\n\n```method : public : DrawText(text:String, font:Font, color:Scalar, thickness:Int, type:LineType) ~ API.OpenCV.Image```\n\n\n\ntext: String\n\npt: Point\n\nfont: Font\n\nscale: Float\n\ncolor: Scalar\n\nthickness: Int\n\ntype: LineType\n\nreturn: API.OpenCV.Image"]
 				},
+				"Erode": {
+					"descriptions": ["**Erodes an image using a structuring element**\n\n```method : public : Erode(shape:Int, ksize_w:Int, ksize_h:Int) ~ Image```\n\n\n\nshape: Int\n\nksize_w: Int\n\nksize_h: Int\n\nreturn: Image"]
+				},
+				"FindContours": {
+					"descriptions": ["**Finds contours in a binary image. The image should be single-channel (e.g., after CvtColor to grayscale and Threshold). Returns a packed Int[] with format: [count, size0..sizeN-1, x0,y0,x1,y1,...]. Use ContourArea() and BoundingRect() to analyze individual contours.**\n\n```method : public : FindContours(mode:Int, approx:Int) ~ Int[]```\n\n\n\nmode: Int\n\napprox: Int\n\nreturn: Int[]"]
+				},
+				"Flip": {
+					"descriptions": ["**Flips an image**\n\n```method : public : Flip(flipCode:Int) ~ Image```\n\n\n\nflipCode: Int\n\nreturn: Image"]
+				},
+				"GaussianBlur": {
+					"descriptions": ["**Applies Gaussian blur to the image**\n\n```method : public : GaussianBlur(ksize_w:Int, ksize_h:Int, sigmaX:Float) ~ Image```\n\n\n\nksize_w: Int\n\nksize_h: Int\n\nsigmaX: Float\n\nreturn: Image"]
+				},
+				"GetRotationMatrix2D": {
+					"descriptions": ["**Computes a 2D rotation matrix for an affine transformation.**\n\n```function : GetRotationMatrix2D(center_x:Float, center_y:Float, angle:Float, scale:Float) ~ Float[]```\n\n\n\ncenter_x: Float\n\ncenter_y: Float\n\nangle: Float\n\nscale: Float\n\nreturn: Float[]"]
+				},
 				"IsEmpty": {
 					"descriptions": ["**Determines if an image is empty**\n\n```method : public : IsEmpty() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
 				"Load": {
 					"descriptions": ["**Load image from file**\n\n```function : Load(image_path:String) ~ API.OpenCV.Image```\n\n\n\nimage_path: String\n\nreturn: API.OpenCV.Image", "**Load image from bytes**\n\n```function : Load() ~ API.OpenCV.Image```\n\n\n\nimage_bytes: Byte[]\n\nreturn: API.OpenCV.Image"]
+				},
+				"MedianBlur": {
+					"descriptions": ["**Applies median blur to the image**\n\n```method : public : MedianBlur(ksize:Int) ~ Image```\n\n\n\nksize: Int\n\nreturn: Image"]
+				},
+				"MorphologyEx": {
+					"descriptions": ["**Applies a morphological operation to an image**\n\n```method : public : MorphologyEx(op:Int, shape:Int, ksize_w:Int, ksize_h:Int) ~ Image```\n\n\n\nop: Int\n\nshape: Int\n\nksize_w: Int\n\nksize_h: Int\n\nreturn: Image"]
+				},
+				"Normalize": {
+					"descriptions": ["**Normalizes the image for neural network preprocessing. Converts the image to float, normalizes to [0,1], converts BGR to RGB, subtracts the given mean values, and divides by the given std values per channel. Returns the result as a flattened CHW tensor (Float[]).**\n\n```method : public : Normalize(mean_r:Float, mean_g:Float, mean_b:Float, std_r:Float, std_g:Float, std_b:Float) ~ Float[]```\n\n\n\nmean_r: Float\n\nmean_g: Float\n\nmean_b: Float\n\nstd_r: Float\n\nstd_g: Float\n\nstd_b: Float\n\nreturn: Float[]"]
 				},
 				"Resize": {
 					"descriptions": ["**Resizes an image**\n\n```method : public : Resize(sz:Size, fx:Float, fy:Float, interpolation:InterpolationFlags) ~ API.OpenCV.Image```\n\n\n\nsz: Size\n\nfx: Float\n\nfy: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image", "**Resizes an image**\n\n```method : public : Resize(fx:Float, fy:Float, interpolation:InterpolationFlags) ~ API.OpenCV.Image```\n\n\n\nfx: Float\n\nfy: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image", "**Resizes an image**\n\n```method : public : Resize(f:Float, ) ~ API.OpenCV.Image```\n\n\n\nf: Float\n\ninterpolation: InterpolationFlags\n\nreturn: API.OpenCV.Image"]
@@ -1475,14 +1650,29 @@
 				"Rows": {
 					"descriptions": ["**Gets image rows**\n\n```method : public : Rows() ~ Int```\n\n\n\nreturn: Int"]
 				},
+				"Save": {
+					"descriptions": ["**Saves an image to file**\n\n```method : public : Save(path:String) ~ Bool```\n\n\n\npath: String\n\nreturn: Bool"]
+				},
 				"Show": {
 					"descriptions": ["**Shows an image**\n\n```method : public : Show(title:String) ~ Nil```\n\n\n\ntitle: String\n\nreturn: Nil", "**Shows an image**\n\n```method : public : Show(title:String, scale:Float) ~ Nil```\n\n\n\ntitle: String\n\nscale: Float\n\nreturn: Nil", "**Shows an image**\n\n```method : public : Show(title:String, scale:Float, ) ~ Nil```\n\n\n\ntitle: String\n\nscale: Float\n\nms_wait: Int\n\nreturn: Nil"]
 				},
 				"Size": {
 					"descriptions": ["**Gets image size**\n\n```method : public : Size() ~ Int```\n\n\n\nreturn: Int"]
 				},
+				"Sobel": {
+					"descriptions": ["**Applies Sobel edge detection**\n\n```method : public : Sobel(ddepth:Int, dx:Int, dy:Int) ~ Image```\n\n\n\nddepth: Int\n\ndx: Int\n\ndy: Int\n\nreturn: Image"]
+				},
+				"Threshold": {
+					"descriptions": ["**Applies a fixed-level threshold to each array element**\n\n```method : public : Threshold(thresh:Float, maxval:Float, type:Int) ~ Image```\n\n\n\nthresh: Float\n\nmaxval: Float\n\ntype: Int\n\nreturn: Image"]
+				},
 				"Type": {
 					"descriptions": ["**Gets image type**\n\n```method : public : Type() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"WarpAffine": {
+					"descriptions": ["**Applies an affine transformation to the image using a 2x3 matrix.**\n\n```method : public : WarpAffine(matrix:Float[], width:Int, height:Int) ~ Image```\n\n\n\nmatrix: Float[]\n\nwidth: Int\n\nheight: Int\n\nreturn: Image"]
+				},
+				"WarpPerspective": {
+					"descriptions": ["**Applies a perspective transformation to the image using a 3x3 matrix.**\n\n```method : public : WarpPerspective(matrix:Float[], width:Int, height:Int) ~ Image```\n\n\n\nmatrix: Float[]\n\nwidth: Int\n\nheight: Int\n\nreturn: Image"]
 				}
 			}
 		},
@@ -1556,6 +1746,26 @@
 			"functions": {
 				"Open": {
 					"descriptions": ["**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(id:Int) ~ Bool```\n\n\n\nid: Int\n\nreturn: Bool", "**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(id:Int, pref:Api) ~ Bool```\n\n\n\nid: Int\n\npref: Api\n\nreturn: Bool", "**Open video file or a capturing device or a IP video stream**\n\n```method : public : Open(name:String) ~ Bool```\n\n\n\nname: String\n\nreturn: Bool"]
+				}
+			}
+		},
+		"API.OpenCV.VideoWriter": {
+			"description": "OpenCV VideoWriter for writing video files",
+			"functions": {
+				"FourCC": {
+					"descriptions": ["**Computes a FourCC code from four characters. Example: FourCC('m', 'p', '4', 'v') for MP4V codec.**\n\n```function : FourCC(c1:Char, c2:Char, c3:Char, c4:Char) ~ Int```\n\n\n\nc1: Char\n\nc2: Char\n\nc3: Char\n\nc4: Char\n\nreturn: Int"]
+				},
+				"IsOpen": {
+					"descriptions": ["**Checks if the VideoWriter has been successfully opened.**\n\n```method : public : IsOpen() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Creates a new VideoWriter.**\n\n```New(filename:String, fourcc:Int, fps:Float, width:Int, height:Int)```\n\n\n\nfilename: String\n\nfourcc: Int\n\nfps: Float\n\nwidth: Int\n\nheight: Int"]
+				},
+				"Release": {
+					"descriptions": ["**Releases the VideoWriter and closes the file.**\n\n```method : public : Release() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Write": {
+					"descriptions": ["**Writes a frame to the video file.**\n\n```method : public : Write(image:Image) ~ Nil```\n\n\n\nimage: Image\n\nreturn: Nil"]
 				}
 			}
 		},
@@ -2921,6 +3131,9 @@
 				"GetTypeValue": {
 					"descriptions": ["**Get JSON values**\n\n```method : public : GetTypeValue() ~ String```\n\n\n\nreturn: String"]
 				},
+				"HasError": {
+					"descriptions": ["**Checks if a parsing error occurred**\n\n```method : public : HasError() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
 				"New": {
 					"descriptions": ["**Constructor**\n\n```New(input:InputStream)```\n\n\n\ninput: InputStream"]
 				},
@@ -3116,17 +3329,35 @@
 				"Close": {
 					"descriptions": ["**Closes a connection**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
+				"Commit": {
+					"descriptions": ["**Commits the current transaction.**\n\n```method : public : Commit() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
 				"CreateParameterStatement": {
 					"descriptions": ["**Create a parametrized SQL statement**\n\n```method : public : CreateParameterStatement(sql:String) ~ ParameterStatement```\n\n\n\nsql: String\n\nreturn: ParameterStatement"]
+				},
+				"GetColumns": {
+					"descriptions": ["**Gets column information for a table as name:type pairs.**\n\n```method : public : GetColumns(table:String) ~ String[]```\n\n\n\ntable: String\n\nreturn: String[]"]
+				},
+				"GetLastError": {
+					"descriptions": ["**Gets the last error message from the connection.**\n\n```method : public : GetLastError() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetTables": {
+					"descriptions": ["**Gets the list of table names in the data source.**\n\n```method : public : GetTables() ~ String[]```\n\n\n\nreturn: String[]"]
 				},
 				"IsOpen": {
 					"descriptions": ["**Check rather a connect is open**\n\n```method : public : IsOpen() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
 				"New": {
-					"descriptions": ["**Constructor**\n\n```New(ds:String, username:String, password:String)```\n\n\n\nds: String\n\nusername: String\n\npassword: String"]
+					"descriptions": ["**Constructor**\n\n```New(ds:String, username:String, password:String)```\n\n\n\nds: String\n\nusername: String\n\npassword: String", "**Constructor using a connection string**\n\n```New(conn_str:String)```\n\n\n\nconn_str: String"]
+				},
+				"Rollback": {
+					"descriptions": ["**Rolls back the current transaction.**\n\n```method : public : Rollback() ~ Bool```\n\n\n\nreturn: Bool"]
 				},
 				"Select": {
 					"descriptions": ["**Executes a SQL select statement**\n\n```method : public : Select(sql:String) ~ ResultSet```\n\n\n\nsql: String\n\nreturn: ResultSet"]
+				},
+				"SetAutoCommit": {
+					"descriptions": ["**Sets autocommit mode. When false, changes must be explicitly committed.**\n\n```method : public : SetAutoCommit(enable:Bool) ~ Bool```\n\n\n\nenable: Bool\n\nreturn: Bool"]
 				},
 				"Update": {
 					"descriptions": ["**Executes a SQL update statement**\n\n```method : public : Update(sql:String) ~ Int```\n\n\n\nsql: String\n\nreturn: Int"]
@@ -3171,8 +3402,14 @@
 				"Close": {
 					"descriptions": ["**Closes the statement**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
+				"GetLastError": {
+					"descriptions": ["**Gets the last error message from the statement.**\n\n```method : public : GetLastError() ~ String```\n\n\n\nreturn: String"]
+				},
 				"Select": {
 					"descriptions": ["**Executes a SQL select statement**\n\n```method : public : Select() ~ ResultSet```\n\n\n\nreturn: ResultSet"]
+				},
+				"SetBigInt": {
+					"descriptions": ["**Sets a big integer type to NULL**\n\n```method : public : SetBigInt(pos:Int) ~ Bool```\n\n\n\npos: Int\n\nreturn: Bool", "**Sets a big integer type**\n\n```method : public : SetBigInt(pos:Int, value:Int) ~ Bool```\n\n\n\npos: Int\n\nvalue: Int\n\nreturn: Bool"]
 				},
 				"SetBit": {
 					"descriptions": ["**Sets a bit type to NULL**\n\n```method : public : SetBit(pos:Int) ~ Bool```\n\n\n\npos: Int\n\nreturn: Bool", "**Sets a bit type**\n\n```method : public : SetBit(pos:Int, value:Bool) ~ Bool```\n\n\n\npos: Int\n\nvalue: Bool\n\nreturn: Bool"]
@@ -3215,6 +3452,9 @@
 				"Close": {
 					"descriptions": ["**Closes a result set**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
+				"GetBigInt": {
+					"descriptions": ["**Gets a big integer value**\n\n```method : public : GetBigInt(column:Int) ~ Int```\n\n\n\ncolumn: Int\n\nreturn: Int", "**Gets a big integer value**\n\n```method : public : GetBigInt(column:String) ~ Int```\n\n\n\ncolumn: String\n\nreturn: Int"]
+				},
 				"GetBit": {
 					"descriptions": ["**Gets a bit value**\n\n```method : public : GetBit(column:Int) ~ Bool```\n\n\n\ncolumn: Int\n\nreturn: Bool", "**Gets a bit value**\n\n```method : public : GetBit(column:String) ~ Bool```\n\n\n\ncolumn: String\n\nreturn: Bool"]
 				},
@@ -3232,6 +3472,9 @@
 				},
 				"GetInt": {
 					"descriptions": ["**Gets an integer value**\n\n```method : public : GetInt(column:Int) ~ Int```\n\n\n\ncolumn: Int\n\nreturn: Int", "**Gets an integer value**\n\n```method : public : GetInt(column:String) ~ Int```\n\n\n\ncolumn: String\n\nreturn: Int"]
+				},
+				"GetLastError": {
+					"descriptions": ["**Gets the last error message from the result set statement.**\n\n```method : public : GetLastError() ~ String```\n\n\n\nreturn: String"]
 				},
 				"GetReal": {
 					"descriptions": ["**Gets a real value**\n\n```method : public : GetReal(column:Int) ~ Float```\n\n\n\ncolumn: Int\n\nreturn: Float", "**Gets a real value**\n\n```method : public : GetReal(column:String) ~ Float```\n\n\n\ncolumn: String\n\nreturn: Float"]
@@ -6736,7 +6979,7 @@
 					"descriptions": ["**Splits a string into lines**\n\n```method : public : native : Lines() ~ String[]```\n\n\n\nreturn: String[]"]
 				},
 				"New": {
-					"descriptions": ["**Default constructor**\n\n```New()```\n\n", "**Copy constructor**\n\n```New(string:String)```\n\n\n\nstring: String", "**Copy constructor**\n\n```New(array:Char[])```\n\n\n\narray: Char[]", "**Copy constructor**\n\n```New(array:Char[], copy:Bool)```\n\n\n\narray: Char[]\n\ncopy: Bool", "**Copy constructor**\n\n```New(array:Char[], offset:Int, length:Int)```\n\n\n\narray: Char[]\n\noffset: Int\n\nlength: Int", "**Copy constructor**\n\n```New(bytes:Byte[])```\n\n\n\nbytes: Byte[]", "**Copy constructor**\n\n```New(bytes:Byte[], offset:Int, length:Int)```\n\n\n\nbytes: Byte[]\n\noffset: Int\n\nlength: Int"]
+					"descriptions": ["**Default constructor**\n\n```New()```\n\n", "**Copy constructor**\n\n```New(string:String)```\n\n\n\nstring: String", "**Copy constructor**\n\n```New(array:Char[])```\n\n\n\narray: Char[]", "**Constructor with initial capacity**\n\n```New(capacity:Int)```\n\n\n\ncapacity: Int", "**Copy constructor**\n\n```New(array:Char[], copy:Bool)```\n\n\n\narray: Char[]\n\ncopy: Bool", "**Copy constructor**\n\n```New(array:Char[], offset:Int, length:Int)```\n\n\n\narray: Char[]\n\noffset: Int\n\nlength: Int", "**Copy constructor**\n\n```New(bytes:Byte[])```\n\n\n\nbytes: Byte[]", "**Copy constructor**\n\n```New(bytes:Byte[], offset:Int, length:Int)```\n\n\n\nbytes: Byte[]\n\noffset: Int\n\nlength: Int"]
 				},
 				"Pad": {
 					"descriptions": ["**Pads a string with a character**\n\n```method : public : Pad(char:Char, num:Int, is_left:Bool) ~ String```\n\n\n\nchar: Char\n\nnum: Int\n\nis_left: Bool\n\nreturn: String"]
@@ -7441,6 +7684,85 @@
 				}
 			}
 		},
+		"System.IO.Net.DTLSSocket": {
+			"description": "DTLS\/UDP secure socket",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the socket**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Flush": {
+					"descriptions": ["**Flushes the output buffer. This is a no-opt given this socket is not backed by an output buffer.**\n\n```method : public : Flush() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"GetAddress": {
+					"descriptions": ["**Returns the connected network address**\n\n```method : public : GetAddress() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetIssuer": {
+					"descriptions": ["**Gets the X.509 certificate issuer name**\n\n```method : public : GetIssuer() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetLastError": {
+					"descriptions": ["**Get the last error**\n\n```function : GetLastError() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetPort": {
+					"descriptions": ["**Returns the connected network port**\n\n```method : public : GetPort() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetSubject": {
+					"descriptions": ["**Gets the X.509 certificate subject name**\n\n```method : public : GetSubject() ~ String```\n\n\n\nreturn: String"]
+				},
+				"IsOpen": {
+					"descriptions": ["**Returns rather the socket is open**\n\n```method : public : IsOpen() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Default constructor**\n\n```New(address:System.String, port:Int, pem:String, verify:Bool)```\n\n\n\naddress: System.String\n\nport: Int\n\npem: String\n\nverify: Bool"]
+				},
+				"ReadBuffer": {
+					"descriptions": ["**Reads bytes into a byte buffer**\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Byte[]\n\nreturn: Int", "**Reads bytes into a character buffer**\n\n```method : public : ReadBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Char[]\n\nreturn: Int"]
+				},
+				"ReadByte": {
+					"descriptions": ["**Reads a byte**\n\n```method : public : ReadByte() ~ Byte```\n\n\n\nreturn: Byte"]
+				},
+				"ReadLine": {
+					"descriptions": ["**Reads a string until a newline or character return is detected**\n\n```method : public : native : ReadLine() ~ System.String```\n\n\n\nreturn: System.String"]
+				},
+				"Select": {
+					"descriptions": ["**Checks if read\/write data is available**\n\n```method : public : Select(is_write:Bool) ~ Int```\n\n\n\nis_write: Bool\n\nreturn: Int"]
+				},
+				"WriteBuffer": {
+					"descriptions": ["**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Byte[]) ~ Int```\n\n\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes bytes from a byte buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Byte[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Byte[]\n\nreturn: Int", "**Writes characters from a byte buffer**\n\n```method : public : WriteBuffer(buffer:Char[]) ~ Int```\n\n\n\nbuffer: Char[]\n\nreturn: Int", "**Writes characters from a character buffer**\n\n```method : public : WriteBuffer(offset:Int, num:Int, buffer:Char[]) ~ Int```\n\n\n\noffset: Int\n\nnum: Int\n\nbuffer: Char[]\n\nreturn: Int"]
+				},
+				"WriteByte": {
+					"descriptions": ["**Writes a byte**\n\n```method : public : WriteByte(b:Int) ~ Bool```\n\n\n\nb: Int\n\nreturn: Bool"]
+				},
+				"WriteString": {
+					"descriptions": ["**Writes a character string**\n\n```method : public : WriteString(str:System.String) ~ Nil```\n\n\n\nstr: System.String\n\nreturn: Nil"]
+				}
+			}
+		},
+		"System.IO.Net.DTLSSocketServer": {
+			"description": "DTLS\/UDP secure server socket",
+			"functions": {
+				"Accept": {
+					"descriptions": ["**Accepts a client connection**\n\n```method : public : Accept() ~ DTLSSocket```\n\n\n\nreturn: DTLSSocket"]
+				},
+				"Close": {
+					"descriptions": ["**Closes the server socket**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"GetIssuer": {
+					"descriptions": ["**Gets the X.509 certificate's issuer name**\n\n```method : public : GetIssuer() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetLastError": {
+					"descriptions": ["**Get the last error**\n\n```function : GetLastError() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetSubject": {
+					"descriptions": ["**Gets the X.509 certificate subject name**\n\n```method : public : GetSubject() ~ String```\n\n\n\nreturn: String"]
+				},
+				"Listen": {
+					"descriptions": ["**Listens for incoming client connections**\n\n```method : public : Listen() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Default constructor**\n\n```New(cert:String, key:String, passwd:String, port:Int)```\n\n\n\ncert: String\n\nkey: String\n\npasswd: String\n\nport: Int"]
+				}
+			}
+		},
 		"System.IO.Net.TCPSecureSocket": {
 			"description": "Secure SSL TCP\/IP socket",
 			"functions": {
@@ -8000,6 +8322,29 @@
 				}
 			}
 		},
+		"System.ML.LinearRegression": {
+			"description": "Simple linear regression using least squares. Fits y = X * coefficients via the normal equation.",
+			"functions": {
+				"Fit": {
+					"descriptions": ["**Fits the model to training data using least squares.**\n\n```method : public : Fit(X:Float[,], y:Float[,]) ~ Bool```\n\n\n\nX: Float[,]\n\ny: Float[,]\n\nreturn: Bool"]
+				},
+				"GetCoefficients": {
+					"descriptions": ["**Gets the computed coefficients.**\n\n```method : public : GetCoefficients() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"GetRSquared": {
+					"descriptions": ["**Gets the R-squared goodness of fit.**\n\n```method : public : GetRSquared() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"IsFitted": {
+					"descriptions": ["**Whether the model has been fitted.**\n\n```method : public : IsFitted() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
+				},
+				"Predict": {
+					"descriptions": ["**Predicts target values for new input data.**\n\n```method : public : Predict(X:Float[,]) ~ Float[,]```\n\n\n\nX: Float[,]\n\nreturn: Float[,]"]
+				}
+			}
+		},
 		"System.ML.LinearResult": {
 			"description": "Result of liner equations",
 			"functions": {
@@ -8025,6 +8370,32 @@
 				},
 				"New": {
 					"descriptions": ["**Constructor**\n\n```New(m1:Float[,], m2:Float[,])```\n\n\n\nm1: Float[,]\n\nm2: Float[,]"]
+				}
+			}
+		},
+		"System.ML.LogisticRegression": {
+			"description": "Logistic regression using gradient descent with sigmoid activation. Binary classification only.",
+			"functions": {
+				"Fit": {
+					"descriptions": ["**Fits the model to training data using gradient descent.**\n\n```method : public : Fit(X:Float[,], y:Float[,]) ~ Bool```\n\n\n\nX: Float[,]\n\ny: Float[,]\n\nreturn: Bool"]
+				},
+				"GetWeights": {
+					"descriptions": ["**Gets the learned weights.**\n\n```method : public : GetWeights() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"IsFitted": {
+					"descriptions": ["**Whether the model has been fitted.**\n\n```method : public : IsFitted() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"LogSigmoid": {
+					"descriptions": ["**Sigmoid activation function**\n\n```function : LogSigmoid() ~ Float```\n\n\n\nx: Float\n\nreturn: Float"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(learning_rate:Float, iterations:Int)```\n\n\n\nlearning_rate: Float\n\niterations: Int"]
+				},
+				"Predict": {
+					"descriptions": ["**Predicts probabilities for input data.**\n\n```method : public : Predict(X:Float[,]) ~ Float[]```\n\n\n\nX: Float[,]\n\nreturn: Float[]"]
+				},
+				"PredictClass": {
+					"descriptions": ["**Predicts class labels for input data (threshold 0.5).**\n\n```method : public : PredictClass(X:Float[,]) ~ Bool[]```\n\n\n\nX: Float[,]\n\nreturn: Bool[]"]
 				}
 			}
 		},
@@ -8657,6 +9028,15 @@
 				},
 				"SetCookie": {
 					"descriptions": ["**Sets a cookie**\n\n```method : public : SetCookie(cookie:Cookie) ~ Nil```\n\n\n\ncookie: Cookie\n\nreturn: Nil"]
+				},
+				"SetMaxRedirects": {
+					"descriptions": ["**Sets the maximum number of redirects to follow (default 10)**\n\n```method : public : SetMaxRedirects(max:Int) ~ Nil```\n\n\n\nmax: Int\n\nreturn: Nil"]
+				},
+				"SetRetry": {
+					"descriptions": ["**Sets retry behavior for transient errors (429, 503)**\n\n```method : public : SetRetry(max_retries:Int, delay_ms:Int) ~ Nil```\n\n\n\nmax_retries: Int\n\ndelay_ms: Int\n\nreturn: Nil"]
+				},
+				"StreamPost": {
+					"descriptions": ["**Performs an HTTPS POST and returns an SSE stream for reading events. Used for streaming responses from LLM APIs.**\n\n```method : public : StreamPost(url:Web.HTTP.Url, data:Byte[], content_type:String) ~ SSEStream```\n\n\n\nurl: Web.HTTP.Url\n\ndata: Byte[]\n\ncontent_type: String\n\nreturn: SSEStream", "**Performs an HTTPS POST and returns an SSE stream for reading events.**\n\n```method : public : StreamPost(url:Web.HTTP.Url, data:Byte[], content_type:String, pem:String) ~ SSEStream```\n\n\n\nurl: Web.HTTP.Url\n\ndata: Byte[]\n\ncontent_type: String\n\npem: String\n\nreturn: SSEStream"]
 				}
 			}
 		},
@@ -8674,6 +9054,46 @@
 				},
 				"ToString": {
 					"descriptions": ["**Get the string representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"Web.HTTP.SSEEvent": {
+			"description": "Server-Sent Event (SSE) data. Represents a single event from an SSE stream (text\/event-stream). Used with LLM APIs (OpenAI, Claude, Gemini) for streaming responses.",
+			"functions": {
+				"GetData": {
+					"descriptions": ["**Gets the event data (from \"data:\" field)**\n\n```method : public : GetData() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetEvent": {
+					"descriptions": ["**Gets the event type (from \"event:\" field, or \"message\" by default)**\n\n```method : public : GetEvent() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetId": {
+					"descriptions": ["**Gets the event ID (from \"id:\" field, may be Nil)**\n\n```method : public : GetId() ~ String```\n\n\n\nreturn: String"]
+				},
+				"IsDone": {
+					"descriptions": ["**Checks if this is the stream termination signal (data is \"[DONE]\")**\n\n```method : public : IsDone() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"New": {
+					"descriptions": ["**Constructor**\n\n```New(event:String, data:String, id:String)```\n\n\n\nevent: String\n\ndata: String\n\nid: String"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"Web.HTTP.SSEStream": {
+			"description": "Server-Sent Events (SSE) stream reader. Reads events from an HTTP text\/event-stream response line by line.",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes the underlying connection**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"GetStatusCode": {
+					"descriptions": ["**Gets the HTTP status code**\n\n```method : public : GetStatusCode() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"HasNext": {
+					"descriptions": ["**Checks if more events are available**\n\n```method : public : HasNext() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"Next": {
+					"descriptions": ["**Returns the next SSE event. Call HasNext() first.**\n\n```method : public : Next() ~ SSEEvent```\n\n\n\nreturn: SSEEvent"]
 				}
 			}
 		},
@@ -8844,11 +9264,20 @@
 				"New": {
 					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
 				},
+				"ProcessDelete": {
+					"descriptions": ["**Callback for DELETE requests. Override to handle DELETE.**\n\n```method : public : ProcessDelete(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
+				},
 				"ProcessGet": {
 					"descriptions": ["**Callback for GET requests**\n\n```method : private : virutal : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
 				},
+				"ProcessPatch": {
+					"descriptions": ["**Callback for PATCH requests. Override to handle PATCH.**\n\n```method : public : ProcessPatch(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
+				},
 				"ProcessPost": {
 					"descriptions": ["**Callback for POST requests**\n\n```method : private : virutal : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPut": {
+					"descriptions": ["**Callback for PUT requests. Override to handle PUT.**\n\n```method : public : ProcessPut(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
 				},
 				"ProcessResponse": {
 					"descriptions": ["**Processes the HTTP response**\n\n```method : private : ProcessResponse(response:Response, is_head:Bool) ~ Nil```\n\n\n\nresponse: Response\n\nis_head: Bool\n\nreturn: Nil"]
@@ -8870,11 +9299,20 @@
 				"New": {
 					"descriptions": ["**Constructor**\n\n```New()```\n\n"]
 				},
+				"ProcessDelete": {
+					"descriptions": ["**Callback for DELETE requests. Override to handle DELETE.**\n\n```method : public : ProcessDelete(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
+				},
 				"ProcessGet": {
 					"descriptions": ["**Callback for GET requests**\n\n```method : private : virutal : ProcessGet(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
 				},
+				"ProcessPatch": {
+					"descriptions": ["**Callback for PATCH requests. Override to handle PATCH.**\n\n```method : public : ProcessPatch(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
+				},
 				"ProcessPost": {
 					"descriptions": ["**Callback for POST requests**\n\n```method : private : virutal : ProcessPost(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Bool```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Bool"]
+				},
+				"ProcessPut": {
+					"descriptions": ["**Callback for PUT requests. Override to handle PUT.**\n\n```method : public : ProcessPut(request:Web.HTTP.Server.Request, response:Web.HTTP.Server.Response) ~ Nil```\n\n\n\nrequest: Web.HTTP.Server.Request\n\nresponse: Web.HTTP.Server.Response\n\nreturn: Nil"]
 				},
 				"ProcessResponse": {
 					"descriptions": ["**Processes the HTTPS response**\n\n```method : private : ProcessResponse(response:Response, is_head:Bool) ~ Nil```\n\n\n\nresponse: Response\n\nis_head: Bool\n\nreturn: Nil"]
@@ -9467,1219 +9905,1279 @@
 	"class-bundle-names": {
 		"AudioPart": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"BinaryPart": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Candidate": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Chat": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Content": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"EndPoint": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Model": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"OAuthEndPoint": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Part": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"TextPart": {
 			"bundle": "API.Google.Gemini"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Chunk": {
 			"bundle": "API.Google.Gemini.Corpus"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Corpus": {
 			"bundle": "API.Google.Gemini.Corpus"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Document": {
 			"bundle": "API.Google.Gemini.Corpus"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Dataset": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Hyperparameters": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"TunedModel": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Tuner": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"TuningExample": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"TuningTask": {
 			"bundle": "API.Google.Gemini.Tuning"
-,			"file": "gemini.obl"
+,			"file": ""
  		},
 		"Chat": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"Completion": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"EndPoint": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"Model": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"ModelDetails": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"ModelInfo": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
  		},
 		"ModelPulled": {
 			"bundle": "API.Ollama"
-,			"file": "ollama.obl"
+,			"file": ""
+ 		},
+		"Options": {
+			"bundle": "API.Ollama"
+,			"file": ""
+ 		},
+		"Tool": {
+			"bundle": "API.Ollama"
+,			"file": ""
  		},
 		"DeepLabClassification": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"DeepLabResult": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"DeepLabSession": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
+ 		},
+		"OnnxRuntime": {
+			"bundle": "API.Onnx"
+,			"file": ""
  		},
 		"OpenPoseClassification": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"OpenPoseResult": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"OpenPoseSession": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
+ 		},
+		"Phi3Result": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"Phi3Session": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"Phi3Tokenizer": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"Phi3VisionSession": {
+			"bundle": "API.Onnx"
+,			"file": ""
  		},
 		"ResNetResult": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"ResNetSession": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
- 		},
-		"Runtime": {
-			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"YoloClassification": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"YoloResult": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"YoloSession": {
 			"bundle": "API.Onnx"
-,			"file": "onnx.obl"
+,			"file": ""
  		},
 		"Assistant": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Contents": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
+ 		},
+		"Embedding": {
+			"bundle": "API.OpenAI"
+,			"file": ""
  		},
 		"EndPoint": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"File": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"FileQuery": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Image": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"ImageQuery": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Message": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
+ 		},
+		"Models": {
+			"bundle": "API.OpenAI"
+,			"file": ""
  		},
 		"Realtime": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Run": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Thread": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"VectorStore": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"VectorStoreFile": {
 			"bundle": "API.OpenAI"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Speech": {
 			"bundle": "API.OpenAI.Audio"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Transcription": {
 			"bundle": "API.OpenAI.Audio"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Choice": {
 			"bundle": "API.OpenAI.Chat"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Completion": {
 			"bundle": "API.OpenAI.Chat"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Conversation": {
 			"bundle": "API.OpenAI.Chat"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Content": {
 			"bundle": "API.OpenAI.Responses"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Output": {
 			"bundle": "API.OpenAI.Responses"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Response": {
 			"bundle": "API.OpenAI.Responses"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Tool": {
 			"bundle": "API.OpenAI.Responses"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Checkpoint": {
 			"bundle": "API.OpenAI.Tuning"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Job": {
 			"bundle": "API.OpenAI.Tuning"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Tuner": {
 			"bundle": "API.OpenAI.Tuning"
-,			"file": "openai.obl"
+,			"file": ""
  		},
 		"Image": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
  		},
 		"Point": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
  		},
 		"Rect": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
  		},
 		"Scalar": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
  		},
 		"Size": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
  		},
 		"VideoCapture": {
 			"bundle": "API.OpenCV"
-,			"file": "opencv.obl"
+,			"file": ""
+ 		},
+		"VideoWriter": {
+			"bundle": "API.OpenCV"
+,			"file": ""
  		},
 		"Decrypt": {
 			"bundle": "Cipher"
-,			"file": "cipher.obl"
+,			"file": ""
  		},
 		"Encrypt": {
 			"bundle": "Cipher"
-,			"file": "cipher.obl"
+,			"file": ""
  		},
 		"Hash": {
 			"bundle": "Cipher"
-,			"file": "cipher.obl"
+,			"file": ""
  		},
 		"BackwardIterator": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Cache": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"CompareBackwardIterator": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"CompareForwardIterator": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"CompareList": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"CompareVector": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"ForwardIterator": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Hash": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"HashSet": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Heap": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"List": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Map": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"MultiMap": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Pair": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Queue": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Set": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"SetHash": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Stack": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Vector": {
 			"bundle": "Collection"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Pair": {
 			"bundle": "Collection.Tuple"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Quartet": {
 			"bundle": "Collection.Tuple"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Quintet": {
 			"bundle": "Collection.Tuple"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"Triplet": {
 			"bundle": "Collection.Tuple"
-,			"file": "gen_collect.obl"
+,			"file": ""
  		},
 		"CsvColumn": {
 			"bundle": "Data.CSV"
-,			"file": "csv.obl"
+,			"file": ""
  		},
 		"CsvRow": {
 			"bundle": "Data.CSV"
-,			"file": "csv.obl"
+,			"file": ""
  		},
 		"CsvTable": {
 			"bundle": "Data.CSV"
-,			"file": "csv.obl"
+,			"file": ""
  		},
 		"JsonBuilder": {
 			"bundle": "Data.JSON"
-,			"file": "json.obl"
+,			"file": ""
  		},
 		"JsonElement": {
 			"bundle": "Data.JSON"
-,			"file": "json.obl"
+,			"file": ""
  		},
 		"JsonParser": {
 			"bundle": "Data.JSON"
-,			"file": "json.obl"
+,			"file": ""
  		},
 		"Client": {
 			"bundle": "Data.JSON.RPC"
-,			"file": "json_rpc.obl"
+,			"file": ""
  		},
 		"Server": {
 			"bundle": "Data.JSON.RPC"
-,			"file": "json_rpc.obl"
+,			"file": ""
  		},
 		"FunctionType": {
 			"bundle": "Data.JSON.Scheme"
-,			"file": "json.obl"
+,			"file": ""
  		},
 		"ParameterType": {
 			"bundle": "Data.JSON.Scheme"
-,			"file": "json.obl"
+,			"file": ""
  		},
 		"StreamParser": {
 			"bundle": "Data.JSON.Stream"
-,			"file": "json_stream.obl"
+,			"file": ""
  		},
 		"XmlAttribute": {
 			"bundle": "Data.XML"
-,			"file": "xml.obl"
+,			"file": ""
  		},
 		"XmlBuilder": {
 			"bundle": "Data.XML"
-,			"file": "xml.obl"
+,			"file": ""
  		},
 		"XmlElement": {
 			"bundle": "Data.XML"
-,			"file": "xml.obl"
+,			"file": ""
  		},
 		"XmlParser": {
 			"bundle": "Data.XML"
-,			"file": "xml.obl"
+,			"file": ""
  		},
 		"ColumnInfo": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"Connection": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"Date": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"ParameterStatement": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"ResultSet": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"Timestamp": {
 			"bundle": "Database.ODBC"
-,			"file": "odbc.obl"
+,			"file": ""
  		},
 		"AnimatedImageSprite": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"GameFramework": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"ImageSprite": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"Position": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"Rectangle": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"Shape": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"Sprite": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"TextSprite": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"TitledImageSprite": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"Vector2": {
 			"bundle": "Game.Framework"
-,			"file": "sdl_game.obl"
+,			"file": ""
  		},
 		"CPU": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Clipboard": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Color": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Core": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Cursor": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Display": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"DisplayMode": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Event": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Filesystem": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Font": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"GameController": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"GameControllerButtonBind": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Hints": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Image": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"JoyAxisEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"JoyButtonEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"JoyHatEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Joystick": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Keyboard": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"KeyboardEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Keysym": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"MixChunk": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"MixMusic": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Mixer": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"MouseButtonEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"MouseMotionEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"MouseWheelEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"PixelData": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"PixelFormat": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Platform": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Point": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Power": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Rect": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Renderer": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"RendererInfo": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Surface": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"TextInputEvent": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Texture": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Timer": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Window": {
 			"bundle": "Game.SDL2"
-,			"file": "sdl2.obl"
+,			"file": ""
  		},
 		"Lame": {
 			"bundle": "Game.SDL2.Aux"
-,			"file": "lame.obl"
+,			"file": ""
  		},
 		"RegEx": {
 			"bundle": "Query.RegEx"
-,			"file": "regex.obl"
+,			"file": ""
  		},
 		"Result": {
 			"bundle": "Query.RegEx"
-,			"file": "regex.obl"
+,			"file": ""
  		},
 		"Finder": {
 			"bundle": "Query.Structured"
-,			"file": "query.obl"
+,			"file": ""
  		},
 		"Row": {
 			"bundle": "Query.Structured"
-,			"file": "query.obl"
+,			"file": ""
  		},
 		"Table": {
 			"bundle": "Query.Structured"
-,			"file": "query.obl"
+,			"file": ""
  		},
 		"Base": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"BaseArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"BasicCompare": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Bool": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"BoolArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"BoolRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Byte": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"ByteArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"ByteBuffer": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"ByteRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Char": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CharArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CharRange": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CharRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Clone": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CommandOutput": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Compare": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CompareArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Float": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FloatArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FloatRange": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FloatRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Func2Ref": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Func3Ref": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Func4Ref": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FuncRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Int": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"IntArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"IntRange": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"IntRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Number": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Primitive": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Range": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Runtime": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"String": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"StringArrayRef": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Stringify": {
 			"bundle": "System"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"DllProxy": {
 			"bundle": "System.API"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Thread": {
 			"bundle": "System.Concurrency"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"ThreadMutex": {
 			"bundle": "System.Concurrency"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Analysis": {
 			"bundle": "System.Diagnostics"
-,			"file": "diags.obl"
+,			"file": ""
  		},
 		"Analyzer": {
 			"bundle": "System.Diagnostics"
-,			"file": "diags.obl"
+,			"file": ""
  		},
 		"Result": {
 			"bundle": "System.Diagnostics"
-,			"file": "diags.obl"
+,			"file": ""
  		},
 		"Console": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Deserializer": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"InputStream": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"OutputStream": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Pipe": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Serializer": {
 			"bundle": "System.IO"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Directory": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"File": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FileReader": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FileReaderWriter": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"FileWriter": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"HardLink": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Logger": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"SymbolicLink": {
 			"bundle": "System.IO.Filesystem"
-,			"file": "lang.obl"
+,			"file": ""
+ 		},
+		"DTLSSocket": {
+			"bundle": "System.IO.Net"
+,			"file": ""
+ 		},
+		"DTLSSocketServer": {
+			"bundle": "System.IO.Net"
+,			"file": ""
  		},
 		"TCPSecureSocket": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"TCPSecureSocketServer": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"TCPSocket": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"TCPSocketServer": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"UDPSocket": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"UDPSocketServer": {
 			"bundle": "System.IO.Net"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"OAuthClient": {
 			"bundle": "System.IO.Net.OAuth"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"OAuthToken": {
 			"bundle": "System.IO.Net.OAuth"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"Class": {
 			"bundle": "System.Introspection"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"DataType": {
 			"bundle": "System.Introspection"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Method": {
 			"bundle": "System.Introspection"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"BayesEntry": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"BayesGroup": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"BoolMatrixRef": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"CrossValidation": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"DecisionTree": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"FeatureScaler": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"FloatMatrixRef": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"KMeans": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"KMeansGroup": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"KMeansGrouping": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"KNearestNeighbors": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"KNeighbor": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
+ 		},
+		"LinearRegression": {
+			"bundle": "System.ML"
+,			"file": ""
  		},
 		"LinearResult": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"LinearSolver": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
+ 		},
+		"LogisticRegression": {
+			"bundle": "System.ML"
+,			"file": ""
  		},
 		"Matrix2D": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"MatrixReader": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"Metrics": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"NaiveBayes": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"NeuralNetwork": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"RandomForest": {
 			"bundle": "System.ML"
-,			"file": "ml.obl"
+,			"file": ""
  		},
 		"SentimentAnalyzer": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"SentimentResult": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"TF_IDF": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"TextPreprocessor": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"TextSimilarity": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"Tokenizer": {
 			"bundle": "System.NLP"
-,			"file": "nlp.obl"
+,			"file": ""
  		},
 		"Alarm": {
 			"bundle": "System.Time"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Date": {
 			"bundle": "System.Time"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"DateUtility": {
 			"bundle": "System.Time"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"Timer": {
 			"bundle": "System.Time"
-,			"file": "lang.obl"
+,			"file": ""
  		},
 		"CodeFormatter": {
 			"bundle": "System.Utility"
-,			"file": "misc.obl"
+,			"file": ""
  		},
 		"Parser": {
 			"bundle": "System.Utility"
-,			"file": "misc.obl"
+,			"file": ""
  		},
 		"Spinner": {
 			"bundle": "System.Utility"
-,			"file": "misc.obl"
+,			"file": ""
  		},
 		"Cookie": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"HttpClient": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"HttpsClient": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"Response": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
+ 		},
+		"SSEEvent": {
+			"bundle": "Web.HTTP"
+,			"file": ""
+ 		},
+		"SSEStream": {
+			"bundle": "Web.HTTP"
+,			"file": ""
  		},
 		"SecureWebSocket": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"Url": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"WebDownloader": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"WebSocket": {
 			"bundle": "Web.HTTP"
-,			"file": "net_common.obl"
+,			"file": ""
  		},
 		"HttpRequestHandler": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"HttpsRequestHandler": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"MultipartContent": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"MultipartDecoder": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"MultipartEncoder": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"Request": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"RequestPageHandler": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"Response": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"WebServer": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"WebServerConfig": {
 			"bundle": "Web.HTTP.Server"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"McpRequestHandler": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"McpServer": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"PromptArgument": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"PromptItem": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"PromptMessage": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"ResourceContent": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"ResourceItem": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"ResourceTemplate": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"ToolContent": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"ToolItem": {
 			"bundle": "Web.HTTP.Server.MCP"
-,			"file": "net_server.obl"
+,			"file": ""
  		},
 		"RSSChannel": {
 			"bundle": "Web.RSS"
-,			"file": "rss.obl"
+,			"file": ""
  		},
 		"RSSPost": {
 			"bundle": "Web.RSS"
-,			"file": "rss.obl"
+,			"file": ""
  		},
 		"RSSReader": {
 			"bundle": "Web.RSS"
-,			"file": "rss.obl"
+,			"file": ""
  		}
 	}
 }

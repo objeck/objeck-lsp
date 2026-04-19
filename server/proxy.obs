@@ -265,6 +265,52 @@ bundle LSP {
 			return Nil;
 		}
 
+		method : public : DocumentHighlight(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
+			if(references <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : references) {
+					reference := references[i];
+					found_uri := reference->GetDescription();
+
+					# only include references in the current document
+					if(found_uri->Equals(uri)) {
+						builder := JsonBuilder->New();
+
+						start_line := end_line := reference->GetStartLine();
+						start_index := reference->GetStartPosition();
+						end_index := reference->GetEndPosition();
+
+						builder->PushObject();
+						builder->Insert("kind", 1);
+
+						builder->PushObject("range");
+							obj := builder->PushObject("start");
+								obj->Insert("line", start_line);
+								obj->Insert("character", start_index);
+							builder->Pop();
+
+							obj := builder->PushObject("end");
+								obj->Insert("line", end_line);
+								obj->Insert("character", end_index);
+							builder->Pop();
+						builder->Pop();
+
+						array->Add(builder->Pop());
+					};
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
 		method : public : Completion(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
 			if(@analysis = Nil) {
 				return Nil;
@@ -812,6 +858,345 @@ bundle LSP {
 					GetSymbols(children[i], uri, array);
 				};
 			};
+		}
+
+		method : public : FindTypeDefinition(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			definition := @analysis->FindTypeDefinition(uri, line_pos, char_pos, sys_path);
+			if(definition <> Nil) {
+				builder := JsonBuilder->New();
+
+				start_line := end_line := definition->GetStartLine();
+				start_index := definition->GetStartPosition();
+				end_index := definition->GetEndPosition();
+				def_uri := definition->GetDescription();
+
+				builder->PushObject();
+				builder->Insert("uri", def_uri);
+
+				builder->PushObject("range");
+					obj := builder->PushObject("start");
+					obj->Insert("line", start_line);
+					obj->Insert("character", start_index);
+					builder->Pop();
+
+					obj := builder->PushObject("end");
+					obj->Insert("line", end_line);
+					obj->Insert("character", end_index);
+					builder->Pop();
+				builder->Pop();
+
+				return builder->Pop();
+			};
+
+			return Nil;
+		}
+
+		method : public : FindImplementation(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			implementations := @analysis->FindImplementation(uri, line_pos, char_pos, sys_path);
+			if(implementations <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : implementations) {
+					impl := implementations[i];
+
+					builder := JsonBuilder->New();
+
+					start_line := end_line := impl->GetStartLine();
+					start_index := impl->GetStartPosition();
+					end_index := impl->GetEndPosition();
+					impl_uri := impl->GetDescription();
+
+					builder->PushObject();
+					builder->Insert("uri", impl_uri);
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+							obj->Insert("line", start_line);
+							obj->Insert("character", start_index);
+						builder->Pop();
+
+						obj := builder->PushObject("end");
+							obj->Insert("line", end_line);
+							obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
+
+					array->Add(builder->Pop());
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : public : PrepareCallHierarchy(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			item := @analysis->PrepareCallHierarchy(uri, line_pos, char_pos, sys_path);
+			if(item <> Nil) {
+				builder := JsonBuilder->New();
+
+				builder->PushObject();
+				builder->Insert("name", item->GetName());
+				builder->Insert("kind", 6);
+				builder->Insert("uri", item->GetDescription());
+
+				builder->PushObject("range");
+					obj := builder->PushObject("start");
+					obj->Insert("line", item->GetStartLine());
+					obj->Insert("character", item->GetStartPosition());
+					builder->Pop();
+
+					obj := builder->PushObject("end");
+					obj->Insert("line", item->GetEndLine());
+					obj->Insert("character", item->GetEndPosition());
+					builder->Pop();
+				builder->Pop();
+
+				builder->PushObject("selectionRange");
+					obj := builder->PushObject("start");
+					obj->Insert("line", item->GetStartLine());
+					obj->Insert("character", item->GetStartPosition());
+					builder->Pop();
+
+					obj := builder->PushObject("end");
+					obj->Insert("line", item->GetStartLine());
+					obj->Insert("character", item->GetStartPosition() + item->GetName()->Size());
+					builder->Pop();
+				builder->Pop();
+
+				return builder->Pop();
+			};
+
+			return Nil;
+		}
+
+		method : public : IncomingCalls(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			callers := @analysis->IncomingCalls(uri, line_pos, char_pos, sys_path);
+			if(callers <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : callers) {
+					caller := callers[i];
+					builder := JsonBuilder->New();
+
+					builder->PushObject();
+
+					# from - the calling method as a CallHierarchyItem
+					from_builder := builder->PushObject("from");
+					from_builder->Insert("name", caller->GetName());
+					from_builder->Insert("kind", 6);
+					from_builder->Insert("uri", caller->GetDescription());
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", caller->GetStartLine());
+						obj->Insert("character", caller->GetStartPosition());
+						builder->Pop();
+						obj := builder->PushObject("end");
+						obj->Insert("line", caller->GetEndLine());
+						obj->Insert("character", caller->GetEndPosition());
+						builder->Pop();
+					builder->Pop();
+
+					builder->PushObject("selectionRange");
+						obj := builder->PushObject("start");
+						obj->Insert("line", caller->GetStartLine());
+						obj->Insert("character", caller->GetStartPosition());
+						builder->Pop();
+						obj := builder->PushObject("end");
+						obj->Insert("line", caller->GetStartLine());
+						obj->Insert("character", caller->GetStartPosition() + caller->GetName()->Size());
+						builder->Pop();
+					builder->Pop();
+
+					builder->Pop();
+
+					# fromRanges
+					from_ranges := JsonElement->New(JsonElement->JsonType->ARRAY);
+					range_builder := JsonBuilder->New();
+					range_builder->PushObject();
+					obj := range_builder->PushObject("start");
+					obj->Insert("line", caller->GetStartLine());
+					obj->Insert("character", caller->GetStartPosition());
+					range_builder->Pop();
+					obj := range_builder->PushObject("end");
+					obj->Insert("line", caller->GetStartLine());
+					obj->Insert("character", caller->GetStartPosition() + caller->GetName()->Size());
+					range_builder->Pop();
+					from_ranges->Add(range_builder->Pop());
+					builder->Insert("fromRanges", from_ranges);
+
+					array->Add(builder->Pop());
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : public : OutgoingCalls(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			callees := @analysis->OutgoingCalls(uri, line_pos, char_pos, sys_path);
+			if(callees <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : callees) {
+					callee := callees[i];
+					builder := JsonBuilder->New();
+
+					builder->PushObject();
+
+					# to - the called method as a CallHierarchyItem
+					to_builder := builder->PushObject("to");
+					to_builder->Insert("name", callee->GetName());
+					to_builder->Insert("kind", 6);
+					to_builder->Insert("uri", callee->GetDescription());
+
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", callee->GetStartLine());
+						obj->Insert("character", callee->GetStartPosition());
+						builder->Pop();
+						obj := builder->PushObject("end");
+						obj->Insert("line", callee->GetEndLine());
+						obj->Insert("character", callee->GetEndPosition());
+						builder->Pop();
+					builder->Pop();
+
+					builder->PushObject("selectionRange");
+						obj := builder->PushObject("start");
+						obj->Insert("line", callee->GetStartLine());
+						obj->Insert("character", callee->GetStartPosition());
+						builder->Pop();
+						obj := builder->PushObject("end");
+						obj->Insert("line", callee->GetStartLine());
+						obj->Insert("character", callee->GetStartPosition() + callee->GetName()->Size());
+						builder->Pop();
+					builder->Pop();
+
+					builder->Pop();
+
+					# fromRanges
+					from_ranges := JsonElement->New(JsonElement->JsonType->ARRAY);
+					range_builder := JsonBuilder->New();
+					range_builder->PushObject();
+					obj := range_builder->PushObject("start");
+					obj->Insert("line", callee->GetStartLine());
+					obj->Insert("character", callee->GetStartPosition());
+					range_builder->Pop();
+					obj := range_builder->PushObject("end");
+					obj->Insert("line", callee->GetStartLine());
+					obj->Insert("character", callee->GetStartPosition() + callee->GetName()->Size());
+					range_builder->Pop();
+					from_ranges->Add(range_builder->Pop());
+					builder->Insert("fromRanges", from_ranges);
+
+					array->Add(builder->Pop());
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : public : InlayHints(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			hints := @analysis->InlayHints(uri, line_pos, char_pos, sys_path);
+			if(hints <> Nil) {
+				array := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				each(i : hints) {
+					hint := hints[i];
+					builder := JsonBuilder->New();
+
+					builder->PushObject();
+					builder->Insert("label", hint->GetName());
+					builder->Insert("kind", hint->GetKind()->As(Int));
+
+					builder->PushObject("position");
+					obj := builder->PushObject("start");
+					obj->Insert("line", hint->GetStartLine());
+					obj->Insert("character", hint->GetStartPosition());
+					builder->Pop();
+					builder->Pop();
+
+					array->Add(builder->Pop());
+				};
+
+				return array;
+			};
+
+			return Nil;
+		}
+
+		method : public : SemanticTokens(uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			tokens := @analysis->SemanticTokens(uri, sys_path);
+			if(tokens <> Nil) {
+				# encode as LSP delta format
+				data := JsonElement->New(JsonElement->JsonType->ARRAY);
+
+				prev_line := 0;
+				prev_char := 0;
+
+				each(i : tokens) {
+					token := tokens[i];
+					line := token->GetStartLine();
+					start_char := token->GetStartPosition();
+					length := token->GetEndLine();
+					token_type := token->GetEndPosition();
+					token_mods := token->GetKind()->As(Int);
+
+					delta_line := line - prev_line;
+					delta_char := start_char;
+					if(delta_line = 0) {
+						delta_char := start_char - prev_char;
+					};
+
+					data->Add(delta_line);
+					data->Add(delta_char);
+					data->Add(length);
+					data->Add(token_type);
+					data->Add(token_mods);
+
+					prev_line := line;
+					prev_char := start_char;
+				};
+
+				result := JsonElement->New(JsonElement->JsonType->OBJECT);
+				result->Insert("data", data);
+
+				return result;
+			};
+
+			return Nil;
 		}
 
 		method : public : Build() ~ Bool {
