@@ -55,14 +55,28 @@ echo "========================================"
 echo ""
 
 # update runtime
-echo "[1/2] Updating runtime from $OBJECK_DIR..."
+echo "[1/3] Updating runtime from $OBJECK_DIR..."
 cp "$OBJECK_DIR/bin/obr" "$LSP_HOME/bin/"
 chmod +x "$LSP_HOME/bin/obr"
-cp "$OBJECK_DIR"/lib/* "$LSP_HOME/lib/"
+[ -f "$OBJECK_DIR/bin/obd" ] && cp "$OBJECK_DIR/bin/obd" "$LSP_HOME/bin/" && chmod +x "$LSP_HOME/bin/obd"
+cp "$OBJECK_DIR"/lib/*.obl "$LSP_HOME/lib/"
+cp "$OBJECK_DIR"/lib/*.pem "$LSP_HOME/lib/" 2>/dev/null
+cp "$OBJECK_DIR"/lib/*.ini "$LSP_HOME/lib/" 2>/dev/null
 echo "   Done."
 
+# update native libraries (includes libobjk_diags which has the compiler)
+echo "[2/3] Updating native libraries from $OBJECK_DIR..."
+if [ -d "$OBJECK_DIR/lib/native" ]; then
+    mkdir -p "$LSP_HOME/lib/native"
+    cp "$OBJECK_DIR"/lib/native/*.so "$LSP_HOME/lib/native/" 2>/dev/null
+    cp "$OBJECK_DIR"/lib/native/*.dylib "$LSP_HOME/lib/native/" 2>/dev/null
+    echo "   Done."
+else
+    echo "   Skipped (no native directory found)."
+fi
+
 # update server
-echo "[2/2] Updating LSP server from $SERVER_DIR..."
+echo "[3/3] Updating LSP server from $SERVER_DIR..."
 cp "$SERVER_DIR/objeck_lsp.obe" "$LSP_HOME/"
 cp "$SERVER_DIR/objk_apis.json" "$LSP_HOME/"
 echo "   Done."

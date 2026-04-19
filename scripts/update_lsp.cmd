@@ -46,13 +46,24 @@ echo ========================================
 echo.
 
 REM update runtime
-echo [1/2] Updating runtime from %OBJECK_DIR%...
+echo [1/3] Updating runtime from %OBJECK_DIR%...
 copy /y "%OBJECK_DIR%\bin\obr.exe" "%LSP_HOME%\bin\" >nul
-xcopy /y /q "%OBJECK_DIR%\lib\*" "%LSP_HOME%\lib\" >nul
+copy /y "%OBJECK_DIR%\bin\obd.exe" "%LSP_HOME%\bin\" >nul 2>nul
+xcopy /y /q "%OBJECK_DIR%\lib\*.*" "%LSP_HOME%\lib\" >nul
 echo    Done.
 
+REM update native libraries (includes libobjk_diags.dll which has the compiler)
+echo [2/3] Updating native libraries from %OBJECK_DIR%...
+if exist "%OBJECK_DIR%\lib\native" (
+    if not exist "%LSP_HOME%\lib\native" mkdir "%LSP_HOME%\lib\native"
+    xcopy /y /q "%OBJECK_DIR%\lib\native\*.dll" "%LSP_HOME%\lib\native\" >nul
+    echo    Done.
+) else (
+    echo    Skipped (no native directory found).
+)
+
 REM update server
-echo [2/2] Updating LSP server from %SERVER_DIR%...
+echo [3/3] Updating LSP server from %SERVER_DIR%...
 copy /y "%SERVER_DIR%\objeck_lsp.obe" "%LSP_HOME%\" >nul
 copy /y "%SERVER_DIR%\objk_apis.json" "%LSP_HOME%\" >nul
 echo    Done.
