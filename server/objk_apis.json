@@ -663,6 +663,68 @@
 				}
 			}
 		},
+		"API.Onnx.FaceDetection": {
+			"description": "Single face detection result from SCRFD, containing the bounding box, confidence score, and five facial landmarks.",
+			"functions": {
+				"GetBounds": {
+					"descriptions": ["**Bounding box in original image coordinates.**\n\n```method : public : GetBounds() ~ Rect```\n\n\n\nreturn: Rect"]
+				},
+				"GetLandmarks": {
+					"descriptions": ["**Five facial landmarks as flat array [x0,y0, x1,y1, x2,y2, x3,y3, x4,y4]: left-eye, right-eye, nose, left-mouth, right-mouth.**\n\n```method : public : GetLandmarks() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"GetScore": {
+					"descriptions": ["**Detection confidence score [0, 1].**\n\n```method : public : GetScore() ~ Float```\n\n\n\nreturn: Float"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.FaceRecognitionResult": {
+			"description": "Collection of face recognition results returned by FaceSession->Recognize(). Each entry contains a FaceDetection plus a 512-dim ArcFace embedding.",
+			"functions": {
+				"GetResults": {
+					"descriptions": ["**Array of face results (detection + embedding).**\n\n```method : public : GetResults() ~ FaceResult[]```\n\n\n\nreturn: FaceResult[]"]
+				},
+				"GetSize": {
+					"descriptions": ["**Number of recognised faces.**\n\n```method : public : GetSize() ~ Int```\n\n\n\nreturn: Int"]
+				}
+			}
+		},
+		"API.Onnx.FaceResult": {
+			"description": "Face recognition result: detection plus 512-dim ArcFace embedding. Use FaceSession->Compare() to measure similarity between two embeddings.",
+			"functions": {
+				"GetDetection": {
+					"descriptions": ["**The face detection (bounding box + landmarks).**\n\n```method : public : GetDetection() ~ FaceDetection```\n\n\n\nreturn: FaceDetection"]
+				},
+				"GetEmbedding": {
+					"descriptions": ["**L2-normalised 512-dimensional ArcFace embedding.**\n\n```method : public : GetEmbedding() ~ Float[]```\n\n\n\nreturn: Float[]"]
+				},
+				"ToString": {
+					"descriptions": ["**String representation**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+		"API.Onnx.FaceSession": {
+			"description": "Face recognition session wrapping an SCRFD detector and an ArcFace recognizer. Detect() returns bounding boxes and landmarks; Recognize() additionally extracts 512-dim embeddings for identity comparison via Compare(). <b>Example<\/b> <code> session := FaceSession->New(\"det_10g.onnx\", \"w600k_r50.onnx\"); r1 := session->Recognize(image1_bytes, 0.5); r2 := session->Recognize(image2_bytes, 0.5); if(r1->GetSize() > 0 & r2->GetSize() > 0) { faces1 := r1->GetResults(); faces2 := r2->GetResults(); sim := FaceSession->Compare(faces1[0]->GetEmbedding(), faces2[0]->GetEmbedding()); \"Similarity: {$sim}\"->PrintLine(); # >0.35 = same person }; session->Close(); <\/code>",
+			"functions": {
+				"Close": {
+					"descriptions": ["**Closes all loaded sessions and releases resources.**\n\n```method : public : Close() ~ Nil```\n\n\n\nreturn: Nil"]
+				},
+				"Compare": {
+					"descriptions": ["**Compute cosine similarity between two L2-normalised ArcFace embeddings. Returns a value in [-1, 1]; typically >0.35 indicates the same person.**\n\n```function : Compare(emb1:Float[], emb2:Float[]) ~ Float```\n\n\n\nemb1: Float[]\n\nemb2: Float[]\n\nreturn: Float"]
+				},
+				"Detect": {
+					"descriptions": ["**Detect all faces in an image.**\n\n```method : public : Detect(image:Byte[], conf_threshold:Float) ~ FaceDetectionResult```\n\n\n\nimage: Byte[]\n\nconf_threshold: Float\n\nreturn: FaceDetectionResult"]
+				},
+				"New": {
+					"descriptions": ["**Constructor \u0x2014 detection only (no recognizer loaded).**\n\n```New(det_model:String)```\n\n\n\ndet_model: String", "**Constructor \u0x2014 detection + recognition.**\n\n```New(det_model:String, rec_model:String)```\n\n\n\ndet_model: String\n\nrec_model: String", "**Constructor with configuration options.**\n\n```New(det_model:String, rec_model:String, config:Map&lt;String,String&gt;)```\n\n\n\ndet_model: String\n\nrec_model: String\n\nconfig: Map&lt;String,String&gt;"]
+				},
+				"Recognize": {
+					"descriptions": ["**Detect faces and extract ArcFace embeddings for each. Requires the recognizer model to have been loaded.**\n\n```method : public : Recognize(image:Byte[], conf_threshold:Float) ~ FaceRecognitionResult```\n\n\n\nimage: Byte[]\n\nconf_threshold: Float\n\nreturn: FaceRecognitionResult"]
+				}
+			}
+		},
 		"API.Onnx.OnnxRuntime": {
 			"description": "ONNX runtime utilities for querying execution providers. <b>Example<\/b> <code> providers := OnnxRuntime->GetProviders(); each(p in providers) { p->PrintLine(); }; <\/code>",
 			"functions": {
@@ -7152,8 +7214,14 @@
 				"CodeRename": {
 					"descriptions": ["**Renames a variable or method\/function**\n\n```method : public : CodeRename(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
 				},
+				"CollectWorkspaceSymbols": {
+					"descriptions": ["**Depth-first walk over a Result tree emitted by GetSymbols, appending every named, source-located entry whose lower-cased name contains the needle. Helper for WorkspaceSymbols.**\n\n```method : private : CollectWorkspaceSymbols(node:Result, needle:String, out:Vector&lt;Result&gt;) ~ Nil```\n\n\n\nnode: Result\n\nneedle: String\n\nout: Vector&lt;Result&gt;\n\nreturn: Nil"]
+				},
 				"Completion": {
 					"descriptions": ["**Get completion options**\n\n```method : public : Completion(uri:String, line:Int, pos:Int, var_str:String, mthd_str:String, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nvar_str: String\n\nmthd_str: String\n\nsys_path: String\n\nreturn: Result"]
+				},
+				"DocumentHighlight": {
+					"descriptions": ["**Get document highlights for the symbol at the cursor \u0x2014 references scoped to the current file. Backs textDocument\/documentHighlight.**\n\n```method : public : DocumentHighlight(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
 				},
 				"FindDeclaration": {
 					"descriptions": ["**Finds symbol deceleration**\n\n```method : public : FindDeclaration(uri:String, line:Int, pos:Int, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result"]
@@ -7161,8 +7229,14 @@
 				"FindDefinition": {
 					"descriptions": ["**Finds symbol definition**\n\n```method : public : FindDefinition(uri:String, line:Int, pos:Int, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result"]
 				},
+				"FindImplementation": {
+					"descriptions": ["**Finds implementations of an interface or overrides of a virtual method**\n\n```method : public : FindImplementation(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
 				"FindReferences": {
 					"descriptions": ["**Get references specified symbol**\n\n```method : public : FindReferences(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
+				"FindTypeDefinition": {
+					"descriptions": ["**Finds type definition (go to the type of a symbol)**\n\n```method : public : FindTypeDefinition(uri:String, line:Int, pos:Int, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result"]
 				},
 				"GetDiagnostics": {
 					"descriptions": ["**Get parse and analysis errors**\n\n```method : public : GetDiagnostics(was_analyzed:BoolRef, uri:String, sys_path:String) ~ Result[]```\n\n\n\nwas_analyzed: BoolRef\n\nuri: String\n\nsys_path: String\n\nreturn: Result[]"]
@@ -7176,14 +7250,41 @@
 				"Hover": {
 					"descriptions": ["**Gets hover signatures**\n\n```method : public : Hover(uri:String, line:Int, pos:Int, var_str:String, mthd_str:String, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nvar_str: String\n\nmthd_str: String\n\nsys_path: String\n\nreturn: Result"]
 				},
+				"IncomingCalls": {
+					"descriptions": ["**Finds all methods that call the target method**\n\n```method : public : IncomingCalls(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
+				"InlayHints": {
+					"descriptions": ["**Gets inlay hints for a range of lines**\n\n```method : public : InlayHints(uri:String, start_line:Int, end_line:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nstart_line: Int\n\nend_line: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
 				"IsParsed": {
 					"descriptions": ["**Check to see if source was parsed**\n\n```method : public : IsParsed() ~ Bool```\n\n\n\nreturn: Bool"]
+				},
+				"OutgoingCalls": {
+					"descriptions": ["**Finds all methods called by the target method**\n\n```method : public : OutgoingCalls(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
+				"PrepareCallHierarchy": {
+					"descriptions": ["**Prepares call hierarchy item at cursor**\n\n```method : public : PrepareCallHierarchy(uri:String, line:Int, pos:Int, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result"]
+				},
+				"PrepareTypeHierarchy": {
+					"descriptions": ["**Return the class-level TypeHierarchyItem at the cursor. Backs textDocument\/prepareTypeHierarchy. When the cursor is on a class header, returns that class; when inside a method body, returns the enclosing class. Delegates to FindDefinition since the LSP only needs a \"seed\" Result that supertypes\/subtypes can subsequently operate on.**\n\n```method : public : PrepareTypeHierarchy(uri:String, line:Int, pos:Int, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result"]
 				},
 				"Release": {
 					"descriptions": ["**Release native resources, required for clean up.**\n\n```method : public : Release() ~ Nil```\n\n\n\nreturn: Nil"]
 				},
+				"SemanticTokens": {
+					"descriptions": ["**Gets semantic tokens for the file**\n\n```method : public : SemanticTokens(uri:String, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nsys_path: String\n\nreturn: Result[]"]
+				},
 				"SignatureHelp": {
 					"descriptions": ["**Get signature definitions**\n\n```method : public : SignatureHelp(uri:String, line:Int, pos:Int, var_str:String, mthd_str:String, sys_path:String) ~ Result```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nvar_str: String\n\nmthd_str: String\n\nsys_path: String\n\nreturn: Result"]
+				},
+				"TypeHierarchySubtypes": {
+					"descriptions": ["**Return classes that directly extend the class at the cursor (and any classes implementing it if it is an interface). Backs typeHierarchy\/subtypes. Delegates to FindImplementation, which already walks every bundle for classes whose parent matches the target.**\n\n```method : public : TypeHierarchySubtypes(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
+				"TypeHierarchySupertypes": {
+					"descriptions": ["**Walk the parent chain of the class at the cursor, returning each supertype in order (immediate parent first, then grandparent, ...). Backs typeHierarchy\/supertypes. User-space only \u0x2014 stops at the first parent that resolves to a library class.**\n\n```method : public : TypeHierarchySupertypes(uri:String, line:Int, pos:Int, sys_path:String) ~ Result[]```\n\n\n\nuri: String\n\nline: Int\n\npos: Int\n\nsys_path: String\n\nreturn: Result[]"]
+				},
+				"WorkspaceSymbols": {
+					"descriptions": ["**Return every workspace symbol whose name contains the query substring (case-insensitive). Backs workspace\/symbol (Ctrl+T in VS Code). Matches across every parsed class, method, and enum.**\n\n```method : public : WorkspaceSymbols(query:String, sys_path:String) ~ Result[]```\n\n\n\nquery: String\n\nsys_path: String\n\nreturn: Result[]"]
 				}
 			}
 		},
@@ -7195,41 +7296,6 @@
 				},
 				"ParseText": {
 					"descriptions": ["**Parsers text for analysis**\n\n```function : ParseText(src_strs:String[,]) ~ Analysis```\n\n\n\nsrc_strs: String[,]\n\nreturn: Analysis"]
-				}
-			}
-		},
-		"System.Diagnostics.Result": {
-			"description": "Collection analysis result",
-			"functions": {
-				"GetCode": {
-					"descriptions": ["**Gets the code**\n\n```method : public : GetCode() ~ Int```\n\n\n\nreturn: Int"]
-				},
-				"GetDescription": {
-					"descriptions": ["**Get result description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
-				},
-				"GetEndLine": {
-					"descriptions": ["**Get end line**\n\n```method : public : GetEndLine() ~ Int```\n\n\n\nreturn: Int"]
-				},
-				"GetEndPosition": {
-					"descriptions": ["**Get end position**\n\n```method : public : GetEndPosition() ~ Int```\n\n\n\nreturn: Int"]
-				},
-				"GetKind": {
-					"descriptions": ["**Get result kind**\n\n```method : public : GetKind() ~ Result-&gt;Kind```\n\n\n\nreturn: Result-&gt;Kind"]
-				},
-				"GetName": {
-					"descriptions": ["**Get result name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
-				},
-				"GetResults": {
-					"descriptions": ["**Get child results**\n\n```method : public : GetResults() ~ Result[]```\n\n\n\nreturn: Result[]"]
-				},
-				"GetStartLine": {
-					"descriptions": ["**Get start line**\n\n```method : public : GetStartLine() ~ Int```\n\n\n\nreturn: Int"]
-				},
-				"GetStartPosition": {
-					"descriptions": ["**Get start position**\n\n```method : public : GetStartPosition() ~ Int```\n\n\n\nreturn: Int"]
-				},
-				"ToString": {
-					"descriptions": ["**Result to string**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
 				}
 			}
 		},
@@ -9900,7 +9966,43 @@
 					"descriptions": ["**Default constructor**\n\n```New(url:String)```\n\n\n\nurl: String"]
 				}
 			}
-		}
+		},
+		"for.Result": {
+			"description": "Collection analysis result",
+			"functions": {
+				"GetCode": {
+					"descriptions": ["**Gets the code**\n\n```method : public : GetCode() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetDescription": {
+					"descriptions": ["**Get result description**\n\n```method : public : GetDescription() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetEndLine": {
+					"descriptions": ["**Get end line**\n\n```method : public : GetEndLine() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetEndPosition": {
+					"descriptions": ["**Get end position**\n\n```method : public : GetEndPosition() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetKind": {
+					"descriptions": ["**Get result kind**\n\n```method : public : GetKind() ~ Result-&gt;Kind```\n\n\n\nreturn: Result-&gt;Kind"]
+				},
+				"GetName": {
+					"descriptions": ["**Get result name**\n\n```method : public : GetName() ~ String```\n\n\n\nreturn: String"]
+				},
+				"GetResults": {
+					"descriptions": ["**Get child results**\n\n```method : public : GetResults() ~ Result[]```\n\n\n\nreturn: Result[]"]
+				},
+				"GetStartLine": {
+					"descriptions": ["**Get start line**\n\n```method : public : GetStartLine() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"GetStartPosition": {
+					"descriptions": ["**Get start position**\n\n```method : public : GetStartPosition() ~ Int```\n\n\n\nreturn: Int"]
+				},
+				"ToString": {
+					"descriptions": ["**Result to string**\n\n```method : public : ToString() ~ String```\n\n\n\nreturn: String"]
+				}
+			}
+		},
+	
 	},
 	"class-bundle-names": {
 		"AudioPart": {
@@ -10024,6 +10126,22 @@
 ,			"file": ""
  		},
 		"DeepLabSession": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"FaceDetection": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"FaceRecognitionResult": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"FaceResult": {
+			"bundle": "API.Onnx"
+,			"file": ""
+ 		},
+		"FaceSession": {
 			"bundle": "API.Onnx"
 ,			"file": ""
  		},
@@ -10795,10 +10913,6 @@
 			"bundle": "System.Diagnostics"
 ,			"file": ""
  		},
-		"Result": {
-			"bundle": "System.Diagnostics"
-,			"file": ""
- 		},
 		"Console": {
 			"bundle": "System.IO"
 ,			"file": ""
@@ -11177,6 +11291,10 @@
  		},
 		"RSSReader": {
 			"bundle": "Web.RSS"
+,			"file": ""
+ 		},
+		"Result": {
+			"bundle": "for"
 ,			"file": ""
  		}
 	}

@@ -1,3 +1,10 @@
+v2026.5.0
+* Face recognition API (SCRFD+ArcFace/InsightFace buffalo_l)
+* Windows emoji support (full Unicode supplementary plane)
+* LSP enhancements: typeHierarchy, selectionRange, documentHighlight, foldingRange
+* Bumped to support Objeck v2026.5.0
+---
+
 v2026.4.3
 * DAP debugger hover with instance field display
 * Editor setup refresh for VSCode, Sublime, and gvim (Win/Linux/macOS)
