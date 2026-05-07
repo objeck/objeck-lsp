@@ -270,45 +270,42 @@ bundle LSP {
 				return Nil;
 			};
 
-			references := @analysis->FindReferences(uri, line_pos, char_pos, sys_path);
-			if(references <> Nil) {
-				array := JsonElement->New(JsonElement->JsonType->ARRAY);
-
-				each(i : references) {
-					reference := references[i];
-					found_uri := reference->GetDescription();
-
-					# only include references in the current document
-					if(found_uri->Equals(uri)) {
-						builder := JsonBuilder->New();
-
-						start_line := end_line := reference->GetStartLine();
-						start_index := reference->GetStartPosition();
-						end_index := reference->GetEndPosition();
-
-						builder->PushObject();
-						builder->Insert("kind", 1);
-
-						builder->PushObject("range");
-							obj := builder->PushObject("start");
-								obj->Insert("line", start_line);
-								obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-								obj->Insert("line", end_line);
-								obj->Insert("character", end_index);
-							builder->Pop();
-						builder->Pop();
-
-						array->Add(builder->Pop());
-					};
-				};
-
-				return array;
+			# Analysis.DocumentHighlight handles URI filtering internally so the
+			# caller only needs to wrap the matches into the LSP DocumentHighlight
+			# JSON shape (range + kind).
+			highlights := @analysis->DocumentHighlight(uri, line_pos, char_pos, sys_path);
+			if(highlights = Nil) {
+				return Nil;
 			};
 
-			return Nil;
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			each(i : highlights) {
+				highlight := highlights[i];
+				builder := JsonBuilder->New();
+
+				start_line := end_line := highlight->GetStartLine();
+				start_index := highlight->GetStartPosition();
+				end_index := highlight->GetEndPosition();
+
+				builder->PushObject();
+				builder->Insert("kind", 1);
+
+				builder->PushObject("range");
+					obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
+					builder->Pop();
+
+					obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+					builder->Pop();
+				builder->Pop();
+
+				array->Add(builder->Pop());
+			};
+
+			return array;
 		}
 
 		method : public : Completion(line_pos : Int, char_pos : Int, var_str : String, mthd_str : String, uri : String, sys_path : String) ~ JsonElement {
@@ -734,66 +731,64 @@ bundle LSP {
 				return Nil;
 			};
 
+			# Analysis.WorkspaceSymbols walks every bundle in the parsed program
+			# and returns case-insensitive substring matches against the query.
+			# This consolidates the previous per-URI tree walk (which was both
+			# redundant — GetSymbols caches the same tree across URIs — and
+			# limited to exact-match-only filtering).
+			matches := @analysis->WorkspaceSymbols(query, sys_path);
+			if(matches = Nil) {
+				return Nil;
+			};
+
+			# Build a lookup of currently-open URIs so we restrict workspace symbol
+			# results to files the editor knows about. Without this we would also
+			# surface stdlib symbols (String, Vector, etc.) which is noisy.
+			open_uris := HashSet->New()<String>;
+			each(open_uri := uris) {
+				open_uris->Add(open_uri);
+			};
+
 			array := JsonElement->New(JsonElement->JsonType->ARRAY);
-
-			each(uri := uris) {
-				symbol := @analysis->GetSymbols(uri, sys_path);
-				if(symbol <> Nil) {
-					children := symbol->GetResults();
-
-					children := symbol->GetResults();
-					if(children <> Nil) {
-						each(child := children) {
-							GetSymbol(query, child, uri, array);
-						};
-					};
+			each(i : matches) {
+				symbol := matches[i];
+				symbol_uri := symbol->GetDescription();
+				if(symbol_uri <> Nil & open_uris->Has(symbol_uri)) {
+					BuildSymbolJson(symbol, symbol_uri, array);
 				};
 			};
 
 			return array;
 		}
 
-		method : GetSymbol(query : String, symbol : Result, uri : String, array : JsonElement) ~ Nil {
+		method : BuildSymbolJson(symbol : Result, uri : String, array : JsonElement) ~ Nil {
 			builder := JsonBuilder->New();
-			
-			start_line := symbol->GetStartLine();
-			start_index := symbol->GetStartPosition();	
 
-			end_line := symbol->GetEndLine();			
+			start_line := symbol->GetStartLine();
+			start_index := symbol->GetStartPosition();
+			end_line := symbol->GetEndLine();
 			end_index := symbol->GetEndPosition();
 
-			name := symbol->GetName();
-			desc := symbol->GetDescription();
+			obj := builder->PushObject();
+			obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
+			obj->Insert("name", symbol->GetName());
 
-			if(query->EqualsIgnoreCase(name) & (desc = Nil | desc->Equals(uri))) {
-				obj := builder->PushObject();
-				obj->Insert("kind", symbol->GetKind()->As(Int) - 200);
-				obj->Insert("name", name);
+				builder->PushObject("location");
+					builder->Insert("uri", uri);
 
-					builder->PushObject("location");
-						builder->Insert("uri", uri);
-
-						builder->PushObject("range");
-							obj := builder->PushObject("start");
-							obj->Insert("line", start_line);
-							obj->Insert("character", start_index);
-							builder->Pop();
-
-							obj := builder->PushObject("end");
-							obj->Insert("line", end_line);
-							obj->Insert("character", end_index);
-							builder->Pop();
+					builder->PushObject("range");
+						obj := builder->PushObject("start");
+						obj->Insert("line", start_line);
+						obj->Insert("character", start_index);
 						builder->Pop();
 
-				array->Add(builder->PopAll());
-			};
+						obj := builder->PushObject("end");
+						obj->Insert("line", end_line);
+						obj->Insert("character", end_index);
+						builder->Pop();
+					builder->Pop();
 
-			children := symbol->GetResults();
-			if(children <> Nil) {
-				each(i : children) {
-					GetSymbol(query, children[i], uri, array);
-				};
-			};
+			array->Add(builder->PopAll());
 		}
 
 		method : public : GetSymbols(uri : String, sys_path : String) ~ JsonElement {
@@ -936,6 +931,96 @@ bundle LSP {
 			};
 
 			return Nil;
+		}
+
+		method : public : PrepareTypeHierarchy(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			# Analysis.PrepareTypeHierarchy delegates to FindDefinition, which
+			# returns a single Result for the class at (or enclosing) the cursor.
+			# LSP expects an *array* of TypeHierarchyItem so we wrap the single
+			# match in an array.
+			item := @analysis->PrepareTypeHierarchy(uri, line_pos, char_pos, sys_path);
+			if(item = Nil) {
+				return Nil;
+			};
+
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			array->Add(BuildTypeHierarchyItem(item));
+			return array;
+		}
+
+		method : public : TypeHierarchySupertypes(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			supers := @analysis->TypeHierarchySupertypes(uri, line_pos, char_pos, sys_path);
+			if(supers = Nil) {
+				return Nil;
+			};
+
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			each(i : supers) {
+				array->Add(BuildTypeHierarchyItem(supers[i]));
+			};
+			return array;
+		}
+
+		method : public : TypeHierarchySubtypes(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {
+			if(@analysis = Nil) {
+				return Nil;
+			};
+
+			subs := @analysis->TypeHierarchySubtypes(uri, line_pos, char_pos, sys_path);
+			if(subs = Nil) {
+				return Nil;
+			};
+
+			array := JsonElement->New(JsonElement->JsonType->ARRAY);
+			each(i : subs) {
+				array->Add(BuildTypeHierarchyItem(subs[i]));
+			};
+			return array;
+		}
+
+		# Helper: convert a Result into an LSP TypeHierarchyItem. Kind=5 (Class)
+		# is fixed since Objeck's type hierarchy operates on classes only.
+		method : BuildTypeHierarchyItem(item : Result) ~ JsonElement {
+			builder := JsonBuilder->New();
+
+			builder->PushObject();
+			builder->Insert("name", item->GetName());
+			builder->Insert("kind", 5);
+			builder->Insert("uri", item->GetDescription());
+
+			builder->PushObject("range");
+				obj := builder->PushObject("start");
+				obj->Insert("line", item->GetStartLine());
+				obj->Insert("character", item->GetStartPosition());
+				builder->Pop();
+
+				obj := builder->PushObject("end");
+				obj->Insert("line", item->GetEndLine());
+				obj->Insert("character", item->GetEndPosition());
+				builder->Pop();
+			builder->Pop();
+
+			builder->PushObject("selectionRange");
+				obj := builder->PushObject("start");
+				obj->Insert("line", item->GetStartLine());
+				obj->Insert("character", item->GetStartPosition());
+				builder->Pop();
+
+				obj := builder->PushObject("end");
+				obj->Insert("line", item->GetStartLine());
+				obj->Insert("character", item->GetStartPosition() + item->GetName()->Size());
+				builder->Pop();
+			builder->Pop();
+
+			return builder->Pop();
 		}
 
 		method : public : PrepareCallHierarchy(line_pos : Int, char_pos : Int, uri : String, sys_path : String) ~ JsonElement {

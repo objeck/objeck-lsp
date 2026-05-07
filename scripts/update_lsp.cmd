@@ -59,7 +59,7 @@ if exist "%OBJECK_DIR%\lib\native" (
     xcopy /y /q "%OBJECK_DIR%\lib\native\*.dll" "%LSP_HOME%\lib\native\" >nul
     echo    Done.
 ) else (
-    echo    Skipped (no native directory found).
+    echo    Skipped - no native directory found.
 )
 
 REM update server

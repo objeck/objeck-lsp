@@ -87,6 +87,9 @@ bundle LSP {
 		method : virtual : CallbackOutgoingCalls(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackInlayHint(id : Int, params : JsonElement) ~ Nil;
 		method : virtual : CallbackSemanticTokensFull(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackPrepareTypeHierarchy(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackTypeHierarchySupertypes(id : Int, params : JsonElement) ~ Nil;
+		method : virtual : CallbackTypeHierarchySubtypes(id : Int, params : JsonElement) ~ Nil;
 
 		# --- process requests ---
 		method : ProcessResponse(request : RpcRequest) ~ Nil {
@@ -249,6 +252,18 @@ bundle LSP {
 
 					label "textDocument/semanticTokens/full" {
 						CallbackSemanticTokensFull(id, request->GetParams());
+					}
+
+					label "textDocument/prepareTypeHierarchy" {
+						CallbackPrepareTypeHierarchy(id, request->GetParams());
+					}
+
+					label "typeHierarchy/supertypes" {
+						CallbackTypeHierarchySupertypes(id, request->GetParams());
+					}
+
+					label "typeHierarchy/subtypes" {
+						CallbackTypeHierarchySubtypes(id, request->GetParams());
 					}
 
 					other {
@@ -863,6 +878,33 @@ bundle LSP {
 			};
 
 			return proxy->DocumentHighlight(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : PrepareTypeHierarchy(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->PrepareTypeHierarchy(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : TypeHierarchySupertypes(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->TypeHierarchySupertypes(line_pos, char_pos, @uri, @workspace->GetLibs());
+		}
+
+		method : public : TypeHierarchySubtypes(line_pos : Int, char_pos : Int) ~ JsonElement {
+			proxy := AstProxy->New(@workspace, @uri, false, @is_debug);
+			leaving {
+				proxy->Release();
+			};
+
+			return proxy->TypeHierarchySubtypes(line_pos, char_pos, @uri, @workspace->GetLibs());
 		}
 
 		method : public : FoldingRange() ~ JsonElement {

@@ -329,6 +329,65 @@ bundle LSP {
 			};
 		}
 
+		method : CallbackPrepareTypeHierarchy(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("textDocument/uri")->GetValue();
+			line_pos := params->FindElements("position/line")->GetValue();
+			char_pos := params->FindElements("position/character")->GetValue();
+
+			document := @workspace->GetDocument(uri);
+			if(document <> Nil) {
+				response := document->PrepareTypeHierarchy(line_pos->ToInt(), char_pos->ToInt());
+				WriteRpcResponse(id, response);
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		# typeHierarchy/supertypes & /subtypes both receive a TypeHierarchyItem in
+		# params.item. We re-resolve from item/uri + item/range/start so the same
+		# Document.TypeHierarchy* methods can be used regardless of which side
+		# (prepare or follow-up) the request came from.
+		method : CallbackTypeHierarchySupertypes(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("item/uri")->GetValue();
+			line_pos := params->FindElements("item/range/start/line");
+			char_pos := params->FindElements("item/range/start/character");
+
+			if(uri <> Nil & line_pos <> Nil & char_pos <> Nil) {
+				document := @workspace->GetDocument(uri);
+				if(document <> Nil) {
+					response := document->TypeHierarchySupertypes(line_pos->GetInt(), char_pos->GetInt());
+					WriteRpcResponse(id, response);
+				}
+				else {
+					WriteRpcResponse(id, Nil);
+				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
+		method : CallbackTypeHierarchySubtypes(id : Int, params : JsonElement) ~ Nil {
+			uri := params->FindElements("item/uri")->GetValue();
+			line_pos := params->FindElements("item/range/start/line");
+			char_pos := params->FindElements("item/range/start/character");
+
+			if(uri <> Nil & line_pos <> Nil & char_pos <> Nil) {
+				document := @workspace->GetDocument(uri);
+				if(document <> Nil) {
+					response := document->TypeHierarchySubtypes(line_pos->GetInt(), char_pos->GetInt());
+					WriteRpcResponse(id, response);
+				}
+				else {
+					WriteRpcResponse(id, Nil);
+				};
+			}
+			else {
+				WriteRpcResponse(id, Nil);
+			};
+		}
+
 		method : CallbackInlayHint(id : Int, params : JsonElement) ~ Nil {
 			uri := params->FindElements("textDocument/uri")->GetValue();
 			start_line := params->FindElements("range/start/line");
@@ -534,6 +593,9 @@ bundle LSP {
 
 			callHierarchyProvider := capabilities->AddChild("callHierarchyProvider");
 			callHierarchyProvider->Insert("id", "objeck-call-hierarchy");
+
+			typeHierarchyProvider := capabilities->AddChild("typeHierarchyProvider");
+			typeHierarchyProvider->Insert("id", "objeck-type-hierarchy");
 
 			semanticTokensLegend := JsonElement->New(JsonElement->JsonType->OBJECT);
 			tokenTypes := JsonElement->New(JsonElement->JsonType->ARRAY);
