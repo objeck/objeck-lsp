@@ -1,3 +1,8 @@
+v2026.5.1
+* HTTP/2+3/QUIC clients, Gemini/OpenAI API expansion, WebSocket hardening
+* Bumped to support Objeck v2026.5.1
+---
+
 v2026.5.0
 * Face recognition API (SCRFD+ArcFace/InsightFace buffalo_l)
 * Windows emoji support (full Unicode supplementary plane)
