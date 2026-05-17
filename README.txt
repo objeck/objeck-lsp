@@ -1,6 +1,6 @@
-v2026.5.1
-* HTTP/2+3/QUIC clients, Gemini/OpenAI API expansion, WebSocket hardening
-* Bumped to support Objeck v2026.5.1
+v2026.5.2
+* HTTP/2+3/QUIC clients, Gemini/OpenAI API expansion, ARM64 Windows support, WebSocket hardening
+* Bumped to support Objeck v2026.5.2
 ---
 
 v2026.5.0
