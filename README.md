@@ -1,3 +1,8 @@
+> [!WARNING]
+> **This repository has moved.** The Objeck LSP server is now part of the main [objeck-lang](https://github.com/objeck/objeck-lang) repository at [`tools/lsp/`](https://github.com/objeck/objeck-lang/tree/master/tools/lsp). Please report issues and download releases there. This repo is no longer maintained.
+
+---
+
 <p align="center">
 <strong>Objeck LSP</strong><br>
 Language Server Protocol support for <a href="https://github.com/objeck/objeck-lang">Objeck</a><br>
