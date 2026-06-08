@@ -35,7 +35,17 @@ obr doc_json.obe templates "$VERSION" \
 	$LIB_SRC/rss.obs \
 	$LIB_SRC/misc.obs \
 	$LIB_SRC/diags.obs \
-	$LIB_SRC/ml.obs \
+	$LIB_SRC/ml_core.obs \
+	$LIB_SRC/ml_linear.obs \
+	$LIB_SRC/ml_tree.obs \
+	$LIB_SRC/ml_bayes.obs \
+	$LIB_SRC/ml_neighbors.obs \
+	$LIB_SRC/ml_cluster.obs \
+	$LIB_SRC/ml_data.obs \
+	$LIB_SRC/ai_search.obs \
+	$LIB_SRC/ai_game.obs \
+	$LIB_SRC/ai_optimize.obs \
+	$LIB_SRC/ai_rl.obs \
 	$LIB_SRC/nlp.obs \
 	$LIB_SRC/openai.obs \
 	$LIB_SRC/gemini.obs \
